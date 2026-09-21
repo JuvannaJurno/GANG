@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚔️ Osmanlı Kuruluş AI Seçkisi</title>
+    <style>
+        :root {
+            --primary: #2C3E50;
+            --success: #27AE60;
+            --danger: #C0392B;
+            --light: #ECF0F1;
+            --dark: #34495E;
+            --accent: #D35400;
+            --gold: #F1C40F;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body {
+            background: linear-gradient(135deg, #2C3E50 0%, #D35400 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+        }
+        
+        h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin-bottom: 5px; }
+        .subtitle { font-size: 1.1rem; opacity: 0.9; }
+
+        .progress-container { width: 100%; background-color: #e9ecef; height: 10px; }
+        .progress-bar { height: 100%; background: var(--gold); width: 0%; transition: width 0.3s ease; }
+        
+        .quiz-container { padding: 25px; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; background: var(--light); padding: 10px; border-radius: 8px; }
+        
+        .question-container { background: #fdfefe; border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--accent); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .question { font-size: 1.25rem; font-weight: 600; margin-bottom: 15px; }
+        
+        .options { display: grid; grid-template-columns: 1fr; gap: 10px; position: relative; }
+        
+        .cat-cover {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(44, 62, 80, 0.95);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border-radius: 10px; z-index: 10; cursor: pointer;
+        }
+        .cat-image { max-width: 150px; border-radius: 8px; margin-bottom: 10px; border: 3px solid var(--gold); }
+        .cat-text { color: white; font-weight: bold; }
+
+        .option-btn {
+            padding: 15px; border: 2px solid #ddd; border-radius: 8px;
+            background: white; cursor: pointer; transition: 0.2s; text-align: left; font-size: 1.05rem;
+        }
+        .option-btn:hover { border-color: var(--accent); background: #fffaf0; }
+        .option-btn.correct { background-color: var(--success) !important; color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger) !important; color: white; border-color: var(--danger); }
+        
+        .feedback { padding: 20px; border-radius: 10px; margin-top: 20px; display: none; border-left: 5px solid; }
+        .correct-feedback { background: #e8f5e9; border-color: var(--success); }
+        .incorrect-feedback { background: #ffebee; border-color: var(--danger); }
+        
+        .next-btn {
+            background: var(--primary); color: white; border: none; padding: 15px 30px;
+            border-radius: 8px; font-size: 1.1rem; cursor: pointer; display: block;
+            margin: 20px auto 0; width: 100%; max-width: 300px; font-weight: bold;
+        }
+
+        .results-container { padding: 30px; text-align: center; display: none; }
+        .word-list { text-align: left; margin-top: 20px; }
+        .word-card { background: var(--light); padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚔️ Osmanlı Kuruluş AI Seçkisi</h1>
+            <div class="subtitle">KPSS Son 11 Yılın Frekans Analiziyle Oluşturulmuş Sorular</div>
+        </header>
+        <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <span>Puan: <span id="score">0</span></span>
+                <span>Soru: <span id="progress">1</span>/<span id="totalCount">40</span></span>
+            </div>
+            <div class="question-container"><div class="question" id="question"></div></div>
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat/says/Basla" alt="Cat" class="cat-image">
+                    <div class="cat-text">Şıkları Görmek İçin Tıkla!</div>
+                </div>
+            </div>
+            <div class="feedback" id="feedback"></div>
+            <button class="next-btn" id="nextBtn" style="display: none;">Sıradaki Bilgiye Geç</button>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <h2>🏆 Analiz Tamamlandı!</h2>
+            <div style="font-size: 2.5rem; margin: 20px 0; color: var(--accent);" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()">Tekrar Çöz</button>
+        </div>
+    </div>
+
+    <script>
+        const originalQuizData = [
+            {
+                q: "Osmanlı Devleti'nin kuruluşunda gaza amacıyla akınlara katılan ve 'Anadolu Gazileri' anlamına gelen askeri grup hangisidir?",
+                a: "Gaziyân-ı Rum",
+                options: ["Gaziyân-ı Rum", "Ahiyân-ı Rum", "Bacıyan-ı Rum", "Abdalan-ı Rum"],
+                m: "Gaziyân-ı Rum asker kökenli gaza grubudur. Ahiyân-ı Rum esnafları, Bacıyân-ı Rum kadınları, Abdalan-ı Rum ise dervişleri ifade eder."
+            },
+            {
+                q: "Osmanlı tarihinde ilk atanan kadı aşağıdakilerden hangisidir?",
+                a: "Dursun Fakih",
+                options: ["Çandarlı Halil", "Dursun Fakih", "Davud-u Kayseri", "Yahşi Fakih"],
+                m: "Osman Bey döneminde Karacahisar'ın fethi sonrası ilk kadı olarak Dursun Fakih atanmıştır."
+            },
+            {
+                q: "Halil İnalcık'a göre Osmanlı Devleti'nin asıl kuruluşu olarak kabul edilen savaş hangisidir?",
+                a: "Bafeon (Koyunhisar) Savaşı",
+                options: ["Sırpsındığı", "Maltepe (Pelekanon)", "Bafeon (Koyunhisar) Savaşı", "Sazlıdere"],
+                m: "Halil İnalcık, 1302 Koyunhisar Zaferi ile Osmanlı'nın hanedan kimliği kazandığını ve asıl kuruluşun bu tarih olduğunu savunur."
+            },
+            {
+                q: "Osmanlı Devleti'nin Rumeli'deki ilk üssü olan kale hangisidir?",
+                a: "Çimpe Kalesi",
+                options: ["Gelibolu", "Çimpe Kalesi", "Edirne", "Vize"],
+                m: "Bizans'taki taht mücadelelerinde Kantakuzen'e yardım karşılığında 1353'te Çimpe Kalesi alınmıştır."
+            },
+            {
+                q: "Osmanlı'ya katılan ilk beylik olup aynı zamanda Osmanlı'nın ilk donanma sahibi olmasını sağlayan yapı hangisidir?",
+                a: "Karesioğulları",
+                options: ["Germiyanoğulları", "Karesioğulları", "Hamitoğulları", "Saruhanoğulları"],
+                m: "Orhan Bey döneminde Karesioğulları'nın alınmasıyla Anadolu Türk birliği adımları atılmış ve donanma gücü elde edilmiştir."
+            },
+            {
+                q: "Niğbolu Savaşı sonrası Abbasi Halifesi tarafından Yıldırım Bayezid'e verilen unvan hangisidir?",
+                a: "Sultan-ı İklim-i Rum",
+                options: ["Hadimü'l Harameyn", "Sultan-ı İklim-i Rum", "Hüdavendigar", "Kayzer-i Rum"],
+                m: "1396 Niğbolu Zaferi sonrası Yıldırım Bayezid'e 'Anadolu'nun Sultanı' anlamına gelen bu unvan verilmiştir."
+            },
+            {
+                q: "Osmanlı'nın Balkanlarda fethettiği bölgelerdeki halka uyguladığı 'hoşgörü ve adalet' politikasının adı nedir?",
+                a: "İstimalet",
+                options: ["İskân", "İstimalet", "Müdara", "Müsadere"],
+                m: "İstimalet, fethedilen bölge halkının dini inançlarına ve adetlerine saygı göstererek devlete bağlılıklarını artırma politikasıdır."
+            },
+            {
+                q: "Osmanlı Devleti'nin kuruluş döneminde Bizans tekfurları ile uyguladığı 'görünüşte dostça geçinme' politikası hangisidir?",
+                a: "Müdara",
+                options: ["İltizam", "Müdara", "Gaza", "Cihat"],
+                m: "Özellikle Osman Bey döneminde askeri güç tam yetmediğinde uygulanan diplomatik esneklik politikasına müdara denir."
+            },
+            {
+                q: "Osmanlı Devleti'de ilk düzenli ordu (Yaya ve Müsellem) hangi padişah döneminde kurulmuştur?",
+                a: "Orhan Gazi",
+                options: ["Osman Bey", "Orhan Gazi", "I. Murat", "I. Bayezid"],
+                m: "Beylikten devlete geçişin en önemli adımı olarak Orhan Gazi döneminde Yaya ve Müsellem teşkilatı kurulmuştur."
+            },
+            {
+                q: "Haçlılarla yapılan ilk büyük savaş (1364) aşağıdakilerden hangisidir?",
+                a: "Sırpsındığı Savaşı",
+                options: ["I. Kosova", "Sırpsındığı Savaşı", "Niğbolu", "Varna"],
+                m: "Edirne ve Filibe'nin fethi sonrası Haçlıların karşı saldırıya geçmesiyle yapılan ilk büyük Haçlı-Osmanlı savaşıdır."
+            },
+            {
+                q: "I. Murat döneminde kurulan ve merkezi Manastır olan idari birim hangisidir?",
+                a: "Rumeli Beylerbeyliği",
+                options: ["Anadolu Beylerbeyliği", "Rumeli Beylerbeyliği", "Sancak-ı Şerif", "Dergâh-ı Ali"],
+                m: "Rumeli'deki sınırların genişlemesi üzerine idari kolaylık için Rumeli Beylerbeyliği kurulmuş, başına Lala Şahin Paşa getirilmiştir."
+            },
+            {
+                q: "Anadolu Türk Siyasi Birliği'ni geniş ölçüde sağlayan ancak Ankara Savaşı sonrası birliğin bozulmasına neden olan padişah kimdir?",
+                a: "Yıldırım Bayezid",
+                options: ["I. Murat", "Çelebi Mehmed", "Yıldırım Bayezid", "II. Murat"],
+                m: "Yıldırım Bayezid beylikleri doğrudan ilhak etmiş, ancak Timur yenilgisi sonrası beylikler tekrar bağımsız olmuştur."
+            },
+            {
+                q: "Osmanlı'nın devlet yapısını dinsel inançlara göre (Müslim/Gayrimüslim) şekillendirdiği sistemin adı nedir?",
+                a: "Millet Sistemi",
+                options: ["Tımar Sistemi", "Millet Sistemi", "Devşirme Sistemi", "Pençik Sistemi"],
+                m: "Millet sistemi, toplumu ırk değil din esasına göre örgütleyen hukuki bir yapıdır."
+            },
+            {
+                q: "Savaşta esir alınanların beşte birinin orduya katılması esasına dayanan sistem hangisidir?",
+                a: "Pençik",
+                options: ["Devşirme", "Pençik", "Müsadere", "İltizam"],
+                m: "Pençik (beşte bir), I. Murat döneminde uygulanmaya başlanmıştır. Daha sonra devşirme sistemine geçilmiştir."
+            },
+            {
+                q: "Osmanlı tarihinde ilk dini ve sosyal nitelikli isyan olan Şeyh Bedreddin İsyanı hangi dönemde çıkmıştır?",
+                a: "Çelebi Mehmed",
+                options: ["Yıldırım Bayezid", "Çelebi Mehmed", "II. Murat", "Fatih Sultan Mehmet"],
+                m: "Fetret Devri sonrası sarsılan sosyal yapının etkisiyle Çelebi Mehmed döneminde bu isyan patlak vermiştir."
+            },
+            {
+                q: "Osmanlı'nın 'İkinci Kurucusu' olarak kabul edilen, Fetret Devri'ne son veren padişah kimdir?",
+                a: "Çelebi Mehmed",
+                options: ["I. Murat", "Çelebi Mehmed", "II. Murat", "Fatih Sultan Mehmet"],
+                m: "Ankara Savaşı sonrası dağılan devleti toparladığı için bu unvanla anılır."
+            },
+            {
+                q: "Balkanların kesin olarak Türk yurdu olduğunun kanıtlandığı ve Avrupalıların Türkleri Balkanlardan atma ümidinin sona erdiği savaş hangisidir?",
+                a: "II. Kosova Savaşı",
+                options: ["I. Kosova", "II. Kosova Savaşı", "Varna", "Niğbolu"],
+                m: "II. Murat dönemindeki 1448 zaferi ile Balkanlardaki Türk hakimiyeti kesinleşmiştir."
+            },
+            {
+                q: "Osmanlı'da merkezi otoriteyi güçlendirmek için 'kullardan' (devşirme) yönetici yetiştirme geleneğini başlatan ana amaç nedir?",
+                a: "Alternatif güç odaklarını engellemek",
+                options: ["Asker sayısını artırmak", "Alternatif güç odaklarını engellemek", "Ticareti geliştirmek", "Dini birliği sağlamak"],
+                m: "Kullar padişahın doğrudan otoritesine bağlı olduğu için köklü Türk ailelerinin gücü dengelenmeye çalışılmıştır."
+            },
+            {
+                q: "Venediklilerle yapılan tarihteki ilk Osmanlı deniz savaşı (Çalıbey Savaşı) hangi dönemdedir?",
+                a: "Çelebi Mehmed",
+                options: ["Orhan Bey", "Yıldırım Bayezid", "Çelebi Mehmed", "II. Murat"],
+                m: "Osmanlı donanması henüz zayıf olduğu için bu ilk savaşı kaybetmiştir."
+            },
+            {
+                q: "Savaş alanında şehit edilen ilk ve tek Osmanlı padişahı aşağıdakilerden hangisidir?",
+                a: "I. Murat",
+                options: ["Osman Bey", "I. Murat", "Yıldırım Bayezid", "II. Osman"],
+                m: "I. Kosova Savaşı sonrası meydanı gezerken bir Sırp asilzadesi (Miloş Obiliç) tarafından şehit edilmiştir."
+            },
+            {
+                q: "Fethedilen bir bölgenin askeri başarısından dolayı o komutana dirlik olarak verilmesine ne ad verilir?",
+                a: "Kılıç Hakkı",
+                options: ["Gedik", "Kılıç Hakkı", "İltizam", "Mülk"],
+                m: "Osmanlı'nın ilk yıllarında fetihleri özendirmek için uygulanan bir sistemdir."
+            },
+            {
+                q: "Kuruluş döneminde en köklü askeri ve idari düzenlemeleri yaparak 'Beylikten Devlete Geçişi' tamamlayan padişah hangisidir?",
+                a: "Orhan Gazi",
+                options: ["Osman Bey", "Orhan Gazi", "I. Murat", "I. Bayezid"],
+                m: "Vezirlik, Divan, Adli teşkilat ve Ordu gibi kurumları ilk o oluşturmuştur."
+            },
+            {
+                q: "Aşağıdakilerden hangisi Kuruluş Dönemi'nde Osmanlı'nın çağdaşı (dönemdaşı) olan bir devlet değildir?",
+                a: "Büyük Selçuklu Devleti",
+                options: ["İlhanlılar", "Memlûkler", "Altın Orda Devleti", "Büyük Selçuklu Devleti"],
+                m: "Büyük Selçuklu 1157'de yıkılmıştır; Osmanlı ise 1299 civarı kurulmuştur."
+            },
+            {
+                q: "Osmanlı'da gayrimüslim tebaanın can ve mal güvenliğinin sağlanması karşılığında alınan vergi hangisidir?",
+                a: "Cizye",
+                options: ["Haraç", "Cizye", "Öşür", "Avarız"],
+                m: "Cizye güvenlik vergisidir; haraç ise toprak ürünü üzerinden alınır."
+            },
+            {
+                q: "İlk Osmanlı tersanesi hangi padişah döneminde Gelibolu'da kurulmuştur?",
+                a: "Yıldırım Bayezid",
+                options: ["Orhan Bey", "I. Murat", "Yıldırım Bayezid", "Çelebi Mehmed"],
+                m: "Yıldırım Bayezid denizciliği güçlendirmek için Gelibolu Tersanesi'ni kurmuştur."
+            },
+            {
+                q: "Osmanlı'nın Kuruluş Dönemi'nde Haçlılarla yaptığı savaşlar arasında aşağıdakilerden hangisi yer almaz?",
+                a: "Maltepe (Pelekanon) Savaşı",
+                options: ["Sırpsındığı", "I. Kosova", "Varna", "Maltepe (Pelekanon) Savaşı"],
+                m: "Maltepe Savaşı Bizans ile yapılmıştır; Haçlı ittifakıyla değil."
+            },
+            {
+                q: "Osmanlı'nın Kuruluş Dönemi bilgilerini içeren elimizdeki 'en eski kaynak' hangisidir?",
+                a: "Ahmedi - İskendername",
+                options: ["Aşıkpaşazade Tarihi", "Neşri Tarihi", "Ahmedi - İskendername", "Yahşi Fakih Menakıbnamesi"],
+                m: "Yahşi Fakih'in eseri kayıptır; günümüze ulaşan en eski yazılı kaynak Ahmedi'nin eseridir."
+            },
+            {
+                q: "Sancak sisteminden yetişerek tahta çıkan ve padişahlığından önce Amasya'da eğitim gören Kuruluş padişahı hangisidir?",
+                a: "Çelebi Mehmed",
+                options: ["Osman Bey", "Orhan Bey", "I. Murat", "Çelebi Mehmed"],
+                m: "Çelebi Mehmed Amasya'da sancakbeyliği yapmış, Fetret sonrası tahta çıkmıştır."
+            },
+            {
+                q: "Osmanlı'da devlet işlerinin görüşüldüğü 'Divan-ı Hümayun' ilk kez hangi padişah döneminde oluşturulmuştur?",
+                a: "Orhan Gazi",
+                options: ["Osman Bey", "Orhan Gazi", "I. Murat", "I. Bayezid"],
+                m: "Orhan Gazi kurumsallaşma adına ilk Divan'ı toplamıştır."
+            },
+            {
+                q: "Anadolu Beylerbeyliği'nin merkezi olan şehir hangisidir?",
+                a: "Kütahya",
+                options: ["Manastır", "Bursa", "Kütahya", "Konya"],
+                m: "Yıldırım Bayezid döneminde kurulan Anadolu Beylerbeyliği'nin merkezi Kütahya'dır."
+            },
+            {
+                q: "Gayrimüslim gençlerin eğitilerek saray ve ordu hizmetine alınmasını sağlayan 'Devşirme Kanunu' hangi padişah döneminde yasallaşmıştır?",
+                a: "II. Murat",
+                options: ["I. Murat", "Yıldırım Bayezid", "II. Murat", "Fatih Sultan Mehmet"],
+                m: "Uygulama I. Murat'ta başlasa da sistemli kanun haline II. Murat döneminde gelmiştir."
+            },
+            {
+                q: "Osmanlı'da ilk para (bakır mangır) hangi padişah döneminde basılmıştır?",
+                a: "Osman Bey",
+                options: ["Osman Bey", "Orhan Bey", "I. Murat", "Yıldırım Bayezid"],
+                m: "İlk bakır para Osman Bey; ilk gümüş akçe Orhan Bey dönemidir."
+            },
+            {
+                q: "Aşağıdakilerden hangisi Balkanlarda Osmanlı yönetimini kolaylaştıran bir faktör değildir?",
+                a: "Avarız vergisinin sadece gayrimüslimlerden alınması",
+                options: ["Esnek vergi politikası", "İstimalet politikası", "Zimmi statüsü tanınması", "Avarız vergisinin sadece gayrimüslimlerden alınması"],
+                m: "Avarız vergisi olağanüstü durumlarda herkesden (Müslim/Gayrimüslim) alınır."
+            },
+            {
+                q: "Osmanlı Devleti'nde ilk medrese (İznik) hangi padişah döneminde açılmıştır?",
+                a: "Orhan Bey",
+                options: ["Osman Bey", "Orhan Bey", "I. Murat", "I. Bayezid"],
+                m: "İznik Orhaniyesi Osmanlı'nın ilk eğitim kurumudur."
+            },
+            {
+                q: "İlk Osmanlı müderrisi aşağıdakilerden hangisidir?",
+                a: "Davud-u Kayseri",
+                options: ["Dursun Fakih", "Davud-u Kayseri", "Molla Fenari", "Kadızade-i Rumi"],
+                m: "İznik medresesine atanan ilk profesör (müderris) Davud-u Kayseri'dir."
+            },
+            {
+                q: "Osmanlı ordusunda gayrimüslimlerden oluşan, atların bakımından sorumlu askeri zümre hangisidir?",
+                a: "Voynuklar",
+                options: ["Martoloslar", "Voynuklar", "Lala", "Akıncılar"],
+                m: "Voynuklar Bulgar ve Sırplardan tertip edilen hizmet birimidir."
+            },
+            {
+                q: "I. Murat'ın şehit edilmesi sonrası tahta geçen padişah hangisidir?",
+                a: "Yıldırım Bayezid",
+                options: ["Çelebi Mehmed", "Yıldırım Bayezid", "II. Murat", "Orhan Gazi"],
+                m: "1389 I. Kosova zaferi sonrası Yıldırım Bayezid tahta geçmiştir."
+            },
+            {
+                q: "Topçu Ocağı hangi padişah döneminde kurulmuştur?",
+                a: "I. Murat",
+                options: ["Orhan Gazi", "I. Murat", "Yıldırım Bayezid", "Fatih Sultan Mehmet"],
+                m: "Topçu ocağı klasik dönemde I. Murat zamanında kurulmuştur ve o dönemde batı etkisi yoktur."
+            },
+            {
+                q: "Bizans İmparatoru'nun kızıyla evlenerek diplomatik bir ilişki kuran ve karşılığında Çimpe'yi alan padişah kimdir?",
+                a: "Orhan Gazi",
+                options: ["Osman Bey", "Orhan Gazi", "I. Murat", "II. Murat"],
+                m: "Orhan Gazi Kantakuzen ile olan bu yardımlaşma sayesinde Rumeli'ye geçmiştir."
+            },
+            {
+                q: "Padişahın ordunun başında sefere çıkmadığı durumlarda orduyu komuta eden görevliye ne ad verilir?",
+                a: "Serdar-ı Ekrem",
+                options: ["Beylerbeyi", "Veziriazam", "Serdar-ı Ekrem", "Kaptan-ı Derya"],
+                m: "Veziriazamlar bu unvanla orduyu yönetirlerdi."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        function shuffleArray(array) {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        function initQuiz() {
+            questions = shuffleArray(originalQuizData);
+            document.getElementById('totalCount').textContent = questions.length;
+            showQuestion();
+            catCoverEl.onclick = revealOptions;
+        }
+
+        function showQuestion() {
+            const currentQ = questions[currentQuestionIndex];
+            questionEl.innerText = currentQ.q;
+            
+            const shuffledOptions = shuffleArray(currentQ.options);
+            
+            optionsEl.innerHTML = '';
+            optionsEl.appendChild(catCoverEl);
+            catCoverEl.style.display = 'flex';
+            catCoverEl.querySelector('img').src = `https://cataas.com/cat/says/Soru%20${currentQuestionIndex + 1}`;
+
+            shuffledOptions.forEach(optText => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = optText;
+                btn.onclick = () => checkAnswer(optText, currentQ);
+                optionsEl.appendChild(btn);
+            });
+            
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.innerText = currentQuestionIndex + 1;
+            progressBarEl.style.width = ((currentQuestionIndex + 1) / questions.length * 100) + "%";
+        }
+
+        function revealOptions() {
+            catCoverEl.style.display = 'none';
+        }
+
+        function checkAnswer(selected, qObj) {
+            const btns = document.querySelectorAll('.option-btn');
+            btns.forEach(btn => {
+                btn.disabled = true;
+                if (btn.innerText === qObj.a) btn.classList.add('correct');
+                else if (btn.innerText === selected) btn.classList.add('incorrect');
+            });
+
+            feedbackEl.style.display = 'block';
+            if (selected === qObj.a) {
+                score += 10;
+                scoreEl.innerText = score;
+                feedbackEl.className = 'feedback correct-feedback';
+                feedbackEl.innerHTML = `<strong>✅ Doğru!</strong><br>${qObj.m}`;
+            } else {
+                feedbackEl.className = 'feedback incorrect-feedback';
+                feedbackEl.innerHTML = `<strong>❌ Yanlış!</strong> Doğru cevap: <b>${qObj.a}</b><br>${qObj.m}`;
+            }
+            
+            nextBtn.style.display = 'block';
+        }
+
+        nextBtn.onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) showQuestion();
+            else finishQuiz();
+        };
+
+        function finishQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            finalScoreEl.innerText = `${score} / ${questions.length * 10}`;
+            
+            questions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<b>${q.q}</b><br><small>${q.m}</small>`;
+                wordListEl.appendChild(card);
+            });
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>

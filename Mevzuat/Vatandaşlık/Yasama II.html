@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Vatandaşlık Testi</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "⚖️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* --- NOTLAR KISMI CSS --- */
+        .notes-container {
+            padding: 25px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .notes-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notes-scroll-area {
+            max-height: 55vh;
+            overflow-y: auto;
+            background: var(--light);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .notes-scroll-area::-webkit-scrollbar { width: 8px; }
+        .notes-scroll-area::-webkit-scrollbar-track { background: #e9ecef; border-radius: 10px; }
+        .notes-scroll-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+        .notes-scroll-area h3 {
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 5px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .notes-scroll-area h3:first-child { margin-top: 0; }
+        .notes-scroll-area ul { padding-left: 20px; margin-bottom: 15px; }
+        .notes-scroll-area li { margin-bottom: 8px; }
+
+        .table-responsive { overflow-x: auto; margin-bottom: 15px; border-radius: 8px; }
+        .notes-table { width: 100%; border-collapse: collapse; min-width: 600px; background: white; }
+        .notes-table th, .notes-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .notes-table th { background-color: var(--primary); color: white; }
+
+        /* SAYILAR VE ORANLAR KUTUSU */
+        .numbers-box {
+            background-color: #E3F2FD;
+            border-left: 5px solid #1976D2;
+            padding: 15px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        
+        .numbers-box h3 { color: #1565C0 !important; border-bottom: 2px solid #90CAF9 !important; margin-top: 0 !important; }
+        .numbers-box ul { list-style-type: none !important; padding-left: 0 !important; }
+        .numbers-box li {
+            background: white;
+            margin-bottom: 8px !important;
+            padding: 10px 15px !important;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid #1976D2;
+            display: flex;
+            align-items: center;
+        }
+        
+        .num-badge {
+            background: #1976D2; color: white; font-weight: bold; padding: 4px 10px;
+            border-radius: 4px; margin-right: 12px; font-size: 1.1rem; min-width: 60px; text-align: center;
+        }
+
+        .highlight-direct { background-color: #C8E6C9; color: #2E7D32; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #81C784; }
+        .highlight-indirect { background-color: #FFCDD2; color: #C62828; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #E57373; }
+
+        .important-note {
+            background-color: #FFF8E1; border-left: 5px solid #FFC107;
+            padding: 15px; margin-top: 20px; border-radius: 5px; font-size: 0.95rem;
+        }
+
+        .start-quiz-wrapper { text-align: center; padding: 10px 0; }
+        .scroll-msg { color: var(--danger); font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; }
+        #startTestBtn:disabled { background: #cccccc; color: #666666; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        /* --- BİTİŞ --- */
+        
+        .progress-container { width: 100%; background-color: #e9ecef; border-radius: 10px; margin: 15px 0; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); width: 0%; transition: width 0.5s ease; border-radius: 10px; }
+        .quiz-container { padding: 25px; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 1.1rem; background-color: var(--light); padding: 15px; border-radius: 10px; border: 2px solid var(--accent); }
+        .score { color: var(--primary); font-weight: bold; font-size: 1.2rem; }
+        .question-container { background: var(--light); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .question { font-size: 1.3rem; margin-bottom: 10px; color: var(--dark); line-height: 1.5; font-weight: 600; }
+        .options { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; position: relative; }
+        .cat-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(46, 125, 50, 0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px; z-index: 10; cursor: pointer; transition: all 0.3s ease; }
+        .cat-cover:hover { background-color: rgba(46, 125, 50, 0.85); }
+        .cat-image { max-width: 200px; max-height: 150px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .cat-text { color: white; font-size: 1.2rem; text-align: center; padding: 0 15px; }
+        .option-btn { padding: 16px 20px; border: 2px solid #ddd; border-radius: 10px; background-color: white; color: var(--dark); font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; text-align: left; position: relative; overflow: hidden; }
+        .option-btn:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .option-btn.correct { background-color: var(--success); color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .feedback { padding: 20px; border-radius: 10px; margin-top: 20px; display: none; font-size: 1.1rem; line-height: 1.6; animation: fadeIn 0.5s ease; }
+        .correct-feedback { background-color: rgba(56, 142, 60, 0.1); border-left: 5px solid var(--success); }
+        .incorrect-feedback { background-color: rgba(198, 40, 40, 0.1); border-left: 5px solid var(--danger); }
+        .next-btn { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none; padding: 16px 32px; border-radius: 10px; font-size: 1.2rem; cursor: pointer; display: block; margin: 25px auto 0; transition: all 0.3s ease; font-weight: 600; width: 100%; max-width: 250px; }
+        .next-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(46, 125, 50, 0.3); }
+        .results-container { padding: 30px; text-align: center; display: none; }
+        .results-title { color: var(--primary); margin-bottom: 20px; font-size: 2rem; }
+        .final-score { font-size: 3rem; color: var(--accent); margin: 20px 0; font-weight: bold; }
+        .word-list { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 30px; }
+        .word-card { border: 2px solid var(--accent); border-radius: 12px; padding: 20px; background: var(--light); transition: all 0.3s ease; }
+        .word-card:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        .word { font-weight: bold; font-size: 1.4rem; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+        .meaning { font-size: 1.1rem; line-height: 1.6; color: var(--dark); }
+        .category { display: inline-block; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; margin-top: 10px; }
+        
+        .category-ysk { background: #1565C0; }
+        .category-secim { background: #6A1B9A; }
+        .category-yasama { background: #2E7D32; }
+        .category-dokunulmazlik { background: #FF8F00; }
+        .category-tbmm { background: #1976D2; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        
+        @media (max-width: 600px) {
+            .container { border-radius: 10px; }
+            h1 { font-size: 1.6rem; }
+            .notes-title { font-size: 1.3rem; }
+            .notes-scroll-area { max-height: 60vh; padding: 15px; }
+            .question { font-size: 1.1rem; }
+            .option-btn { padding: 14px 16px; font-size: 1rem; }
+            .cat-image { max-width: 150px; max-height: 120px; }
+            .cat-text { font-size: 1rem; }
+            .num-badge { min-width: 50px; font-size: 1rem; margin-right: 8px; padding: 3px 6px; }
+            .numbers-box li { padding: 8px 10px !important; font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ MEB-AGS Vatandaşlık</h1>
+            <div class="subtitle">Yasama II (Çıkmış Soru İlave Sürümü)</div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <h2 class="notes-title">📖 Yasama II Ders Notları</h2>
+            
+            <div class="notes-scroll-area" id="notesScrollArea">
+                <h3>1. Yüksek Seçim Kurulu (YSK)</h3>
+                <ul>
+                    <li>Anayasa'nın "Yasama" bölümünde düzenlenir. Bir mahkeme değil, idari bir kuruldur. Seçimlerin genel yönetimi ve dürüstlüğünden sorumludur.</li>
+                    <li>Toplam 11 üyeden (7 asıl, 4 yedek) oluşur. Bu üyelerin 6'sı Yargıtay, 5'i Danıştay tarafından seçilir.</li>
+                    <li>Üyelerin görev süresi 6 yıldır. Kararları kesindir, yargı denetimine kapalıdır (itiraz edilemez).</li>
+                    <li>Seçim tutanaklarını kabul eder. Başkanını kendi üyeleri arasından seçer.</li>
+                </ul>
+
+                <h3>2. Seçim Dönemleri ve Erken Seçim</h3>
+                <ul>
+                    <li><strong>Yasama Dönemi:</strong> İki genel seçim arasındaki 5 yıllık süre.</li>
+                    <li><strong>Yasama Yılı:</strong> 1 Ekim'de başlayıp 30 Eylül'de biten 1 yıllık çalışma süresi.</li>
+                    <li>2017 değişikliği ile TBMM ve CB seçimleri 5 yılda bir, aynı gün yapılır.</li>
+                    <li><strong>Erken Seçim (Seçimlerin Yenilenmesi):</strong> TBMM (3/5 çoğunlukla) veya Cumhurbaşkanı karar verebilir. CB karar verirse iki seçim de (TBMM + CB) yenilenir.</li>
+                    <li>CB ikinci (son) dönemindeyken Meclis erken seçim kararı alırsa, CB bir kez daha aday olabilir. (Ancak CB'nin olağan olarak ikinci kez seçilmesi otomatik erken seçim demek değildir).</li>
+                </ul>
+
+                <h3>3. Seçimlerin Ertelenmesi ve Ara Seçim</h3>
+                <div class="table-responsive">
+                    <table class="notes-table">
+                        <thead>
+                            <tr>
+                                <th>Durum</th>
+                                <th>Karar Mercii</th>
+                                <th>Kurallar ve İstisnalar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Seçimlerin Ertelenmesi</strong></td>
+                                <td>TBMM Parlamento Kararı</td>
+                                <td>Sadece <strong>SAVAŞ</strong> sebebiyle ve 1 yıl süreyle ertelenebilir. Savaş sürerse tekrarlanabilir.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Genel Ara Seçim</strong></td>
+                                <td>YSK / TBMM</td>
+                                <td>Boşalan vekillikler için dönemde 1 kez yapılır. 30 ay geçmeden yapılamaz. Seçime 1 yıl kala <strong>kesinlikle</strong> yapılamaz.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>İstisna 1: %5 Boşalma</strong></td>
+                                <td>YSK</td>
+                                <td>Üye tam sayısının %5'i boşalırsa 3 ay içinde yapılır (30 ay şartı aranmaz ama 1 yıl kala yasağı BURADA DA GEÇERLİDİR).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>İstisna 2: Temsilcisiz İl</strong></td>
+                                <td>YSK</td>
+                                <td>Bir ilin hiç vekili kalmazsa 90 gün sonraki ilk Pazar yapılır. (Bunda ne 30 ay, ne de 1 yıl yasağı aranmaz, her an yapılır).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>4. Milletvekilliği Statüsü ve Dokunulmazlıklar</h3>
+                <ul>
+                    <li><strong>Milli Temsil:</strong> Sadece kendi bölgesini veya partisini değil, tüm Türk milletini temsil ederler. Vekillik sıfatı, İl Seçim Kurulu mazbatayı düzenlediği an kazanılır (yeminle değil).</li>
+                    <li><strong>Yasama Sorumsuzluğu:</strong> Meclisteki söz ve düşüncelerden dolayı sorumlu tutulmamaktır. Ömür boyu sürer, Meclis tarafından kaldırılamaz. (Sadece milletvekilleri yararlanır).</li>
+                    <li><strong>Yasama Dokunulmazlığı:</strong> Seçimden önce/sonra işlenen suçlardan Meclis izni olmadan yargılanamamaktır. Görev süresince (5 yıl) geçerlidir. Katılanların salt çoğunluğu ile kaldırılabilir. CB Yardımcıları ve Bakanlar da bundan yararlanır.</li>
+                    <li><strong>Dokunulmazlığın İstisnaları:</strong> Ağır cezalık suçüstü halleri ve Anayasa Md. 14 suçlarında (soruşturma seçimden önce başladıysa) dokunulmazlık işlemez.</li>
+                </ul>
+
+                <h3>5. Milletvekilliğinin Sona Ermesi</h3>
+                <ul>
+                    <li><strong>Kendiliğinden Düşme:</strong> Ölüm, CB seçilmek, YSK'nın seçim iptali.</li>
+                    <li><strong>Meclis Kararıyla Düşme:</strong> İstifa, bağdaşmayan görevde ısrar etme, devamsızlık.</li>
+                    <li>Vekilliğin düşürülmesi (devamsızlık hariç) veya dokunulmazlığın kaldırılmasına karşı 7 gün içinde AYM'ye itiraz edilebilir. (Devamsızlık ile düşürme için 301 oy gerekir).</li>
+                </ul>
+
+                <h3>6. TBMM Çalışma Düzeni ve Denetim Yolları</h3>
+                <ul>
+                    <li>TBMM Başkanlık Divanı'nda siyasi parti genel başkanları yer almaz. Dönemde 2 kez seçilirler. Siyasi partiler Meclis Başkanlığına aday gösteremezler.</li>
+                    <li>Olağanüstü Toplantı: Cumhurbaşkanı veya Meclis Başkanı <span class="highlight-direct">DOĞRUDAN</span> çağırabilir. 120 milletvekilinin isteğiyle Meclis Başkanı <span class="highlight-indirect">DOLAYLI</span> çağırabilir.</li>
+                    <li><strong>Denetim:</strong> Meclis araştırması/genel görüşmeyi gruplar veya en az 20 vekil ister. Yazılı soruyu 1 vekil bile sorabilir (15 günde cevaplanır).</li>
+                </ul>
+
+                <h3 style="color: #FF8F00;">7. Kamu Başdenetçiliği ve Bütçe Kanunu (Çıkmış Soru Odaklı)</h3>
+                <ul>
+                    <li><strong>Kamu Başdenetçisi (Ombudsman):</strong> TBMM Başkanlığına bağlıdır. TBMM tarafından 4 turlu gizli oyla, <strong>4 yıllığına</strong> seçilir.</li>
+                    <li><strong>Bütçe Kanunu:</strong> Bütçe kanun teklifini TBMM'ye sadece <strong>Cumhurbaşkanı</strong> (mali yılbaşından 75 gün önce) sunar. Cumhurbaşkanının Meclis'e geri gönderemediği (veto edemediği) tek kanundur.</li>
+                    <li>Kanun teklif etmeye sadece <strong>Milletvekilleri</strong> yetkilidir (Bakanlar Kurulu tasarısı kavramı kalkmıştır).</li>
+                </ul>
+
+                <h3 style="color: #FF8F00;">8. 2017 Değişikliği ile Kaldırılan Kurumlar</h3>
+                <ul>
+                    <li>ÖSYM ve MEB "hangisi kaldırıldı" diye sormayı çok sever. 2017 değişikliği ile yasama ve denetim alanında şu kurumlar <strong>tamamen kaldırılmıştır:</strong> Gensoru, Güvenoyu, Kanun Hükmünde Kararname (KHK), Tüzük, Bakanlar Kurulu ve Başbakanlık.</li>
+                </ul>
+
+                <div class="numbers-box">
+                    <h3>🔢 Sınavda Çıkacak Önemli Sayılar ve Oranlar</h3>
+                    <ul>
+                        <li><span class="num-badge">11 Üye</span> YSK'nın üye yapısı (7 asıl + 4 yedek).</li>
+                        <li><span class="num-badge">6 Yıl</span> YSK üyelerinin görev süresi.</li>
+                        <li><span class="num-badge">4 Yıl</span> Kamu Başdenetçisinin görev süresi.</li>
+                        <li><span class="num-badge">75 Gün</span> Bütçe kanun teklifinin mali yılbaşından önce sunulma süresi.</li>
+                        <li><span class="num-badge">30 / 20</span> Siyasi parti kurmak için en az <strong>30 kişi</strong>, Meclis'te parti grubu kurmak için en az <strong>20 vekil</strong> gerekir.</li>
+                        <li><span class="num-badge">1/3 (200)</span> TBMM'nin toplantı yeter sayısı.</li>
+                        <li><span class="num-badge">151</span> Karar yeter sayısının düşebileceği en alt limit (Üye tam sayısının dörtte birinin bir fazlası).</li>
+                        <li><span class="num-badge">3/5 (360)</span> TBMM'nin erken seçim kararı ile **genel ve özel af** ilan edebilmesi için gereken vekil sayısı.</li>
+                        <li><span class="num-badge">2/3 (400)</span> Bakan veya CB Yardımcısını Yüce Divan'a sevk edebilmek için gereken karar sayısı. (Soruşturma teklifi için 301).</li>
+                        <li><span class="num-badge">301</span> Devamsızlık nedeniyle milletvekilliği düşürmek için gereken salt çoğunluk. (1 ayda 5 birleşime girmemek).</li>
+                        <li><span class="num-badge">30 Ay</span> Ara seçim yapılabilmesi için genel seçimin üzerinden geçmesi gereken süre.</li>
+                        <li><span class="num-badge">1 Yıl Kala</span> Ara seçimin kesinlikle yapılamayacağı zaman dilimi (İstisna: Temsilcisiz il kalması).</li>
+                    </ul>
+                </div>
+
+                <div class="important-note">
+                    <strong>⚠️ Önemli Sınav İpucu: Dokunulmazlık Kapsamı</strong><br><br>
+                    Dokunulmazlık tam olarak <strong>görev dışı (adi)</strong> suçlar için vardır. Anayasaya göre dokunulmazlığın SADECE iki istisnası vardır: <br>
+                    1. Ağır cezayı gerektiren <strong>suçüstü</strong> hali. <br>
+                    2. Seçimden önce soruşturmasına başlanılmış olmak kaydıyla <strong>Anayasa Md. 14</strong> kapsamındaki devlet aleyhine işlenen suçlar.
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <p id="scrollMsg" class="scroll-msg">Testi başlatmak için notların sonuna kadar okuyun/kaydırın 👇</p>
+                <button class="next-btn" id="startTestBtn" disabled>Notları Okudum, Testi Başlat</button>
+            </div>
+        </div>
+        
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer" style="display: none;">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const QUIZ_DATA = [
+            { question: "Yüksek Seçim Kurulu (YSK) ile ilgili aşağıdaki ifadelerden hangisi doğrudur?", options: ["Bir mahkeme olarak görev yapar.", "Üyelerinin tamamı Yargıtay tarafından seçilir.", "Seçimlerin genel yönetimi ve dürüstlüğünden sorumludur.", "Kararlarına karşı temyiz yolu açıktır."], correctAnswer: 2, meaning: "YSK, idari bir kuruldur ve seçimlerin genel yönetimi ve dürüstlüğünden sorumludur.", category: "Yüksek Seçim Kurulu (YSK)" },
+            { question: "Yüksek Seçim Kurulu'nun (YSK) üye dağılımı ve seçiliş şekli aşağıdakilerden hangisinde doğru olarak verilmiştir?", options: ["7 asıl, 4 yedek üye; 6'sı Danıştay, 5'i Yargıtay'dan", "11 asıl üye; tamamı Cumhurbaşkanı tarafından atanır", "7 asıl, 4 yedek üye; 6'sı Yargıtay, 5'i Danıştay'dan", "11 asıl üye; TBMM tarafından seçilir"], correctAnswer: 2, meaning: "YSK, 7 asıl 4 yedek üyeden oluşur. 6 üye Yargıtay, 5 üye Danıştay tarafından seçilir.", category: "Yüksek Seçim Kurulu (YSK)" },
+            { question: "Yüksek Seçim Kurulu (YSK) üyelerinin görev süresi ve kararlarının niteliği ile ilgili aşağıdakilerden hangisi doğrudur?", options: ["4 yıl için seçilirler, kararlarına karşı Anayasa Mahkemesi'ne başvurulabilir.", "6 yıl için seçilirler, kararları kesindir.", "Görev süresi yoktur, kararları yargı denetimine açıktır.", "5 yıl için seçilirler, kararlarına karşı itiraz edilemez."], correctAnswer: 1, meaning: "YSK üyeleri 6 yıl için seçilir ve kararları kesindir.", category: "Yüksek Seçim Kurulu (YSK)" },
+            { question: "Aşağıdaki ifadelerden hangisi YSK için yanlıştır?", options: ["Seçim tutanaklarını kabul eder.", "Seçim itirazlarını kesin olarak karara bağlar.", "Anayasa'da 'Yargı' bölümünde düzenlenmiştir.", "Başkanını kendi üyeleri arasından seçer."], correctAnswer: 2, meaning: "YSK, Anayasa'nın 'Yasama' bölümünde düzenlenmiştir. Bir mahkeme değildir.", category: "Yüksek Seçim Kurulu (YSK)" },
+            { question: "TBMM seçimleri ile ilgili aşağıdaki ifadelerden hangisi 2017 değişikliği sonrası doğrudur?", options: ["4 yılda bir yapılır.", "5 yılda bir, Cumhurbaşkanlığı seçimleri ile birlikte yapılır.", "5 yılda bir yapılır, Cumhurbaşkanlığı seçiminden bağımsızdır.", "6 yılda bir yapılır."], correctAnswer: 1, meaning: "2017 Anayasa değişikliği ile TBMM seçimleri 5 yılda bir yapılır ve Cumhurbaşkanlığı seçimleri ile aynı gündedir.", category: "Seçimler" },
+            { question: "'Görev süresi dolan TBMM, yenisi seçilene kadar görevine devam eder.' kuralı aşağıdaki anayasal ilkelerden hangisiyle doğrudan ilgilidir?", options: ["Yasama yetkisinin asliliği", "Yasamanın sürekliliği", "Seçimlerin serbestliği", "Yasama yetkisinin genelliği"], correctAnswer: 1, meaning: "Yasamanın sürekliliği ilkesi, TBMM'nin daimi bir organ olduğunu ve görev süresi bitse bile yeni meclis oluşana kadar çalışmaya devam ettiğini ifade eder.", category: "Yasama İlkeleri" },
+            { question: "İki genel seçim arasında geçen 5 yıllık sürenin tamamına ne ad verilir?", options: ["Yasama yılı", "Oturum dönemi", "Yasama dönemi", "Seçim periyodu"], correctAnswer: 2, meaning: "İki genel seçim arasındaki 5 yıllık süreye 'yasama dönemi' denir.", category: "Seçimler" },
+            { question: "TBMM'nin 1 Ekim'de başlayıp bir sonraki yılın 30 Eylül'üne kadar devam eden 1 yıllık çalışma süresine ne ad verilir?", options: ["Yasama dönemi", "Birleşim", "Oturum", "Yasama yılı"], correctAnswer: 3, meaning: "TBMM'nin 1 Ekim'de başlayıp bir sonraki 30 Eylül'de sona eren bir yıllık çalışma süresine 'yasama yılı' denir.", category: "Yasama İşleyişi" },
+            { question: "TBMM seçimlerinin 5 yıllık süre dolmadan yenilenmesine ne denir ve bu kararı kim verebilir?", options: ["Ara seçim; sadece TBMM", "Seçimlerin yenilenmesi (erken seçim); sadece Cumhurbaşkanı", "Seçimlerin yenilenmesi (erken seçim); TBMM veya Cumhurbaşkanı", "Olağanüstü seçim; Anayasa Mahkemesi"], correctAnswer: 2, meaning: "Seçimlerin yenilenmesi (erken seçim) kararını TBMM veya Cumhurbaşkanı verebilir.", category: "Seçimler" },
+            { question: "TBMM, seçimlerin yenilenmesine (erken seçim) karar vermek için üye tam sayısının en az kaçta kaçının oyu ile karar almalıdır?", options: ["Salt çoğunluk (301)", "3/5 çoğunluk (360)", "2/3 çoğunluk (400)", "Toplantıya katılanların salt çoğunluğu"], correctAnswer: 1, meaning: "TBMM'nin erken seçim kararı alabilmesi için üye tam sayısının 3/5 çoğunluğu (360 oy) gerekir.", category: "Seçimler" },
+            { question: "Cumhurbaşkanı, TBMM seçimlerini yenileme (erken seçim) kararı aldığında aşağıdakilerden hangisi gerçekleşir?", options: ["Sadece TBMM seçimleri yenilenir.", "TBMM seçimleri yenilenir, Cumhurbaşkanlığı seçimi yapılmaz.", "Hem TBMM seçimleri hem de Cumhurbaşkanlığı seçimi yenilenir.", "Cumhurbaşkanı görevinden ayrılmış sayılmaz."], correctAnswer: 2, meaning: "Cumhurbaşkanı erken seçim kararı aldığında, hem TBMM seçimleri hem de Cumhurbaşkanlığı seçimi birlikte yenilenir.", category: "Seçimler" },
+            { question: "Aşağıdaki durumların hangisinde, Cumhurbaşkanlığı seçimleri otomatik olarak yenilenmez?", options: ["TBMM'nin 360 oyla erken seçim kararı alması", "Cumhurbaşkanının erken seçim kararı alması", "Cumhurbaşkanının ikinci kez seçilmesi", "TBMM'nin Cumhurbaşkanını görevden alma kararı alması"], correctAnswer: 2, meaning: "Cumhurbaşkanının ikinci kez seçilmesi, normal bir seçim sürecidir. Erken seçim değildir, dolayısıyla otomatik yenileme olmaz.", category: "Seçimler" },
+            { question: "Cumhurbaşkanı ikinci (ve son) dönemindeyken, TBMM erken seçim kararı alırsa, bu Cumhurbaşkanı için aşağıdakilerden hangisi doğrudur?", options: ["Bir kez daha aday olabilir ve Cumhurbaşkanlığı yapabilir.", "Sadece TBMM seçimleri yapılır, kendisi aday olamaz.", "Görev süresi dolmuş sayılır ve seçime katılamaz.", "Sadece bir dönem daha aday olma hakkı doğar."], correctAnswer: 0, meaning: "Son dönemindeki Cumhurbaşkanı, TBMM'nin erken seçim kararı ile yeni bir seçim dönemi başladığı için yeniden aday olma hakkı kazanır.", category: "Seçimler" },
+            { question: "TBMM seçimlerinin ertelenmesi (geriye bırakılması) hangi şartla ve kim tarafından mümkün kılınır?", options: ["Ekonomik kriz sebebiyle, Cumhurbaşkanı kararıyla", "Savaş sebebiyle, TBMM parlamento kararıyla", "Doğal afet sebebiyle, Bakanlar Kurulu kararıyla", "Salgın hastalık sebebiyle, YSK kararıyla"], correctAnswer: 1, meaning: "TBMM seçimleri sadece savaş sebebiyle ertelenebilir ve bu erteleme TBMM'nin parlamento kararı ile olur.", category: "Seçimler" },
+            { question: "Savaş sebebiyle ertelenen TBMM seçimleri en fazla kaç yıl ertelenebilir ve bu işlem tekrarlanabilir mi?", options: ["6 ay, tekrarlanamaz.", "1 yıl, savaş durumu devam ettikçe tekrarlanabilir.", "2 yıl, tekrarlanamaz.", "Süre sınırı yoktur."], correctAnswer: 1, meaning: "Seçimler bir yıl için ertelenebilir. Savaş hali devam ediyorsa, aynı usulle her yıl yeniden ertelenme kararı alınabilir.", category: "Seçimler" },
+            { question: "Ara seçim ile ilgili aşağıdaki ifadelerden hangisi yanlıştır?", options: ["Sadece boşalan milletvekillikleri için yapılır.", "Her seçim döneminde (yasama döneminde) bir defa yapılabilir.", "Tüm milletvekillerinin yeniden seçilmesini sağlar.", "Boşalma olması durumunda yapılır."], correctAnswer: 2, meaning: "Ara seçim, genel seçim değildir. Sadece boşalan üyelikleri doldurur, tüm milletvekillerini yeniden seçtirmez.", category: "Ara Seçim" },
+            { question: "Bir yasama döneminde olağan ara seçim yapılabilmesi için, son genel seçimlerin üzerinden en az ne kadar süre geçmiş olmalıdır?", options: ["6 ay", "1 yıl", "30 ay", "3 yıl"], correctAnswer: 2, meaning: "Ara seçim yapılabilmesi için son genel seçimlerin üzerinden 30 ay (2.5 yıl) geçmiş olmalıdır.", category: "Ara Seçim" },
+            { question: "Bir sonraki genel seçimlere ne kadar süre kala, ara seçim yapılamaz?", options: ["18 ay", "1 yıl", "6 ay", "90 gün"], correctAnswer: 1, meaning: "Genel seçimlere 1 yıldan az kala ara seçim yapılamaz.", category: "Ara Seçim" },
+            { question: "'TBMM üye tam sayısının en az %5'i (30 milletvekili) boşalmışsa' hangi durum gerçekleşir?", options: ["Meclis feshedilir.", "3 ay içinde ara seçim yapılmasına karar verilir.", "Cumhurbaşkanı erken seçim kararı almak zorunda kalır.", "TBMM'nin çalışmaları otomatik olarak durur."], correctAnswer: 1, meaning: "Üye tam sayısının %5'i (30 milletvekili) boşaldığında, 30 ay şartı aranmaksızın 3 ay içinde ara seçim yapılması zorunludur.", category: "Ara Seçim" },
+            { question: "%5'lik boşalma (30 milletvekili) durumunda dahi, ara seçim yapılmasının önündeki kesin engel aşağıdakilerden hangisidir?", options: ["Cumhurbaşkanının onay vermemesi", "YSK'nin karar almaması", "Seçimlere 1 yıl veya daha az süre kalması", "TBMM'nin karar almaması"], correctAnswer: 2, meaning: "%5 boşalma istisnasında bile, 'seçime 1 yıl kala ara seçim yapılamaz' kuralı geçerlidir. Bu mutlak bir sınırlamadır.", category: "Ara Seçim" },
+            { question: "Bir ilin veya seçim çevresinin TBMM'de hiç temsilcisi kalmamışsa, ara seçim ne zaman yapılır?", options: ["3 ay içinde", "90 gün sonraki ilk Pazar günü", "1 yıl sonra", "Yasama dönemi bitince"], correctAnswer: 1, meaning: "Bir ilin/seçim çevresinin TBMM'de hiç temsilcisi kalmamışsa, boşalma tarihinden itibaren 90 gün sonraki ilk Pazar günü ara seçim yapılır.", category: "Ara Seçim" },
+            { question: "Temsilcisiz kalma' durumunda ara seçim yapılması için aşağıdaki şartlardan hangisi aranmaz?", options: ["30 ay süresinin dolması", "Seçime 1 yıldan fazla süre olması", "TBMM kararı alınması", "Hiçbiri"], correctAnswer: 3, meaning: "Temsilcisiz kalma durumunda 30 ay kuralı dahil hiçbir sınırlama aranmaz. Yasama döneminin her anında bu ara seçim yapılabilir.", category: "Ara Seçim" },
+            { question: "Milletvekillerinin temsil yetkisi ile ilgili aşağıdaki ifadelerden hangisi Anayasal ilkedir?", options: ["Sadece kendilerini seçen seçmen bölgesini temsil ederler.", "Parti liderlerini ve programını temsil ederler.", "Tüm Türk Milletini temsil ederler.", "Sadece kendi siyasi partilerini temsil ederler."], correctAnswer: 2, meaning: "Milletvekilleri, sadece bir bölgenin değil, tüm Türk Milletini temsil eder (milli temsil ilkesi).", category: "Milletvekilliği Statüsü" },
+            { question: "Bir kişi, milletvekili sıfatını ve yetkilerini ne zaman kazanmış olur?", options: ["Seçimleri kazandığı anda", "İl Seçim Kurulu'nun mazbatayı (seçildiğine dair tutanağı) düzenlediği anda", "TBMM'de yemin ettiği anda", "Resmi Gazete'de ilan edildiği anda"], correctAnswer: 1, meaning: "Milletvekilliği sıfatı, İl Seçim Kurulu tarafından mazbata düzenlendiği anda kazanılır. Yemin ise göreve başlama işlemidir.", category: "Milletvekilliği Statüsü" },
+            { question: "Yasama dokunulmazlığı ile ilgili aşağıdaki ifadelerden hangisi doğrudur?", options: ["Sadece milletvekilliği sürecinde işlenen suçları kapsar.", "Ömür boyu süren mutlak bir korumadır.", "Seçimden önce veya sonra işlenen suçları da kapsar.", "TBMM tarafından hiçbir şekilde kaldırılamaz."], correctAnswer: 2, meaning: "Yasama dokunulmazlığı, vekilin seçimden önce veya sonra işlediği suçlardan dolayı Meclis kararı olmadan yargılanamamasıdır.", category: "Yasama Dokunulmazlığı" },
+            { question: "Yasama dokunulmazlığının süresi ne kadardır?", options: ["10 yıl", "Ömür boyu", "5 yıl (milletvekilliği süresince)", "6 yıl"], correctAnswer: 2, meaning: "Yasama dokunulmazlığı, milletvekilliği göreviyle başlar ve görevin sona ermesiyle biter (5 yıl).", category: "Yasama Dokunulmazlığı" },
+            { question: "Bir milletvekilinin dokunulmazlığının kaldırılması için TBMM Genel Kurulu'nda hangi çoğunluk aranır?", options: ["Katılanların salt çoğunluğu", "Üye tam sayısının salt çoğunluğu (301)", "Üye tam sayısının 3/5 çoğunluğu (360)", "Üye tam sayısının 2/3 çoğunluğu (400)"], correctAnswer: 0, meaning: "Dokunulmazlığın kaldırılması için toplantı yeter sayısı (184) sağlandıktan sonra, oturuma katılan milletvekillerinin salt çoğunluğu yeterlidir.", category: "Yasama Dokunulmazlığı" },
+            { question: "Aşağıdaki durumların hangisinde, yasama dokunulmazlığı işlemez (istisna)?", options: ["Ağır cezayı gerektiren suçüstü hali", "Görev sırasında işlenen hakaret suçu", "Görev dışı işlenen suçlar", "Yasama dokunulmazlığı her durumda işler"], correctAnswer: 0, meaning: "Yasama dokunulmazlığının yalnızca iki istisnası vardır: 1) Ağır cezayı gerektiren suçüstü hali, 2) Soruşturmasına seçimden önce başlanmış olmak kaydıyla Anayasa Md. 14 durumları. Görev dışı (adi) suçlarda dokunulmazlık tam da vekili korumak için vardır ve KESİNLİKLE işler.", category: "Yasama Dokunulmazlığı" },
+            { question: "Anayasa'nın 14. maddesinde sayılan (temel hakları yok etmeye yönelik) suçlarda dokunulmazlığın işlememesi için hangi şart aranır?", options: ["Suçun milletvekiliyken işlenmiş olması", "Soruşturmasına seçimden önce başlanmış olması", "Suçun basında yer alması", "Cumhurbaşkanının onay vermesi"], correctAnswer: 1, meaning: "14. madde suçlarında dokunulmazlık istisnası için soruşturmanın seçimden önce başlamış olması şartı aranır.", category: "Yasama Dokunulmazlığı" },
+            { question: "Yasama sorumsuzluğu ile ilgili aşağıdaki ifadelerden hangisi yanlıştır?", options: ["Sadece milletvekilliği sırasındaki oy, söz ve düşünceleri korur.", "TBMM tarafından kaldırılabilir.", "Ömür boyu (sürekli) koruma sağlar.", "Hem cezai hem hukuki sorumluluğu ortadan kaldırır."], correctAnswer: 1, meaning: "Yasama sorumsuzluğu mutlak ve süreklidir, TBMM tarafından kaldırılamaz. Bu, onu dokunulmazlıktan ayıran temel özelliktir.", category: "Yasama Sorumsuzluğu" },
+            { question: "Bir milletvekili, genel kurulda yaptığı bir konuşmadan dolayı hakaret suçundan suçlanıyor. Milletvekilliği bittikten 2 yıl sonra dava açılabilir mi?", options: ["Evet, çünkü dokunulmazlık kalkmıştır.", "Hayır, çünkü yasama sorumsuzluğu ömür boyu koruma sağlar.", "Evet, çünkü yasama sorumsuzluğu sadece görev süresince geçerlidir.", "Hayır, ama TBMM izin verirse dava açılabilir."], correctAnswer: 1, meaning: "Genel kuruldaki konuşma yasama faaliyeti kapsamında olduğu için yasama sorumsuzluğu devreye girer ve bu koruma ömür boyu sürer.", category: "Yasama Sorumsuzluğu" },
+            { question: "Aşağıdakilerden hangisi, milletvekilliğinin 'kendiliğinden (doğrudan)' sona erme sebeplerinden biri değildir?", options: ["YSK tarafından seçim iptali kararı verilmesi", "Ölüm", "Milletvekilliği ile bağdaşmayan bir görevi sürdürmekte ısrar etmek", "Cumhurbaşkanı seçilmek"], correctAnswer: 2, meaning: "'Milletvekilliği ile bağdaşmayan bir görevi sürdürmekte ısrar etmek', TBMM'nin oylama kararıyla milletvekilliğini düşürme sebeplerindendir. Kendiliğinden sona erme değildir.", category: "Milletvekilliğinin Sona Ermesi" },
+            { question: "Bir milletvekili, özürsüz ve izinsiz olarak bir ayda toplam kaç birleşime katılmazsa, milletvekilliği düşürülebilir?", options: ["3", "5", "7", "10"], correctAnswer: 1, meaning: "Bir milletvekili özürsüz ve izinsiz olarak bir ay içinde toplam 5 birleşime katılmazsa, milletvekilliği düşürülebilir.", category: "Milletvekilliğinin Sona Ermesi" },
+            { question: "Devamsızlık nedeniyle milletvekilliğinin düşürülmesi için hangi çoğunluk aranır?", options: ["Katılanların salt çoğunluğu", "Üye tam sayısının salt çoğunluğu (301)", "Üye tam sayısının 3/5 çoğunluğu (360)", "Üye tam sayısının 2/3 çoğunluğu (400)"], correctAnswer: 1, meaning: "Devamsızlık nedeniyle milletvekilliğinin düşürülmesi için üye tam sayısının salt çoğunluğu (301 oy) gerekir.", category: "Milletvekilliğinin Sona Ermesi" },
+            { question: "Aşağıdaki durumların hangisinde milletvekilliği sona ermez?", options: ["Milletvekilliğinden istifa etmek (Meclis kararıyla)", "Kısıtlanmak veya kesin hüküm giymek", "Dokunulmazlığının kaldırılması", "Cumhurbaşkanı yardımcısı veya Bakan olarak atanmak"], correctAnswer: 2, meaning: "Dokunulmazlığın kaldırılması, sadece yargılanma önündeki engeli kaldırır. Milletvekilliği sıfatı devam eder.", category: "Milletvekilliğinin Sona Ermesi" },
+            { question: "Dokunulmazlığın kaldırılması veya milletvekillinin düşürülmesi kararına karşı, ilgili milletvekili kaç gün içinde Anayasa Mahkemesi'ne başvurabilir?", options: ["3 gün", "7 gün", "15 gün", "30 gün"], correctAnswer: 1, meaning: "Dokunulmazlığın kaldırılması veya milletvekilliğinin düşürülmesi kararına karşı, ilgili milletvekili 7 gün içinde Anayasa Mahkemesi'ne başvurabilir.", category: "Milletvekilliğinin Sona Ermesi" },
+            { question: "Cumhurbaşkanı Yardımcıları ve Bakanlar ile ilgili aşağıdakilerden hangisi doğrudur?", options: ["Sadece yasama sorumsuzluğundan yararlanırlar.", "Sadece yasama dokunulmazlığından yararlanırlar.", "Hiçbir dokunulmazlık veya sorumsuzlukları yoktur.", "Hem yasama dokunulmazlığı hem de yasama sorumsuzluğundan yararlanırlar."], correctAnswer: 1, meaning: "Cumhurbaşkanı Yardımcıları ve Bakanlar, yasama dokunulmazlığından yararlanırlar. Yasama sorumsuzluğu ise sadece TBMM üyeleri (milletvekilleri) için geçerlidir.", category: "Yasama Dokunulmazlığı" },
+            { question: "TBMM'nin olağanüstü toplanması ile ilgili aşağıdaki ifadelerden hangisi doğrudur?", options: ["Sadece Cumhurbaşkanı tarafından toplantıya çağrılabilir.", "Sadece TBMM Başkanı tarafından toplantıya çağrılabilir.", "Cumhurbaşkanı veya TBMM Başkanı tarafından doğrudan toplantıya çağrılabilir.", "Sadece Bakanlar Kurulu kararı ile toplantıya çağrılabilir."], correctAnswer: 2, meaning: "TBMM, Cumhurbaşkanı veya TBMM Başkanı tarafından doğrudan olağanüstü toplantıya çağrılabilir.", category: "TBMM Çalışma Düzeni" },
+            { question: "TBMM'nin olağanüstü toplantıya çağrılması ile ilgili aşağıdakilerden hangisi yanlıştır?", options: ["120 milletvekilinin istemi üzerine TBMM Başkanı meclisi toplantıya çağırır.", "Cumhurbaşkanı doğrudan meclisi olağanüstü toplantıya çağırabilir.", "TBMM Başkanı doğrudan meclisi olağanüstü toplantıya çağırabilir.", "Sadece hükümet krizi durumunda olağanüstü toplantı yapılabilir."], correctAnswer: 3, meaning: "TBMM, 120 milletvekilinin istemi üzerine TBMM Başkanı tarafından veya Cumhurbaşkanı/TBMM Başkanı tarafından doğrudan olağanüstü toplantıya çağrılabilir. Sadece hükümet krizi durumunda sınırlı değildir.", category: "TBMM Çalışma Düzeni" },
+            { question: "TBMM Başkanlık Divanı'nın üyeleri arasında aşağıdakilerden hangisi yer almaz?", options: ["TBMM Başkanı", "Katip Üyeler", "TBMM Başkan Vekilleri", "Siyasi Parti Genel Başkanları"], correctAnswer: 3, meaning: "TBMM Başkanlık Divanı; TBMM Başkanı, Başkan Vekilleri, Katip Üyeler ve İdare Amirlerinden oluşur. Siyasi parti genel başkanları bu divanda yer almaz.", category: "TBMM Başkanlık Divanı" },
+            { question: "TBMM Başkanlık Divanı seçimleri ile ilgili aşağıdaki ifadelerden hangisi doğrudur?", options: ["Bir yasama döneminde sadece bir kez seçim yapılır.", "Bir yasama döneminde iki kez seçim yapılır.", "Beş yılda bir seçim yapılır.", "Sadece Cumhurbaşkanı tarafından atanır."], correctAnswer: 1, meaning: "TBMM Başkanlık Divanı için bir yasama döneminde iki defa seçim yapılır. İlk seçilenler 2 yıl görev yapar, ikinci seçilenler dönemin sonuna kadar görevde kalır.", category: "TBMM Başkanlık Divanı" },
+            { question: "TBMM Başkanı seçimi ile ilgili aşağıdaki ifadelerden hangisi doğrudur?", options: ["Siyasi parti grupları TBMM Başkanlığına aday gösteremez.", "TBMM Başkanı seçildiğinde partisiyle ilişkisi kesilir.", "TBMM Başkanı sadece hükümet üyeleri arasından seçilir.", "TBMM Başkanı Cumhurbaşkanı tarafından atanır."], correctAnswer: 0, meaning: "Siyasi parti grupları TBMM Başkanlığına aday gösteremez. TBMM Başkanı seçildiğinde partisiyle ilişkisi kesilmez.", category: "TBMM Başkanlık Divanı" },
+            { question: "TBMM'nin toplantı yeter sayısı kaçtır?", options: ["Üye tam sayısının salt çoğunluğu (301)", "Üye tam sayısının 1/3'ü (200)", "Üye tam sayısının 1/4'ü (150)", "Üye tam sayısının 3/5'i (360)"], correctAnswer: 1, meaning: "TBMM'nin toplantı yeter sayısı, üye tam sayısının 1/3'üdür (200 milletvekili).", category: "TBMM Çalışma Kuralları" },
+            { question: "TBMM'de karar yeter sayısı ile ilgili aşağıdaki ifadelerden hangisi doğrudur?", options: ["Üye tam sayısının salt çoğunluğu (301) her zaman gereklidir.", "Toplantıya katılanların salt çoğunluğu ile karar alınır, ancak bu sayı 151'den az olamaz.", "Sadece 3/5 çoğunluk (360) ile karar alınabilir.", "Üye tam sayısının 2/3'ü (400) her karar için gereklidir."], correctAnswer: 1, meaning: "TBMM'de karar yeter sayısı, toplantıya katılanların salt çoğunluğudur, ancak bu sayı üye tam sayısının 1/4'ünün 1 fazlasından (151) az olamaz. Daha azsa meclis karar alamaz.", category: "TBMM Çalışma Kuralları" },
+            { question: "Siyasi parti ve siyasi parti grubu kuruluşu ile ilgili aşağıdaki ifadelerden hangisi doğrudur?", options: ["Bir siyasi parti en az 20 kişi ile kurulur.", "Bir siyasi parti grubu en az 10 milletvekili ile kurulur.", "Bir siyasi parti en az 30 TC vatandaşı ile, bir siyasi parti grubu ise en az 20 milletvekili ile kurulur.", "Bir siyasi parti en az 3 TC vatandaşı ile kurulur."], correctAnswer: 2, meaning: "Siyasi Partiler Kanunu'na göre bir siyasi parti en az 30 Türk vatandaşı ile kurulur. TBMM'de parti grubu kurmak için ise en az 20 milletvekili gerekir.", category: "Siyasi Partiler" },
+            { question: "TBMM'nin bilgi edinme ve denetleme yollarından hangisi için en az 20 milletvekili veya bir siyasi parti grubu önerge verebilir?", options: ["Meclis araştırması ve genel görüşme", "Yazılı soru", "Meclis soruşturması", "Gensoru"], correctAnswer: 0, meaning: "Meclis araştırması ve genel görüşme için bir siyasi parti grubu veya en az 20 milletvekili önerge verebilir. Yazılı soru için 1 milletvekili yeterlidir.", category: "TBMM Denetim Yolları" },
+            { question: "Yazılı soru ile ilgili aşağıdaki ifadelerden hangisi yanlıştır?", options: ["Cumhurbaşkanı yardımcısı ve bakanlara yöneltilir.", "En geç 15 gün içinde cevaplanmak zorundadır.", "En az 20 milletvekilinin imzası gerekir.", "1 milletvekili bile yazılı soru sorabilir."], correctAnswer: 2, meaning: "Yazılı soru için en az 20 milletvekili imzası gerekmez. 1 milletvekili bile yazılı soru sorabilir ve cevaplar en geç 15 gün içinde verilmelidir.", category: "TBMM Denetim Yolları" },
+            { question: "Meclis soruşturması önergesinin verilebilmesi için kaç milletvekilinin imzası gerekir?", options: ["En az 20 milletvekili", "Üye tam sayısının salt çoğunluğu (301)", "Üye tam sayısının 3/5'i (360)", "Üye tam sayısının 2/3'ü (400)"], correctAnswer: 1, meaning: "Meclis soruşturması önergesinin verilebilmesi için TBMM üye tam sayısının salt çoğunluğu (301 milletvekili) gereklidir.", category: "TBMM Denetim Yolları" },
+            { question: "Bir bakan veya Cumhurbaşkanı yardımcısının Yüce Divan'a sevk edilebilmesi için gereken oy sayısı kaçtır?", options: ["Üye tam sayısının salt çoğunluğu (301)", "Üye tam sayısının 3/5'i (360)", "Üye tam sayısının 2/3'ü (400)", "Toplantıya katılanların salt çoğunluğu"], correctAnswer: 2, meaning: "Bir bakan veya Cumhurbaşkanı yardımcısının Yüce Divan'a sevk edilebilmesi için TBMM üye tam sayısının 2/3'ünün (400 milletvekili) oyu gereklidir.", category: "TBMM Denetim Yolları" },
+            { question: "Aşağıdakilerden hangisi 2017 Anayasa değişikliği ile TBMM'nin bilgi edinme ve denetim yolları arasından tamamen çıkarılmıştır?", options: ["Meclis araştırması", "Genel görüşme", "Meclis soruşturması", "Gensoru"], correctAnswer: 3, meaning: "2017 Anayasa değişikliği ile yasama denetim yollarından Gensoru tamamen kaldırılmıştır.", category: "TBMM Denetim Yolları" },
+            { question: "Kamu Başdenetçisi (Ombudsman) aşağıdakilerden hangisi tarafından ve kaç yıllığına seçilir?", options: ["Cumhurbaşkanı - 5 yıl", "TBMM - 4 yıl", "Anayasa Mahkemesi - 6 yıl", "TBMM Başkanı - 5 yıl"], correctAnswer: 1, meaning: "Kamu Başdenetçisi TBMM Başkanlığına bağlıdır ve TBMM tarafından 4 turlu gizli oyla 4 yıllığına seçilir.", category: "TBMM Çalışma Kuralları" },
+            { question: "Merkezi Yönetim Bütçe Kanunu teklifini Türkiye Büyük Millet Meclisine sunmaya aşağıdakilerden hangisi yetkilidir?", options: ["Milletvekilleri", "Maliye Bakanı", "Cumhurbaşkanı", "TBMM Başkanı"], correctAnswer: 2, meaning: "Bütçe kanun teklifini Meclis'e sadece Cumhurbaşkanı sunar. Ayrıca Cumhurbaşkanının Meclise geri gönderemediği (veto edemediği) tek kanundur.", category: "TBMM Çalışma Kuralları" },
+            { question: "Güncel Anayasa kurallarına göre bir kanun teklifi vermeye aşağıdakilerden hangisi yetkilidir?", options: ["Bakanlar Kurulu", "Sadece Milletvekilleri", "Cumhurbaşkanı", "Siyasi Parti Grupları"], correctAnswer: 1, meaning: "2017 değişikliği sonrası 'Kanun Tasarısı' kavramı kaldırılmış, kanun teklif etme yetkisi sadece milletvekillerine verilmiştir.", category: "TBMM Çalışma Kuralları" },
+            { question: "Türkiye Büyük Millet Meclisinin genel ve özel af ilan edebilmesi için üye tam sayısının en az kaçta kaçının kararı gerekir?", options: ["Salt çoğunluk (301)", "3/5 çoğunluk (360)", "2/3 çoğunluk (400)", "Toplantıya katılanların salt çoğunluğu"], correctAnswer: 1, meaning: "Genel ve özel af ilanı kararı alabilmek için TBMM üye tam sayısının en az 3/5'inin (yani 360 milletvekilinin) oyu gerekir.", category: "TBMM Çalışma Kuralları" },
+            { question: "TBMM Başkanlık Divanı için yapılacak seçimlerde meclis başkanının seçimi en fazla kaç turda tamamlanır ve 3. turda aranan çoğunluk nedir?", options: ["3 turda tamamlanır; salt çoğunluk aranır.", "4 turda tamamlanır; 3. turda üye tam sayısının salt çoğunluğu (301) aranır.", "2 turda tamamlanır; 2/3 çoğunluk aranır.", "4 turda tamamlanır; 3. turda toplantıya katılanların salt çoğunluğu aranır."], correctAnswer: 1, meaning: "TBMM Başkanı seçimi gizli oyla en fazla 4 turda yapılır. 1. ve 2. turda 400 (2/3), 3. turda 301 (salt çoğunluk) oy aranır. Seçilemezse 4. turda en çok oy alan seçilir.", category: "TBMM Başkanlık Divanı" },
+            { question: "Merkezi yönetim bütçe kanunu teklifini TBMM'ye kim, ne zaman sunar?", options: ["Maliye Bakanı, mali yıl başından 30 gün önce", "Cumhurbaşkanı, mali yıl başından 75 gün önce", "Bakanlar Kurulu, mali yıl başından 60 gün önce", "TBMM Plan ve Bütçe Komisyonu, mali yıl başından 45 gün önce"], correctAnswer: 1, meaning: "Merkezi yönetim bütçe kanunu teklifini mali yıl başından en az 75 gün önce Cumhurbaşkanı TBMM'ye sunar.", category: "Kanun Yapım Süreci" },
+            { question: "Aşağıdakilerden hangisi TBMM'nin üye seçtiği veya atadığı kurumlardan biri değildir?", options: ["Anayasa Mahkemesi (3 üye)", "Sayıştay (Tüm üyeler)", "Kamu Başdenetçisi", "Yargıtay (Üyeleri)"], correctAnswer: 3, meaning: "Yargıtay üyelerini Hakimler ve Savcılar Kurulu (HSK) seçer. TBMM; AYM'ye (3 üye), RTÜK'e, Sayıştay'a, HSK'ya (7 üye) üye seçer ve Kamu Başdenetçisini atar.", category: "TBMM'nin Görev ve Yetkileri" }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.questions = [];
+                this.masteredWords = [];
+                
+                this.elements = {
+                    question: document.getElementById('question'),
+                    options: document.getElementById('options'),
+                    feedback: document.getElementById('feedback'),
+                    feedbackText: document.getElementById('feedbackText'),
+                    nextBtn: document.getElementById('nextBtn'),
+                    score: document.getElementById('score'),
+                    progress: document.getElementById('progress'),
+                    total: document.getElementById('total'),
+                    progressBar: document.getElementById('progressBar'),
+                    quizContainer: document.getElementById('quizContainer'),
+                    resultsContainer: document.getElementById('resultsContainer'),
+                    finalScore: document.getElementById('finalScore'),
+                    resultMessage: document.getElementById('resultMessage'),
+                    wordList: document.getElementById('wordList'),
+                    catCover: document.getElementById('catCover')
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.shuffleQuestions();
+                this.elements.total.textContent = this.questions.length;
+                this.setupEventListeners();
+                this.showCurrentQuestion();
+            }
+            
+            shuffleQuestions() {
+                this.questions = [...QUIZ_DATA];
+                for (let i = this.questions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [this.questions[i], this.questions[j]] = [this.questions[j], this.questions[i]];
+                }
+            }
+            
+            setupEventListeners() {
+                this.elements.catCover.addEventListener('click', () => this.removeCatCover());
+                this.elements.nextBtn.addEventListener('click', () => this.nextQuestion());
+            }
+            
+            removeCatCover() {
+                this.elements.catCover.style.display = 'none';
+            }
+            
+            showCurrentQuestion() {
+                const question = this.questions[this.currentQuestionIndex];
+                this.elements.question.textContent = question.question;
+                this.elements.catCover.style.display = 'flex';
+                this.displayOptions(question);
+                this.resetQuestionUI();
+                this.updateProgress();
+            }
+            
+            displayOptions(question) {
+                this.elements.options.innerHTML = '';
+                this.elements.options.appendChild(this.elements.catCover);
+                const shuffledOptions = this.shuffleArray([...question.options]);
+                shuffledOptions.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'option-btn fade-in';
+                    button.textContent = option;
+                    button.addEventListener('click', () => this.handleAnswer(option, question));
+                    this.elements.options.appendChild(button);
+                });
+            }
+            
+            resetQuestionUI() {
+                this.elements.feedback.style.display = 'none';
+                this.elements.nextBtn.style.display = 'none';
+                this.elements.progress.textContent = this.currentQuestionIndex + 1;
+            }
+            
+            updateProgress() {
+                const progressPercent = ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
+                this.elements.progressBar.style.width = `${progressPercent}%`;
+            }
+            
+            handleAnswer(selectedOption, question) {
+                const buttons = document.querySelectorAll('.option-btn');
+                const correctOption = question.options[question.correctAnswer];
+                
+                buttons.forEach(button => {
+                    button.disabled = true;
+                    if (button.textContent === correctOption) {
+                        button.classList.add('correct');
+                    }
+                    if (button.textContent === selectedOption && button.textContent !== correctOption) {
+                        button.classList.add('incorrect');
+                    }
+                });
+                
+                const isCorrect = selectedOption === correctOption;
+                if (isCorrect) {
+                    this.score++;
+                    this.elements.score.textContent = this.score;
+                    this.addToMasteredWords(question);
+                }
+                
+                this.showFeedback(isCorrect, question, correctOption);
+                this.elements.nextBtn.style.display = 'block';
+            }
+            
+            addToMasteredWords(question) {
+                const alreadyExists = this.masteredWords.some(w => w.question === question.question);
+                if (!alreadyExists) {
+                    this.masteredWords.push(question);
+                }
+            }
+            
+            showFeedback(isCorrect, question, correctOption) {
+                this.elements.feedback.style.display = 'block';
+                this.elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+                
+                let feedbackHTML = '';
+                if (isCorrect) {
+                    feedbackHTML = `✅ Doğru!<br><br>${question.meaning}`;
+                } else {
+                    feedbackHTML = `❌ Yanlış!<br>Doğru cevap: <strong>${correctOption}</strong><br><br>${question.meaning}`;
+                }
+                
+                this.elements.feedbackText.innerHTML = feedbackHTML;
+            }
+            
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) {
+                    this.showCurrentQuestion();
+                } else {
+                    this.endQuiz();
+                }
+            }
+            
+            endQuiz() {
+                this.elements.quizContainer.style.display = 'none';
+                this.elements.resultsContainer.style.display = 'block';
+                
+                const percentage = Math.round((this.score / this.questions.length) * 100);
+                this.elements.finalScore.textContent = `${this.score}/${this.questions.length} (${percentage}%)`;
+                
+                this.showResultMessage(percentage);
+                this.displayAllWords();
+            }
+            
+            showResultMessage(percentage) {
+                let message = "";
+                if (percentage >= 90) {
+                    message = "Mükemmel! Yasama II testini çok iyi geçtiniz! 🏆";
+                } else if (percentage >= 70) {
+                    message = "Çok iyi! Temel bilgilere hakimsiniz. 👍";
+                } else if (percentage >= 50) {
+                    message = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+                } else {
+                    message = "Öğrenmeye devam! Yasama konularını tekrar etmeniz faydalı olacaktır. 📚";
+                }
+                
+                this.elements.resultMessage.textContent = message;
+            }
+            
+            displayAllWords() {
+                this.elements.wordList.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Bilgiler</h3>';
+                
+                QUIZ_DATA.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'word-card fade-in';
+                    card.innerHTML = `
+                        <div class="word">${item.question}</div>
+                        <div class="meaning">${item.meaning}</div>
+                        <div class="category ${this.getCategoryClass(item.category)}">${item.category}</div>
+                    `;
+                    this.elements.wordList.appendChild(card);
+                });
+            }
+            
+            getCategoryClass(category) {
+                const classMap = {
+                    'Yüksek Seçim Kurulu (YSK)': 'category-ysk',
+                    'Seçimler': 'category-secim',
+                    'Ara Seçim': 'category-secim',
+                    'Yasama İlkeleri': 'category-yasama',
+                    'Yasama İşleyişi': 'category-yasama',
+                    'Milletvekilliği Statüsü': 'category-yasama',
+                    'Yasama Dokunulmazlığı': 'category-dokunulmazlik',
+                    'Yasama Sorumsuzluğu': 'category-dokunulmazlik',
+                    'Milletvekilliğinin Sona Ermesi': 'category-yasama',
+                    'TBMM Çalışma Düzeni': 'category-tbmm',
+                    'TBMM Başkanlık Divanı': 'category-tbmm',
+                    'TBMM Çalışma Kuralları': 'category-tbmm',
+                    'Siyasi Partiler': 'category-tbmm',
+                    'TBMM Denetim Yolları': 'category-tbmm',
+                    'Kanun Yapım Süreci': 'category-yasama',
+                    'TBMM\'nin Görev ve Yetkileri': 'category-tbmm'
+                };
+                return classMap[category] || 'category-yasama';
+            }
+            
+            shuffleArray(array) {
+                const newArray = [...array];
+                for (let i = newArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                }
+                return newArray;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const notesScrollArea = document.getElementById('notesScrollArea');
+            const startTestBtn = document.getElementById('startTestBtn');
+            const scrollMsg = document.getElementById('scrollMsg');
+            const notesContainer = document.getElementById('notesContainer');
+            const quizContainer = document.getElementById('quizContainer');
+            const progressContainer = document.getElementById('progressContainer');
+
+            notesScrollArea.addEventListener('scroll', () => {
+                if (notesScrollArea.scrollTop + notesScrollArea.clientHeight >= notesScrollArea.scrollHeight - 10) {
+                    startTestBtn.disabled = false;
+                    scrollMsg.style.display = 'none';
+                }
+            });
+
+            if (notesScrollArea.scrollHeight <= notesScrollArea.clientHeight) {
+                startTestBtn.disabled = false;
+                scrollMsg.style.display = 'none';
+            }
+
+            startTestBtn.addEventListener('click', () => {
+                notesContainer.style.display = 'none';
+                progressContainer.style.display = 'block';
+                quizContainer.style.display = 'block';
+                
+                new QuizManager();
+            });
+        });
+    </script>
+</body>
+</html>

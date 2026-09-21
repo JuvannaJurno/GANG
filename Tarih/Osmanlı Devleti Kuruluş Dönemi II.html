@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MEB-AGS Türkiye Tarihi - Kuruluş II</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "🏛️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            text-align: left;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ MEB-AGS Türkiye Tarihi</h1>
+            <div class="subtitle">Osmanlı Devleti Kuruluş Dönemi II</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                correctAnswer: "B",
+                meaning: "I. Bayezit, Karamanoğulları ile yapılan Frenkyazısı Savaşı'ndaki başarısından dolayı bu ünvanı almıştır.",
+                question: "I. Bayezit, \"Yıldırım\" ünvanını hangi beylikle yapılan hangi savaşın sonucunda almıştır?",
+                options: ["Candaroğulları - Çirmen Savaşı", "Karamanoğulları - Frenkyazısı Savaşı", "Aydınoğulları - Sırpsındığı Savaşı", "Menteşeoğulları - Varna Savaşı"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Yıldırım Bayezit, Saruhanoğulları, Aydınoğulları gibi beyliklere son vererek Anadolu Türk siyasi birliğini büyük ölçüde sağlayan ilk padişahtır.",
+                question: "Saruhanoğulları, Aydınoğulları, Candaroğulları ve Menteşeoğulları gibi beyliklere son vererek Anadolu Türk siyasi birliğini geniş ölçüde sağlayan ilk Osmanlı padişahı kimdir?",
+                options: ["I. Murat", "I. Mehmet (Çelebi)", "Yıldırım Bayezit", "II. Murat"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Osmanlı Devleti'nde ilk hastane Yıldırım Bayezit tarafından Bursa'da açılmıştır.",
+                question: "Osmanlı Devleti'nde ilk defa Bursa'da hastane açtıran padişah aşağıdakilerden hangisidir?",
+                options: ["Osman Bey", "Orhan Bey", "I. Murat", "Yıldırım Bayezit"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Yıldırım Bayezit İstanbul'u kuşatan ilk padişahtır ve Anadoluhisarı'nı yaptırmıştır.",
+                question: "1391-1401 yılları arasında İstanbul'u kuşatan ilk Osmanlı padişahı ve kuşatmaya yardımcı olması için yaptırdığı hisar hangisidir?",
+                options: ["I. Mehmet - Rumelihisarı", "Fatih Sultan Mehmet - Boğazkesen", "Yıldırım Bayezit - Anadoluhisarı", "II. Murat - Çimenlik Kalesi"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Şeyh Bedrettin İsyanı, Yıldırım Bayezit döneminde değil, Fetret Devri sonrası I. Mehmet döneminde çıkmıştır.",
+                question: "Aşağıdakilerden hangisi Yıldırım Bayezit dönemindeki İstanbul kuşatmalarının başarısız olmasında etkili olan faktörlerden biri değildir?",
+                options: ["Karamanoğullarının iki kez isyan etmesi", "1396 Niğbolu Savaşı", "Şeyh Bedrettin İsyanı", "Timur'un ilerleyişi"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Ayasofya'nın ibadete açılması ancak 1453 fethinden sonra gerçekleşmiştir.",
+                question: "İstanbul kuşatmaları sonucunda Bizans ile yapılan antlaşmaya göre aşağıdakilerden hangisi kabul edilmemiştir?",
+                options: ["Bizans vergi verecek", "Türk mahallesi kurulacak", "İstanbul'a kadı atanacak", "Ayasofya ibadete açılacak"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Niğbolu Kalesi'ni müdafaa eden komutan Doğan Bey'dir.",
+                question: "1396 yılında Haçlı ordusuna karşı Niğbolu Kalesi'ni kahramanca müdafaa eden komutan kimdir?",
+                options: ["Lala Şahin Paşa", "Doğan Bey", "Evrenos Bey", "Zağanos Paşa"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Abbasi halifesi o dönemde Memlük Devleti himayesindeydi.",
+                question: "Niğbolu Savaşı'nın ardından Yıldırım Bayezit'e ünvan veren Abbasi halifesi hangi devletin koruması altındaydı?",
+                options: ["Selçuklular", "Memlük Devleti", "Eyyubiler", "İlhanlılar"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Halife tarafından Yıldırım Bayezit'e 'Sultan-ı İklim-i Rum' ünvanı verilmiştir.",
+                question: "1396 Niğbolu Savaşı zaferi sonrası Abbasi halifesi tarafından Yıldırım Bayezit'e verilen ünvan hangisidir?",
+                options: ["Ebu'l-Feth", "Ebu'l-Hayrat", "Hüdavendigar", "Sultan-ı İklim-i Rum"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Haçlı ittifakı Ankara Savaşı'nın nedenleri arasında değildir.",
+                question: "Aşağıdakilerden hangisi 1402 Ankara Savaşı'nın nedenleri arasında gösterilemez?",
+                options: ["Beyliklerin Timur'u kışkırtması", "Liderlerin mektuplaşmaları", "Timur'un Sivas'ı işgal etmesi", "Haçlıların Avrupa ittifakı"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Ankara Savaşı'nın en önemli sonucu Anadolu Türk siyasi birliğinin bozulmasıdır.",
+                question: "1402 Ankara Savaşı'nın en önemli sonucu olarak vurgulanan gelişme aşağıdakilerden hangisidir?",
+                options: ["İstanbul fethinin gecikmesi", "Padişahın esir düşmesi", "Anadolu Türk siyasi birliğinin bozulması", "Fetret Devri"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Karesioğulları Ankara Savaşı'ndan sonra tekrar kurulmayan beyliktir.",
+                question: "Ankara Savaşı sonrasında Anadolu'da birçok beylik yeniden kurulmuştur. Aşağıdakilerden hangisi bu beyliklerden biri değildir?",
+                options: ["Karesioğulları", "Karamanoğulları", "Hamitoğulları", "Saruhanoğulları"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Akkoyunlular Ankara Savaşı sonrası doğuda güçlenerek rakip olmuştur.",
+                question: "Ankara Savaşı sonrasında doğuda güçlenerek Osmanlı'nın siyasi rakibi hâline gelen devlet hangisidir?",
+                options: ["Karakoyunlular", "Memlükler", "Akkoyunlular", "Safeviler"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Ankara Savaşı sonrası Balkan fetihleri duraksamış, hızlanmamıştır.",
+                question: "Ankara Savaşı'nın sonuçlarıyla ilgili verilen bilgilerden hangisi yanlıştır?",
+                options: ["Fetih 50 yıl gecikti", "Padişah esir düştü", "Balkan fetihleri hızlandı", "Fetret Devri başladı"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Timur tarafından götürülen oğul Mustafa Çelebi'dir.",
+                question: "Ankara Savaşı'nın ardından Timur tarafından Semerkant'a götürülen Yıldırım Bayezit'un oğlu kimdir?",
+                options: ["Süleyman Çelebi", "Mustafa Çelebi", "İsa Çelebi", "Musa Çelebi"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Musa Çelebi başlangıçta Bursa çevresindeydi; Edirne'de Süleyman Çelebi vardı.",
+                question: "Fetret Devri'nde şehzadelerin bağımsızlık ilan ettikleri yerlerle ilgili hangisi yanlıştır?",
+                options: ["Süleyman Çelebi - Rumeli", "İsa Çelebi - Balıkesir", "Mehmet Çelebi - Amasya", "Musa Çelebi - Edirne"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Fetret Devri'ni bitirdiği için I. Mehmet 'İkinci Kurucu' sayılır.",
+                question: "Fetret Devri'ni sona erdirdiği için 'Osmanlı Devleti'nin İkinci Kurucusu' sayılan padişah kimdir?",
+                options: ["I. Murat", "Yıldırım Bayezit", "I. Mehmet", "II. Murat"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "I. Mehmet Menteşe ve Saruhanoğulları'na son vererek ATSB'yi sağlamaya çalışmıştır.",
+                question: "I. Mehmet (Çelebi), Anadolu Türk siyasi birliğini sağlamak için hangi beyliklere son vermiştir?",
+                options: ["Karamanoğulları - Dulkadir", "Menteşe - Saruhan", "Aydın - Hamit", "Karesi - Candar"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Venedik ile yapılan ilk deniz savaşı Çalı Bey Savaşı'dır.",
+                question: "Venedik ile yapılan ilk deniz savaşı aşağıdakilerden hangisidir?",
+                options: ["Çalı Bey Savaşı", "Preveze", "Cerbe", "İnebahtı"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Osmanlı'daki ilk dini nitelikli toplumsal ayaklanma Şeyh Bedrettin İsyanı'dır.",
+                question: "Osmanlı Devleti'ndeki ilk dinî nitelikli toplumsal ayaklanma hangisidir?",
+                options: ["Babai", "Buçuktepe", "Şeyh Bedrettin", "Celali"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "İsyan edip Bizans'a sığınan kişi Düzmece Mustafa'dır.",
+                question: "I. Mehmet döneminde isyan edip Bizans'a sığınan, II. Murat döneminde idam edilen kişi kimdir?",
+                options: ["Şehzade Bayezit", "Düzmece Mustafa", "Cem Sultan", "Musa Çelebi"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Lakabı 'Ebu'l-Hayrat' olan padişah II. Murat'tır.",
+                question: "Lakabı \"Ebu'l - Hayrat\" (Hayır Babası) olan Osmanlı padişahı hangisidir?",
+                options: ["I. Murat", "Yıldırım Bayezit", "I. Mehmet", "II. Murat"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "II. Murat döneminde Ladislas Macar kralı, Hünyadi Yanoş Eflak beyi/kumandanıdır.",
+                question: "II. Murat döneminde Osmanlı'nın savaştığı Macar kralı ve Eflak Beyi sırasıyla kimdir?",
+                options: ["Sigismund - Vlad", "Ladislas - Hünyadi Yanoş", "Şarlken - Ferdinand", "Hunyadi - Ladislas"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "1444 yılında imzalanan 10 yıllık antlaşma Edirne-Segedin'dir.",
+                question: "1444 yılında Macarlarla imzalanan 10 yıllık barış antlaşması hangisidir?",
+                options: ["Vasvar", "Karlofça", "Edirne-Segedin", "Zitvatorok"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Tahtın çocuğa bırakılmasını fırsat bilen Papa, antlaşmayı bozmuştur.",
+                question: "II. Murat tahtı 12 yaşındaki oğluna bırakınca antlaşmayı kabul etmeyip Haçlıları harekete geçiren kimdir?",
+                options: ["Bizans", "Venedik", "Papa", "Macar Kralı"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "1444 yılında Haçlıların mağlup edildiği savaş Varna Savaşı'dır.",
+                question: "1444 yılında Osmanlı'nın Haçlı ordusunu mağlup ettiği savaş hangisidir?",
+                options: ["Sırpsındığı", "Niğbolu", "Varna", "II. Kosova"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "İlk yeniçeri isyanı Buçuktepe İsyanı'dır.",
+                question: "1446 yılında meydana gelen ilk yeniçeri isyanı hangisidir?",
+                options: ["Vaka-i Vakvakiye", "Edirne Olayı", "Patrona Halil", "Buçuktepe"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "II. Kosova ile Balkanlar kesin olarak Türk yurdu olmuştur.",
+                question: "1448 II. Kosova Savaşı'nın en önemli sonucu aşağıdakilerden hangisidir?",
+                options: ["Balkanların kesin Türk yurdu olması", "İstanbul fethi", "Anadolu birliği", "Fetret devrinin bitişi"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "II. Kosova sonrası başlayan üstünlük II. Viyana kuşatmasına kadar sürdü.",
+                question: "Türklerin ilerleyişi hangi olaya kadar devam etmiş, Avrupalılar savunmada kalmıştır?",
+                options: ["Mohaç", "Preveze", "II. Viyana Kuşatması", "Karlofça"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Miryokefalon Anadolu'yu, II. Kosova Balkanlar'ı tescillemiştir.",
+                question: "Anadolu ve Balkanlar'ın kesin Türk yurdu olmasıyla ilgili doğru eşleştirme hangisidir?",
+                options: ["Malazgirt - I. Kosova", "Miryokefalon - II. Kosova", "Pasinler - Varna", "Yassıçemen - Niğbolu"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Enderun ilk kez Edirne Sarayı'nda açılmıştır.",
+                question: "Devlet adamı yetiştirmek için kurulan Enderun ilk defa hangi sarayda açılmıştır?",
+                options: ["Topkapı", "Bursa", "Dolmabahçe", "Edirne Sarayı"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "SINAV II kodlamasındaki Ankara Savaşı Timur'a karşıdır.",
+                question: "SINAV II kodlamasında yer almasına rağmen Haçlılarla değil Timur ile yapılan savaş hangisidir?",
+                options: ["Sırpsındığı", "I. Kosova", "Ankara", "Varna"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Sultan-ı İklim-i Rum ünvanı Yıldırım Bayezit'e aittir.",
+                question: "Halife tarafından \"Sultan-ı İklim-i Rum\" ünvanı verilen padişah hangisidir?",
+                options: ["Orhan Bey", "I. Murat", "Yıldırım Bayezit", "II. Murad"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Çelebi Mehmet devleti yıkılmaktan kurtardığı için ikinci kurucu sayılır.",
+                question: "Fetret Devri'ne son vererek devleti yıkılmaktan kurtaran padişah hangisidir?",
+                options: ["Çelebi Mehmed", "II. Murad", "Fatih", "Yıldırım"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Anadolu Hisarı'nı Yıldırım Bayezit yaptırmıştır.",
+                question: "Kuşatma sırasında Boğaz güvenliği için Anadolu Hisarı'nı yaptıran padişah hangisidir?",
+                options: ["I. Murad", "Yıldırım Bayezit", "Çelebi Mehmed", "II. Murad"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "II. Kosova Balkan egemenliğini kesinleştirmiştir.",
+                question: "Hangi savaşla Osmanlı'nın Balkanlardaki egemenliği kesinleşmiştir?",
+                options: ["Sırpsındığı", "I. Kosova", "Varna", "II. Kosova"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Ankara Savaşı Balkanlar'da büyük toprak kaybına değil, Anadolu'da birliğin bozulmasına yol açtı.",
+                question: "Aşağıdakilerden hangisi Ankara Savaşı'nın sonuçlarından biri değildir?",
+                options: ["Anadolu birliğinin bozulması", "Balkanlarda büyük toprak kaybı", "İstanbul fethinin gecikmesi", "Fetret Devri"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Niğbolu (1396) diğer seçeneklerden (1402, 1444) daha öncedir.",
+                question: "Hangi gelişme kronolojik olarak diğerlerinden daha önce gerçekleşmiştir?",
+                options: ["Ankara Savaşı", "Edirne-Segedin", "Varna Savaşı", "Niğbolu Savaşı"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Ebu'l-Hayrat: II. Murat, Sultan-ı İklim-i Rum: I. Bayezit, İkinci Kurucu: I. Mehmet.",
+                question: "Ebu'l-Hayrat | Sultan-ı İklim-i Rum | İkinci Kurucu sıralaması hangi seçenekte doğrudur?",
+                options: ["II. Murat - I. Bayezit - I. Mehmet", "I. Mehmet - I. Bayezit - II. Murat", "I. Murat - Fatih - I. Mehmet", "II. Murat - Orhan Bey - I. Bayezit"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Tarif edilen padişah Yıldırım Bayezit'tir.",
+                question: "Anadolu birliğini sağlayan ancak Timur'a esir düşen padişah kimdir?",
+                options: ["I. Murat", "I. Mehmet", "Yıldırım Bayezit", "II. Murat"]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        function shuffleArray(array) {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        function initQuiz() {
+            questions = shuffleArray(quizData);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            catCoverEl.addEventListener('click', () => catCoverEl.style.display = 'none');
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            // Doğru cevabı orijinal index üzerinden bul
+            const correctText = currentQuestion.options[currentQuestion.correctAnswer.charCodeAt(0) - 65];
+            
+            // Şıkları karıştır
+            const shuffledOptions = shuffleArray(currentQuestion.options);
+            
+            optionsEl.innerHTML = '';
+            optionsEl.appendChild(catCoverEl);
+            catCoverEl.style.display = 'flex';
+
+            shuffledOptions.forEach(optionText => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = optionText;
+                button.onclick = () => selectAnswer(optionText, correctText, currentQuestion.meaning);
+                optionsEl.appendChild(button);
+            });
+            
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        function selectAnswer(selectedOption, correctOptionText, meaning) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correctOptionText) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selectedOption) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            const isCorrect = selectedOption === correctOptionText;
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+            }
+
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            feedbackTextEl.innerHTML = isCorrect ? 
+                `<strong>✅ Doğru!</strong><br><br>${meaning}` : 
+                `<strong>❌ Yanlış!</strong><br>Doğru Cevap: ${correctOptionText}<br><br>${meaning}`;
+            
+            nextBtn.style.display = 'block';
+        }
+
+        nextBtn.onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        };
+
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            finalScoreEl.textContent = `Puanınız: ${score} / ${questions.length}`;
+            
+            wordListEl.innerHTML = '<h3 style="margin-bottom:15px;">Genel Tekrar:</h3>';
+            quizData.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>${q.question}</strong><br><small style="color:var(--primary)">${q.meaning}</small>`;
+                wordListEl.appendChild(card);
+            });
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>

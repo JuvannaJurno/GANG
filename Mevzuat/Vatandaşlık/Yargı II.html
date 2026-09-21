@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Vatandaşlık Testi</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gold: #FFD700;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%); color: var(--dark); line-height: 1.6; padding: 15px; min-height: 100vh; }
+        
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow: hidden; }
+        
+        header { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; text-align: center; padding: 25px 20px; position: relative; }
+        header::before { content: "⚖️"; font-size: 3rem; position: absolute; top: 10px; left: 20px; opacity: 0.3; }
+        h1 { margin-bottom: 8px; font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.1rem; opacity: 0.9; }
+
+        /* --- NOTLAR KISMI CSS --- */
+        .notes-container { padding: 25px; animation: fadeIn 0.5s ease; }
+        .notes-title { color: var(--primary); margin-bottom: 15px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .notes-scroll-area { max-height: 55vh; overflow-y: auto; background: var(--light); border: 2px solid var(--accent); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        .notes-scroll-area::-webkit-scrollbar { width: 8px; }
+        .notes-scroll-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        .notes-scroll-area h3 { color: var(--dark); border-bottom: 2px solid var(--primary); padding-bottom: 5px; margin-top: 20px; margin-bottom: 10px; }
+        .notes-scroll-area ul { padding-left: 20px; margin-bottom: 15px; }
+        .notes-scroll-area li { margin-bottom: 8px; }
+
+        .table-responsive { overflow-x: auto; margin-bottom: 15px; border-radius: 8px; }
+        .notes-table { width: 100%; border-collapse: collapse; min-width: 600px; background: white; }
+        .notes-table th, .notes-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .notes-table th { background-color: var(--primary); color: white; }
+
+        .numbers-box { background-color: #E3F2FD; border-left: 5px solid #1976D2; padding: 15px; margin: 20px 0; border-radius: 5px; }
+        .numbers-box h3 { color: #1565C0 !important; border-bottom: 2px solid #90CAF9 !important; margin-top: 0 !important; }
+        .numbers-box li { background: white; margin-bottom: 8px; padding: 10px; border-radius: 6px; list-style: none; display: flex; align-items: center; }
+        .num-badge { background: #1976D2; color: white; font-weight: bold; padding: 4px 10px; border-radius: 4px; margin-right: 12px; min-width: 65px; text-align: center; }
+
+        .important-note { background-color: #FFF8E1; border-left: 5px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 5px; }
+        .scroll-msg { color: var(--danger); font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; text-align: center; }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        /* --- QUIZ CSS --- */
+        .progress-container { width: 100%; background-color: #e9ecef; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); width: 0%; transition: width 0.5s ease; }
+        .quiz-container { padding: 25px; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; background-color: var(--light); padding: 15px; border-radius: 10px; border: 2px solid var(--accent); }
+        .question-container { background: var(--light); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .options { display: grid; gap: 12px; position: relative; }
+        .cat-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(46, 125, 50, 0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px; z-index: 10; cursor: pointer; }
+        .cat-image { max-width: 200px; border-radius: 8px; margin-bottom: 10px; }
+        .option-btn { padding: 16px; border: 2px solid #ddd; border-radius: 10px; background: white; cursor: pointer; text-align: left; font-size: 1.1rem; transition: 0.3s; }
+        .option-btn.correct { background-color: var(--success); color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .feedback { padding: 20px; border-radius: 10px; margin-top: 20px; display: none; line-height: 1.6; }
+        .next-btn { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none; padding: 16px; border-radius: 10px; cursor: pointer; width: 100%; max-width: 250px; display: block; margin: 20px auto; font-weight: bold; }
+        .next-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .results-container { padding: 30px; text-align: center; display: none; }
+        .final-score { font-size: 3rem; color: var(--accent); font-weight: bold; margin: 20px 0; }
+        .word-card { border: 2px solid var(--accent); padding: 15px; margin-bottom: 15px; background: var(--light); text-align: left; border-radius: 10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ MEB-AGS Vatandaşlık</h1>
+            <div class="subtitle">Yargı II (Çıkmış Sorular Odaklı)</div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <h2 class="notes-title">📖 Yargı II Ders Notları (Eksikler Kapatıldı)</h2>
+            <div class="notes-scroll-area" id="notesScrollArea">
+                <h3>1. Anayasa Mahkemesi (AYM) Üye Nitelikleri</h3>
+                <ul>
+                    <li><strong>Hizmet Şartı:</strong> AYM üyesi seçilebilmek için profesör, doçent, avukat veya üst kademe yöneticisi olanların en az <strong>20 yıl</strong> fiilen çalışmış olması şarttır.</li>
+                    <li><strong>Yaş Şartı:</strong> 45 yaşını doldurmuş olmak gerekir.</li>
+                    <li><strong>Bölümler ve Genel Kurul:</strong> AYM <strong>iki bölüm</strong> ve <strong>Genel Kurul</strong> halinde çalışır. Bireysel başvurulara bölümler bakar.</li>
+                </ul>
+
+                <h3>2. Yargıtay Cumhuriyet Başsavcılığı</h3>
+                <ul>
+                    <li><strong>Seçim:</strong> Yargıtay Cumhuriyet Başsavcısı ve vekilini, Yargıtay Genel Kurulu'nun belirlediği 5 aday arasından <strong>Cumhurbaşkanı</strong> seçer.</li>
+                    <li><strong>Görev Süresi:</strong> <strong>4 yıl</strong> için seçilirler ve süreleri bitince yeniden seçilebilirler.</li>
+                </ul>
+
+                <h3>3. HSK ve Sayıştay Yeni Detaylar</h3>
+                <ul>
+                    <li><strong>HSK Üyeleri:</strong> Üyeler 4 yıl için seçilir ve <strong>süresi biten üyeler yeniden seçilebilir.</strong></li>
+                    <li><strong>Sayıştay Denetimi:</strong> Sayıştay, sadece merkezi bütçeyi değil, <strong>mahalli idareleri (belediyeler vb.)</strong> de TBMM adına denetler.</li>
+                </ul>
+
+                <h3>4. Önemli İtiraz Süreçleri</h3>
+                <ul>
+                    <li><strong>Milletvekilliğinin Düşürülmesi:</strong> Milletvekilliğinin düşürülmesine (istifa, devamsızlık vb. hariç) karşı ilgili milletvekili veya başka bir milletvekili <strong>7 gün</strong> içinde AYM'ye başvurabilir. AYM <strong>15 gün</strong> içinde kararını verir.</li>
+                    <li><strong>Uyuşmazlık Mahkemesi:</strong> Sadece <strong>adli ve idari yargı</strong> arasındaki görev ve hüküm uyuşmazlıklarını çözer. Diğer yargı kollarıyla ilgili yetkisi yoktur.</li>
+                </ul>
+
+                <div class="numbers-box">
+                    <h3>🔢 Çıkmış Soru Odaklı Kritik Sayılar</h3>
+                    <ul>
+                        <li><span class="num-badge">7 Gün</span> Milletvekilliği düşme iptali başvuru süresi.</li>
+                        <li><span class="num-badge">15 Gün</span> AYM'nin vekillik düşme iptaline karar verme süresi.</li>
+                        <li><span class="num-badge">20 Yıl</span> AYM üyesi olabilmek için gereken asgari hizmet süresi.</li>
+                        <li><span class="num-badge">4 Yıl</span> HSK üyesi ve Yargıtay Başsavcısı görev süresi (Tekrar seçilebilirler).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <p id="scrollMsg" class="scroll-msg">Teste geçmek için notları sonuna kadar kaydırın 👇</p>
+                <button class="next-btn" id="startTestBtn" disabled>Notları Okudum, Testi Başlat</button>
+            </div>
+        </div>
+
+        <div id="quizSection" style="display: none;">
+            <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+            <div class="quiz-container">
+                <div class="stats">
+                    <div class="score">Puan: <span id="score">0</span></div>
+                    <div>İlerleme: <span id="progress">0</span>/<span id="totalQ">30</span></div>
+                </div>
+                <div class="question-container"><div class="question" id="question"></div></div>
+                <div class="options" id="options">
+                    <div class="cat-cover" id="catCover">
+                        <img src="https://cataas.com/cat" class="cat-image">
+                        <div class="cat-text" style="color:white">Cevapları görmek için tıklayın!</div>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback"><div id="feedbackText"></div></div>
+                <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+            </div>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        // Melih, 30 soruluk güncel soru paketi:
+        const QUIZ_DATA = [
+            { question: "Aşağıdakilerden hangisine karşı yargı yolu açıktır?", options: ["OHAL CBK", "Yüksek Hakim Kurulu kararları", "Tahkim Kurulu kararları", "HSK meslekten çıkarma"], correctAnswer: 3, meaning: "Sadece meslekten çıkarma kararı denetime açıktır.", category: "Yargı" },
+            { question: "Cumhurbaşkanlığı Kararnamelerinin (CBK) yargısal denetimini hangi mahkeme yapar?", options: ["Danıştay", "Yargıtay", "Anayasa Mahkemesi", "Sayıştay"], correctAnswer: 2, meaning: "CBK denetimi AYM tarafından yapılır.", category: "Yargı" },
+            { question: "Anayasa Mahkemesi üyesi seçilebilmek için avukatların kaç yıl fiilen çalışmış olması gerekir?", options: ["10 yıl", "15 yıl", "20 yıl", "25 yıl"], correctAnswer: 2, meaning: "AYM üyesi için 20 yıl hizmet şartı vardır.", category: "AYM" },
+            { question: "Yargıtay Cumhuriyet Başsavcısını ve vekilini aşağıdakilerden hangisi seçer?", options: ["TBMM", "HSK", "Cumhurbaşkanı", "Yargıtay Genel Kurulu"], correctAnswer: 2, meaning: "Adaylar arasından Cumhurbaşkanı seçer.", category: "Yargı" },
+            { question: "Milletvekilliğinin düşürülmesine ilişkin kararın iptali için kaç gün içinde AYM'ye başvurulabilir?", options: ["7 gün", "15 gün", "30 gün", "60 gün"], correctAnswer: 0, meaning: "Başvuru 7 gün, karar süresi 15 gündür.", category: "Yasama/Yargı" },
+            { question: "HSK üyeleri kaç yıl için seçilir ve görev süresi biten üye tekrar seçilebilir mi?", options: ["4 yıl - Seçilemez", "4 yıl - Seçilebilir", "12 yıl - Seçilemez", "12 yıl - Seçilebilir"], correctAnswer: 1, meaning: "4 yıl için seçilirler ve tekrar seçilebilirler.", category: "HSK" },
+            { question: "Sayıştay aşağıdakilerden hangisini TBMM adına denetlemekle görevlidir?", options: ["Siyasi Partiler", "Kamu İktisadi Teşebbüsleri", "Mahalli İdareler", "Vakıflar"], correctAnswer: 2, meaning: "Sayıştay mahalli idareleri de denetler.", category: "Sayıştay" },
+            { question: "Ekonomik ve Sosyal Konsey hangi yıl yapılan değişiklikle Anayasa'ya girmiştir?", options: ["1982", "2001", "2010", "2017"], correctAnswer: 2, meaning: "2010 değişikliği ile girmiştir.", category: "Yargı" },
+            { question: "AYM'nin işin esasına girerek verdiği ret kararından itibaren kaç yıl geçmeden aynı madde için başvuru yapılamaz?", options: ["1 yıl", "5 yıl", "10 yıl", "12 yıl"], correctAnswer: 2, meaning: "10 yıl geçmesi gerekir.", category: "AYM" },
+            { question: "HSK Genel Sekreterini aşağıdakilerden hangisi atar?", options: ["Cumhurbaşkanı", "TBMM Başkanı", "Adalet Bakanı", "HSK Başkanı"], correctAnswer: 2, meaning: "Genel Sekreter Adalet Bakanı tarafından atanır.", category: "HSK" },
+            { question: "Uyuşmazlık Mahkemesi sadece hangi iki yargı kolu arasındaki uyuşmazlıklara bakar?", options: ["Adli - Askeri", "Adli - İdari", "İdari - Anayasa", "Askeri - İdari"], correctAnswer: 1, meaning: "Sadece Adli ve İdari yargı arası uyuşmazlıklara bakar.", category: "Yargı" },
+            { question: "Duruşmaların kapalı yapılmasına ancak hangi iki gerekçeyle karar verilebilir?", options: ["Devlet sırrı - Milli güvenlik", "Genel ahlak - Kamu güvenliği", "Özel hayatın gizliliği - Ticari sır", "Kamu düzeni - Adalet"], correctAnswer: 1, meaning: "Genel ahlak ve kamu güvenliği gerekçesiyle kapatılabilir.", category: "Yargı" },
+            { question: "Sayıştay üyelerini ve başkanını aşağıdakilerden hangisi seçer?", options: ["Cumhurbaşkanı", "TBMM", "HSK", "Adalet Bakanlığı"], correctAnswer: 1, meaning: "Üyeleri TBMM seçer.", category: "Sayıştay" },
+            { question: "Yargıtay üyelerinin tamamını aşağıdakilerden hangisi seçer?", options: ["Cumhurbaşkanı", "TBMM", "HSK", "AYM"], correctAnswer: 2, meaning: "Yargıtay üyelerini HSK seçer.", category: "Yargı" },
+            { question: "Danıştay üyelerinin 1/4'ünü kim, 3/4'ünü kim seçer?", options: ["CB - TBMM", "TBMM - HSK", "CB - HSK", "HSK - TBMM"], correctAnswer: 2, meaning: "1/4 CB, 3/4 HSK seçer.", category: "Yargı" },
+            { question: "Anayasa Mahkemesi'ne bireysel başvuru için hangi yolların tüketilmesi zorunludur?", options: ["Olağan kanun yolları", "Olağanüstü kanun yolları", "Tüm idari yollar", "Siyasi yollar"], correctAnswer: 0, meaning: "Sadece olağan kanun yolları yeterlidir.", category: "AYM" },
+            { question: "Siyasi partilerin kapatılması davasında savcılık görevini kim yürütür?", options: ["Adalet Bakanı", "Yargıtay Başsavcısı", "AYM Başkanı", "Sayıştay Başkanı"], correctAnswer: 1, meaning: "Yargıtay Cumhuriyet Başsavcısı yürütür.", category: "Yargı" },
+            { question: "Anayasa Mahkemesi kaç bölümden oluşur?", options: ["1", "2", "3", "4"], correctAnswer: 1, meaning: "İki bölüm ve Genel Kurul'dan oluşur.", category: "AYM" },
+            { question: "Sayıştay kararlarına karşı kaç gün içinde yeniden inceleme istenebilir?", options: ["7 gün", "15 gün", "30 gün", "60 gün"], correctAnswer: 1, meaning: "15 gün içinde istenebilir.", category: "Sayıştay" },
+            { question: "HSK'nın başkanı kimdir?", options: ["Adalet Bakanı", "En yaşlı üye", "CB tarafından seçilen üye", "Yargıtay Başkanı"], correctAnswer: 0, meaning: "Adalet Bakanı başkandır.", category: "HSK" },
+            { question: "Genelkurmay Başkanını Yüce Divan'da yargılama görevi hangi yıl verilmiştir?", options: ["1982", "2001", "2010", "2017"], correctAnswer: 2, meaning: "2010 değişikliği ile verilmiştir.", category: "Yargı" },
+            { question: "AYM üyesi olabilmek için asgari yaş kaçtır?", options: ["40", "45", "50", "55"], correctAnswer: 1, meaning: "Asgari yaş 45'tir.", category: "AYM" },
+            { question: "Adalet Bakanı HSK'da hangi sıfata sahiptir?", options: ["Üye", "Gözlemci", "Başkan ve Üye", "Sadece Başkan"], correctAnswer: 2, meaning: "Hem başkan hem üyedir.", category: "HSK" },
+            { question: "AYM'de Anayasa değişikliği iptali için hangi çoğunluk gerekir?", options: ["Salt çoğunluk", "3/5", "2/3", "Oybirliği"], correctAnswer: 2, meaning: "Nitelikli çoğunluk (2/3) gerekir.", category: "AYM" },
+            { question: "Somut norm denetimi davası açma süresi kaç gündür?", options: ["Süre sınırı yoktur", "30 gün", "60 gün", "90 gün"], correctAnswer: 0, meaning: "Somut normda (itiraz yolu) süre sınırı yoktur.", category: "AYM" },
+            { question: "Anayasa Mahkemesi kararları ne zaman yürürlüğe girer?", options: ["İmzada", "15 gün sonra", "RG'de yayım gününde (aksi belirtilmedikçe)", "1 yıl sonra"], correctAnswer: 2, meaning: "Yayımlandığı an yürürlüğe girer.", category: "AYM" },
+            { question: "Hangisi soyut norm denetimine (iptal davası) konu olamaz?", options: ["Kanun", "CBK", "Yönetmelik", "TBMM İçtüzüğü"], correctAnswer: 2, meaning: "Yönetmelikler AYM'de dava edilemez.", category: "AYM" },
+            { question: "Milletvekilliği düşme kararını AYM kaç günde karara bağlar?", options: ["7 gün", "15 gün", "30 gün", "60 gün"], correctAnswer: 1, meaning: "Başvuru 7, karar 15 gündür.", category: "Yasama" },
+            { question: "Sayıştay bir yüksek mahkeme midir?", options: ["Evet", "Hayır", "Sadece mali konularda", "Anayasaya göre evet"], correctAnswer: 1, meaning: "Yargı bölümündedir ama yüksek mahkeme değildir.", category: "Yargı" },
+            { question: "AYM üyeleri kaç yıl için seçilir?", options: ["4 yıl", "6 yıl", "10 yıl", "12 yıl"], correctAnswer: 3, meaning: "12 yıl için seçilirler.", category: "AYM" }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0; this.score = 0; this.questions = [];
+                this.elements = {
+                    question: document.getElementById('question'), options: document.getElementById('options'),
+                    feedback: document.getElementById('feedback'), feedbackText: document.getElementById('feedbackText'),
+                    nextBtn: document.getElementById('nextBtn'), score: document.getElementById('score'),
+                    progress: document.getElementById('progress'), totalQ: document.getElementById('totalQ'),
+                    progressBar: document.getElementById('progressBar'), catCover: document.getElementById('catCover'),
+                    resultsContainer: document.getElementById('resultsContainer'), quizSection: document.getElementById('quizSection'),
+                    finalScore: document.getElementById('finalScore'), wordList: document.getElementById('wordList')
+                };
+                this.init();
+            }
+            init() {
+                this.questions = [...QUIZ_DATA].sort(() => Math.random() - 0.5);
+                this.elements.catCover.onclick = () => this.elements.catCover.style.display = 'none';
+                this.elements.nextBtn.onclick = () => this.nextQuestion();
+                this.showQuestion();
+            }
+            showQuestion() {
+                const q = this.questions[this.currentQuestionIndex];
+                this.elements.question.textContent = q.question;
+                this.elements.catCover.style.display = 'flex';
+                this.elements.options.innerHTML = '';
+                this.elements.options.appendChild(this.elements.catCover);
+                [...q.options].sort(() => Math.random() - 0.5).forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn'; btn.textContent = opt;
+                    btn.onclick = () => this.handleAnswer(opt, q);
+                    this.elements.options.appendChild(btn);
+                });
+                this.elements.feedback.style.display = 'none';
+                this.elements.nextBtn.style.display = 'none';
+                this.elements.progress.textContent = this.currentQuestionIndex + 1;
+                this.elements.progressBar.style.width = `${((this.currentQuestionIndex + 1) / this.questions.length) * 100}%`;
+            }
+            handleAnswer(sel, q) {
+                const cor = q.options[q.correctAnswer];
+                document.querySelectorAll('.option-btn').forEach(b => {
+                    b.disabled = true;
+                    if (b.textContent === cor) b.classList.add('correct');
+                    if (b.textContent === sel && sel !== cor) b.classList.add('incorrect');
+                });
+                const ok = sel === cor;
+                if (ok) this.score++; this.elements.score.textContent = this.score;
+                this.elements.feedback.style.display = 'block';
+                this.elements.feedback.className = `feedback ${ok ? 'correct-feedback' : 'incorrect-feedback'}`;
+                this.elements.feedback.style.borderLeftColor = ok ? 'var(--success)' : 'var(--danger)';
+                this.elements.feedback.style.backgroundColor = ok ? 'rgba(56,142,60,0.1)' : 'rgba(198,40,40,0.1)';
+                this.elements.feedbackText.innerHTML = ok ? `✅ Doğru!<br>${q.meaning}` : `❌ Yanlış!<br>Doğru Cevap: <strong>${cor}</strong><br>${q.meaning}`;
+                this.elements.nextBtn.style.display = 'block';
+            }
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) this.showQuestion();
+                else this.endQuiz();
+            }
+            endQuiz() {
+                this.elements.quizSection.style.display = 'none';
+                this.elements.resultsContainer.style.display = 'block';
+                const p = Math.round((this.score / this.questions.length) * 100);
+                this.elements.finalScore.textContent = `${this.score}/${this.questions.length} (%${p})`;
+                QUIZ_DATA.forEach(i => {
+                    const d = document.createElement('div'); d.className = 'word-card';
+                    d.innerHTML = `<strong>${i.question}</strong><p style="margin-top:5px; color:#555">${i.meaning}</p>`;
+                    this.elements.wordList.appendChild(d);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const scroll = document.getElementById('notesScrollArea');
+            const btn = document.getElementById('startTestBtn');
+            const msg = document.getElementById('scrollMsg');
+            scroll.onscroll = () => { if (scroll.scrollTop + scroll.clientHeight >= scroll.scrollHeight - 10) { btn.disabled = false; msg.style.display = 'none'; } };
+            if (scroll.scrollHeight <= scroll.clientHeight) { btn.disabled = false; msg.style.display = 'none'; }
+            btn.onclick = () => {
+                document.getElementById('notesContainer').style.display = 'none';
+                document.getElementById('quizSection').style.display = 'block';
+                new QuizManager();
+            };
+        });
+    </script>
+</body>
+</html>

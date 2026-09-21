@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MEB-AGS Türkiye Tarihi - 19. Yüzyıl (II. Mahmut) Islahatları</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "🏛️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+
+        .sultan-portrait {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--gold);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            object-fit: cover;
+            z-index: 5;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .sultan-portrait:hover {
+            transform: scale(1.15) rotate(5deg);
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            padding-right: 80px; /* Portre için yer açalım */
+            padding-left: 60px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            text-align: left;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @media (max-width: 600px) {
+            h1 { 
+                font-size: 1.4rem; 
+                padding-right: 50px;
+                padding-left: 40px;
+            }
+            .question { font-size: 1.1rem; }
+            .sultan-portrait {
+                width: 50px;
+                height: 50px;
+                top: 20px;
+                right: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="https://i.pinimg.com/originals/c7/b2/fa/c7b2fab18efc7cded621b2cc65a3ad7f.jpg" alt="II. Mahmut" class="sultan-portrait" title="II. Mahmut">
+            <h1>🏛️ MEB-AGS Türkiye Tarihi</h1>
+            <div class="subtitle">19. Yüzyıl (II. Mahmut) Islahatları</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                correctAnswer: "B",
+                meaning: "19. yüzyıl ıslahatlarında tamamen Avrupa örnek alınmıştır.",
+                question: "19. yüzyılda Osmanlı Devleti'nde yapılan ıslahatların örnek alındığı temel merkez aşağıdakilerden hangisidir?",
+                options: ["Doğu Medeniyetleri", "Tamamen Avrupa", "Selçuklu Devlet Teşkilatı", "İslam Hukuku"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Saray, ulema ve asker ıslahatlara karşı çıkmıştır.",
+                question: "19. yüzyıl ıslahatlarına Osmanlı toplumu içindeki hangi gruplar karşı çıkmıştır?",
+                options: ["Sadece Yeniçeriler", "Ulema ve Azınlıklar", "Saray, ulema ve asker", "Esnaf ve Tüccarlar"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "İlk defa halk yönetime 19. yüzyılda katılmıştır.",
+                question: "Osmanlı Devleti'nde halkın ilk defa yönetime katılması hangi dönem/yüzyıl ıslahatlarının bir özelliğidir?",
+                options: ["17. Yüzyıl", "18. Yüzyıl", "19. Yüzyıl", "20. Yüzyıl"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "19. yüzyılda her alanda ıslahat yapılmıştır.",
+                question: "19. yüzyıl ıslahatlarının kapsamı değerlendirildiğinde aşağıdakilerden hangisi söylenebilir?",
+                options: ["Sadece askeri alanda yapılmıştır.", "Sadece maliyeyi düzeltmek hedeflenmiştir.", "Hukuk alanı dışında tutulmuştur.", "Her alanda ıslahat yapılmıştır."]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Demokratikleşme faaliyetleri 19. yüzyılda başlamıştır.",
+                question: "Osmanlı Devleti'nde demokratikleşme faaliyetleri ilk olarak hangi yüzyılda başlamıştır?",
+                options: ["16. Yüzyıl", "17. Yüzyıl", "18. Yüzyıl", "19. Yüzyıl"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "III. Selim Kabakçı Mustafa İsyanı sonucunda tahttan indirilmiştir.",
+                question: "III. Selim, hangi isyan sonucunda tahttan indirilmiştir?",
+                options: ["Patrona Halil İsyanı", "Kabakçı Mustafa İsyanı", "Celali İsyanları", "Çınar Vakası"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Alemdar Mustafa Paşa İstanbul'a gelerek tekrar III. Selim'i tahta çıkartmak istemiştir.",
+                question: "III. Selim'i tekrar tahta çıkarmak amacıyla ordusuyla İstanbul'a gelen devlet adamı kimdir?",
+                options: ["Nevşehirli Damat İbrahim Paşa", "Tarhuncu Ahmet Paşa", "Alemdar Mustafa Paşa", "Köprülü Mehmet Paşa"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Alemdar Mustafa Paşa'nın gelişi üzerine IV. Mustafa, III. Selim'i öldürtmüştür.",
+                question: "Alemdar Mustafa Paşa'nın İstanbul'a gelmesi üzerine, III. Selim'i öldürten Osmanlı padişahı kimdir?",
+                options: ["II. Mahmut", "IV. Mustafa", "I. Abdülhamit", "III. Osman"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Alemdar Mustafa Paşa da IV. Mustafa'yı tahttan indirerek yerine II. Mahmut'u geçirmiştir.",
+                question: "IV. Mustafa'yı tahttan indirerek II. Mahmut'u tahta geçiren ve sonrasında sadrazamlık makamına getirilen kişi kimdir?",
+                options: ["Sokullu Mehmet Paşa", "Alemdar Mustafa Paşa", "Pargalı İbrahim Paşa", "Mustafa Reşit Paşa"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Alemdar Mustafa Paşa Âyanları padişahla görüşmesi için İstanbul'a davet etmiştir.",
+                question: "Alemdar Mustafa Paşa, ülke içinde etkin bir konuma gelen Âyanları padişahla görüştürmek için nereye davet etmiştir?",
+                options: ["Edirne", "Bursa", "İstanbul", "Amasya"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Yapılan görüşmeler sonucunda Sened-i İttifak imzalanmıştır.",
+                question: "II. Mahmut ile Âyanlar arasında yapılan görüşmeler sonucunda imzalanan tarihi belgenin adı nedir?",
+                options: ["Tanzimat Fermanı", "Islahat Fermanı", "Kanun-i Esasi", "Sened-i İttifak"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Âyanlar merkezi otoriteyi kabul edecek, asker ve vergi toplamaya yardım edecektir.",
+                question: "Sened-i İttifak'ın içeriğine göre Âyanların sorumlulukları arasında aşağıdakilerden hangisi yer almaz?",
+                options: ["Merkezi otoriteyi kabul etmek", "Asker toplamaya yardım etmek", "Vergi toplamaya yardım etmek", "Yabancı elçilerle antlaşma imzalamak"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Padişah eşit ve adaletli vergi alacak, ağır vergiler koymayacaktır.",
+                question: "Sened-i İttifak'ta padişahın vergi politikasıyla ilgili alınan karar hangisidir?",
+                options: ["Tüm vergiler kaldırılacaktır.", "Eşit ve adaletli vergi alınacak, ağır vergiler konmayacaktır.", "Sadece gayrimüslimlerden vergi alınacaktır.", "Vergileri belirleme yetkisi tamamen Âyanlara bırakılacaktır."]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Âyanlık haklarının babadan oğula geçmesi kabul edilmiştir.",
+                question: "Sened-i İttifak'a göre Âyanlık haklarının statüsü nasıl belirlenmiştir?",
+                options: ["Seçimle belirlenecektir.", "Babadan oğula geçmesi kabul edilmiştir.", "Padişah tarafından yıllık olarak atanacaktır.", "Sadece askeri kökenliler Âyan olabilecektir."]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Âyanlar emir beklemeksizin İstanbul'a gelerek isyanı önleyeceklerdir.",
+                question: "Sened-i İttifak'a göre, İstanbul'da Yeniçeri veya diğer ocaklarda isyan çıktığında Âyanların tutumu nasıl olmalıdır?",
+                options: ["Padişahtan yazılı emir beklemelidirler.", "Kendi bölgelerinde savunmada kalmalıdırlar.", "Emir beklemeksizin İstanbul'a gelerek isyanı önlemelidirler.", "İsyancılarla arabuluculuk yapmalıdırlar."]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Sened-i İttifak ile ilk kez Osmanlı padişahının mutlak otoritesi kısıtlanmıştır.",
+                question: "İlk kez bir Osmanlı padişahının mutlak otoritesini kısıtlayan belge aşağıdakilerden hangisidir?",
+                options: ["Fatih Kanunnamesi", "Sened-i İttifak", "Tanzimat Fermanı", "Halepa Fermanı"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Âyanların varlığı ilk kez resmiyet kazanmıştır.",
+                question: "Sened-i İttifak ile varlığı ilk kez resmiyet kazanan zümre aşağıdakilerden hangisidir?",
+                options: ["Ulema", "Kapıkulu Askerleri", "Âyanlar", "Azınlıklar"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Sened-i İttifak, Osmanlı'nın ilk demokratikleşme hareketi sayılmıştır.",
+                question: "Osmanlı Devleti'nin ilk demokratikleşme hareketi olarak kabul edilen olay hangisidir?",
+                options: ["Sened-i İttifak", "Meşrutiyet'in İlanı", "Tanzimat Fermanı", "31 Mart Vakası"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1215 Magna Carta'ya (Büyük Şart) benzetilmiştir.",
+                question: "Sened-i İttifak, taşıdığı özellikler bakımından dünya tarihinde hangi belgeye benzetilmektedir?",
+                options: ["İnsan ve Yurttaş Hakları Bildirgesi", "1215 Magna Carta (Büyük Şart)", "Amerikan Bağımsızlık Bildirgesi", "Hammurabi Kanunları"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Köylere muhtar, eyaletlere müşir atamıştır.",
+                question: "II. Mahmut döneminde Âyanlığın kaldırılmasıyla merkezî otoriteyi güçlendirmek için köylere ve eyaletlere sırasıyla hangi atamalar yapılmıştır?",
+                options: ["Kadı - Sancakbeyi", "Muhtar - Müşir", "Subaşı - Beylerbeyi", "Tımar Sipahisi - Vali"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Tımar ve Müsadere sistemleri kaldırılmıştır.",
+                question: "II. Mahmut döneminde kaldırılan ekonomik ve idari sistemler hangi seçenekte doğru verilmiştir?",
+                options: ["İltizam ve Malikane", "Tımar ve Müsadere", "Devşirme ve Pençik", "Gedik ve Lonca"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Devlet dairelerine resmini astırması uygulaması Tasvir-i Hümayun'dur.",
+                question: "II. Mahmut'un devlet dairelerine kendi resmini astırması uygulamasına ne ad verilir?",
+                options: ["Cülus-u Hümayun", "Tasvir-i Hümayun", "Hatt-ı Hümayun", "İrade-i Seniyye"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Evkâf Vekâleti (Vakıflar Müdürlüğü) kurulmuştur.",
+                question: "Vakıflar Müdürlüğü olarak da bilinen ve II. Mahmut döneminde kurulan kurumun adı nedir?",
+                options: ["Evkâf Vekâleti", "Diyanet İşleri Başkanlığı", "Şeyhülislamlık Makamı", "Darülfünun"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Belediye işlerini düzenlemek için İhtisab Nezareti kurulmuştur.",
+                question: "II. Mahmut döneminde belediye işlerini düzenlemek amacıyla kurulan nezaret hangisidir?",
+                options: ["Hariciye Nezareti", "Dahiliye Nezareti", "İhtisab Nezareti", "Ticaret Nezareti"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Pasaport uygulamasına geçilmiştir.",
+                question: "Ülke dışına çıkışları kontrol altına almak amacıyla Osmanlı'da ilk kez \"Pasaport\" uygulamasına geçen padişah kimdir?",
+                options: ["III. Selim", "Abdülmecit", "II. Mahmut", "II. Abdülhamit"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "İstanbul'a gelenler için Mürur Tezkeresi düzenlenmiştir.",
+                question: "II. Mahmut döneminde, Anadolu ve Rumeli'den İstanbul'a gelecek olan kişiler için düzenlenen \"iç vize\" niteliğindeki belgenin adı nedir?",
+                options: ["İskan Belgesi", "Mürur Tezkeresi", "Derbent Resmi", "Çiftbozan"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "İdari işlemleri ve ıslahatları düzenlemek amacıyla Dar-ı Şûrayı Babıali kurulmuştur.",
+                question: "İdari işlemleri ve ıslahatları düzenlemek amacıyla II. Mahmut döneminde kurulan danışma meclisi hangisidir?",
+                options: ["Dar-ı Şûrayı Askerî", "Meclisi Valayı Ahkam-ı Adliye", "Heyet-i Vükela", "Dar-ı Şûrayı Babıali"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Memurların yargı ve terfi işlemleri için Meclisi Valayı Ahkam-ı Adliye kurulmuştur.",
+                question: "Memurların yargılanması ve terfi işlemleriyle ilgilenmek üzere kurulan kurum aşağıdakilerden hangisidir?",
+                options: ["Meclisi Valayı Ahkam-ı Adliye", "Şuray-ı Devlet", "Divan-ı Ahkam-ı Adliye", "Meclis-i Ayan"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "İlk resmî gazete olan Takvim-i Vekâyi çıkarılmıştır.",
+                question: "II. Mahmut döneminde çıkarılan Osmanlı Devleti'nin ilk resmî gazetesinin adı nedir?",
+                options: ["Ceride-i Havadis", "Tercüman-ı Ahval", "Takvim-i Vekâyi", "Tasvir-i Efkar"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Memurlara maaş bağlanmış, dâhiliye ve hariciye olarak ikiye ayrılmıştır.",
+                question: "Memurlara maaş bağlayıp onları dâhiliye ve hariciye olarak ikiye ayıran padişah kimdir?",
+                options: ["I. Abdülhamit", "III. Selim", "II. Mahmut", "Abdülaziz"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Memurların ceket, pantolon ve fes giymesi zorunlu hâle gelmiştir.",
+                question: "Memurların ceket, pantolon ve fes giymesini zorunlu hâle getiren padişah aşağıdakilerden hangisidir?",
+                options: ["II. Mahmut", "Abdülmecit", "V. Murat", "II. Abdülhamit"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Devlet memuru yetiştirmek için Mekteb-i Maarif-i Adliye açılmıştır.",
+                question: "II. Mahmut döneminde modern anlamda devlet memuru yetiştirmek için açılan okul hangisidir?",
+                options: ["Mekteb-i Mülkiye", "Mekteb-i Maarif-i Adliye", "Galatasaray Mekteb-i Sultanisi", "Enderun Mektebi"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Divan-ı Hümayun kaldırılmış yerine Heyet-i Vükela (Bakanlar Kurulu) kurulmuştur.",
+                question: "II. Mahmut döneminde Divan-ı Hümayun kaldırılarak yerine hangi kurul oluşturulmuştur?",
+                options: ["Ayan Meclisi", "Mebusan Meclisi", "Heyet-i Vükela (Bakanlar Kurulu)", "Saltanat Şurası"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Sadrazamlık, Başvekâlet'e dönüştürülmüştür.",
+                question: "Divanıhümayun'un kaldırılmasıyla Sadrazamlık makamının dönüştüğü yeni kurum hangisidir?",
+                options: ["Başvekâlet", "Hariciye Nezareti", "Dâhiliye Nezareti", "Babımeşihat Dairesi"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Reisülküttab, Hariciye Nezareti'ne dönüşmüştür.",
+                question: "Divanıhümayun'un kaldırılmasıyla dış işlerinden sorumlu olan Reisülküttablık makamı hangi nezarete dönüşmüştür?",
+                options: ["Dâhiliye Nezareti", "Evkaf-ı Hümayun Nezareti", "Hariciye Nezareti", "Ticaret Nezareti"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Sadaret Kethüdası, Dâhiliye Nezareti'ne dönüşmüştür.",
+                question: "Divanıhümayun'un kaldırılmasıyla iç işlerinden sorumlu olan Sadaret Kethüdası makamı hangi nezarete dönüşmüştür?",
+                options: ["Hariciye Nezareti", "Başvekâlet", "Dâhiliye Nezareti", "Babımeşihat Dairesi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Şeyhülislamlık, Babımeşihat Dairesi'ne dönüştürülmüştür.",
+                question: "Divanıhümayun'un kaldırılmasıyla Şeyhülislamlık makamı hangi daireye dönüştürülmüştür?",
+                options: ["Evkaf-ı Hümayun Nezareti", "Babımeşihat Dairesi", "Meclis-i Maarif", "Darülfünun"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Adalete önem verdiği ve yeni kanunlar hazırlattığı için II. Mahmut'a Adli ünvanı verilmiştir.",
+                question: "Adalete önem verdiği ve yeni kanun ve tüzükler hazırlattığı için \"Adlî\" ünvanı verilen padişah kimdir?",
+                options: ["Kanuni Sultan Süleyman", "II. Mahmut", "Fatih Sultan Mehmet", "Yavuz Sultan Selim"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Sekban-ı Cedit ve Eşkinci Ocağı kurulmuştur.",
+                question: "II. Mahmut döneminde Yeniçeri Ocağı'na alternatif olarak kurulan ancak isyanlar sonucu kapatılan askeri ocaklar hangileridir?",
+                options: ["Nizam-ı Cedit ve İrad-ı Cedit", "Sekban-ı Cedit ve Eşkinci Ocağı", "Asakir-i Mansure ve Redif Birlikleri", "Humbaracı ve Lağımcı Ocakları"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Yeniçeri Ocağının kaldırılmasına Osmanlı tarihinde Vakay-ı Hayriyye adı verilmiştir.",
+                question: "1826 yılında Yeniçeri Ocağı'nın kaldırılması olayına Osmanlı tarihinde verilen isim nedir?",
+                options: ["Çınar Vakası (Vakay-ı Vakvakiye)", "Edirne Olayı", "Vakay-ı Hayriyye (Hayırlı Olay)", "31 Mart Vakası"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Yerine Asakir-i Mansure-i Muhammediye ordusu kurulmuştur.",
+                question: "Yeniçeri Ocağı'nın kaldırılmasından sonra yerine kurulan yeni ordunun adı nedir?",
+                options: ["Nizam-ı Cedit", "Asakir-i Nizamiye", "Asakir-i Mansure-i Muhammediye", "Hamidiye Alayları"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Ordunun ihtiyacının karşılanması için Mekteb-i Fünun-ı Harbiye kurulmuştur.",
+                question: "Asakir-i Mansure-i Muhammediye ordusunun subay ihtiyacını karşılamak amacıyla kurulan okul hangisidir?",
+                options: ["Mekteb-i Tıbbiye", "Mekteb-i Maarif-i Adliye", "Mühendishane-i Bahr-i Hümayun", "Mekteb-i Fünun-ı Harbiye"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "İleride Asakir-i Mansure-i Muhammediyenin yerine Asakir-i Nizamiye ordusu kurulmuştur.",
+                question: "İleriki dönemlerde Asakir-i Mansure-i Muhammediye ordusunun yerine kurulan ordunun adı nedir?",
+                options: ["Asakir-i Nizamiye", "Kuvâ-yi İnzibatiye", "Merkez Ordusu", "Hareket Ordusu"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Yeniçeri Ocağının kaldırılması modernleşmenin asıl başlangıcı kabul edilmiştir.",
+                question: "Osmanlı Devleti'nde ordu ve devlet teşkilatlarındaki modernleşmenin asıl başlangıcı olarak kabul edilen olay hangisidir?",
+                options: ["Sened-i İttifak'ın imzalanması", "Yeniçeri Ocağı'nın kaldırılması", "Nizam-ı Cedit'in kurulması", "Tanzimat Fermanı'nın ilanı"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Askerlik çağına gelmiş kişileri tespit etmek amacıyla ilk kez nüfus sayımı yapılmıştır.",
+                question: "Askerlik çağına gelmiş kişileri tespit etmek ve vergi almak amacıyla Osmanlı'da ilk nüfus sayımı hangi dönemde yapılmıştır?",
+                options: ["I. Abdülhamit", "III. Selim", "II. Mahmut", "Abdülmecit"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Bu sayımda hayvan ve mülklerde sayılmıştır.",
+                question: "II. Mahmut döneminde yapılan ilk nüfus sayımının özellikleri arasında hangisi yer alır?",
+                options: ["Sadece kadınlar sayılmıştır.", "Sadece Rumeli'de yapılmıştır.", "İnsanların yanı sıra hayvan ve mülkler de sayılmıştır.", "Sayım sonuçları Avrupa devletleriyle paylaşılmıştır."]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Askerlik şubeleri olarak Dar-ı Şûrayı Askerî kurulmuştur.",
+                question: "Askeri şubeler olarak görev yapmak üzere II. Mahmut döneminde kurulan teşkilat hangisidir?",
+                options: ["Dar-ı Şûrayı Askerî", "Dar-ı Şûrayı Babıali", "Seraskerlik", "Mızıkayı Hümayun"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Mektebi Şahane (Harbiye) ve Mektebi Tıbbiye açılmıştır.",
+                question: "Askeri alanda eğitim vermek üzere II. Mahmut döneminde açılan yüksekokullar hangi seçenekte doğru verilmiştir?",
+                options: ["Mektebi Şahane ve Mektebi Tıbbiye", "Hendesehane ve Darülfünun", "Mekteb-i Mülkiye ve Mekteb-i Hukuk", "Sanayi-i Nefise Mektebi ve Darülmuallimin"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Köylerin ve kasabaların güvenliğinin sağlanması amacı ile Redif Birlikleri kurulmuştur.",
+                question: "Köylerin ve kasabaların güvenliğini sağlamak amacı ile II. Mahmut döneminde kurulan birlikler hangileridir?",
+                options: ["Sekban Birlikleri", "Tımarlı Sipahiler", "Redif Birlikleri", "Akıncılar"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Genelkurmay Başkanlığı anlamına gelen Seraskerlik kurulmuştur.",
+                question: "Günümüzdeki Genelkurmay Başkanlığı'nın temeli sayılan ve II. Mahmut döneminde kurulan makam hangisidir?",
+                options: ["Sadrazamlık", "Seraskerlik", "Kaptanıderyalık", "Yeniçeri Ağalığı"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Avrupa'ya eğitim amaçlı ilk öğrenciler gönderilmiştir.",
+                question: "Avrupa'ya eğitim amaçlı ilk öğrenciler hangi padişah döneminde gönderilmiştir?",
+                options: ["Lale Devri", "III. Selim", "II. Mahmut", "II. Abdülhamit"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Mekteb-i Ulum-u Edebiye ve Rüştiyeler (ortaokullar) açılmıştır.",
+                question: "II. Mahmut döneminde ortaokul düzeyinde eğitim vermek amacıyla açılan okulların isimleri nelerdir?",
+                options: ["İdadiler ve Sultaniler", "Mekteb-i Ulum-u Edebiye ve Rüştiyeler", "Sıbyan Mektepleri ve Darülkurra", "Mekteb-i Maarif ve Darülmuallimat"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Bulaşıcı hastalıkların yayılmasının önlenmesi amacıyla karantina uygulamasına geçilmiştir.",
+                question: "Bulaşıcı hastalıkların yayılmasının önlenmesi amacıyla Osmanlı Devleti'nde ilk kez hangi uygulamaya geçilmiştir?",
+                options: ["Aşı kampanyaları", "Karantina uygulaması", "Darüşşifa inşası", "Şehir hastaneleri projesi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Halkı yerinde görmek için yurt içine geziler düzenlenmiştir.",
+                question: "Halkın durumunu yerinde görmek amacıyla yurt içine geziler düzenleyen ilk Osmanlı padişahı kimdir?",
+                options: ["II. Mahmut", "Fatih Sultan Mehmet", "IV. Murat", "Abdülaziz"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "İlköğretimi zorunlu hâle getirmiştir. (Sadece İstanbul'da)",
+                question: "İlköğretimi zorunlu hâle getiren padişah kimdir ve bu zorunluluk ilk etapta neresi için geçerli olmuştur?",
+                options: ["Abdülmecit - Tüm Osmanlı", "II. Mahmut - Sadece İstanbul", "III. Selim - Sadece Rumeli", "II. Abdülhamit - Sadece Anadolu"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Mehterhane kapatıldı yerine Donizetti Paşa tarafından Mızıkayı Hümayun kurulmuştur.",
+                question: "Mehterhane'nin kapatılmasının ardından yerine İtalyan müzisyen Donizetti Paşa tarafından kurulan bando takımının adı nedir?",
+                options: ["Darülelhan", "Darülbedayi", "Mızıkayı Hümayun", "Musiki Muallim Mektebi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Yabancı dil bilen Müslüman diplomat yetiştirmek amacıyla Tercüme Odaları kurulmuştur.",
+                question: "Yabancı dil bilen Müslüman diplomat yetiştirmek amacıyla II. Mahmut döneminde kurulan yapı hangisidir?",
+                options: ["Hariciye Nezareti", "Tercüme Odaları", "Encümen-i Daniş", "Enderun Mektebi"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "II. Mahmut, din ayrımı gözetmediğini belirterek Osmanlıcılık Politikası'nı başlatmıştır.",
+                question: "II. Mahmut'un \"Ben tebaamın Müslüman'ını camide, Hristiyan'ını kilisede, Musevi'sini havrada fark ederim...\" sözü hangi politikanın başlatıldığını gösterir?",
+                options: ["Ümmetçilik (İslamcılık)", "Türkçülük", "Turancılık", "Osmanlıcılık Politikası"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Ticaret Nezareti kurularak tarım ve ticaret işleri düzene koyulmuştur.",
+                question: "Tarım ve ticaret işlerini düzene koymak amacıyla II. Mahmut döneminde kurulan bakanlık (nezaret) hangisidir?",
+                options: ["Maliye Nezareti", "Ticaret Nezareti", "Ziraat Bankası", "Rüsumat Emaneti"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Yerli malı kullanımı teşvik edilmiştir.",
+                question: "II. Mahmut döneminde yabancı malların etkisini kırmak ve ekonomiyi güçlendirmek için hangi tutum sergilenmiştir?",
+                options: ["Dış borç alınmıştır.", "Duyun-u Umumiye kurulmuştur.", "Yerli malı kullanımı teşvik edilmiştir.", "Kapitülasyonlar genişletilmiştir."]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Bakırköy'de bez fabrikası açılmıştır.",
+                question: "II. Mahmut döneminde tekstil alanında üretim yapmak üzere Bakırköy'de hangi fabrika açılmıştır?",
+                options: ["Çuha fabrikası", "İpek fabrikası", "Bez fabrikası", "Şeker fabrikası"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Osmanlı tüccarlarına Avrupalı tüccarlarla rekabet edebilmeleri için gümrük vergilerinde kolaylıklar sağlanmıştır.",
+                question: "Osmanlı tüccarlarının Avrupalı tüccarlarla rekabet edebilmeleri için devlet tarafından hangi adım atılmıştır?",
+                options: ["Tüm vergiler sıfırlanmıştır.", "Gümrük vergilerinde kolaylıklar sağlanmıştır.", "Tüccarlara bedava arazi verilmiştir.", "Yabancı tüccarların ülkeye girişi yasaklanmıştır."]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Ordunun fes ihtiyacını karşılamak için feshane kurulmuştur.",
+                question: "Asakir-i Mansure-i Muhammediye ordusunun başlık ihtiyacını karşılamak için kurulan üretim tesisi hangisidir?",
+                options: ["Tophane", "Feshane", "Tersane-i Amire", "Dikimevi"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Memurun giyeceği kıyafetlerin yerli malı olma zorunluluğu getirilmiştir.",
+                question: "Ekonomik bağımsızlığı desteklemek amacıyla devlet memurlarının giyeceği kıyafetler için getirilen kural nedir?",
+                options: ["Sadece Avrupa kumaşı kullanılması", "Siyah renk giyme zorunluluğu", "Yerli malı olma zorunluluğu", "İpek kumaş yasaklanması"]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        function shuffleArray(array) {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        function initQuiz() {
+            questions = shuffleArray(quizData);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            catCoverEl.addEventListener('click', () => catCoverEl.style.display = 'none');
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            const correctText = currentQuestion.options[currentQuestion.correctAnswer.charCodeAt(0) - 65];
+            const shuffledOptions = shuffleArray(currentQuestion.options);
+            
+            optionsEl.innerHTML = '';
+            optionsEl.appendChild(catCoverEl);
+            catCoverEl.style.display = 'flex';
+
+            shuffledOptions.forEach(optionText => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = optionText;
+                button.onclick = () => selectAnswer(optionText, correctText, currentQuestion.meaning);
+                optionsEl.appendChild(button);
+            });
+            
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        function selectAnswer(selectedOption, correctOptionText, meaning) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correctOptionText) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selectedOption) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            const isCorrect = selectedOption === correctOptionText;
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+            }
+
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            feedbackTextEl.innerHTML = isCorrect ? 
+                `<strong>✅ Doğru!</strong><br><br>${meaning}` : 
+                `<strong>❌ Yanlış!</strong><br>Doğru Cevap: ${correctOptionText}<br><br>${meaning}`;
+            
+            nextBtn.style.display = 'block';
+        }
+
+        nextBtn.onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        };
+
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            finalScoreEl.textContent = `Puanınız: ${score} / ${questions.length}`;
+            
+            wordListEl.innerHTML = '<h3 style="margin-bottom:15px;">Genel Tekrar:</h3>';
+            questions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>${q.question}</strong><br><small style="color:var(--primary)">${q.meaning}</small>`;
+                wordListEl.appendChild(card);
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (quizContainer.style.display === 'none') return;
+            if ((e.key === 'Enter' || e.code === 'Space') && nextBtn.style.display === 'block') {
+                if (e.code === 'Space') e.preventDefault();
+                nextBtn.click();
+                return;
+            }
+            if (catCoverEl.style.display !== 'none') {
+                if (['1', '2', '3', '4'].includes(e.key)) {
+                    catCoverEl.style.display = 'none';
+                }
+                return; 
+            }
+            const buttons = document.querySelectorAll('.option-btn');
+            if (buttons.length === 0 || buttons[0].disabled) return;
+            if (e.key === '1' && buttons[0]) buttons[0].click();
+            if (e.key === '2' && buttons[1]) buttons[1].click();
+            if (e.key === '3' && buttons[2]) buttons[2].click();
+            if (e.key === '4' && buttons[3]) buttons[3].click();
+        });
+
+        initQuiz();
+    </script>
+</body>
+</html>

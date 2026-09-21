@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MEB-AGS Türkiye Tarihi - Gerileme Dönemi (1699-1792)</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "🏛️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            text-align: left;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ MEB-AGS Türkiye Tarihi</h1>
+            <div class="subtitle">XVIII. Yüzyıl Gerileme Dönemi Siyasi Olayları (1699-1792)</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                correctAnswer: "C",
+                meaning: "Gerileme Dönemi, 1699 Karlofça Antlaşması ile başlayıp 1792 Yaş Antlaşması'na kadar süren dönemdir.",
+                question: "Osmanlı Devleti'nin Gerileme Dönemi hangi tarih aralığını kapsar?",
+                options: ["1683 - 1699", "1699 - 1774", "1699 - 1792", "1774 - 1792"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Avrupa devletlerinin amaca ulaşmak için her türlü tedbire başvurmasına 'Makyavelizm' denilmiştir.",
+                question: "Avrupa devletlerinin amaca ulaşmak için her türlü tedbire başvurmasını ifade eden kavram aşağıdakilerden hangisidir?",
+                options: ["Hümanizm", "Makyavelizm", "Rönesans", "Reform"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Fransa, 1756-1763 yılları arasında İngiltere ve Rusya'ya mağlup olmuş, sömürgelerini İngiltere'ye kaybetmiş ve ülkesinde ihtilal yaşanmıştır.",
+                question: "Fransa'nın 1756-1763 yılları arasında mağlup olduğu devletler aşağıdakilerden hangisidir?",
+                options: ["İngiltere ve Rusya", "Avusturya ve Prusya", "İspanya ve Portekiz", "Hollanda ve İsveç"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Fransa, Yedi Yıl Savaşları (1756-1763) sonucunda sömürgelerini İngiltere'ye kaybetmiştir.",
+                question: "1756-1763 yılları arasındaki savaşlar sonucunda Fransa, sömürgelerini hangi devlete kaybetmiştir?",
+                options: ["Rusya", "İngiltere", "Avusturya", "Prusya"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Fransa, 1789'da gerçekleşen Fransız İhtilali ile büyük bir iç karışıklık yaşamıştır.",
+                question: "Fransa'nın XVIII. yüzyılın sonlarında yaşadığı ve tüm Avrupa'yı etkileyen iç karışıklık hangisidir?",
+                options: ["Yüzyıl Savaşları", "Otuz Yıl Savaşları", "Fransız İhtilali", "Fransa-Prusya Savaşı"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Fransa, Osmanlı'ya ait Mısır'a 1798'de Napolyon komutasında saldırmıştır.",
+                question: "Fransa, Osmanlı Devleti'nin hangi toprağına saldırmıştır?",
+                options: ["Cezayir", "Tunus", "Suriye", "Mısır"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Avusturya, XVIII. yüzyılda en çok Rusya ile iş birliği yapmıştır.",
+                question: "Avusturya, XVIII. yüzyılda Osmanlı'ya karşı en çok hangi devletle iş birliği yapmıştır?",
+                options: ["Fransa", "İngiltere", "Rusya", "Prusya"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Avusturya, Balkanlar'a egemen olup Ege Denizi'ne ulaşmayı hedeflemiştir.",
+                question: "Avusturya'nın Osmanlı Devleti'ne karşı temel hedefi aşağıdakilerden hangisidir?",
+                options: ["Balkanlar'a egemen olup Ege Denizi'ne ulaşmak", "Karadeniz'e inmek", "Akdeniz'de üstünlük sağlamak", "Kafkasya'ya yayılmak"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Çar I. Petro'nun dört temel amacı vardır: Kırım'ı alıp Karadeniz'e inmek, Akdeniz'e inmek, Orta Asya ve Kafkasya'ya yayılmak, Balkanlar'da Slav birliğini sağlamak (Panslavizm).",
+                question: "Aşağıdakilerden hangisi Rus Çarı I. Petro'nun amaçlarından biri değildir?",
+                options: ["Kırım'ı alıp Karadeniz'e inmek", "Karadeniz'den Akdeniz'e inmek", "Balkanlar'da Slav birliğini sağlamak (Panslavizm)", "İstanbul'u fethederek Ortodoks dünyasının merkezi yapmak"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Osmanlı Devleti, Venedik'in elinden Mora Yarımadası'nı almıştır.",
+                question: "Osmanlı Devleti, XVIII. yüzyılda hangi devletin elinden Mora Yarımadası'nı almıştır?",
+                options: ["Rusya", "Venedik", "Avusturya", "Fransa"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Rusya ile Osmanlı, 1724'te İstanbul Antlaşması ile İran'ı kendi aralarında paylaşmıştır.",
+                question: "Osmanlı Devleti ile Rusya, 1724'te imzaladıkları hangi antlaşma ile İran'ı paylaşmışlardır?",
+                options: ["İstanbul Antlaşması", "Ahmet Paşa Antlaşması", "Kerden Antlaşması", "Kasr-ı Şirin Antlaşması"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "1732 Ahmet Paşa Antlaşması ve 1746 Kerden Antlaşması (II. Kasr-ı Şirin) ile 1639 Kasr-ı Şirin Antlaşması'ndaki maddeler aynen kabul edilmiştir.",
+                question: "1746 yılında Osmanlı ile İran arasında imzalanan ve II. Kasr-ı Şirin olarak da bilinen antlaşma hangisidir?",
+                options: ["İstanbul Antlaşması", "Ahmet Paşa Antlaşması", "Kerden Antlaşması", "Serav Antlaşması"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Demirbaş Şarl'ın Poltova Savaşı sonrasında Osmanlı topraklarına girmesi ve onu takip eden Rusların da topraklarımıza girmesi sonucu Rusya ile Prut Antlaşması imzalanmıştır.",
+                question: "1711 Prut Antlaşması'nın imzalanmasına neden olan olay aşağıdakilerden hangisidir?",
+                options: ["Kırım'ın Rusya tarafından işgali", "Venedik'in Mora'yı işgali", "Avusturya'nın Belgrad'ı kuşatması", "Demirbaş Şarl'ın Osmanlı topraklarına sığınması ve Rusların takibi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Prut Antlaşması ile Azak Kalesi Osmanlı'ya geri verilmiş ve Osmanlı Devleti'nin Karlofça ve İstanbul Antlaşması ile kaybettiği toprakları geri alma umudu doğmuştur.",
+                question: "1711 Prut Antlaşması ile aşağıdaki yerlerden hangisi Osmanlı Devleti'ne geri verilmiştir?",
+                options: ["Kırım", "Azak Kalesi", "Belgrad", "Mora"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "1715-1718 yılları arasında Osmanlı Devleti ile Avusturya arasında Petervaradin Savaşı yapılmıştır.",
+                question: "1715-1718 yılları arasında Osmanlı Devleti ile Avusturya arasında yapılan savaş hangisidir?",
+                options: ["Prut Savaşı", "Çeşme Baskını", "Petervaradin Savaşı", "Niğbolu Savaşı"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "1718'de Avusturya ile Pasarofça Antlaşması imzalanmıştır. Osmanlı Devleti ilk defa Batı'nın üstünlüğünü kabul etmiş ve 'Lale Devri'ne girmiştir.",
+                question: "Osmanlı Devleti'nin ilk defa Batı'nın üstünlüğünü kabul ettiği ve 'Lale Devri'ne girdiği antlaşma hangisidir?",
+                options: ["Pasarofça Antlaşması", "Belgrat Antlaşması", "Karlofça Antlaşması", "Küçük Kaynarca Antlaşması"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Lale Devri, 1718 Pasarofça Antlaşması ile başlayıp 1730 Patrona Halil İsyanı ile sona eren dönemdir.",
+                question: "Osmanlı Devleti'nde 'Lale Devri' hangi antlaşma sonrasında başlamıştır?",
+                options: ["Karlofça Antlaşması", "İstanbul Antlaşması", "Prut Antlaşması", "Pasarofça Antlaşması"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1736-1739 yıllarında Osmanlı, Avusturya ve Rusya'ya karşı galip gelmiş ve Belgrat Antlaşması ile Belgrat tekrar Osmanlı Devleti'ne verilmiştir.",
+                question: "1739'da imzalanan ve Belgrat'ın tekrar Osmanlı Devleti'ne verilmesini sağlayan antlaşma hangisidir?",
+                options: ["Pasarofça Antlaşması", "Belgrat Antlaşması", "Ziştovi Antlaşması", "Yaş Antlaşması"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Belgrat Antlaşması'nda arabuluculuk yapan Fransa'ya I. Mahmut tarafından 1740'ta kapitülasyonlar sürekli (daimi) hâle getirilmiştir.",
+                question: "Kapitülasyonlar hangi padişah döneminde ve hangi antlaşma sonucunda sürekli (daimi) hâle getirilmiştir?",
+                options: ["I. Mahmut - Belgrat Antlaşması", "III. Ahmet - Pasarofça Antlaşması", "III. Mustafa - Küçük Kaynarca Antlaşması", "I. Abdülhamit - Aynalıkavak Tenkihnamesi"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "1740 yılında Fransa'ya verilen kapitülasyonlar sürekli hâle getirilerek Osmanlı ekonomisi üzerindeki Fransız etkisi kalıcılaşmıştır.",
+                question: "Kapitülasyonlar hangi yılda sürekli (daimi) hâle getirilmiştir?",
+                options: ["1718", "1739", "1740", "1774"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1768-1774 Osmanlı-Rus Savaşı sırasında Rusya, 1770'te Çeşme'de Osmanlı donanmasını yakmıştır.",
+                question: "1770 yılında Rus donanması Osmanlı donanmasını nerede yakmıştır?",
+                options: ["Sinop", "Çeşme", "Navarin", "İnebahtı"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "1774'te Osmanlı ile Rusya arasında Küçük Kaynarca Antlaşması imzalanmıştır.",
+                question: "Osmanlı Devleti ile Rusya arasında 1774 yılında imzalanan antlaşma hangisidir?",
+                options: ["Küçük Kaynarca Antlaşması", "Belgrat Antlaşması", "Yaş Antlaşması", "Aynalıkavak Tenkihnamesi"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Küçük Kaynarca Antlaşması'na göre Kırım bağımsız olacak ancak dini açıdan Osmanlı padişahına (halifeye) bağlı kalacaktır. İlk defa tamamı Türk ve Müslüman olan bir bölge Osmanlı'nın elinden çıkmıştır.",
+                question: "Küçük Kaynarca Antlaşması'na göre Kırım'ın statüsü ne olmuştur?",
+                options: ["Tamamen Rusya'ya bırakılmıştır", "Osmanlı'ya bağlı muhtar bir bölge olmuştur", "İki devlet arasında paylaşılmıştır", "Bağımsız olacak, dini açıdan Osmanlı padişahına bağlı kalacaktır"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "İlk defa tamamı Türk ve Müslüman olan bir bölge (Kırım) Osmanlı'nın elinden çıkmıştır.",
+                question: "Osmanlı Devleti tarihinde ilk defa tamamı Türk ve Müslüman olan bir bölgenin elden çıkması hangi antlaşma ile gerçekleşmiştir?",
+                options: ["Karlofça Antlaşması", "Pasarofça Antlaşması", "Küçük Kaynarca Antlaşması", "Yaş Antlaşması"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Küçük Kaynarca Antlaşması ile ilk defa halifelik siyasi bir güç olarak kullanılmıştır.",
+                question: "Halifeliğin ilk defa siyasi bir güç olarak kullanıldığı antlaşma hangisidir?",
+                options: ["Küçük Kaynarca Antlaşması", "İstanbul Antlaşması", "Belgrat Antlaşması", "Prut Antlaşması"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Küçük Kaynarca Antlaşması'na göre Rusya, İstanbul'da daimi bir elçi bulunduracak ve Balkan topraklarında istediği her yerde konsolosluk açabilecektir.",
+                question: "Rusya'nın İstanbul'da daimi elçi bulundurma ve Balkanlar'da istediği yerde konsolosluk açma hakkını elde ettiği antlaşma hangisidir?",
+                options: ["Prut Antlaşması", "Küçük Kaynarca Antlaşması", "Belgrat Antlaşması", "Yaş Antlaşması"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Küçük Kaynarca Antlaşması ile Rusya, Osmanlı Devleti'nin politikalarını yakından takip etme fırsatı elde etmiş ve Balkanlar'da Panslavizm politikası doğrultusunda önemli bir adım atmıştır.",
+                question: "Küçük Kaynarca Antlaşması'nın Rusya'ya sağladığı en önemli stratejik avantaj aşağıdakilerden hangisidir?",
+                options: ["Karadeniz'de donanma bulundurma hakkı", "Kırım'ı ilhak etme hakkı", "Boğazlardan serbest geçiş hakkı", "Osmanlı politikalarını yakından takip etme ve Panslavizm için zemin hazırlama fırsatı"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Küçük Kaynarca Antlaşması ile Osmanlı Devleti tarihinde ilk defa savaş tazminatı ödemiştir.",
+                question: "Osmanlı Devleti tarihinde ilk defa savaş tazminatı ödediği antlaşma hangisidir?",
+                options: ["Karlofça Antlaşması", "Pasarofça Antlaşması", "Küçük Kaynarca Antlaşması", "İstanbul Antlaşması"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "1779'da Şahin Giray'ın Kırım hanı olmasına Aynalıkavak Tenkihnamesi ile Osmanlı Devleti onay vermiştir.",
+                question: "Şahin Giray'ın Kırım hanı olarak tanınmasını sağlayan 1779 tarihli belge hangisidir?",
+                options: ["Aynalıkavak Tenkihnamesi", "Küçük Kaynarca Antlaşması", "Yaş Antlaşması", "Ziştovi Antlaşması"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1787-1792 yıllarında Osmanlı, Kırım'ı geri alabilmek için Rusya ve Avusturya ile savaşmıştır.",
+                question: "Osmanlı Devleti, 1787-1792 yıllarında Kırım'ı geri alabilmek için hangi devletlerle savaşmıştır?",
+                options: ["Sadece Rusya", "Rusya ve Avusturya", "Rusya ve İran", "Avusturya ve Venedik"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Fransız İhtilali'nden etkilenen Avusturya, Osmanlı ile 1791'de Ziştovi Antlaşması'nı yaparak savaştan çekilmiştir.",
+                question: "1791 yılında Avusturya'nın Osmanlı ile imzaladığı ve savaştan çekildiği antlaşma hangisidir?",
+                options: ["Belgrat Antlaşması", "Pasarofça Antlaşması", "Ziştovi Antlaşması", "Yaş Antlaşması"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Avusturya'nın savaştan çekilmesinin temel nedeni, Fransız İhtilali'nin yaydığı milliyetçilik fikirlerinden etkilenmesidir.",
+                question: "Avusturya'nın 1791 Ziştovi Antlaşması ile savaştan çekilmesinin temel nedeni aşağıdakilerden hangisidir?",
+                options: ["Osmanlı ordusuna yenilmesi", "Rusya ile anlaşmazlığa düşmesi", "İngiltere'nin baskısı", "Fransız İhtilali'nden etkilenmesi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1792 Yaş Antlaşması ile Kırım'ın Rusya'ya ait olduğu kabul edilmiştir.",
+                question: "Kırım'ın Rusya'ya ait olduğunun Osmanlı Devleti tarafından resmen kabul edildiği antlaşma hangisidir?",
+                options: ["Küçük Kaynarca Antlaşması", "Yaş Antlaşması", "Aynalıkavak Tenkihnamesi", "Belgrat Antlaşması"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "1798'de Napolyon, Mısır'a saldırmıştır.",
+                question: "1798 yılında Fransa'nın Osmanlı toprağı olan Mısır'a saldırmasına önderlik eden Fransız komutan kimdir?",
+                options: ["Napolyon Bonapart", "General Mençikof", "General Kleber", "Amiral Nelson"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Osmanlı, Fransa'ya karşı ilk defa denge politikası izleyerek İngiltere ve Rusya'dan yardım istemiştir.",
+                question: "Napolyon'un Mısır'ı işgali üzerine Osmanlı Devleti'nin izlediği politika aşağıdakilerden hangisidir?",
+                options: ["Tarafsızlık politikası", "Yalnızlık politikası", "Denge politikası (İngiltere ve Rusya'dan yardım isteme)", "Teslimiyet politikası"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Napolyon'un Mısır'ı işgali sırasında, Rus donanması ilk defa Boğazlardan geçerek Akdeniz'e inmiştir.",
+                question: "Rus donanması ilk defa hangi olay sırasında Boğazlardan geçmiştir?",
+                options: ["Prut Savaşı", "Çeşme Baskını", "Kırım Savaşı", "Napolyon'un Mısır'ı İşgali"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Cezzar Ahmet Paşa, Nizam-ı Cedit ordusuyla Akka önlerinde Napolyon'u durdurmuştur.",
+                question: "Napolyon'u Akka önlerinde durduran Osmanlı komutanı ve kullandığı ordu aşağıdakilerden hangisidir?",
+                options: ["Kavalalı Mehmet Ali Paşa - Mısır ordusu", "Cezzar Ahmet Paşa - Nizam-ı Cedit ordusu", "Alemdar Mustafa Paşa - Yeniçeri Ocağı", "Tepedelenli Ali Paşa - Arnavut birlikleri"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Fransa ile önce El Ariş Ateşkes Antlaşması, daha sonra ise 1802'de Paris Antlaşması imzalanmıştır.",
+                question: "Napolyon'un Mısır'dan çekilmesi sürecinde Fransa ile imzalanan antlaşmaların doğru sıralaması hangisidir?",
+                options: ["El Ariş Ateşkes Antlaşması → Paris Antlaşması", "Paris Antlaşması → El Ariş Ateşkes Antlaşması", "Amiens Antlaşması → Paris Antlaşması", "El Ariş Ateşkes Antlaşması → Amiens Antlaşması"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1802 Paris Antlaşması ile Fransa, Mısır'dan tamamen çekilmiştir.",
+                question: "Fransa'nın Mısır'dan tamamen çekilmesini sağlayan 1802 tarihli antlaşma hangisidir?",
+                options: ["El Ariş Antlaşması", "Paris Antlaşması", "Amiens Antlaşması", "Londra Antlaşması"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "1724 İstanbul Antlaşması ile Osmanlı ve Rusya İran'ı paylaşmıştır.",
+                question: "Osmanlı Devleti ile Rusya'nın İran'ı paylaştıkları 1724 tarihli antlaşma hangisidir?",
+                options: ["Kerden Antlaşması", "Ahmet Paşa Antlaşması", "İstanbul Antlaşması", "Kasr-ı Şirin Antlaşması"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "1732 Ahmet Paşa Antlaşması, Osmanlı ile İran arasında imzalanmıştır.",
+                question: "Osmanlı Devleti ile İran arasında 1732 yılında imzalanan antlaşma hangisidir?",
+                options: ["Ahmet Paşa Antlaşması", "Kerden Antlaşması", "İstanbul Antlaşması", "Serav Antlaşması"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "1746 Kerden Antlaşması'nda, 1639 Kasr-ı Şirin Antlaşması'ndaki maddeler aynen kabul edilmiştir.",
+                question: "Hangi antlaşma, 1639 Kasr-ı Şirin Antlaşması'ndaki maddelerin aynen kabul edilmesi nedeniyle 'II. Kasr-ı Şirin' olarak adlandırılmıştır?",
+                options: ["Ahmet Paşa Antlaşması", "İstanbul Antlaşması", "Kerden Antlaşması", "Serav Antlaşması"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Prut Antlaşması ile Osmanlı Devleti'nin Karlofça ve İstanbul Antlaşmaları ile kaybettiği toprakları geri alma umudu doğmuştur.",
+                question: "Osmanlı Devleti'nin Karlofça ve İstanbul Antlaşmaları ile kaybettiği toprakları geri alma umudunun doğduğu antlaşma hangisidir?",
+                options: ["Pasarofça Antlaşması", "Belgrat Antlaşması", "Küçük Kaynarca Antlaşması", "Prut Antlaşması"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Rusya, Çeşme Baskını ile Osmanlı donanmasını 1770 yılında yakmıştır.",
+                question: "1768-1774 Osmanlı-Rus Savaşı sırasında hangi yılda Çeşme Baskını gerçekleşmiştir?",
+                options: ["1768", "1770", "1772", "1774"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1703 (Edirne Olayı) isyanıyla II. Mustafa tahttan indirilmiş, yerine kardeşi III. Ahmet Osmanlı tahtına geçmiştir.",
+                question: "1703 yılında Şeyhülislam Feyzullah Efendi'ye karşı oluşan muhalefet grubunun isyanı sonucunda Padişah II. Mustafa tahttan indirilmiş ve yerine kardeşi geçirilmiştir. Bu olay sonucunda Osmanlı tahtına çıkan padişah aşağıdakilerden hangisidir?",
+                options: ["I. Mahmut", "III. Ahmet", "III. Selim", "I. Abdülhamit"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "1709 Poltava Savaşı'nda Rus Çarı I. Petro'ya yenilen İsveç Kralı Demirbaş Şarl'ın Osmanlı'ya sığınması, Osmanlı-Rus (Prut) Savaşı'na zemin hazırlamıştır.",
+                question: "İsveç Kralı XII. Şarl'ın (Demirbaş Şarl), 1709 yılında Rus Çarı I. Petro'ya karşı ağır bir yenilgi alarak Osmanlı Devleti'ne sığınmasına neden olan meşhur savaş aşağıdakilerden hangisidir?",
+                options: ["Poltava Savaşı", "Narva Savaşı", "Petervaradin Savaşı", "Zenta Savaşı"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Avrupa'yı daha yakından tanımak amacıyla Lale Devri'nin hemen başında, 1719 yılında İbrahim Paşa Viyana'ya, 1720'de ise Yirmisekiz Çelebi Mehmet Paris'e elçi olarak gönderilmiştir.",
+                question: "Avrupa'yı daha yakından tanımak amacıyla 1719 yılında Rumeli Beylerbeyliği pâyesiyle Viyana'ya büyükelçi olarak gönderilen devlet adamı aşağıdakilerden hangisidir?",
+                options: ["Yirmisekiz Çelebi Mehmet", "İbrahim Paşa", "Halil Hamid Paşa", "Koca Ragıp Paşa"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Pasarofça Antlaşması'nın ardından Batı tarzı yenilikler başlamış ve Avrupa'nın üstünlüğü kabul edilip Lale Devri'ne girilmiştir, ancak o tarihte bir taht değişikliği yaşanmamıştır (III. Ahmet dönemi devam etmiştir).",
+                question: "1718 yılında imzalanan Pasarofça Antlaşması'nın ardından Osmanlı iç siyasetinde aşağıdakilerden hangisi yaşanmamıştır?",
+                options: ["Batı tarzı yenilik hareketlerinin başlaması", "Avrupa'nın askeri üstünlüğünün kabul edilmesi", "Taht değişikliği yaşanması", "Lale Devri'ne girilmesi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "I. Mahmut döneminde 1736-1739 yılları arasındaki savaşlarda Osmanlı, müttefik olan iki devlete (Rusya ve Avusturya'ya) karşı eş zamanlı ve başarılı bir mücadele vermiştir.",
+                question: "I. Mahmut döneminde gerçekleşen ve 1739 Belgrat Antlaşması ile neticelenen 1736-1739 Savaşları'nda, Osmanlı İmparatorluğu hangi iki devlete karşı aynı anda mücadele etmiştir?",
+                options: ["Venedik - Ceneviz", "Rusya - Avusturya", "Lehistan - Rusya", "Avusturya - Venedik"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "I. Mahmut döneminde orduyu modernize etmek için Humbaracı Ocağı'nı ıslah eden ve İslamiyet'i kabul ederek Ahmet Paşa adını alan uzman Comte de Bonneval'dir.",
+                question: "I. Mahmut zamanında Humbaracı (havan topçu) Ocağı'nı Batı tarzında hesap ve hendeseye dayanarak ıslah eden, bu amaçla Hendesehâne'nin kurulmasını sağlayan Fransız asıllı uzman kimdir?",
+                options: ["Baron de Tott", "Comte de Bonneval (Ahmet Paşa)", "Koca Sekbanbaşı", "General Moltke"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Küçük Kaynarca Antlaşması'yla (1774) ilk defa halkının tamamı Müslüman olan Kırım, Osmanlı'dan ayrılarak bağımsız olmuştur.",
+                question: "1768-1774 Osmanlı-Rus Savaşı'nı sona erdiren Küçük Kaynarca Antlaşması ile halkı tamamen Müslüman olan hangi bölge Osmanlı'dan ayrılarak bağımsız olmuştur?",
+                options: ["Mısır", "Kırım", "Eflak", "Mora"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Bucaş Antlaşması (1676) Duraklama Dönemi'nde (17. yy) imzalanmış, Batı'da en geniş sınırlara ulaşılan antlaşmadır. Pasarofça, Belgrat ve Küçük Kaynarca ise 18. yüzyıl antlaşmalarıdır.",
+                question: "Aşağıdaki antlaşmalardan hangisi, Prut gibi 18. yüzyılda (XVIII. yy) değil, 17. yüzyılda (XVII. yy) imzalanmış antlaşmalara bir örnektir?",
+                options: ["Pasarofça Antlaşması", "Belgrat Antlaşması", "Bucaş Antlaşması (1676)", "Küçük Kaynarca Antlaşması"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Karadeniz'in tamamen Osmanlı kontrolünde olması durumu (Türk Gölü özelliği), Küçük Kaynarca ile Kırım'ın kaybedilmesi ve Ruslara Karadeniz'de donanma bulundurma hakkı verilmesiyle sona ermiştir.",
+                question: "Küçük Kaynarca Antlaşması ile halkı Müslüman olan Kırım'ın bağımsızlığını kazanmasıyla aşağıdakilerden hangisi gerçekleşmiştir?",
+                options: ["Rusya sıcak denizlere inme politikasından vazgeçmiştir.", "Osmanlı Devleti donanmasını terhis etmiştir.", "Karadeniz'in 'Türk Gölü' olma özelliği sona ermiştir.", "Boğazlar tamamen uluslararası bir statü kazanmıştır."]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Napolyon komutasındaki Fransız ordusunu Suriye (Akkâ) önlerinde durduran Nizam-ı Cedit ordusu ve tecrübeli komutanı Cezzar Ahmet Paşa'dır.",
+                question: "Napolyon komutasındaki Fransız ordusunu Akkâ Kalesi önlerinde durduran ve büyük bir savunma destanı yazan ünlü Osmanlı komutanı aşağıdakilerden hangisidir?",
+                options: ["Alemdar Mustafa Paşa", "Cezzar Ahmet Paşa", "Tepedelenli Ali Paşa", "Pargalı İbrahim Paşa"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "1770 Çeşme baskınından sonra donanmayı yeniden kuran, masraflarını bizzat karşılayan ve evcil aslanıyla bilinen Kaptan-ı Derya, Cezayirli Gazi Hasan Paşa'dır.",
+                question: "1770 yılında Rus donanmasının Çeşme'de Osmanlı donanmasını yakmasının ardından mahvolan donanmayı yeniden kuran ve günümüzde Çeşme'de 'Aslanlı Paşa' olarak heykeli bulunan meşhur Kaptan-ı Deryâ kimdir?",
+                options: ["Barbaros Hayreddin Paşa", "Seydi Ali Reis", "Cezayirli Gazi Hasan Paşa", "Kılıç Ali Paşa"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Kırım 1774'te bağımsız olmuş, 1783'te Rusya tarafından işgal edilmiş ve Osmanlı Devleti 1792 Yaş Antlaşması ile Kırım'ın resmen Rusya'ya ait olduğunu kabul etmiştir.",
+                question: "Kırım'ın resmen bir Rus toprağı olduğunu Osmanlı Devleti'nin kabul ettiği ve onayladığı antlaşma aşağıdakilerden hangisidir?",
+                options: ["Prut Antlaşması", "Belgrat Antlaşması", "Berlin Antlaşması", "1792 Yaş Antlaşması"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Nizam-ı Cedit adı verilen yenilik hareketlerini başlatan III. Selim, 1807 yılında gerici Kabakçı Mustafa İsyanı ile tahttan indirilmiştir.",
+                question: "1807'de patlak veren Kabakçı Mustafa İsyanı ile tahttan indirilen padişah kimdir?",
+                options: ["II. Mahmut", "III. Selim", "I. Abdülhamit", "IV. Mustafa"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Ermeni sorunu ilk defa Ayastefanos Antlaşması'nda geçmiş, ancak bu antlaşma yürürlüğe girmemiştir. Sorunun uluslararası platformda resmen yürürlüğe girdiği yer 1878 Berlin Antlaşması'dır.",
+                question: "Ermeni sorununun uluslararası platformda yürürlüğe girdiği ve bölgede ıslahat yapılmasının resmen kararlaştırıldığı geçerli antlaşma hangisidir?",
+                options: ["Paris Antlaşması", "1878 Berlin Antlaşması", "Londra Boğazlar Sözleşmesi", "Uşi Antlaşması"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Fransa'nın 1798'de Mısır'ı işgali üzerine çıkarları tehlikeye giren İngiltere ve Rusya, Osmanlı'nın yanında savaşa dâhil olmuş; bu durum Osmanlı'nın uyguladığı ilk Denge Politikası olmuştur.",
+                question: "1798'de Fransa'nın Mısır'ı işgali üzerine Uzak Doğu ve Akdeniz'deki çıkarları zedelendiği için Osmanlı Devleti'nin yanında savaşa giren iki devlet hangileridir?",
+                options: ["Avusturya ve Prusya", "Rusya ve Avusturya", "Rusya ve İngiltere", "İngiltere ve İtalya"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Veraset sistemi (Ülke hanedanın ortak malıdır), Türk-İslam devletlerinde padişah/hükümdar öldükten sonra yerine kimin geçeceğini belirleyen kurallar bütünüdür.",
+                question: "Türk-İslam Devletlerinde ve Osmanlı'da uygulanan; devletin hükümdarı öldüğünde onun yerine geçecek yeni hükümdarı belirlemekte kullanılan, temelinde 'ülke hanedanın ortak malıdır' anlayışı yatan usule ne ad verilir?",
+                options: ["İltizam", "Müsadere", "Veraset", "Ekber ve Erşed"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Küçük Kaynarca Antlaşması sonrası elde ettiği haklarla Rusya, Osmanlı tebaası olan Ortodoksların koruyuculuğunu üstlendiğini iddia ederek sürekli içişlerine karışmıştır.",
+                question: "Osmanlı Devleti 18. yüzyılda liderlik özelliğini kaybedince, 'Ortodoks koruyuculuğu' rolünü üstlenerek Osmanlı'nın içişlerine karışma fırsatı bulan devlet hangisidir?",
+                options: ["İngiltere", "Fransa", "Avusturya", "Rusya"]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        function shuffleArray(array) {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        function initQuiz() {
+            questions = shuffleArray(quizData);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            catCoverEl.addEventListener('click', () => catCoverEl.style.display = 'none');
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            const correctText = currentQuestion.options[currentQuestion.correctAnswer.charCodeAt(0) - 65];
+            const shuffledOptions = shuffleArray(currentQuestion.options);
+            
+            optionsEl.innerHTML = '';
+            optionsEl.appendChild(catCoverEl);
+            catCoverEl.style.display = 'flex';
+
+            shuffledOptions.forEach(optionText => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = optionText;
+                button.onclick = () => selectAnswer(optionText, correctText, currentQuestion.meaning);
+                optionsEl.appendChild(button);
+            });
+            
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        function selectAnswer(selectedOption, correctOptionText, meaning) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correctOptionText) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selectedOption) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            const isCorrect = selectedOption === correctOptionText;
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+            }
+
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            feedbackTextEl.innerHTML = isCorrect ? 
+                `<strong>✅ Doğru!</strong><br><br>${meaning}` : 
+                `<strong>❌ Yanlış!</strong><br>Doğru Cevap: ${correctOptionText}<br><br>${meaning}`;
+            
+            nextBtn.style.display = 'block';
+        }
+
+        nextBtn.onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        };
+
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            finalScoreEl.textContent = `Puanınız: ${score} / ${questions.length}`;
+            
+            wordListEl.innerHTML = '<h3 style="margin-bottom:15px;">Genel Tekrar:</h3>';
+            questions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>${q.question}</strong><br><small style="color:var(--primary)">${q.meaning}</small>`;
+                wordListEl.appendChild(card);
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (quizContainer.style.display === 'none') return;
+            if ((e.key === 'Enter' || e.code === 'Space') && nextBtn.style.display === 'block') {
+                if (e.code === 'Space') e.preventDefault();
+                nextBtn.click();
+                return;
+            }
+            if (catCoverEl.style.display !== 'none') {
+                if (['1', '2', '3', '4'].includes(e.key)) {
+                    catCoverEl.style.display = 'none';
+                }
+                return; 
+            }
+            const buttons = document.querySelectorAll('.option-btn');
+            if (buttons.length === 0 || buttons[0].disabled) return;
+            if (e.key === '1' && buttons[0]) buttons[0].click();
+            if (e.key === '2' && buttons[1]) buttons[1].click();
+            if (e.key === '3' && buttons[2]) buttons[2].click();
+            if (e.key === '4' && buttons[3]) buttons[3].click();
+        });
+
+        initQuiz();
+    </script>
+</body>
+</html>

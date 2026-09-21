@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGS Hazırlık: 1739 Sayılı Kanun - Madde 19-25</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gold: #FFD700;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%); color: var(--dark); line-height: 1.6; padding: 15px; min-height: 100vh; }
+        
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow: hidden; }
+        
+        header { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; text-align: center; padding: 25px 20px; position: relative; }
+        header::before { content: "📚"; font-size: 3rem; position: absolute; top: 10px; left: 20px; opacity: 0.3; }
+        h1 { margin-bottom: 8px; font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.1rem; opacity: 0.9; line-height: 1.4; }
+
+        .notes-container { padding: 25px; animation: fadeIn 0.5s ease; }
+        .notes-title { color: var(--primary); margin-bottom: 15px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .notes-scroll-area { max-height: 55vh; overflow-y: auto; background: var(--light); border: 2px solid var(--accent); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        .notes-scroll-area::-webkit-scrollbar { width: 8px; }
+        .notes-scroll-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        .notes-scroll-area h3 { color: var(--dark); border-bottom: 2px solid var(--primary); padding-bottom: 5px; margin-top: 20px; margin-bottom: 10px; }
+        .notes-scroll-area ul { padding-left: 20px; margin-bottom: 15px; }
+        .notes-scroll-area li { margin-bottom: 8px; }
+
+        .numbers-box { background-color: #E3F2FD; border-left: 5px solid #1976D2; padding: 15px; margin: 20px 0; border-radius: 5px; }
+        .numbers-box h3 { color: #1565C0 !important; border-bottom: 2px solid #90CAF9 !important; margin-top: 0 !important; }
+        .numbers-box li { background: white; margin-bottom: 8px; padding: 10px; border-radius: 6px; list-style: none; display: flex; align-items: center; color: #333; }
+        .num-badge { background: #1976D2; color: white; font-weight: bold; padding: 4px 10px; border-radius: 4px; margin-right: 12px; min-width: 65px; text-align: center; }
+
+        .scroll-msg { color: var(--danger); font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; text-align: center; }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        .progress-container { width: 100%; background-color: #e9ecef; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); width: 0%; transition: width 0.5s ease; }
+        .quiz-container { padding: 25px; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; background-color: var(--light); padding: 15px; border-radius: 10px; border: 2px solid var(--accent); }
+        .question-container { background: var(--light); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .options { display: grid; gap: 12px; position: relative; }
+        .cat-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(46, 125, 50, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px; z-index: 10; cursor: pointer; }
+        .cat-image { max-width: 200px; border-radius: 8px; margin-bottom: 10px; }
+        .option-btn { padding: 16px; border: 2px solid #ddd; border-radius: 10px; background: white; cursor: pointer; text-align: left; font-size: 1.1rem; transition: 0.3s; color: #333; }
+        .option-btn.correct { background-color: var(--success); color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .feedback { padding: 20px; border-radius: 10px; margin-top: 20px; display: none; line-height: 1.6; }
+        .next-btn { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none; padding: 16px; border-radius: 10px; cursor: pointer; width: 100%; max-width: 250px; display: block; margin: 20px auto; font-weight: bold; }
+        .next-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .results-container { padding: 30px; text-align: center; display: none; }
+        .final-score { font-size: 3rem; color: var(--accent); font-weight: bold; margin: 20px 0; }
+        .word-card { border: 2px solid var(--accent); padding: 15px; margin-bottom: 15px; background: var(--light); text-align: left; border-radius: 10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ 1739 Sayılı Kanun</h1>
+            <div class="subtitle">
+                İKİNCİ BÖLÜM: Örgün Eğitim<br>
+                Okul Öncesi Eğitimi ve İlköğretim (Madde 19 - 25)
+            </div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <h2 class="notes-title">📖 Ders Notları</h2>
+            <div class="notes-scroll-area" id="notesScrollArea">
+                <h3>1. Okul Öncesi Eğitimi (Madde 19-21)</h3>
+                <ul>
+                    <li><strong>Kapsam:</strong> Mecburi ilköğrenim çağına gelmemiş çocukları (genelde 3-6 yaş) kapsar. Eğitim <strong>isteğe bağlıdır</strong>. <strong style="color: var(--danger); font-size: 0.95em;">(Dikkat İstisna: Özel eğitime ihtiyacı olan çocuklar için okul öncesi eğitim zorunludur.)</strong></li>
+                    <li><strong>Amaçlar:</strong> 
+                        <br>1) Beden, zihin, duygu gelişmesi ve <b>iyi alışkanlıklar</b> kazanmasını sağlamak.
+                        <br>2) İlköğretime hazırlamak.
+                        <br>3) Şartları elverişsiz ailelerden gelen çocuklar için <b>ortak bir yetişme ortamı</b> (fırsat eşitliği) yaratmak.
+                        <br>4) Türkçeyi <b>doğru ve güzel konuşmalarını</b> sağlamak.
+                    </li>
+                    <li><strong>Kuruluş:</strong> Bağımsız anaokulları, ilköğretime bağlı <b>anasınıfları</b> veya diğer öğretim kurumlarına bağlı <b>uygulama sınıfları</b> olarak açılabilir. Nerelerde açılacağı MEB tarafından hazırlanan <b>yönetmelikle</b> belirlenir.</li>
+                </ul>
+
+                <h3>2. İlköğretim (Madde 22-25)</h3>
+                <ul>
+                    <li><strong>Kapsam:</strong> <b>6-14 yaş</b> grubunu kapsar ve <b>mecburidir</b>. O yılın <b>31 Aralık</b> tarihinde <b>72 ayını</b> dolduran çocukların 1. sınıfa kaydı yapılır. Erteleme/erken başlama hususları yönetmelikle düzenlenir.</li>
+                    <li><strong>Amaçlar:</strong>
+                        <br>1) Her Türk çocuğuna <b>iyi bir vatandaş</b> olmak için gerekli temel bilgi, beceri, davranış ve alışkanlıkları kazandırmak; <b>millî ahlak</b> anlayışına uygun yetiştirmek.
+                        <br>2) İlgi ve kabiliyetleri yönünden yetiştirerek <b>hayata ve üst öğrenime hazırlamak</b>.
+                    </li>
+                    <li><strong>Rehberlik Süreci:</strong> İlköğretimin <b>son ders yılının ikinci yarısında</b>, öğrencilere gidebilecekleri lise programları, meslekler ve bu mesleklerin <b>yaşam standardı</b> hakkında rehberlik servislerince tanıtıcı bilgiler verilir.</li>
+                    <li><strong>Kuruluş:</strong> Bağımsız ilkokul ve ortaokul esastır (Ancak imkâna göre liselerle birleşebilir). 4 yıl ilkokul + 4 yıl ortaokul şeklindedir.</li>
+                    <li><strong>Ortaokullar ve Köy Okulları:</strong> Ortaokullarda yeteneğe göre lise hazırlık programları ve <b>seçmeli dersler</b> vardır. <strong style="color: var(--danger); font-size: 0.95em;">(Dikkat: Din Kültürü ve Ahlak Bilgisi ZORUNLU iken; Kur'an-ı Kerim ve Hz. Peygamberimizin Hayatı SEÇMELİDİR.)</strong> Kırsalda, nüfusun dağınık olduğu köylerde öncelikle <b>ilköğretim bölge okulları</b> ve merkezi köyde pansiyon, bu mümkün değilse <b>Yatılı İlköğretim Bölge Okulları (YİBO)</b> kurulur.</li>
+                </ul>
+
+                <div class="numbers-box">
+                    <h3>🔢 Kritik Sayılar ve İfadeler</h3>
+                    <ul>
+                        <li><span class="num-badge">İsteğe Bağlı</span> Okul öncesi eğitimin durumu.</li>
+                        <li><span class="num-badge">İstisna</span> Özel eğitime ihtiyacı olan çocuklarda okul öncesi mecburidir.</li>
+                        <li><span class="num-badge">72 Ay</span> İlkokul 1. sınıf kayıt şartı (31 Aralık itibarıyla).</li>
+                        <li><span class="num-badge">6-14 Yaş</span> Mecburi ilköğretim çağını kapsayan yaş aralığı.</li>
+                        <li><span class="num-badge">2. Yarıyıl</span> Mesleki ve yaşam standardı rehberliğinin yapıldığı zaman (İlköğretimin son yılında).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <p id="scrollMsg" class="scroll-msg">Teste geçmek için notları sonuna kadar kaydırın 👇</p>
+                <button class="next-btn" id="startTestBtn" disabled>Testi Başlat</button>
+            </div>
+        </div>
+
+        <div id="quizSection" style="display: none;">
+            <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+            <div class="quiz-container">
+                <div class="stats">
+                    <div class="score">Puan: <span id="score">0</span></div>
+                    <div>İlerleme: <span id="progress">0</span>/<span id="totalQ"></span></div>
+                </div>
+                <div class="question-container"><div class="question" id="question"></div></div>
+                <div class="options" id="options">
+                    <div class="cat-cover" id="catCover">
+                        <img src="https://cataas.com/cat" class="cat-image" alt="Cat">
+                        <div class="cat-text" style="color:white; font-weight:bold; text-align:center;">Cevapları görmek için tıkla!</div>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback"><div id="feedbackText"></div></div>
+                <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+            </div>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Modül Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p style="margin-bottom: 20px; color: #555;">Tüm soruların açıklamalı özetini aşağıda bulabilirsin:</p>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()">Tekrar Çöz</button>
+        </div>
+    </div>
+
+    <script>
+        const QUIZ_DATA = [
+            // Okul Öncesi Kapsam ve Amaç
+            { question: "Mecburi ilköğrenim çağına gelmemiş çocukların eğitimini kapsayan eğitim kademesi hangisidir?", options: ["Özel Eğitim", "İlkokul", "Okul Öncesi Eğitimi", "Gündüz Bakımevleri"], correctAnswer: 2, meaning: "Madde 19: Okul öncesi eğitimi, mecburi ilköğrenim çağına gelmemiş çocukların eğitimini kapsar." },
+            { question: "Okul öncesi eğitimin katılım durumu ile ilgili kanundaki kesin hüküm nedir?", options: ["Sadece 5 yaş için mecburidir", "Tüm çocuklar için mecburidir", "İsteğe bağlıdır", "Sadece köylerde isteğe bağlıdır"], correctAnswer: 2, meaning: "Madde 19: Bu eğitim (okul öncesi) isteğe bağlıdır." },
+            { question: "Aşağıdakilerden hangisi Okul Öncesi Eğitiminin amaçlarından biri DEĞİLDİR?", options: ["Çocukların beden ve zihin gelişmesini sağlamak", "İyi alışkanlıklar kazanmasını sağlamak", "İyi bir vatandaş olmak için bilgi kazandırmak", "Onları ilköğretime hazırlamak"], correctAnswer: 2, meaning: "İyi vatandaş yetiştirmek İlköğretimin (Madde 23) amacıdır." },
+            { question: "Çocukların Türkçeyi doğru ve güzel konuşmalarını sağlamak hangi eğitim kademesinin spesifik amaçlarındandır?", options: ["Ortaokul", "İlkokul", "Okul Öncesi", "Lise"], correctAnswer: 2, meaning: "Madde 20/4: Türkçeyi doğru ve güzel konuşmalarını sağlamak Okul Öncesinin amacıdır." },
+            { question: "Şartları elverişsiz çevrelerden ve ailelerden gelen çocuklar için 'ortak bir yetişme ortamı yaratmak' kanunda hangi kademenin görevleri arasında sayılmıştır?", options: ["İlköğretim", "Okul Öncesi Eğitimi", "Ortaöğretim", "Özel Eğitim"], correctAnswer: 1, meaning: "Madde 20/3: Dezavantajlı çocuklar için fırsat eşitliği sunmak Okul Öncesinin görevidir." },
+            { question: "Anaokulunda çocuklara yemekten önce el yıkama kuralının öğretilmesi, kanundaki hangi amaca örnektir?", options: ["İlköğretime hazırlamak", "Duygu gelişmesini sağlamak", "İyi alışkanlıklar kazanmasını sağlamak", "Millî ahlaka uygun yetiştirmek"], correctAnswer: 2, meaning: "El yıkama, eşyalarını toplama gibi davranışlar Madde 20/1'deki 'iyi alışkanlıklar' kapsamındadır." },
+            { question: "Öğrencilerin sınıf kurallarını, sıraya girmeyi ve öğretmeni dinlemeyi öğrenmesi temel olarak okul öncesinin hangi amaca hizmet etmesi içindir?", options: ["Beden gelişimi sağlamak", "İlköğretime hazırlamak", "Ortak ortam yaratmak", "Türkçeyi güzelleştirmek"], correctAnswer: 1, meaning: "Akademik ve sosyal kuralların öğrenilmesi doğrudan 'ilköğretime hazırlamak' (Madde 20/2) amacıdır." },
+            { question: "Çocukların resim yaparak veya drama etkinlikleriyle kendilerini ifade etmeleri, okul öncesinin hangi gelişim alanı hedefini destekler?", options: ["Duygu gelişmesi", "Beden gelişmesi", "Dil gelişmesi", "Fiziksel gelişim"], correctAnswer: 0, meaning: "Drama ve resimle ifade Madde 20/1'deki 'duygu gelişmesi' kapsamına girer." },
+            { question: "Hafıza oyunları ve yapbozlar, okul öncesi eğitimde hangi gelişim alanını doğrudan hedefler?", options: ["Beden", "Zihin", "Duygu", "Ahlak"], correctAnswer: 1, meaning: "Düşünme ve problem çözme etkinlikleri Madde 20/1'deki 'zihin gelişmesi' altındadır." },
+            { question: "Ahmet'in devlet destekli bir anaokuluna giderek, daha varlıklı ailelerin çocuklarıyla aynı gelişim fırsatlarını yakalaması hangi ilkeye örnektir?", options: ["Türkçeyi güzel konuşmak", "Şartları elverişsiz çevreler için ortak yetişme ortamı yaratmak", "İlköğretime hazırlık", "Mecburi katılım"], correctAnswer: 1, meaning: "Madde 20/3 uyarınca sosyoekonomik fırsat eşitliği yaratmak temel bir amaçtır." },
+
+            // İstisna Soruları
+            { question: "Okul öncesi eğitim genel kural olarak 'isteğe bağlı' olmakla birlikte, mevzuatımız gereği hangi grup çocuklar için bu kademe ZORUNLUDUR?", options: ["Kırsal kesimde yaşayan çocuklar", "Özel eğitime ihtiyacı olan çocuklar", "Şartları elverişsiz ailelerden gelen çocuklar", "Yabancı uyruklu çocuklar"], correctAnswer: 1, meaning: "Kanunda genel kural isteğe bağlılık olsa da, özel eğitime ihtiyacı olan çocuklar için okul öncesi eğitim zorunludur. Sınavlarda hayat kurtaran bir istisnadır." },
+            { question: "Ortaokullarda okutulan dini içerikli derslerle ilgili aşağıdaki ifadelerden hangisi doğrudur?", options: ["Tüm dini dersler isteğe bağlı seçmelidir", "Din Kültürü ve Ahlak Bilgisi zorunlu, Kur'an-ı Kerim ve Hz. Peygamberimizin Hayatı seçmelidir", "Kur'an-ı Kerim zorunlu, diğerleri seçmelidir", "Sadece imam-hatip ortaokullarında dini dersler zorunludur"], correctAnswer: 1, meaning: "Din Kültürü ve Ahlak Bilgisi zorunlu okutulan derslerdendir. Madde 25 uyarınca Kur'an-ı Kerim ve Hz. Peygamberimizin Hayatı ise isteğe bağlı seçmeli derslerdir." },
+
+            // Okul Öncesi Kuruluş
+            { question: "Aşağıdakilerden hangisi okul öncesi eğitim kurumlarının kuruluş şekillerinden biri DEĞİLDİR?", options: ["Bağımsız anaokulları", "İlköğretime bağlı anasınıfları", "Diğer kurumlara bağlı uygulama sınıfları", "Merkezi yatılı anaokulları"], correctAnswer: 3, meaning: "Madde 21'de bağımsız anaokulu, anasınıfı ve uygulama sınıfı geçmektedir. Yatılı anaokulu yoktur." },
+            { question: "İlköğretim okulu bünyesinde açılan okul öncesi kurumlara ne ad verilir?", options: ["Bağımsız Anaokulu", "Uygulama Sınıfı", "Anasınıfı", "Hazırlık Sınıfı"], correctAnswer: 2, meaning: "Madde 21: İlköğretim okuluna bağlı açılanlara anasınıfı denir." },
+            { question: "Üniversitelerin çocuk gelişimi bölümlerine bağlı olarak açılan okul öncesi sınıfları kanunda nasıl adlandırılır?", options: ["Anasınıfı", "Bağımsız Anaokulu", "Uygulama Sınıfı", "Pilot Sınıf"], correctAnswer: 2, meaning: "Madde 21: İlgili diğer öğretim kurumlarına bağlı olarak açılanlara 'uygulama sınıfları' denir." },
+            { question: "Okul öncesi eğitim kurumlarının nerelerde ve hangi önceliklere göre açılacağı ne ile düzenlenir?", options: ["Cumhurbaşkanı Kararıyla", "Milli Eğitim Bakanlığı Yönetmeliğiyle", "Kanun Hükmünde Kararnameyle", "İl İdaresi Kanunuyla"], correctAnswer: 1, meaning: "Madde 21/2: Millî Eğitim Bakanlığınca hazırlanacak bir yönetmelikle düzenlenir." },
+            { question: "Okul öncesi eğitim kurumlarının nerelerde açılacağına dair yönetmeliği hazırlamak kimin görevidir?", options: ["Cumhurbaşkanlığı", "İçişleri Bakanlığı", "Millî Eğitim Bakanlığı", "Maliye Bakanlığı"], correctAnswer: 2, meaning: "Madde 21/2 uyarınca bu yetki Milli Eğitim Bakanlığındadır." },
+
+            // İlköğretim Kapsam ve Yaş
+            { question: "Mecburi ilköğretim çağı hangi yaş grubundaki çocukları kapsar?", options: ["5-14", "6-14", "7-15", "6-15"], correctAnswer: 1, meaning: "Madde 22: Mecburi ilköğretim çağı, 6-14 yaş grubundaki çocukları kapsar." },
+            { question: "İlkokul birinci sınıfa kayıt yaptıracak bir çocuğun, o yılın 31 Aralık tarihi itibarıyla kaç ayını doldurmuş olması KURALDIR?", options: ["60 ay", "66 ay", "72 ay", "78 ay"], correctAnswer: 2, meaning: "Madde 22: O yılın 31 Aralık tarihinde 72 ayını dolduran çocukların kaydı yapılır." },
+            { question: "Bir çocuğun ilkokul birinci sınıfa kaydı için yaş hesaplamasında hangi tarih esas alınır?", options: ["Okulların açıldığı gün", "O yılın 1 Eylül tarihi", "O yılın 31 Aralık tarihi", "Çocuğun doğduğu ay"], correctAnswer: 2, meaning: "Madde 22: Kilit tarih 'o yılın 31 Aralık tarihi' olarak belirlenmiştir." },
+            { question: "Çocuğun gelişim durumuna bağlı olarak ilkokula erken başlaması veya kaydının ertelenmesi ile ilgili hususlar nasıl düzenlenir?", options: ["Veli dilekçesiyle", "Okul müdürünün takdiriyle", "İlçe Eğitim Kurulu Kararıyla", "Yönetmelikle"], correctAnswer: 3, meaning: "Madde 22: Erken başlama veya ertelenmesi ile ilgili hususlar yönetmelikle düzenlenir." },
+            { question: "1739 Sayılı Kanuna göre ilköğretim kademesinin zorunluluk durumu nedir?", options: ["İsteğe bağlıdır", "Kısmen mecburidir", "Mecburidir", "Sadece erkek çocuklar için mecburidir"], correctAnswer: 2, meaning: "Madde 22'de açıkça 'Mecburi ilköğretim çağı' ibaresi kullanılmıştır." },
+
+            // İlköğretim Amaçlar
+            { question: "Her Türk çocuğuna iyi bir vatandaş olmak için gerekli temel bilgi ve becerileri kazandırmak hangi kademenin amacıdır?", options: ["Okul Öncesi", "İlköğretim", "Ortaöğretim", "Yükseköğretim"], correctAnswer: 1, meaning: "Madde 23/1: İlköğretimin ilk temel amacı iyi vatandaş yetiştirmektir." },
+            { question: "Çocukları millî ahlak anlayışına uygun olarak yetiştirmek hangi eğitim kademesinin amaçlarındandır?", options: ["İlköğretim", "Okul Öncesi", "Yaygın Eğitim", "Mesleki Eğitim"], correctAnswer: 0, meaning: "Madde 23/1: İlköğretimin amaçlarındandır." },
+            { question: "Öğrencilere dürüstlük, adalet ve topluma saygı gibi davranışların kazandırılması İlköğretimin hangi amacının altındadır?", options: ["Hayata ve üst öğrenime hazırlamak", "İlgi ve istidatları yönünde yetiştirmek", "Onu millî ahlak anlayışına uygun olarak yetiştirmek", "Rehberlik servislerince meslekleri tanıtmak"], correctAnswer: 2, meaning: "Dürüstlük ve adalet kavramları Madde 23'teki 'millî ahlak' anlayışına girer." },
+            { question: "Her Türk çocuğunu ilgi, istidat ve kabiliyetleri yönünden yetiştirerek 'hayata ve üst öğrenime hazırlamak' hangi kademenin amacıdır?", options: ["Okul Öncesi", "İlköğretim", "Halk Eğitim", "Lise"], correctAnswer: 1, meaning: "Madde 23/2: Yeteneklerine göre üst öğrenime hazırlamak ilköğretimin temel bir görevidir." },
+            { question: "İlköğretim kademesinde görev yapan bir öğretmenin, matematiğe yetenekli bir öğrencisini problem çözme etkinlikleriyle lise sınavlarına (üst öğrenime) hazırlaması kanundaki hangi yasal amaca hizmet eder?", options: ["Milli ahlaka uygun yetiştirmek", "İyi vatandaş yetiştirmek", "İlgi ve kabiliyetleri yönünden hayata ve üst öğrenime hazırlamak", "Şartları elverişsiz ailelere destek olmak (Okul Öncesi)"], correctAnswer: 2, meaning: "Yeteneklerin keşfi ve üst öğrenim hazırlığı İlköğretimin amaçlarındandır (Madde 23/2). Şartları elverişsiz ailelere destek olmak ise Okul Öncesinin amacıdır." },
+            { question: "İlköğretimde kariyer planlaması ve meslek tanıtımına yönelik yasal rehberlik çalışmaları ne zaman yapılır?", options: ["Ortaokulun ilk yılında", "İlköğretimin son ders yılının ikinci yarısında", "İlkokul dördüncü sınıfın sonunda", "Ortaokul süresince her dönem"], correctAnswer: 1, meaning: "Madde 23/3'te rehberliğin zamanı spesifik olarak 'İlköğretimin son ders yılının ikinci yarısında' şeklinde belirtilmiştir." },
+            { question: "İlköğretimin son ders yılının ikinci yarısında rehberlik servisleri KANUNA GÖRE aşağıdaki konulardan hangisinde tanıtıcı bilgi verir?", options: ["Öğrencinin alması gereken lise ders notları", "Gidilecek mesleklerin sağlayacağı yaşam standardı", "Üniversiteye giriş sınavı sistemi", "Lisedeki disiplin yönetmeliği"], correctAnswer: 1, meaning: "Kanun metninde spesifik olarak 'bu mesleklerin kendilerine sağlayacağı yaşam standardı konusunda' ibaresi geçer." },
+            { question: "Sekizinci sınıfın ikinci döneminde, öğrencilere gidebilecekleri lise türlerinin yol açacağı meslekler hakkında bilgi verilmesi kanunun hangi maddesinin bir gereğidir?", options: ["Madde 20 (Okul öncesi amaç)", "Madde 23 (İlköğretim amaç)", "Madde 25 (İlköğretim kuruluş)", "Madde 19 (Kapsam)"], correctAnswer: 1, meaning: "Meslek tanıtımı ve rehberlik, Madde 23'te yer alan İlköğretim amaçlarındandır." },
+
+            // İlköğretim Kuruluş, Ortaokullar, YİBO
+            { question: "İlköğretim kurumlarının kuruluş esası bakımından temel kural nedir?", options: ["Liselerle bitişik kurulması esastır", "İlkokul ve ortaokul olarak bağımsız okullar hâlinde kurulması esastır", "Tüm okulların yatılı olması esastır", "İlkokul, ortaokul ve lisenin tek kampüste olması esastır"], correctAnswer: 1, meaning: "Madde 24: İlköğretim kurumlarının bağımsız okullar halinde kurulması esastır." },
+            { question: "Ortaokullar, imkân ve şartların elvermediği durumlarda istisnai olarak neyle BİRLİKTE kurulabilir?", options: ["Sadece ilkokullarla", "Sadece liselerle", "İlkokullarla veya liselerle", "Hiçbir kurumla birleşemez"], correctAnswer: 2, meaning: "Madde 24: İmkân ve şartlara göre ortaokullar, ilkokullarla veya liselerle birlikte de kurulabilir." },
+            { question: "Kanuna göre ilköğretim kademesinin eğitim süresi dağılımı nasıldır?", options: ["8 yıl kesintisiz", "5 yıllık ilkokul, 3 yıllık ortaokul", "4 yıllık ilkokul, 4 yıllık ortaokul", "3 yıl ilkokul, 5 yıl ortaokul"], correctAnswer: 2, meaning: "Madde 25: İlköğretim, dört yıllık ilkokul ve dört yıllık ortaokuldan oluşur." },
+            { question: "Ortaokullarda öğrencilerin ilgilerine göre lise eğitimine hazırlık amacıyla hangi programlar oluşturulabilir?", options: ["Sadece dini ağırlıklı programlar", "Fen, sosyal bilimler veya yabancı dil ağırlıklı programlar", "Sadece mesleki atölye programları", "İlkokul tekrar programları"], correctAnswer: 1, meaning: "Madde 25 uyarınca, ortaokullarda lise eğitimine hazırlık için fen, sosyal bilimler veya yabancı dil ağırlıklı programlar oluşturulabilir." },
+            { question: "Kur'an-ı Kerim ve Hz. Peygamberimizin Hayatı derslerinin ortaokullardaki KANUNİ durumu nedir?", options: ["Zorunlu derslerdir", "Sadece imam-hatipte zorunludur", "İsteğe bağlı seçmeli derslerdir", "Sadece lisede verilirler"], correctAnswer: 2, meaning: "Madde 25: Ortaokullarda bu dersler isteğe bağlı seçmeli ders olarak uygulanır." },
+            { question: "İmam-Hatip ortaokullarında, dini bilgilerin yanı sıra başka hangi derslerin verilmesi KANUNDA güvence altına alınmıştır?", options: ["Mesleki eğitim dersleri", "Üniversite hazırlık dersleri", "Genel ortaokullardaki ders programları", "Sadece seçmeli genel kültür dersleri"], correctAnswer: 2, meaning: "Madde 25: Temel dini bilgilerin yanı sıra, öğrencilerin genel ortaokullardaki ders programlarından da faydalanması sağlanır." },
+            { question: "Nüfusun az ve dağınık olduğu köylerde çocukların ilköğretime erişimi için İLK AŞAMADA hangi çözüm uygulanır?", options: ["Gezici öğretmenler atanır", "İlköğretim bölge okulları ve merkezi köyde pansiyonlar kurulur", "Yatılı ilköğretim bölge okulu (YİBO) kurulur", "Çocuklar şehir merkezine gönderilir"], correctAnswer: 1, meaning: "Madde 25: Önce bölge okulları ve merkezi köyde pansiyonlar oluşturulur. Bu mümkün değilse YİBO kurulur." },
+            { question: "Nüfusun çok dağınık olduğu ve merkezi köyde pansiyon kurmanın dahi mümkün olmadığı yerleşimlerde hangi kurumlar kurulur?", options: ["Açık Öğretim Ortaokulu", "Yatılı İlköğretim Bölge Okulları (YİBO)", "Köy Enstitüleri", "Geçici Köy Okulları"], correctAnswer: 1, meaning: "Madde 25: Pansiyonlu bölge okulu imkanı yoksa, çocukların barınması için YİBO kurulur." },
+            { question: "Yatılı İlköğretim Bölge Okullarının (YİBO) temel kuruluş amacı hangi seçenekte doğru özetlenmiştir?", options: ["Zeki çocukları şehirden izole edip okutmak", "Kırsal kesimde eğitime erişim ve barınma sorununu çözmek", "Şehirlerdeki okul kalabalığını azaltmak", "Özel yetenekli çocukları bir araya toplamak"], correctAnswer: 1, meaning: "YİBO'lar nüfusu az/dağınık yerleşimlerde barınma ve eğitim hizmetini bir arada sunmak içindir." },
+            { question: "Bir öğrencinin ortaokulda kendi yeteneğine göre görsel sanatlar veya yabancı dil dersi alabilmesi sistemin hangi özelliğinin sonucudur?", options: ["Zorunlu eğitimin", "Ortaokullarda uygulanan seçmeli ders sisteminin", "İyi vatandaş yetiştirme amacının", "Dört yıllık ilkokul yapısının"], correctAnswer: 1, meaning: "Madde 25'e göre ortaokullar öğrencilere seçmeli dersler aracılığıyla ilgi geliştirme fırsatı sunar." },
+
+            // Karşılaştırmalı Karma Sorular
+            { question: "KAPSAM açısından değerlendirildiğinde aşağıdakilerden hangisi doğrudur?", options: ["Okul öncesi 3-6 yaş mecburi, İlköğretim 7-15 yaş mecburi", "Okul öncesi mecburi değil, İlköğretim mecburidir", "Her ikisi de mecburi değildir", "Okul öncesi sadece kırsalda mecburidir"], correctAnswer: 1, meaning: "Okul öncesi isteğe bağlı (Madde 19), ilköğretim mecburidir (Madde 22)." },
+            { question: "Aşağıdaki amaçlardan hangisi Okul Öncesi Eğitime aitken, İlköğretim amaçları arasında YER ALMAZ?", options: ["Hayata hazırlamak", "Üst öğrenime hazırlamak", "Türkçeyi doğru ve güzel konuşmalarını sağlamak", "İyi bir vatandaş yetiştirmek"], correctAnswer: 2, meaning: "Türkçeyi güzelleştirmek Okul Öncesinin (Madde 20/4) spesifik amacıdır." },
+            { question: "Aşağıdaki amaçlardan hangisi İlköğretim kademesine aitken, Okul Öncesine ait DEĞİLDİR?", options: ["Duygu gelişmesini sağlamak", "İyi alışkanlıklar kazandırmak", "Millî ahlak anlayışına uygun yetiştirmek", "Ortak bir yetişme ortamı yaratmak"], correctAnswer: 2, meaning: "Milli ahlaka uygun yetiştirmek İlköğretimin (Madde 23) ilk amacıdır." },
+            { question: "'Şartları elverişsiz çevrelerden ve ailelerden gelen çocuklar için ortak bir yetişme ortamı yaratmak' kanunda hangi kademenin amacıdır?", options: ["YİBO", "İlköğretim", "Okul Öncesi Eğitim", "Halk Eğitim"], correctAnswer: 2, meaning: "En yaygın çeldiricidir! 'Ortak ortam yaratmak' Okul Öncesinin (Madde 20) amacıdır. YİBO bir kuruluş şeklidir." },
+            { question: "Kanunda 'İyi alışkanlıklar kazandırmak' ve 'İyi bir vatandaş olmak' hedefleri sırasıyla hangi kademelerde geçer?", options: ["İlköğretim - Okul Öncesi", "Okul Öncesi - İlköğretim", "İlköğretim - Ortaöğretim", "Okul Öncesi - Lise"], correctAnswer: 1, meaning: "İyi alışkanlık -> Okul Öncesi (Madde 20). İyi vatandaş -> İlköğretim (Madde 23)." },
+            { question: "Kuruluş şekilleri karşılaştırıldığında, 'Uygulama Sınıfları' ifadesi hangi eğitim kademesine aittir?", options: ["İlköğretim", "Yükseköğretim", "Okul Öncesi Eğitim", "Açık Öğretim"], correctAnswer: 2, meaning: "Uygulama sınıfları, ilgili öğretim kurumlarına bağlı açılan okul öncesi kurumlardır (Madde 21)." },
+            { question: "İlköğretim çağındaki çocuklara rehberlik hizmeti (meslek tanıtımı vb.) tam olarak ne zaman verilmeye başlanır?", options: ["İlkokula başlar başlamaz", "Ortaokul 1. sınıfta", "İlköğretimin son ders yılının ikinci yarısında", "İlköğretim boyunca sürekli olarak"], correctAnswer: 2, meaning: "Madde 23/3 gereğince, son ders yılının (8. sınıf) ikinci yarısında yapılır." },
+            { question: "Bir okuldaki rehberlik servisi, öğrencilere mesleklerin yaşam standartları hakkında sunum yapıyorsa, bu öğrenciler muhtemelen hangi sınıftadır?", options: ["İlkokul 4. sınıf", "Lise 1. sınıf", "Ortaokul 8. sınıf 2. dönem", "Ortaokul 6. sınıf 1. dönem"], correctAnswer: 2, meaning: "Madde 23/3, bu spesifik rehberlik hizmetini 8. sınıfın (ilköğretimin son yılının) 2. yarısına tanımlar." },
+            { question: "72 ay kriteri, kanunda hangi işlem için temel kural olarak belirlenmiştir?", options: ["Anaokulundan mezun olmak için", "Ortaokula kayıt olmak için", "İlkokul birinci sınıfa kayıt olmak için", "İmam-hatip ortaokulu seçmek için"], correctAnswer: 2, meaning: "Madde 22: O yılın 31 Aralık tarihinde 72 ayını dolduran çocukların 1. sınıfa kaydı yapılır." },
+            { question: "Kanuna göre lise eğitimine hazırlık amacıyla 'fen, sosyal bilimler veya yabancı dil ağırlıklı programlar' aşağıdakilerden hangisinde oluşturulabilir?", options: ["Sadece İmam-Hatip Ortaokullarında", "Genel Ortaokullarda (Ortaokullarda)", "İlkokulların dördüncü sınıfında", "Okul öncesi uygulama sınıflarında"], correctAnswer: 1, meaning: "Madde 25: Ortaokullarda öğrencilerin tercihine göre lise eğitimine hazırlık amacıyla bu programlar oluşturulabilir." }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0; this.score = 0; this.questions = [];
+                this.elements = {
+                    question: document.getElementById('question'), options: document.getElementById('options'),
+                    feedback: document.getElementById('feedback'), feedbackText: document.getElementById('feedbackText'),
+                    nextBtn: document.getElementById('nextBtn'), score: document.getElementById('score'),
+                    progress: document.getElementById('progress'), totalQ: document.getElementById('totalQ'),
+                    progressBar: document.getElementById('progressBar'), catCover: document.getElementById('catCover'),
+                    resultsContainer: document.getElementById('resultsContainer'), quizSection: document.getElementById('quizSection'),
+                    finalScore: document.getElementById('finalScore'), wordList: document.getElementById('wordList')
+                };
+                this.init();
+            }
+            init() {
+                this.questions = [...QUIZ_DATA].sort(() => Math.random() - 0.5);
+                this.elements.totalQ.textContent = this.questions.length;
+                this.elements.catCover.onclick = () => this.elements.catCover.style.display = 'none';
+                this.elements.nextBtn.onclick = () => this.nextQuestion();
+                this.showQuestion();
+            }
+            showQuestion() {
+                const q = this.questions[this.currentQuestionIndex];
+                this.elements.question.textContent = q.question;
+                this.elements.catCover.style.display = 'flex';
+                this.elements.options.innerHTML = '';
+                this.elements.options.appendChild(this.elements.catCover);
+                
+                const optionsWithIndex = q.options.map((opt, i) => ({ text: opt, isCorrect: i === q.correctAnswer }));
+                optionsWithIndex.sort(() => Math.random() - 0.5);
+
+                optionsWithIndex.forEach(optData => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn'; btn.textContent = optData.text;
+                    btn.onclick = () => this.handleAnswer(optData.text, optData.isCorrect, q.options[q.correctAnswer], q);
+                    this.elements.options.appendChild(btn);
+                });
+                this.elements.feedback.style.display = 'none';
+                this.elements.nextBtn.style.display = 'none';
+                this.elements.progress.textContent = this.currentQuestionIndex + 1;
+                this.elements.progressBar.style.width = `${((this.currentQuestionIndex + 1) / this.questions.length) * 100}%`;
+            }
+            handleAnswer(selectedText, isCorrect, correctText, q) {
+                document.querySelectorAll('.option-btn').forEach(b => {
+                    b.disabled = true;
+                    if (b.textContent === correctText) b.classList.add('correct');
+                    if (b.textContent === selectedText && !isCorrect) b.classList.add('incorrect');
+                });
+                
+                if (isCorrect) { this.score++; this.elements.score.textContent = this.score; }
+                
+                this.elements.feedback.style.display = 'block';
+                this.elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+                this.elements.feedback.style.borderLeftColor = isCorrect ? 'var(--success)' : 'var(--danger)';
+                this.elements.feedback.style.backgroundColor = isCorrect ? 'rgba(56, 142, 60, 0.1)' : 'rgba(198, 40, 40, 0.1)';
+                this.elements.feedbackText.innerHTML = isCorrect 
+                    ? `✅ Doğru!<br><small style="color:#444; display:inline-block; margin-top:5px;">Açıklama: ${q.meaning}</small>` 
+                    : `❌ Yanlış!<br>Doğru Cevap: <strong>${correctText}</strong><br><small style="color:#444; display:inline-block; margin-top:5px;">Açıklama: ${q.meaning}</small>`;
+                this.elements.nextBtn.style.display = 'block';
+            }
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) this.showQuestion();
+                else this.endQuiz();
+            }
+            endQuiz() {
+                this.elements.quizSection.style.display = 'none';
+                this.elements.resultsContainer.style.display = 'block';
+                const p = Math.round((this.score / this.questions.length) * 100);
+                this.elements.finalScore.textContent = `${this.score}/${this.questions.length} (%${p})`;
+                QUIZ_DATA.forEach((i, index) => {
+                    const d = document.createElement('div'); d.className = 'word-card';
+                    d.innerHTML = `<strong>${index + 1}. ${i.question}</strong><p style="margin-top:5px; color:#1B5E20">✅ ${i.options[i.correctAnswer]}</p><p style="margin-top:5px; font-size:0.9em; color:#555"><em>Açıklama: ${i.meaning}</em></p>`;
+                    this.elements.wordList.appendChild(d);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const scroll = document.getElementById('notesScrollArea');
+            const btn = document.getElementById('startTestBtn');
+            const msg = document.getElementById('scrollMsg');
+            
+            const checkScroll = () => {
+                if (scroll.scrollTop + scroll.clientHeight >= scroll.scrollHeight - 20) { 
+                    btn.disabled = false; msg.style.display = 'none'; 
+                }
+            };
+            
+            scroll.addEventListener('scroll', checkScroll);
+            setTimeout(checkScroll, 500);
+
+            btn.onclick = () => {
+                document.getElementById('notesContainer').style.display = 'none';
+                document.getElementById('quizSection').style.display = 'block';
+                new QuizManager();
+            };
+        });
+    </script>
+</body>
+</html>

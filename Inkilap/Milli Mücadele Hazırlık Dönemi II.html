@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milli Mücadele Hazırlık Dönemi II</title>
+    <style>
+        :root {
+            --primary: #2E8B57;
+            --success: #228B22;
+            --danger: #B22222;
+            --light: #F5FFFA;
+            --dark: #2F4F4F;
+            --accent: #32CD32;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E8B57 0%, #32CD32 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "📜";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 139, 87, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(46, 139, 87, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(34, 139, 34, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 139, 87, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-erzurum { background: #2E8B57; }
+        .category-sivas { background: #228B22; }
+        .category-amasyagorusme { background: #32CD32; }
+        .category-misakimilli { background: #2E8B57; }
+        .category-kararlar { background: #228B22; }
+        .category-tanimkronoloji { background: #32CD32; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option-btn {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .cat-image {
+                max-width: 150px;
+                max-height: 120px;
+            }
+            
+            .cat-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📜 Milli Mücadele Hazırlık Dönemi II</h1>
+            <div class="subtitle">Erzurum, Sivas, Amasya Görüşmeleri ve Misakımillî Testi</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        // GÜNCELLENMİŞ 18 SORULUK MİLLİ MÜCADELE HAZIRLIK DÖNEMİ II TESTİ
+        const quizData = [
+            // BÖLÜM 6: ERZURUM KONGRESİ (DEVAM) - YENİ SORULAR
+            {
+                word: "Erzurum Kongresi kararlarından 'Millî sınırlar içinde vatan bir bütündür, bölünemez.' maddesi ile ilgili aşağıdaki yargılardan hangisi yanlıştır?",
+                meaning: "Bu karar, Sivas Kongresi'nde tartışılmış ve reddedilmiştir",
+                category: "Erzurum Kongresi",
+                question: "Erzurum Kongresi kararlarından 'Millî sınırlar içinde vatan bir bütündür, bölünemez.' maddesi ile ilgili aşağıdaki yargılardan hangisi yanlıştır?",
+                options: [
+                    "Vatanın sınırlarından ilk kez bu kararla bahsedilmiştir",
+                    "Bu karar, Sivas Kongresi'nde tartışılmış ve reddedilmiştir",
+                    "Misakımillî'de aynen kabul edilmiştir",
+                    "Ulusal bağımsızlığın toprak bütünlüğü boyutunu ortaya koyar"
+                ],
+                explanation: "Bu karar Sivas Kongresi'nde reddedilmemiş, aksine genişletilerek kabul edilmiş ve daha sonra Misakımillî'de de yer almıştır."
+            },
+            {
+                word: "Erzurum Kongresi'nde alınan 'Kuvayımilliye'yi etkin, millî iradeyi hâkim kılmak esastır.' kararı, aşağıdaki ilkelerden hangilerinin birlikte gerçekleşeceğini vurgulamıştır?",
+                meaning: "Ulusal bağımsızlık – Ulusal egemenlik",
+                category: "Erzurum Kongresi",
+                question: "Erzurum Kongresi'nde alınan 'Kuvayımilliye'yi etkin, millî iradeyi hâkim kılmak esastır.' kararı, aşağıdaki ilkelerden hangilerinin birlikte gerçekleşeceğini vurgulamıştır?",
+                options: [
+                    "Tam bağımsızlık – Halkçılık",
+                    "Ulusal bağımsızlık – Ulusal egemenlik",
+                    "Devletçilik – Laiklik",
+                    "Cumhuriyetçilik – İnkılapçılık"
+                ],
+                explanation: "Kuvayımilliye ulusal bağımsızlığı, millî irade ise ulusal egemenliği temsil eder. Bu kararla iki ilkenin birlikte gerçekleştirileceği vurgulanmıştır."
+            },
+            {
+                word: "'Hristiyan azınlıklara, siyasi ve sosyal dengemizi bozucu ayrıcalıklar verilemez.' kararı aşağıdaki kongrelerin hangisinde alınmış olup bu kararla asıl olarak ne amaçlanmıştır?",
+                meaning: "Erzurum Kongresi – Ülkenin siyasi ve sosyal bütünlüğünün korunması, ayrıcalıkların önlenmesi",
+                category: "Erzurum Kongresi",
+                question: "'Hristiyan azınlıklara, siyasi ve sosyal dengemizi bozucu ayrıcalıklar verilemez.' kararı aşağıdaki kongrelerin hangisinde alınmış olup bu kararla asıl olarak ne amaçlanmıştır?",
+                options: [
+                    "Sivas Kongresi – Azınlık haklarının genişletilmesi",
+                    "Erzurum Kongresi – Ülkenin siyasi ve sosyal bütünlüğünün korunması, ayrıcalıkların önlenmesi",
+                    "Balıkesir Kongresi – Yabancı devletlerle iş birliğinin kolaylaştırılması",
+                    "Amasya Genelgesi – Misakımillî sınırlarının daraltılması"
+                ],
+                explanation: "Bu karar Erzurum Kongresi'nde alınmıştır ve Osmanlı döneminde azınlıklara verilen kapitülasyon benzeri ayrıcalıklara son vererek ülkenin siyasi ve sosyal bütünlüğünü korumayı amaçlamaktadır."
+            },
+            {
+                word: "'Ulusal güçler, padişahı ve saltanat makamını düştüğü bu durumdan kurtaracaktır.' kararı aşağıdaki kongrelerin hangisinde alınmış olup bu kararla asıl olarak ne amaçlanmıştır?",
+                meaning: "Erzurum Kongresi – Saltanat yanlılarının Millî Mücadele'ye çekilmesi",
+                category: "Erzurum Kongresi",
+                question: "'Ulusal güçler, padişahı ve saltanat makamını düştüğü bu durumdan kurtaracaktır.' kararı aşağıdaki kongrelerin hangisinde alınmış olup bu kararla asıl olarak ne amaçlanmıştır?",
+                options: [
+                    "Sivas Kongresi – İstanbul Hükûmeti ile doğrudan çatışmaya girilmesi",
+                    "Erzurum Kongresi – Saltanat yanlılarının Millî Mücadele'ye çekilmesi",
+                    "Sivas Kongresi – Halifelik makamının ortadan kaldırılması",
+                    "Erzurum Kongresi – Padişahın siyasi gücünün artırılması"
+                ],
+                explanation: "Bu karar, ulusal egemenlik ilkesiyle çelişse de stratejik olarak saltanat ve halifelik yanlılarının desteğini almak ve geniş bir toplumsal taban oluşturmak için Erzurum Kongresi'nde alınmıştır."
+            },
+            {
+                word: "'Ulusal sınırları amacı olmayan herhangi bir devletten dış yardım alınabilir.' kararı aşağıdaki kongrelerin hangisinde alınmış olup Millî Mücadele'ye bu doğrultuda en fazla destek veren devlet hangisidir?",
+                meaning: "Erzurum Kongresi – Sovyet Rusya",
+                category: "Erzurum Kongresi",
+                question: "'Ulusal sınırları amacı olmayan herhangi bir devletten dış yardım alınabilir.' kararı aşağıdaki kongrelerin hangisinde alınmış olup Millî Mücadele'ye bu doğrultuda en fazla destek veren devlet hangisidir?",
+                options: [
+                    "Sivas Kongresi – Amerika Birleşik Devletleri",
+                    "Erzurum Kongresi – Sovyet Rusya",
+                    "Balıkesir Kongresi – Fransa",
+                    "Amasya Genelgesi – İngiltere"
+                ],
+                explanation: "Bu karar Erzurum Kongresi'nde alınmıştır. Sovyet Rusya, Millî Mücadele'ye silah, cephane ve para yardımı yaparak en büyük dış desteği sağlamıştır."
+            },
+            {
+                word: "Erzurum Kongresi'nin sonucunda oluşturulan ve başkanlığını Mustafa Kemal'in yaptığı yapı aşağıdakilerden hangisidir?",
+                meaning: "Heyet-i Temsiliye",
+                category: "Erzurum Kongresi",
+                question: "Erzurum Kongresi'nin sonucunda oluşturulan ve başkanlığını Mustafa Kemal'in yaptığı yapı aşağıdakilerden hangisidir?",
+                options: [
+                    "Kuvayımilliye Grubu",
+                    "Heyet-i Temsiliye",
+                    "Müdafaa-i Hukuk Cemiyeti",
+                    "İcra Vekilleri Heyeti"
+                ],
+                explanation: "Erzurum Kongresi sonunda 9 kişiden oluşan ve başkanlığını Mustafa Kemal'in yaptığı Temsil Heyeti (Heyet-i Temsiliye) kurulmuştur. Bu heyet daha sonra Sivas Kongresi'nde genişletilmiştir."
+            },
+            {
+                word: "'Damat Ferit Paşa Hükûmetinin yaptığı faaliyetlerin denetlenmesini sağlamak' amacıyla alınan aşağıdaki kararlardan hangisi, hangi kongrede kabul edilmiştir?",
+                meaning: "İstanbul'da Osmanlı Mebusan Meclisinin açılarak hükûmetin bu yolla denetlenmesi – Erzurum Kongresi",
+                category: "Erzurum Kongresi",
+                question: "'Damat Ferit Paşa Hükûmetinin yaptığı faaliyetlerin denetlenmesini sağlamak' amacıyla alınan aşağıdaki kararlardan hangisi, hangi kongrede kabul edilmiştir?",
+                options: [
+                    "Hükümet üyelerinin tutuklanması – Sivas Kongresi",
+                    "İstanbul'da Osmanlı Mebusan Meclisinin açılarak hükûmetin bu yolla denetlenmesi – Erzurum Kongresi",
+                    "İtilaf Devletleri nezdinde protesto edilmesi – Balıkesir Kongresi",
+                    "Doğrudan yeni bir meclisin Ankara'da toplanması – Amasya Genelgesi"
+                ],
+                explanation: "Erzurum Kongresi, İstanbul Hükümeti'ni denetleyebilmek için Osmanlı Mebusan Meclisi'nin açılmasını istemiştir. Bu meclis daha sonra Misakımillî'yi kabul edecektir."
+            },
+
+            // BÖLÜM 7: SİVAS KONGRESİ
+            {
+                word: "Millî Mücadele Hazırlık Dönemi'nde yapılan aşağıdaki kongrelerden hangisi, katılımın az olması nedeniyle tartışmalı geçmiş, 'Anadolu ve Rumeli Müdafaa-i Hukuk Cemiyeti' nin kurulması ve İrade-i Milliye gazetesinin çıkarılması gibi önemli kararlara ev sahipliği yapmıştır?",
+                meaning: "Sivas Kongresi",
+                category: "Sivas Kongresi",
+                question: "Millî Mücadele Hazırlık Dönemi'nde yapılan aşağıdaki kongrelerden hangisi, katılımın az olması nedeniyle tartışmalı geçmiş, 'Anadolu ve Rumeli Müdafaa-i Hukuk Cemiyeti' nin kurulması ve İrade-i Milliye gazetesinin çıkarılması gibi önemli kararlara ev sahipliği yapmıştır?",
+                options: [
+                    "Erzurum Kongresi",
+                    "Pozantı Kongresi",
+                    "Sivas Kongresi",
+                    "Alaşehir Kongresi"
+                ],
+                explanation: "Sivas Kongresi'ne delegelerin engellenmesi, Sivas'ın işgal edileceği söylentileri gibi nedenlerle beklenenden az delege katılmış, kongre tartışmalı geçmiştir. Ancak tüm cemiyetlerin birleştirilmesi ve İrade-i Milliye gazetesinin çıkarılması gibi çok önemli kararlar alınmıştır."
+            },
+            {
+                word: "Sivas Kongresi'nde Temsil Heyeti'nin yürütme yetkisini ilk kez kullanması, aşağıdaki kararlardan hangisiyle somutlaşmıştır?",
+                meaning: "Batı Cephesi Komutanlığına Ali Fuat Cebesoy'u ataması",
+                category: "Sivas Kongresi",
+                question: "Sivas Kongresi'nde Temsil Heyeti'nin yürütme yetkisini ilk kez kullanması, aşağıdaki kararlardan hangisiyle somutlaşmıştır?",
+                options: [
+                    "İrade-i Milliye gazetesinin çıkarılması",
+                    "Manda ve himayenin reddedilmesi",
+                    "Batı Cephesi Komutanlığına Ali Fuat Cebesoy'u ataması",
+                    "Tüm cemiyetleri birleştirmesi"
+                ],
+                explanation: "Sivas Kongresi'nde Temsil Heyeti, Ali Fuat Cebesoy'u Batı Cephesi Komutanlığına atayarak ilk kez yürütme yetkisini kullanmış ve fiilen bir hükümet gibi davranmaya başlamıştır."
+            },
+            {
+                word: "Sivas Kongresi'nde alınan aşağıdaki kararlardan hangisi bağımsızlık ilkesi ile ilgili değildir?",
+                meaning: "Mebusan Meclisi toplanmalıdır",
+                category: "Sivas Kongresi",
+                question: "Sivas Kongresi'nde alınan aşağıdaki kararlardan hangisi bağımsızlık ilkesi ile ilgili değildir?",
+                options: [
+                    "Düşman işgaline karşı topyekûn savaşılacaktır",
+                    "Mebusan Meclisi toplanmalıdır",
+                    "Manda ve himaye kabul edilemez",
+                    "Azınlıklara siyasi ve sosyal dengemizi bozacak ayrıcalıklar verilemez",
+                    "Millî kuvvetleri etkin, millî iradeyi egemen kılmak esastır"
+                ],
+                explanation: "'Mebusan Meclisi toplanmalıdır' kararı, İstanbul Hükümeti'ni denetlemek ve meşru bir zeminde çalışmak amacıyla alınmıştır. Bu, bir yönetim ve denetim mekanizması önerisidir; doğrudan bağımsızlık ilkesiyle ilgili değildir. Diğer şıklar ise (topyekûn savaş, manda reddi, ayrıcalık vermeme, millî irade) doğrudan bağımsızlık ve millî egemenlik ilkeleriyle ilgilidir."
+            },
+
+            // BÖLÜM 8: ÖNEMLİ TANIMLAR VE KRONOLOJİ
+            {
+                word: "'Millî Mücadelenin programıdır.', 'Gerekçe, amaç ve yöntemi ilk kez belirlenmiştir.', 'Mukaddes ittifak olarak adlandırılmıştır.' ifadeleri aşağıdaki belgelerden hangisi için kullanılır?",
+                meaning: "Amasya Genelgesi",
+                category: "Tanım/Kronoloji",
+                question: "'Millî Mücadelenin programıdır.', 'Gerekçe, amaç ve yöntemi ilk kez belirlenmiştir.', 'Mukaddes ittifak olarak adlandırılmıştır.' ifadeleri aşağıdaki belgelerden hangisi için kullanılır?",
+                options: [
+                    "Havza Genelgesi",
+                    "Erzurum Kongresi Kararları",
+                    "Amasya Genelgesi",
+                    "Sivas Kongresi Kararları"
+                ],
+                explanation: "Amasya Genelgesi, Millî Mücadele'nin adeta bir programı niteliğindedir. Gerekçe (vatan tehlikede), amaç (bağımsızlık) ve yöntem (millî irade) ilk kez bu genelgede belirlenmiş, Ali Fuat Cebesoy tarafından 'Mukaddes İttifak' olarak nitelendirilmiştir."
+            },
+            {
+                word: "Temsil Heyeti'nin yürütme yetkisini ilk kez kullanması aşağıdaki kongrelerin hangisinde alınan bir kararla gerçekleşmiştir?",
+                meaning: "Sivas Kongresi",
+                category: "Tanım/Kronoloji",
+                question: "Temsil Heyeti'nin yürütme yetkisini ilk kez kullanması aşağıdaki kongrelerin hangisinde alınan bir kararla gerçekleşmiştir?",
+                options: [
+                    "Erzurum Kongresi",
+                    "Sivas Kongresi",
+                    "Balıkesir Kongresi",
+                    "Alaşehir Kongresi"
+                ],
+                explanation: "Temsil Heyeti'nin yürütme yetkisini ilk kez kullanması, Sivas Kongresi sırasında Ali Fuat Cebesoy'u Batı Cephesi Komutanlığına atama kararı ile gerçekleşmiştir."
+            },
+            {
+                word: "Amasya Görüşmeleri, aşağıdaki hangi gelişme üzerine Temsil Heyeti ile İstanbul Hükümeti arasında gerçekleşmiştir?",
+                meaning: "Damat Ferit Paşa Hükümeti'nin düşürülüp yerine Millî Mücadele yanlısı Ali Rıza Paşa Hükümeti'nin kurulması",
+                category: "Amasya Görüşmeleri",
+                question: "Amasya Görüşmeleri, aşağıdaki hangi gelişme üzerine Temsil Heyeti ile İstanbul Hükümeti arasında gerçekleşmiştir?",
+                options: [
+                    "Sivas Kongresi kararlarının padişah tarafından onaylanması",
+                    "Damat Ferit Paşa Hükümeti'nin düşürülüp yerine Millî Mücadele yanlısı Ali Rıza Paşa Hükümeti'nin kurulması",
+                    "İstanbul'un İtilaf Devletleri tarafından resmen işgal edilmesi",
+                    "TBMM'nin Ankara'da açılması"
+                ],
+                explanation: "Amasya Görüşmeleri, Sivas Kongresi'nden sonra Damat Ferit Paşa Hükümeti'nin düşürülüp yerine Millî Mücadele yanlısı Ali Rıza Paşa Hükümeti'nin kurulması üzerine gerçekleşmiştir."
+            },
+            {
+                word: "Amasya Görüşmeleri'nde alınan kararlardan hangisi, İstanbul Hükümeti'nin millî mücadelenin haklılığını kabul ettiğinin bir göstergesidir?",
+                meaning: "Sivas Kongresi kararları İstanbul Hükümeti tarafından kabul edilecek ve zararlı cemiyetler kapatılacak",
+                category: "Amasya Görüşmeleri",
+                question: "Amasya Görüşmeleri'nde alınan kararlardan hangisi, İstanbul Hükümeti'nin millî mücadelenin haklılığını kabul ettiğinin bir göstergesidir?",
+                options: [
+                    "Azınlıklara yeni ayrıcalıklar verilecek",
+                    "Sivas Kongresi kararları İstanbul Hükümeti tarafından kabul edilecek ve zararlı cemiyetler kapatılacak",
+                    "Padişahlık makamı kaldırılacak",
+                    "İstanbul, yeni meclisin merkezi olacak"
+                ],
+                explanation: "Sivas Kongresi kararlarının İstanbul Hükümeti tarafından kabul edileceğinin belirtilmesi, millî mücadelenin meşruiyetini ve haklılığını tanıdıklarını gösterir."
+            },
+            {
+                word: "Misakımilli Kararlarının alınması sonrası İtilaf Devletleri'nin Mebusan Meclisini basarak yakalayabildikleri vekilleri Malta'ya sürgün etmeleri aşağıdakilerden hangisine neden olmamıştır?",
+                meaning: "Temsil Heyetinin merkezini Sivas'tan Ankara'ya taşması",
+                category: "Misakımillî",
+                question: "Misakımilli Kararlarının alınması sonrası İtilaf Devletleri'nin Mebusan Meclisini basarak yakalayabildikleri vekilleri Malta'ya sürgün etmeleri aşağıdakilerden hangisine neden olmamıştır?",
+                options: [
+                    "Ankara'da millî meclisin açılmasının zemininin oluşması",
+                    "İstanbul Hükûmeti ve saltanatın otoritesinin zayıflaması",
+                    "Millî Mücadele'ye katılımın artması",
+                    "Temsil Heyetinin merkezini Sivas'tan Ankara'ya taşması",
+                    "Osmanlı'da meşrutiyet yönetiminin sonlanması"
+                ],
+                explanation: "Temsil Heyeti'nin merkezi, Meclis-i Mebusan'ın basılması olayından (16 Mart 1920) çok önce, 27 Aralık 1919'da Sivas'tan Ankara'ya taşınmıştır. Dolayısıyla bu olay, Temsil Heyeti'nin merkezini taşımasına neden olmamıştır."
+            },
+            {
+                word: "Erzurum ve Sivas Kongresinde alınan kararlar aşağıdakilerden hangisi üzerinde etkili olmamıştır?",
+                meaning: "Mustafa Kemal Paşa'ya 9. Ordu Müfettişliği görevinin verilmesinde",
+                category: "Kararlar",
+                question: "Erzurum ve Sivas Kongresinde alınan kararlar aşağıdakilerden hangisi üzerinde etkili olmamıştır?",
+                options: [
+                    "Mebusan Meclisinin yeniden toplanmasında",
+                    "Mustafa Kemal Paşa'ya 9. Ordu Müfettişliği görevinin verilmesinde",
+                    "Millî iradenin ön plana çıkarılmasında",
+                    "Emperyalist güçlere karşı bağımsızlık fikrinin öne çıkarılmasında",
+                    "Millî Mücadele'yi destekleyen dış güçlerden yardım alınmasında"
+                ],
+                explanation: "Mustafa Kemal Paşa'ya 9. Ordu Müfettişliği görevi, bu kongrelerden çok önce (30 Nisan 1919'da) verilmiş ve 19 Mayıs 1919'da Samsun'a çıkışıyla görevine başlamıştır. Dolayısıyla Erzurum ve Sivas Kongresi kararlarının bu görevin verilmesi üzerinde bir etkisi yoktur."
+            },
+            {
+                word: "Son Osmanlı Mebusan Meclisinde alınan Misakımillî'de aşağıdaki konulardan hangisi ile ilgili bir karar alınmamıştır?",
+                meaning: "Saltanatın geleceği",
+                category: "Misakımillî",
+                question: "Son Osmanlı Mebusan Meclisinde alınan Misakımillî'de aşağıdaki konulardan hangisi ile ilgili bir karar alınmamıştır?",
+                options: [
+                    "Kapitülasyonlar",
+                    "Dış Türkler",
+                    "Saltanatın geleceği",
+                    "Devlet borçları",
+                    "Azınlıklar"
+                ],
+                explanation: "Misakımillî kararlarında, saltanatın veya hilafetin geleceği ile ilgili herhangi bir karar alınmamıştır. Misakımillî, daha çok millî sınırlar, bağımsızlık, kapitülasyonlar, azınlıklar ve devlet borçları gibi konuları içermektedir."
+            },
+            {
+                word: "Mustafa Kemal Paşa Erzurum ve Sivas Kongrelerine aşağıdaki millî örgütlerden hangisinin üyesi olarak katılmıştır?",
+                meaning: "Şark Vilayetleri Cemiyeti",
+                category: "Tanım/Kronoloji",
+                question: "Mustafa Kemal Paşa Erzurum ve Sivas Kongrelerine aşağıdaki millî örgütlerden hangisinin üyesi olarak katılmıştır?",
+                options: [
+                    "Redd-i İlhak Cemiyeti",
+                    "Millî Kongre Cemiyeti",
+                    "Şark Vilayetleri Cemiyeti",
+                    "Temsil Heyeti",
+                    "TBMM"
+                ],
+                explanation: "Mustafa Kemal Paşa, Erzurum Kongresi'ne Erzurum delegesi olarak katılmıştır. Erzurum delegesi olabilmesi için, o dönemde Doğu Anadolu'daki direnişi organize eden 'Şark Vilayetleri Müdafaa-i Hukuk Cemiyeti' (kısa adıyla Şark Vilayetleri Cemiyeti) üyesi olmuştur."
+            }
+        ];
+
+        // DOM elements
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const resultMessageEl = document.getElementById('resultMessage');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+        let masteredWords = [];
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Initialize quiz
+        function initQuiz() {
+            questions = shuffleArray([...quizData]);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            
+            // Add click event to cat cover
+            catCoverEl.addEventListener('click', removeCatCover);
+        }
+
+        // Remove cat cover to reveal answers
+        function removeCatCover() {
+            catCoverEl.style.display = 'none';
+        }
+
+        // Show current question
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            // Reset cat cover
+            catCoverEl.style.display = 'flex';
+            
+            // Shuffle options
+            const options = shuffleArray([...currentQuestion.options]);
+            
+            // Clear previous options
+            optionsEl.innerHTML = '';
+            
+            // Add cat cover back
+            optionsEl.appendChild(catCoverEl);
+            
+            // Create new option buttons
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = option;
+                button.addEventListener('click', () => selectAnswer(option, currentQuestion));
+                optionsEl.appendChild(button);
+            });
+            
+            // Reset UI for new question
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        // Handle answer selection
+        function selectAnswer(selectedOption, currentQuestion) {
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // Disable all buttons
+            optionButtons.forEach(button => {
+                button.disabled = true;
+                
+                // Mark correct answer
+                if (button.textContent === currentQuestion.meaning) {
+                    button.classList.add('correct');
+                }
+                
+                // Mark incorrect selected answer
+                if (button.textContent === selectedOption && button.textContent !== currentQuestion.meaning) {
+                    button.classList.add('incorrect');
+                }
+            });
+            
+            // Check if answer is correct
+            const isCorrect = selectedOption === currentQuestion.meaning;
+            
+            // Update score if correct
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+                
+                // Add to mastered words if not already there
+                if (!masteredWords.some(w => w.word === currentQuestion.word)) {
+                    masteredWords.push(currentQuestion);
+                }
+            }
+            
+            // Show feedback
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            
+            if (isCorrect) {
+                feedbackTextEl.innerHTML = `✅ Doğru! <br><br><strong>Açıklama:</strong> ${currentQuestion.explanation}`;
+            } else {
+                feedbackTextEl.innerHTML = `❌ Yanlış! <br><br><strong>Doğru Cevap:</strong> ${currentQuestion.meaning} <br><br><strong>Açıklama:</strong> ${currentQuestion.explanation}`;
+            }
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        // End quiz and show results
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            finalScoreEl.textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            // Result message based on performance
+            if (percentage >= 90) {
+                resultMessageEl.textContent = "Mükemmel! Milli Mücadele Hazırlık Dönemi'ni çok iyi biliyorsunuz! 🏆";
+            } else if (percentage >= 70) {
+                resultMessageEl.textContent = "Çok iyi! Tarih bilginiz güçlü. 👍";
+            } else if (percentage >= 50) {
+                resultMessageEl.textContent = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+            } else {
+                resultMessageEl.textContent = "Öğrenmeye devam! Havza, Amasya, Erzurum ve Sivas sürecini tekrar edin. 📚";
+            }
+            
+            // Display all words learned
+            wordListEl.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Kavramlar</h3>';
+            quizData.forEach(word => {
+                const wordCard = document.createElement('div');
+                wordCard.classList.add('word-card', 'fade-in');
+                wordCard.innerHTML = `
+                    <div class="word">${word.question}</div>
+                    <div class="meaning"><strong>Cevap:</strong> ${word.meaning}</div>
+                    <div class="category category-${getCategoryClass(word.category)}">${word.category}</div>
+                `;
+                wordListEl.appendChild(wordCard);
+            });
+        }
+
+        // Helper function to get CSS class for category
+        function getCategoryClass(category) {
+            const classes = {
+                'Erzurum Kongresi': 'erzurum',
+                'Sivas Kongresi': 'sivas',
+                'Amasya Görüşmeleri': 'amasyagorusme',
+                'Misakımillî': 'misakimilli',
+                'Kararlar': 'kararlar',
+                'Tanım/Kronoloji': 'tanimkronoloji'
+            };
+            return classes[category] || 'tanimkronoloji';
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', nextQuestion);
+        
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MEB-AGS Türkiye Tarihi - Yükselme I</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "🏛️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            text-align: left;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ MEB-AGS Türkiye Tarihi</h1>
+            <div class="subtitle">Osmanlı Devleti Yükselme Dönemi I</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                correctAnswer: "B",
+                meaning: "Fatih Sultan Mehmet entelektüel kişiliğiyle öne çıkmış, yedi dil bilmesi ve 'Avni' mahlasıyla şiirler yazmasıyla tanınmıştır.",
+                question: "Yedi dil bilen, \"Avni\" mahlasıyla şiirler yazan ve \"Kanun hükümdarı\" olarak tarihe geçen Osmanlı padişahı kimdir?",
+                options: ["II. Murat", "Fatih Sultan Mehmet", "Yavuz Sultan Selim", "Kanuni Sultan Süleyman"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Amirutzes, Fatih'in hizmetine giren ve Batlamyus'un haritasını Arapçaya çeviren Trabzonlu bir bilgindir.",
+                question: "Fatih Sultan Mehmet'in harita çizdirip yer adlarını Arapça'ya çevirttiği Trabzonlu bilgin kimdir?",
+                options: ["Ali Kuşçu", "Akşemseddin", "Amirutzes", "Bellini"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Fatih Sultan Mehmet (II. Mehmet), Doğu ve Batı kültürlerini sentezleyen evrensel bir vizyona sahip olduğu için bu şekilde anılır.",
+                question: "Zihniyeti, ilim adamlarına gösterdiği sevgi ve fikri özgürlük ile \"Bir ayağı Şark'ta bir ayağı Garb'ta olan büyük hükümdar\" olarak anılan padişah hangisidir?",
+                options: ["I. Süleyman", "II. Mehmet", "II. Bayezit", "III. Selim"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Kuşatma öncesinde Avrupa'dan gelebilecek olası bir haçlı yardımını engellemek için Venedik ve Eflâk ile saldırmazlık antlaşmaları yapılmıştır.",
+                question: "İstanbul'un fethi için yapılan hazırlıklar kapsamında, Osmanlı Devleti hangi prensliklerle antlaşma yapmıştır?",
+                options: ["Sırbistan ve Bosna", "Venedik ve Eflâk", "Ceneviz ve Arnavutluk", "Macaristan ve Boğdan"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Surlara yaklaşmak ve askerlerin güvenli tırmanışını sağlamak için devasa mancınıklar ve hareketli ahşap kuleler inşa edilmiştir.",
+                question: "İstanbul'un fethi sırasında Bizanslıların \"şehirler alan\" olarak nitelendirdiği, Osmanlı'nın inşa ettiği kuşatma araçları hangileridir?",
+                options: ["Şahi topları", "Grejuva ateşleri", "Yürüyen hisarlar", "Mancınık ve hareketli kuleler"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Rumeli Hisarı (Boğazkesen), Karadeniz'den Bizans'a gelebilecek yardımları kesmek amacıyla Fatih tarafından yaptırılmıştır.",
+                question: "Fatih Sultan Mehmet'in İstanbul'un fethi öncesi yaptırdığı Boğazkesen'in diğer adı nedir?",
+                options: ["Anadolu Hisarı", "Çimenlik Kalesi", "Rumeli Hisarı", "Yedikule Zindanları"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Boğazkesen (Rumeli Hisarı) Bizans'ın değil, Osmanlı'nın fethe hazırlık amacıyla yaptırdığı bir yapıdır.",
+                question: "Aşağıdakilerden hangisi İstanbul'un fethine karşı Bizans İmparatorluğu'nun aldığı önlemlerden biri değildir?",
+                options: ["Grejuva ateşinin çoğaltılması", "Haliç'e zincir çekilmesi", "Katolik ve Ortodoks kiliselerinin birleştirilmesi", "Boğazkesen hisarının onarılması"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Grandük Notaras, Latin işgalinin (IV. Haçlı Seferi) yıkıcı anıları nedeniyle Osmanlı idaresini Papa'nın idaresine tercih etmiştir.",
+                question: "Katolik ve Ortodoks kiliselerinin birleşmesine \"İstanbul'da Kardinal külahı görmektense Osmanlı sarığı görmeyi tercih ederim\" diyerek tepki gösteren Bizanslı yüksek dereceli devlet memuru (Grandük) kimdir?",
+                options: ["Notaras", "Genadyos", "Ovakim", "Amirutzes"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Fatih, Ortodoksları koruması altına alarak Avrupa'daki Hristiyan birliğini parçalamayı hedeflemiş ve Genadyos'u patrik atamıştır.",
+                question: "İstanbul'un fethinden sonra Fatih Sultan Mehmet tarafından Rum patriği yapılan kişi kimdir?",
+                options: ["Ovakim", "Notaras", "Genadyos", "Amirutzes"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Bursa'daki Ermeni Piskoposu Ovakim, İstanbul'a getirtilerek Ermeni Patriği olarak görevlendirilmiştir.",
+                question: "İstanbul'un fethinden sonra Ermeni patriği olan kişi kimdir?",
+                options: ["Genadyos", "Ovakim", "Notaras", "Amirutzes"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Fatih, Bizans İmparatorluğu'nun başkentini ele geçirdikten sonra Roma İmparatorluğu'nun varisi olduğunu iddia ederek Kayser-i Rum (Roma Kayseri) ünvanını kullanmıştır.",
+                question: "Fatih Sultan Mehmet'e, İstanbul'un fethinden sonra verilen ve \"Roma Kralı\" anlamına gelen ünvan hangisidir?",
+                options: ["Hakanül Berreyn", "Sultanül Bahreyn", "Kayser-i Rum", "Halife-i Ruy-i Zemin"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Fetihten sonra İtalya'ya kaçan Bizanslı bilginler, orada Antik Yunan eserlerini inceleyerek Rönesans'ın başlamasına katkı sağlamıştır.",
+                question: "İstanbul'un fethinin dünya tarihi açısından sonuçlarından biri olan ve İtalya'da Rönesans'ın başlamasına zemin hazırlayan olay nedir?",
+                options: ["Ticaret yollarının yön değiştirmesi", "İstanbul'dan kaçan bilim insanlarının İtalya'ya gitmesi", "Derebeylik rejiminin güçlenmesi", "Coğrafi Keşiflerin başlaması"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Şahi adı verilen büyük topların surları yıkabildiğinin görülmesi, Avrupa'da şatoların yıkılıp feodalitenin zayıflamasına ve merkezi krallıkların güçlenmesine yol açmıştır.",
+                question: "Topların surları yıkabileceğinin anlaşılması Avrupa'da hangi gelişmeye neden olmuştur?",
+                options: ["Mutlak monarşilerin yıkılmasına", "Feodalitenin (derebeyliğin) zayıflamasına", "Reform hareketlerinin başlamasına", "Magna Carta'nın ilan edilmesine"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "İstanbul'un fethi, İslam dünyasında 'açık, parlak ve muhteşem fetih' anlamına gelen Feth-i Mübin olarak adlandırılmıştır.",
+                question: "İslam dünyasında İstanbul'un fethinin sevinçle karşılanıp nitelendirildiği ve \"Parlak Fetih\" anlamına gelen ifade hangisidir?",
+                options: ["Kızıl Elma", "İlay-ı Kelimetullah", "Nizam-ı Alem", "Feth-i Mübin"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Anadolu Türk siyasi birliğini sağlama çalışmaları kapsamında Fatih döneminde İsfendiyaroğulları'ndan (Candaroğulları) Sinop ve Samsun alınmıştır.",
+                question: "Fatih döneminde Anadolu'da Candaroğulları'ndan alınan yerler nerelerdir?",
+                options: ["Konya ve Karaman", "Amasra ve Trabzon", "Sinop ve Samsun", "Kırım ve Otranto"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "1461 yılında Trabzon'un fethiyle, Bizans'ın soyundan gelen Komnenos hanedanının yönettiği bu devlete son verilmiş, Bizans'ın dirilme umudu bitmiştir.",
+                question: "Bizans'ın tekrar dirilme umutlarını tamamen sona erdiren gelişme hangisidir?",
+                options: ["Trabzon Rum İmparatorluğu'na son verilmesi", "Mora Yarımadası'nın alınması", "Cenevizlilerden Amasra'nın alınması", "Karamanoğulları'ndan Konya'nın alınması"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Rodos Şövalyeleri'nin elinde bulunan ada Fatih döneminde kuşatılmış ancak alınamamış, fethi Kanuni döneminde gerçekleşmiştir.",
+                question: "Fatih döneminde denizlerde kuşatılıp alınamayan yer neresidir?",
+                options: ["Otranto", "Kırım", "Bozcaada", "Rodos"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1475'te Gedik Ahmet Paşa komutasındaki donanmanın Kırım'ı fethiyle İpek Yolu'nun Karadeniz kolu denetim altına alınmış ve Karadeniz Türk gölü olmuştur.",
+                question: "Fatih döneminde Karadeniz'in bir Türk gölü hâline gelmesini sağlayan fetih hangisidir?",
+                options: ["Amasra'nın alınması", "Kırım'ın alınması", "Trabzon'un fethi", "Sinop'un alınması"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Fatih Sultan Mehmet, hem Anadolu ve Rumeli'deki genişlemeler hem de denizlerdeki hakimiyet çabası nedeniyle bu ünvanla anılmıştır.",
+                question: "Fatih Sultan Mehmet'e \"İki denizin ve iki karanın hükümdarı\" anlamına gelen hangi ünvan verilmiştir?",
+                options: ["Kayser-i Rum", "Zıllullah-i fi'l-alem", "Sultanül Bahreyn ve Hakanül Berreyn", "Hadim'ül Haremeyn"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Hicaz'a giden hacıların su sıkıntısı yaşaması üzerine Osmanlı'nın Memlüklerden su yollarının tamiri için izin istemesi, Karamanoğlu ve Dulkadiroğlu beyliklerinin de kışkırtmasıyla krize dönüşmüştür.",
+                question: "Fatih Dönemi'nde Hicaz Su Yolları Sorunu yüzünden ilişkilerin gerildiği devletler aşağıdakilerden hangisinde doğru verilmiştir?",
+                options: ["Karamanoğulları - Dulkadiroğulları - Memlükler", "Venedik - Ceneviz - Napoli", "Akkoyunlular - Safeviler - Memlükler", "Eflak - Boğdan - Macaristan"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "1473 Otlukbeli Savaşı ile Uzun Hasan mağlup edilmiş ve Akkoyunlu tehlikesi önlenerek Doğu Anadolu'da Osmanlı otoritesi güçlenmiştir.",
+                question: "Fatih Sultan Mehmet, Doğu Anadolu'yu hangi savaşta Akkoyunluları mağlup ederek egemenliği altına almıştır?",
+                options: ["Çaldıran Savaşı", "Turnadağ Savaşı", "Otlukbeli Savaşı", "Mercidabık Savaşı"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Fatih Sultan Mehmet döneminde ekonominin güçlendiğinin göstergesi olan ilk altın para, 'Sikke-i Hasene' adıyla bastırılmıştır.",
+                question: "Fatih döneminde bastırılan ilk altın paranın adı nedir?",
+                options: ["Mecidiye", "Sikke-i Hasene", "Akçe", "Kaime"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Devlet teşkilatı, protokol kuralları, kardeş katli gibi hususlar Fatih tarafından Kanunname-i Ali Osman ile yazılı ve sistemli hâle getirilmiştir.",
+                question: "Fatih döneminde örfi hukuk kurallarının yazılı hâle getirildiği eserin adı nedir?",
+                options: ["Mecelle", "Düstur", "Teşkilat-ı Esasiye", "Kanunname-i Ali Osman"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Dönemin en ileri bilim merkezlerinden biri olan Sahn-ı Seman Medresesi Fatih tarafından açılmış, öğrencileri üniversiteye hazırlamak için de Tetimme (hazırlık) medreseleri kurulmuştur.",
+                question: "Fatih döneminde açılan yükseköğretim kurumu ve hazırlık bölümü aşağıdakilerden hangisidir?",
+                options: ["Süleymaniye Medreseleri", "Darülfünun", "Sahn-ı Seman ve Tetimme Medreseleri", "Enderun Mektebi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1352 yılında Orhan Bey döneminde Cenevizlilere tanınan imtiyazlar, Osmanlı'nın verdiği ilk kapitülasyon olarak kabul edilir.",
+                question: "Osmanlı Devleti'nin 1352'de ilk defa kapitülasyon verdiği devlet hangisidir?",
+                options: ["Venedik", "Ceneviz", "Fransa", "İngiltere"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Fatih döneminde Venediklilerle yapılan antlaşma gereği, Venedik İstanbul'da sürekli elçi bulundurma hakkı kazanmış, bu elçilere Balyos adı verilmiştir.",
+                question: "Osmanlı Devleti'nde ilk elçiliği açan devlet ve bu elçilere verilen isim hangisinde doğru eşleştirilmiştir?",
+                options: ["Venedik - Balyos/Baylos", "Ceneviz - Podesta", "Fransa - Sefir", "Rusya - Çar"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Şeyhülislam (Müftü) ilmiye sınıfının başı olarak fetva verirdi, ancak divanın asli ve sürekli üyelerinden biri olması ve sadrazamla eşit rütbeye gelmesi Kanuni döneminde olmuştur.",
+                question: "Aşağıdakilerden hangisi Fatih döneminde ilk defa uygulanan veya yasalaşan gelişmelerden biri değildir?",
+                options: ["İltizam sisteminin uygulanması", "Müsadere sisteminin uygulanması", "Cülus bahşişi vermenin yasalaşması", "Divana şeyhülislamın atanması"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "II. Bayezit'in kardeşi Cem Sultan'ın taht kavgası sonrası önce Memlüklere, sonra Rodos Şövalyelerine ve Papa'ya sığınması, olayı uluslararası bir soruna dönüştürmüştür.",
+                question: "II. Bayezit dönemine damgasını vuran ve Osmanlı Devleti'nde ilk defa bir iç sorunun dış sorun hâline gelmesine neden olan olay nedir?",
+                options: ["Şeyh Bedreddin İsyanı", "Şah Kulu İsyanı", "Cem Sultan Olayı", "Buçuktepe İsyanı"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Safevi Devleti'nin kışkırtmalarıyla Anadolu'da çıkan ve Şiilik propagandasına dayanan Şah Kulu isyanı güçlükle bastırılmıştır.",
+                question: "II. Bayezit döneminde (1511) Antalya ve dolaylarında çıkan isyan hangisidir?",
+                options: ["Celali İsyanları", "Şah Kulu İsyanı", "Babai İsyanı", "Bozoklu Celal İsyanı"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "1492 yılında İspanya'daki Engizisyon baskısından kaçan Sefarad Yahudileri ve Müslümanlar, Kemal Reis komutasındaki Osmanlı gemileriyle kurtarılmıştır.",
+                question: "İspanya'ya giderek zulüm gören Yahudi ve Müslümanları İstanbul'a getiren Osmanlı denizcisi kimdir?",
+                options: ["Barbaros Hayreddin Paşa", "Piri Reis", "Turgut Reis", "Kemal Reis"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Hicaz Su Yolları gerginliği, Cem Sultan'ın Memlüklere sığınması ve Dulkadiroğulları beyliği üzerindeki nüfuz mücadelesi sebebiyle II. Bayezit döneminde sıcak çatışmaya (Ağaçayırı Savaşı) dönüşmüştür.",
+                question: "Fatih döneminde Hicaz Su Yolları meselesi yüzünden ilişkilerin bozulduğu Memlük Devleti'yle ilk savaşların yapıldığı dönem hangisidir?",
+                options: ["Yavuz Sultan Selim", "Kanuni Sultan Süleyman", "II. Bayezit", "II. Murat"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Deprem (Küçük Kıyamet) ve savaş giderlerini karşılamak amacıyla halktan alınan olağanüstü hâl vergisi olan Avarız, ilk kez II. Bayezit döneminde yasallaşmıştır.",
+                question: "II. Bayezit döneminde ilk kez alınan olağanüstü hal vergisinin adı nedir?",
+                options: ["Öşür", "Avarız", "Haraç", "Cizye"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Dünyanın ilk standartlar kanunu olarak bilinen Bursa İhtisab Kanunnamesi (Kanunnâme-i İhtisab-ı Bursa) ile üretilen malların kalite, ebat ve fiyat standartları belirlenmiştir.",
+                question: "Osmanlı Devleti'nde ilk kez malların kalitesi ve standartlarının belli esaslara bağlandığı II. Bayezit dönemi düzenlemesi hangisidir?",
+                options: ["Kanunname-i Ali Osman", "Mecelle", "Kanunnâme-i İhtisab-ı Bursa", "Vilayet Nizamnamesi"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Cem Sultan olayının yarattığı dış baskı ve Şah Kulu İsyanı gibi sorunlar yüzünden II. Bayezit dönemi fetihlerin yavaşladığı, pasif bir dönem olarak anılır.",
+                question: "Yaşanan sorunlardan dolayı \"yükselmenin içinde bir Duraklama Dönemi\" olarak tarihe geçen dönem hangi padişaha aittir?",
+                options: ["II. Selim", "III. Murat", "I. Ahmet", "II. Bayezit"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Semerkant'ta yetişmiş önemli bir bilim insanı olan Ali Kuşçu, Fatih'in davetiyle İstanbul'a gelmiş ve Ayasofya Medresesi ile Sahn-ı Seman'da dersler vermiştir.",
+                question: "Akkoyunlu hükümdarı Uzun Hasan'ın elçisi olarak İstanbul'a gelen, Fatih Sultan Mehmet tarafından Sahn-ı Seman Medresesi'ne başmüderris olarak atanan ünlü astronomi ve matematik bilgini kimdir?",
+                options: ["Takiyüddin", "Matrakçı Nasuh", "Ali Kuşçu", "Piri Reis"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Kanunname-i Ali Osman ile tahta geçen şehzadeye, devletin parçalanmasını ve iç savaşları önlemek ('Nizam-ı Alem') amacıyla diğer kardeşlerini öldürme izni (Kardeş Katli) yasal olarak verilmiştir.",
+                question: "Kanunname-i Ali Osman (Fatih Kanunnamesi) ile yasal hale getirilen, devletin bütünlüğü ve bekası gerekçesiyle uygulanan meşhur sistem aşağıdakilerden hangisidir?",
+                options: ["Devşirme Sistemi", "Kardeş Katli", "Ekber ve Erşed Sistemi", "Pençik Sistemi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Osmanlı padişahlarının (Osman Bey'den II. Bayezit'e kadar) hayatını anlatan sekiz bölümlük 'Heşt Behişt', İdris-i Bitlisi'nin en önemli eseridir.",
+                question: "II. Bayezit'in isteği üzerine Osmanlı tarihini anlatan \"Heşt Behişt\" (Sekiz Cennet) adlı eseri Farsça olarak kaleme alan ünlü tarihçi kimdir?",
+                options: ["İdris-i Bitlisi", "Aşıkpaşazade", "Hoca Sadeddin Efendi", "Gelibolulu Mustafa Âlî"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Fatih döneminde Sırbistan seferleri sırasında kuşatılan ancak Fatih'in yaralanması ve güçlü savunma nedeniyle alınamayan Belgrad, 1521'de Kanuni tarafından fethedilmiştir.",
+                question: "Fatih Sultan Mehmet döneminde Sırbistan fethedilirken kuşatılıp alınamayan, ancak daha sonra Kanuni Sultan Süleyman döneminde fethedilen şehir aşağıdakilerden hangisidir?",
+                options: ["Budin", "Mohaç", "Viyana", "Belgrad"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Sanata ve Batı kültürüne de büyük ilgi duyan Fatih Sultan Mehmet, Venedikli ressam Gentile Bellini'yi İstanbul'a getirtip meşhur gül koklayan padişah portresini çizdirmiştir.",
+                question: "İtalyan Rönesans ressamı Gentile Bellini'yi İstanbul'a davet ederek kendi portresini çizdiren Osmanlı padişahı aşağıdakilerden hangisidir?",
+                options: ["Fatih Sultan Mehmet", "Yavuz Sultan Selim", "Kanuni Sultan Süleyman", "II. Mahmut"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1484 yılında Boğdan Prensliği'ne ait stratejik Kili ve Akkirman kaleleri alınarak, Anadolu ile Kırım arasındaki kara bağlantısı tamamen Osmanlı kontrolüne geçmiştir.",
+                question: "II. Bayezit döneminde Karadeniz sahillerindeki hangi iki kalenin fethedilmesiyle Boğdan'ın fethi tamamlanmış ve Kırım ile karadan doğrudan bağlantı sağlanmıştır?",
+                options: ["Azak ve Kefe", "Kili ve Akkirman", "İnebahtı ve Modon", "Varna ve Silistre"]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        function shuffleArray(array) {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        function initQuiz() {
+            questions = shuffleArray(quizData);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            catCoverEl.addEventListener('click', () => catCoverEl.style.display = 'none');
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            // Doğru cevabı orijinal index üzerinden bul
+            const correctText = currentQuestion.options[currentQuestion.correctAnswer.charCodeAt(0) - 65];
+            
+            // Şıkları karıştır
+            const shuffledOptions = shuffleArray(currentQuestion.options);
+            
+            optionsEl.innerHTML = '';
+            optionsEl.appendChild(catCoverEl);
+            catCoverEl.style.display = 'flex';
+
+            shuffledOptions.forEach(optionText => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = optionText;
+                button.onclick = () => selectAnswer(optionText, correctText, currentQuestion.meaning);
+                optionsEl.appendChild(button);
+            });
+            
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        function selectAnswer(selectedOption, correctOptionText, meaning) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correctOptionText) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selectedOption) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            const isCorrect = selectedOption === correctOptionText;
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+            }
+
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            feedbackTextEl.innerHTML = isCorrect ? 
+                `<strong>✅ Doğru!</strong><br><br>${meaning}` : 
+                `<strong>❌ Yanlış!</strong><br>Doğru Cevap: ${correctOptionText}<br><br>${meaning}`;
+            
+            nextBtn.style.display = 'block';
+        }
+
+        nextBtn.onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        };
+
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            finalScoreEl.textContent = `Puanınız: ${score} / ${questions.length}`;
+            
+            wordListEl.innerHTML = '<h3 style="margin-bottom:15px;">Genel Tekrar:</h3>';
+            quizData.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>${q.question}</strong><br><small style="color:var(--primary)">${q.meaning}</small>`;
+                wordListEl.appendChild(card);
+            });
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>

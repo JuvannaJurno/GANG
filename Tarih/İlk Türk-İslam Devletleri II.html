@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Türkiye Tarihi Testi</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "🏛️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(139, 69, 19, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(139, 69, 19, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-ihsidiler { background: #8B4513; }
+        .category-memlukler { background: #B22222; }
+        .category-eyyubiler { background: #2E8B57; }
+        .category-artuklular { background: #D2691E; }
+        .category-mengucekler { background: #4B0082; }
+        .category-danismendliler { background: #FF8C00; }
+        .category-saltuklular { background: #4682B4; }
+        .category-caka { background: #800080; }
+        .category-beylikler { background: #2F4F4F; }
+        .category-akkoyunlu { background: #8B4513; }
+        .category-karakoyunlu { background: #B22222; }
+        .category-babur { background: #2E8B57; }
+        .category-harezmsah { background: #D2691E; }
+        .category-timur { background: #4B0082; }
+        .category-cengiz { background: #FF8C00; }
+        .category-mogol { background: #4682B4; }
+        .category-gazneli { background: #800080; }
+        .category-selcuklu { background: #2F4F4F; }
+        .category-genel { background: #8B4513; }
+        .category-kultur { background: #4B0082; }
+        .category-sehirler { background: #FF8C00; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option-btn {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .cat-image {
+                max-width: 150px;
+                max-height: 120px;
+            }
+            
+            .cat-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ MEB-AGS Türkiye Tarihi</h1>
+            <div class="subtitle">İlk Türk-İslam Devletleri ve Beylikler</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // İHŞİDİLER SORULARI
+            {
+                correctAnswer: "C",
+                meaning: "'İhşid' unvanı Farsça kökenli olup 'prens' anlamına gelmektedir.",
+                category: "İhşidiler",
+                question: "'İhşid' unvanının anlamı aşağıdakilerden hangisidir?",
+                options: ["Komutan", "Kahraman", "Prens", "Bilge"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Mısır'da kurulan ikinci Türk-İslam devleti İhşidiler'dir. İlk Türk-İslam devleti Tolunoğulları'dır.",
+                category: "İhşidiler",
+                question: "Mısır'da kurulan ikinci Türk-İslam devleti aşağıdakilerden hangisidir?",
+                options: ["Eyyübiler", "Tolunoğulları", "İhşidiler", "Memlükler"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "İhşidiler (Aksitler) Devleti'nin kurucusu Ferganalı Muhammed bin Togaç'tır.",
+                category: "İhşidiler",
+                question: "İhşidiler (Aksitler) Devleti'nin kurucusu kimdir?",
+                options: ["Melikşah", "Muhammed bin Togaç", "Selahaddin Eyyubi", "Aybek"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "İhşidiler Devleti, Abbâsîlerden ayrılarak kurulduğu için 'Tevâif-i Mülûk' (Krallıklar) olarak adlandırılan devletlerden biridir.",
+                category: "İhşidiler",
+                question: "İhşidiler Devleti'nin 'Tevâif-i Mülûk' olarak nitelendirilmesinin nedeni aşağıdakilerden hangisidir?",
+                options: ["İki dilli olmaları", "Abbâsîlerden ayrılarak kurulmaları", "Hicaz'a sahip olmaları", "Türk komutanlar tarafından yönetilmeleri"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Hicaz bölgesine (Mekke ve Medine) sahip olan ilk Türk-İslam devleti İhşidiler'dir.",
+                category: "İhşidiler",
+                question: "Hicaz bölgesine (Mekke ve Medine) sahip olan ilk Türk-İslam devleti aşağıdakilerden hangisidir?",
+                options: ["Memlükler", "Eyyübiler", "İhşidiler", "Karahanlılar"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "İhşidiler (Aksitler) Devleti'ne 969 yılında Fâtımîler son vermiştir.",
+                category: "İhşidiler",
+                question: "İhşidiler (Aksitler) Devleti'ne son veren devlet aşağıdakilerden hangisidir?",
+                options: ["Abbâsîler", "Bizans İmparatorluğu", "Fâtımîler", "Moğollar"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Halife, Muhammed bin Togaç'a Mekke ve Medine'ye sahip olmasından dolayı 'Aksit' (müeyyed, güneş gibi parlak) unvanını vermiştir.",
+                category: "İhşidiler",
+                question: "Halifenin, Muhammed bin Togaç'a 'Aksit' unvanını vermesinin nedeni aşağıdakilerden hangisidir?",
+                options: ["Moğollara karşı kazandığı zafer", "Mekke ve Medine'ye sahip olması", "Bilime yaptığı katkılar", "Haçlıları yenilgiye uğratması"]
+            },
+
+            // MEMLÜKLER SORULARI
+            {
+                correctAnswer: "B",
+                meaning: "'Memlük' kelimesi Arapçada 'köle' veya 'kölemen' anlamına gelmektedir.",
+                category: "Memlükler",
+                question: "'Memlük' kelimesinin anlamı aşağıdakilerden hangisidir?",
+                options: ["Savaşçı", "Köle", "Tüccar", "Alim"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Memlük Devleti'nin ilk hükümdarı Aybek'tir.",
+                category: "Memlükler",
+                question: "Memlük Devleti'nin ilk hükümdarı aşağıdakilerden hangisidir?",
+                options: ["Baybars", "Aybek", "Kılıç Arslan", "Selahaddin Eyyubi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Memlük Devleti'nin en önemli özelliği, saltanatın babadan oğla geçmemesi ve başarılı komutanların da sultan olabilmesidir.",
+                category: "Memlükler",
+                question: "Memlük Devleti'nin diğer Türk devletlerinden farklı olan en önemli özelliği aşağıdakilerden hangisidir?",
+                options: ["Resmi dillerinin Arapça olması", "Saltanatın babadan oğla geçmemesi, başarılı komutanların da sultan olabilmesi", "Denizcilikte ileri gitmeleri", "İlk Türk-İslam devleti olmaları"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Memlüklerde resmi dil ve bilim dili Arapça iken; saray ve orduda Türkçe (Kıpçak Türkçesi) konuşulmuştur.",
+                category: "Memlükler",
+                question: "Memlük Devleti'nde orduda ve sarayda konuşulan, devletin askeri yapısına hâkim olan dil aşağıdakilerden hangisidir?",
+                options: ["Arapça", "Türkçe", "Farsça", "Moğolca"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "1258'de İlhanlılar Abbâsîlere son verince halife kaçarak Memlüklere sığındı. Böylece halifelik Memlüklere geçmiştir.",
+                category: "Memlükler",
+                question: "Halifelik makamı, Abbâsîlerin yıkılmasının ardından aşağıdaki hangi Türk devletine geçmiştir?",
+                options: ["Eyyübiler", "İhşidiler", "Karakoyunlular", "Memlükler"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Memlükler, 1260 Ayn Calud ve 1277 Elbistan savaşlarıyla Moğolları dünya tarihinde ilk defa mağlup etmişlerdir.",
+                category: "Memlükler",
+                question: "Moğolları dünya tarihinde ilk defa mağlup eden devlet aşağıdakilerden hangisidir?",
+                options: ["Osmanlı Devleti", "Anadolu Selçuklu Devleti", "Memlük Devleti", "Harzemşahlar"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Memlük Devleti, 1516 Mercidabık ve 1517 Ridâniye savaşları sonucu Osmanlı Devleti'ne yenilerek yıkılmıştır.",
+                category: "Memlükler",
+                question: "Memlük Devleti'ne son veren savaşlar aşağıdakilerin hangisinde doğru olarak verilmiştir?",
+                options: ["Mercidabık ve Ridaniye", "Ayn Calud ve Elbistan", "Otlukbeli ve Çaldıran", "Yassıçemen ve Malazgirt"]
+            },
+
+            // EYYÜBİLER SORULARI
+            {
+                correctAnswer: "C",
+                meaning: "Eyyübi Devleti'nin kurucusu Selahaddin Eyyubi'dir.",
+                category: "Eyyübiler",
+                question: "Eyyübi Devleti'nin kurucusu aşağıdakilerden hangisidir?",
+                options: ["Nureddin Zengi", "Aybek", "Selahaddin Eyyubi", "Melikşah"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "1187 Hıttin Savaşı ile Haçlıları mağlup edip Kudüs'ü Haçlılardan geri almışlardır.",
+                category: "Eyyübiler",
+                question: "1187 yılında Haçlıları mağlup ederek Kudüs'ü geri alan Eyyübi hükümdarı aşağıdakilerden hangisidir?",
+                options: ["Selahaddin Eyyubi", "Nureddin Zengi", "Melik Kamil", "Şecerüddür"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Selahaddin Eyyubi, 'Hâdimü'l-Haremeyn' (iki kutsal caminin hizmetkârı) unvanını kullanan ilk hükümdardır.",
+                category: "Eyyübiler",
+                question: "'Hâdimü'l-Haremeyn' unvanını kullanan ilk hükümdar aşağıdakilerden hangisidir?",
+                options: ["Yavuz Sultan Selim", "Muhammed bin Togaç", "Selahaddin Eyyubi", "Melikşah"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Mehmet Akif Ersoy, Selahaddin Eyyubi'yi 'Şark'ın en sevgili sultanı' olarak nitelendirmiştir.",
+                category: "Eyyübiler",
+                question: "Mehmet Akif Ersoy'un 'Şark'ın en sevgili sultanı' olarak nitelendirdiği tarihi şahsiyet aşağıdakilerden hangisidir?",
+                options: ["Alparslan", "Fatih Sultan Mehmet", "Sultan Sencer", "Selahaddin Eyyubi"]
+            },
+
+            // ARTUKLULAR SORULARI
+            {
+                correctAnswer: "C",
+                meaning: "Artuklular, Hasankeyf-Harput-Mardin civarında üç şube şeklinde Artuk Bey tarafından kurulmuştur.",
+                category: "Artuklular",
+                question: "Üç farklı kolda (Hasankeyf, Harput, Mardin) hüküm süren beylik aşağıdakilerden hangisidir?",
+                options: ["Danişmendliler", "Saltuklular", "Artuklular", "Mengücekliler"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Robotik ve sibernetiğin bilimsel kurucusu kabul edilen El-Cezerî (İbnü'l-İzz), Artuklular döneminde yaşamış ve bilime hizmet etmiştir.",
+                category: "Artuklular",
+                question: "'Robotik ve sibernetiğin bilimsel kurucusu' kabul edilen ve Artuklular döneminde yaşayan bilim insanı aşağıdakilerden hangisidir?",
+                options: ["Uluğ Bey", "Ali Kuşçu", "El-Cezerî", "İbn-i Sina"]
+            },
+
+            // MENGÜCEKLER SORULARI
+            {
+                correctAnswer: "C",
+                meaning: "Divriği Ulu Camii, Mengücekliler döneminde yapılmıştır ve 1985 yılından beri UNESCO tarafından koruma altına alınmıştır.",
+                category: "Mengücekliler",
+                question: "Divriği Ulu Camii, hangi Anadolu beyliği döneminde yapılmıştır ve UNESCO koruması altındadır?",
+                options: ["Danişmendliler", "Saltuklular", "Mengücekliler", "Artuklular"]
+            },
+
+            // SALTUKLULAR SORULARI
+            {
+                correctAnswer: "A",
+                meaning: "Anadolu'da kurulan ilk Türk-İslam beyliği/devleti Saltuklular'dır (1072).",
+                category: "Saltuklular",
+                question: "Anadolu'da kurulan ilk Türk-İslam beyliği/devleti aşağıdakilerden hangisidir?",
+                options: ["Saltuklular", "Danişmendliler", "Artuklular", "Çaka Beyliği"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Erzurum ve çevresinde kurulan Saltuklular, Kale Camii ve Üç Kümbetler gibi eserler bırakmıştır.",
+                category: "Saltuklular",
+                question: "Erzurum ve çevresinde kurulan, Kale Camii ve Üç Kümbetler gibi eserler bırakan beylik aşağıdakilerden hangisidir?",
+                options: ["Saltuklular", "Artuklular", "Danişmendliler", "Mengücekliler"]
+            },
+
+            // DANİŞMENDLİLER SORULARI
+            {
+                correctAnswer: "C",
+                meaning: "Anadolu'da yapılan ilk medrese olan Yağıbasan Medresesi, Danişmendliler Beyliği'ne aittir.",
+                category: "Danişmendliler",
+                question: "Anadolu'da yapılan ilk medrese olan Yağıbasan Medresesi, hangi beyliğe aittir?",
+                options: ["Saltuklular", "Artuklular", "Danişmendliler", "Mengücekliler"]
+            },
+
+            // ÇAKA BEYLİĞİ SORULARI
+            {
+                correctAnswer: "A",
+                meaning: "İlk Türk denizcisi olarak kabul edilen Çaka Bey, İzmir'de bir beylik kurmuştur.",
+                category: "Çaka Beyliği",
+                question: "İlk Türk denizcisi olarak kabul edilen ve İzmir'de bir beylik kuran kişi aşağıdakilerden hangisidir?",
+                options: ["Çaka Bey", "Danişment Gazi", "Artuk Bey", "Mengücek Gazi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Çaka Bey'in 1081 yılında kurduğu donanma, günümüzde Deniz Kuvvetleri Komutanlığı'nın kuruluş yıl dönümü olarak kutlanmaktadır.",
+                category: "Çaka Beyliği",
+                question: "Günümüz Türk Deniz Kuvvetleri'nin kuruluş yıl dönümü, aşağıdaki hangi beyin donanmasının kuruluş tarihi olarak kabul edilmektedir?",
+                options: ["Umur Bey", "Çaka Bey", "Turgut Reis", "Barbaros Hayrettin Paşa"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Bizans imparatoru, Türkiye Selçukluları Sultanı I. Kılıç Arslan'ı Çaka Bey'e karşı kışkırtmış ve bu kışkırtmalar sonunda I. Kılıç Arslan, kayınpederi Çaka Bey'i öldürmüştür.",
+                category: "Çaka Beyliği",
+                question: "Çaka Bey'in ölümüne sebep olan olay aşağıdakilerden hangisidir?",
+                options: ["Haçlılarla yaptığı bir savaşta şehit düşmesi", "Bizans imparatorunun kışkırtması sonucu damadı I. Kılıç Arslan tarafından öldürülmesi", "Kendi komutanlarının isyanı sonucu tahttan indirilmesi", "Bizans'ın tuzağına düşürülerek esir alınması"]
+            },
+
+            // AKKOYUNLULAR SORULARI
+            {
+                correctAnswer: "B",
+                meaning: "Dede Korkut Hikâyeleri'ni yazıya geçiren devlet Akkoyunlular'dır.",
+                category: "Akkoyunlular",
+                question: "Dede Korkut Hikâyeleri'ni yazıya geçiren devlet aşağıdakilerden hangisidir?",
+                options: ["Karakoyunlular", "Akkoyunlular", "Harzemşahlar", "Gazneliler"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Kur'an-ı Kerim'i Oğuz Türkçesine (Anadolu Türkçesine) çevirten devlet Akkoyunlular'dır.",
+                category: "Akkoyunlular",
+                question: "Kur'an-ı Kerim'i Oğuz Türkçesine (Anadolu Türkçesine) çevirten devlet aşağıdakilerden hangisidir?",
+                options: ["Karahanlılar", "Akkoyunlular", "Anadolu Selçukluları", "Memlükler"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "1473 Otlukbeli Savaşı ile Osmanlı Devleti'ne yenilerek yıkılma sürecine giren devlet Akkoyunlular'dır.",
+                category: "Akkoyunlular",
+                question: "1473 yılında Osmanlı Devleti ile yapılan Otlukbeli Savaşı'nda yenilerek yıkılma sürecine giren devlet aşağıdakilerden hangisidir?",
+                options: ["Karakoyunlular", "Timur Devleti", "Akkoyunlular", "Memlükler"]
+            },
+
+            // KARAKOYUNLULAR SORULARI
+            {
+                correctAnswer: "C",
+                meaning: "Azerbaycan'ın Türkleşmesinde önemli rol oynayan devlet Karakoyunlular'dır.",
+                category: "Karakoyunlular",
+                question: "Azerbaycan'ın Türkleşmesinde önemli rol oynayan devlet aşağıdakilerden hangisidir?",
+                options: ["Akkoyunlular", "Safeviler", "Karakoyunlular", "İlhanlılar"]
+            },
+
+            // BABÜR İMPARATORLUĞU SORULARI
+            {
+                correctAnswer: "C",
+                meaning: "Hindistan'da kurulan ve kurucusu Babür Şah olan Türk devleti Babür İmparatorluğu'dur.",
+                category: "Babür İmparatorluğu",
+                question: "Hindistan'da kurulan ve kurucusu Babür Şah olan Türk devleti aşağıdakilerden hangisidir?",
+                options: ["Gazneliler", "Büyük Selçuklular", "Babür İmparatorluğu", "Timur İmparatorluğu"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Tac Mahal'i yaptıran Babür İmparatoru Şah Cihan'dır.",
+                category: "Babür İmparatorluğu",
+                question: "Tac Mahal'i yaptıran Babür İmparatoru aşağıdakilerden hangisidir?",
+                options: ["Babür Şah", "Ekber Şah", "Şah Cihan", "Hümayun Şah"]
+            },
+
+            // HARZEMŞAHLAR SORULARI
+            {
+                correctAnswer: "B",
+                meaning: "Harzemşahlar Devleti'ne, Otrar Faciası'nı yaşatarak büyük darbe vuran hükümdar Cengiz Han'dır.",
+                category: "Harzemşahlar",
+                question: "Harzemşahlar Devleti'ne, Otrar Faciası'nı yaşatarak büyük darbe vuran hükümdar aşağıdakilerden hangisidir?",
+                options: ["Timur", "Cengiz Han", "Ogeday Han", "Hülagü Han"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Harzemşahlar Devleti, 1230 yılında Anadolu Selçuklu Devleti ile yaptığı Yassıçemen Savaşı'nda yenilmiştir.",
+                category: "Harzemşahlar",
+                question: "Harzemşahlar Devleti, 1230 yılında Anadolu Selçuklu Devleti ile yaptığı hangi savaşta yenilmiştir?",
+                options: ["Malazgirt Savaşı", "Pasinler Savaşı", "Yassıçemen Savaşı", "Miryokefalon Savaşı"]
+            },
+
+            // TİMUR DEVLETİ SORULARI
+            {
+                correctAnswer: "B",
+                meaning: "Timur, Türk-Moğol devlet töresindeki 'Kut' inancına saygı duyduğu ve Cengiz Han soyundan gelmediği için Han veya Sultan yerine 'Emir' unvanını kullanmıştır.",
+                category: "Timur Devleti",
+                question: "Timur'un Cengiz soyundan gelmediği için 'Han' unvanı yerine kullandığı unvan aşağıdakilerden hangisidir?",
+                options: ["Sultan", "Emir", "Hakan", "Şah"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Timur'un 1402 Ankara Savaşı ile Osmanlı Devleti'ni soktuğu dönem Fetret Devri'dir.",
+                category: "Timur Devleti",
+                question: "Timur'un 1402 Ankara Savaşı ile Osmanlı Devleti'ni soktuğu dönem aşağıdakilerden hangisidir?",
+                options: ["Yükselme Devri", "Kuruluş Devri", "Fetret Devri", "Duraklama Devri"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Timur'un Altınordu Devleti'ni parçalamasının uzun vadede en önemli sonucu Rusların güçlenmesi olmuştur.",
+                category: "Timur Devleti",
+                question: "Timur'un Altınordu Devleti'ni parçalamasının uzun vadede en önemli sonucu aşağıdakilerden hangisi olmuştur?",
+                options: ["Çin'in güçlenmesi", "Rusların güçlenmesi", "Bizans'ın ömrünün uzaması", "İpek Yolu'nun kapanması"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "El-Cezerî Artuklular döneminde yaşamıştır. Diğer bilim insanları ise Timur Devleti döneminde yetişmiştir.",
+                category: "Timur Devleti",
+                question: "Aşağıdaki bilim insanlarından hangisi Timur Devleti döneminde yetişmemiştir?",
+                options: ["Ali Kuşçu", "Uluğ Bey", "El-Cezerî", "Ali Şir Nevai"]
+            },
+
+            // CENGİZ İMPARATORLUĞU SORULARI
+            {
+                correctAnswer: "B",
+                meaning: "Cengiz Han'ın oluşturduğu yasaların genel adı 'Yasaname-i Büzürg' (Büyük Cengiz Yasaları)'dır.",
+                category: "Cengiz İmparatorluğu",
+                question: "Cengiz Han'ın oluşturduğu yasaların genel adı aşağıdakilerden hangisidir?",
+                options: ["Töre", "Yasaname-i Büzürg (Büyük Cengiz Yasaları)", "Kanunname", "Kutadgu Bilig"]
+            },
+
+            // MOĞOL İMPARATORLUĞU SORULARI
+            {
+                correctAnswer: "C",
+                meaning: "Moğol İmparatorluğu'nun parçalanmasıyla İran ve çevresinde kurulan devlet İlhanlılar'dır.",
+                category: "Moğol İmparatorluğu",
+                question: "Moğol İmparatorluğu'nun parçalanmasıyla İran ve çevresinde kurulan devlet aşağıdakilerden hangisidir?",
+                options: ["Altınordu Devleti", "Çağatay Hanlığı", "İlhanlılar", "Kubilay Hanlığı"]
+            },
+
+            // YENİ EKLENEN SORULAR
+            {
+                correctAnswer: "D",
+                meaning: "Mısır'da kurulan Türk devletleri: Tolunoğulları, İhşidiler, Eyyübiler, Memlükler'dir. Harzemşahlar ise İran coğrafyasında kurulmuştur.",
+                category: "Genel",
+                question: "Aşağıdakilerden hangisi Mısır'da kurulan Türk devletleri arasında değildir?",
+                options: ["Tolunoğulları", "İhşidiler", "Memlükler", "Harzemşahlar"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Gazneliler Devleti'nin resmi dili Farsçadır. Saray ve orduda Türkçe konuşulsa da resmi yazışma ve edebiyat dili Farsçaydı.",
+                category: "Gazneli",
+                question: "Gazneliler Devleti'nin resmi dili aşağıdakilerden hangisidir?",
+                options: ["Türkçe", "Arapça", "Farsça", "Peştuca"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Samanoğulları bir Türk devleti değil, İran asıllı bir devlettir. Diğer seçeneklerdeki eşleştirmeler doğrudur.",
+                category: "Genel",
+                question: "Türk tarihinde Oğuz boyları aşağıdakilerden hangisinin kuruluşunda rol oynamamıştır?",
+                options: [
+                    "Selçuklu Devleti - Kınık boyu",
+                    "Osmanlı Devleti - Kayı boyu", 
+                    "Akkoyunlular - Bayındır boyu",
+                    "Samanoğulları - Herhangi bir Oğuz boyu"
+                ]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Büyük Selçuklu Devleti, 1141 yılında Karahitaylarla yapılan Katvan Savaşı'nda yenilerek yıkılma sürecine girmiştir.",
+                category: "Selçuklu",
+                question: "Büyük Selçuklu Devleti'nin yıkılma sürecine girmesine neden olan savaş ve bu savaşta karşılaştığı devlet aşağıdakilerden hangisidir?",
+                options: [
+                    "Miryokefalon Savaşı - Bizans",
+                    "Katvan Savaşı - Karahitaylar",
+                    "Dandanakan Savaşı - Gazneliler",
+                    "Malazgirt Savaşı - Bizans"
+                ]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Timur, Altınordu Devleti'ni yıkmış ve Çağatay Hanlığı'na son vermiştir. Bu askeri başarıları onu bölgedeki en güçlü hükümdar yapmıştır.",
+                category: "Timur Devleti",
+                question: "Altınordu Devleti'ni yıkmış ve Çağatay Hanlığı'na son vermiş olan Türk-Moğol hükümdarı aşağıdakilerden hangisidir?",
+                options: [
+                    "Cengiz Han",
+                    "Kubilay Han",
+                    "Timur",
+                    "Batu Han"
+                ]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Kümbet, Türk çadırının mimariye yansımış hâlidir ve anıt mezar niteliği taşır. Selçukluların Türk-İslam mimarisine kazandırdığı en özgün yapı olarak kabul edilir. (2018 Çıkmış Soru)",
+                category: "Kültür ve İnanç",
+                question: "Selçukluların, Türk-İslam mimarisine kazandırdığı yapı aşağıdakilerden hangisidir?",
+                options: [
+                    "Kümbet", 
+                    "Ribat", 
+                    "Şadırvan", 
+                    "Bimaristan"
+                ]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Semerkant, İlk Türk-İslam devletlerinde önemli bir merkez olmuş, Timur Dönemi'nde ise 'şehirlerin şahı' unvanıyla anılarak en parlak dönemini yaşamıştır. (2015 Çıkmış Soru)",
+                category: "Şehirler",
+                question: "Türk-İslam devletlerinin ilk dönemlerinde başkent olan ve Timur Dönemi'nde 'şehirlerin şahı' unvanıyla bilinen stratejik öneme sahip şehir aşağıdakilerden hangisidir?",
+                options: [
+                    "İsfahan", 
+                    "Semerkant", 
+                    "Buhara", 
+                    "Kaşgar"
+                ]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Büyük Selçuklu Devleti'ni zayıflatan en önemli iç tehditlerden biri, Hasan Sabbah'ın kurduğu Batınilik (Haşhaşiler) tarikatının devlet adamlarına yönelik suikastleridir. Nizâmülmülk bu suikastlere kurban gitmiştir. (2017 Çıkmış Soru)",
+                category: "Büyük Selçuklu - Yıkılış",
+                question: "Büyük Selçuklu Dönemi'nde, Hasan Sabbah tarafından kurulan ve önemli devlet adamlarına suikastler düzenleyen gizli örgütün mensupları için kullanılan yaygın ifade aşağıdakilerden hangisidir?",
+                options: [
+                    "Haricîler", 
+                    "Haşhaşiler (Batınîler)", 
+                    "Babaîler", 
+                    "Karmatîler"
+                ]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Gazneliler, Samanoğulları'nın hizmetindeki Türk komutanı Alp Tigin tarafından kurulmuştur. Benzer şekilde Tolunoğulları da Abbasi Devleti'nin hizmetindeki Türk komutanı Tolunoğlu Ahmet tarafından Mısır'da kurulmuştur (Tevâif-i Mülûk). (2017 Çıkmış Soru)",
+                category: "Genel",
+                question: "Gazneliler Devleti, bir başka İslam devletinin (Samanîler) hizmetindeki Türk komutanlar tarafından kurulmuştur. Aşağıdaki Türk-İslam devletlerinden hangisi kuruluş şekli açısından bu durumla benzerlik gösterir?",
+                options: [
+                    "Büyük Selçuklu Devleti", 
+                    "Tolunoğulları Devleti", 
+                    "Karahanlı Devleti", 
+                    "Memlükler Devleti"
+                ]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Tuğrul Bey bu antlaşmayla kendi siyasi ve İslami liderliğini güçlendirip Şii Fatimilerin nüfuzunu kırmayı amaçlamıştır. Ancak Fatimilerle çatıştığı için Şii-Sünni birliğini sağlamak gibi bir amacı olamaz. (2023 Çıkmış Soru)",
+                category: "Büyük Selçuklu",
+                question: "1050 yılında Selçuklular ile Bizans arasında yapılan antlaşmaya göre; İstanbul'daki cami tamir edilecek, Şii Fatimi Halifesi yerine Abbasi Halifesi ve Tuğrul Bey adına hutbe okunacak ve camiye 'ok ve yay' işaretleri işlenecektir. Bu antlaşmayla Tuğrul Bey'in aşağıdakilerden hangisini amaçladığı söylenemez?",
+                options: [
+                    "İslam dünyasındaki Selçuklu nüfuzunu artırmak",
+                    "Şii-Sünni mezhep birliğini sağlamak",
+                    "Fatimilerin nüfuzunu kırmak",
+                    "Kendi liderliğini güçlendirmek"
+                ]
+            }
+        ];
+
+        // DOM elements
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const resultMessageEl = document.getElementById('resultMessage');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+        let masteredWords = [];
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Initialize quiz
+        function initQuiz() {
+            questions = shuffleArray([...quizData]);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            
+            // Add click event to cat cover
+            catCoverEl.addEventListener('click', removeCatCover);
+        }
+
+        // Remove cat cover to reveal answers
+        function removeCatCover() {
+            catCoverEl.style.display = 'none';
+        }
+
+        // Show current question
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            // Reset cat cover
+            catCoverEl.style.display = 'flex';
+            
+            // Shuffle options
+            const options = shuffleArray([...currentQuestion.options]);
+            
+            // Clear previous options
+            optionsEl.innerHTML = '';
+            
+            // Add cat cover back
+            optionsEl.appendChild(catCoverEl);
+            
+            // Create new option buttons
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = option;
+                button.addEventListener('click', () => selectAnswer(option, currentQuestion));
+                optionsEl.appendChild(button);
+            });
+            
+            // Reset UI for new question
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        // Handle answer selection
+        function selectAnswer(selectedOption, currentQuestion) {
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // Disable all buttons
+            optionButtons.forEach(button => {
+                button.disabled = true;
+                
+                // Find the correct answer by index
+                const correctOptionIndex = currentQuestion.options.findIndex(opt => 
+                    opt === currentQuestion.options[parseInt(currentQuestion.correctAnswer.charCodeAt(0) - 65)]
+                );
+                const correctOptionText = currentQuestion.options[correctOptionIndex];
+                
+                // Mark correct answer
+                if (button.textContent === correctOptionText) {
+                    button.classList.add('correct');
+                }
+                
+                // Mark incorrect selected answer
+                if (button.textContent === selectedOption && button.textContent !== correctOptionText) {
+                    button.classList.add('incorrect');
+                }
+            });
+            
+            // Check if answer is correct
+            const correctOptionIndex = parseInt(currentQuestion.correctAnswer.charCodeAt(0) - 65);
+            const isCorrect = selectedOption === currentQuestion.options[correctOptionIndex];
+            
+            // Update score if correct
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+                
+                // Add to mastered words if not already there
+                if (!masteredWords.some(w => w.question === currentQuestion.question)) {
+                    masteredWords.push(currentQuestion);
+                }
+            }
+            
+            // Show feedback
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            
+            if (isCorrect) {
+                feedbackTextEl.innerHTML = `✅ Doğru!<br><br>${currentQuestion.meaning}`;
+            } else {
+                const correctOptionIndex = parseInt(currentQuestion.correctAnswer.charCodeAt(0) - 65);
+                const correctOption = currentQuestion.options[correctOptionIndex];
+                feedbackTextEl.innerHTML = `❌ Yanlış!<br>Doğru cevap: <strong>${correctOption}</strong><br><br>${currentQuestion.meaning}`;
+            }
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        // End quiz and show results
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            finalScoreEl.textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            // Result message based on performance
+            if (percentage >= 90) {
+                resultMessageEl.textContent = "Mükemmel! Türk-İslam Devletleri ve Beylikler konusunu çok iyi biliyorsunuz! 🏆";
+            } else if (percentage >= 70) {
+                resultMessageEl.textContent = "Çok iyi! Temel bilgilere hakimsiniz. 👍";
+            } else if (percentage >= 50) {
+                resultMessageEl.textContent = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+            } else {
+                resultMessageEl.textContent = "Öğrenmeye devam! Konuyu tekrar etmeniz faydalı olacaktır. 📚";
+            }
+            
+            // Display all words learned
+            wordListEl.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Bilgiler</h3>';
+            quizData.forEach(item => {
+                const wordCard = document.createElement('div');
+                wordCard.classList.add('word-card', 'fade-in');
+                wordCard.innerHTML = `
+                    <div class="word">${item.question}</div>
+                    <div class="meaning">${item.meaning}</div>
+                    <div class="category category-${getCategoryClass(item.category)}">${item.category}</div>
+                `;
+                wordListEl.appendChild(wordCard);
+            });
+        }
+
+        // Helper function to get CSS class for category
+        function getCategoryClass(category) {
+            const classes = {
+                'İhşidiler': 'ihsidiler',
+                'Memlükler': 'memlukler',
+                'Eyyübiler': 'eyyubiler',
+                'Artuklular': 'artuklular',
+                'Mengücekliler': 'mengucekler',
+                'Saltuklular': 'saltuklular',
+                'Danişmendliler': 'danismendliler',
+                'Çaka Beyliği': 'caka',
+                'Akkoyunlular': 'akkoyunlu',
+                'Karakoyunlular': 'karakoyunlu',
+                'Babür İmparatorluğu': 'babur',
+                'Harzemşahlar': 'harezmsah',
+                'Timur Devleti': 'timur',
+                'Cengiz İmparatorluğu': 'cengiz',
+                'Moğol İmparatorluğu': 'mogol',
+                'Gazneli': 'gazneli',
+                'Selçuklu': 'selcuklu',
+                'Genel': 'genel',
+                'Kültür ve İnanç': 'kultur',
+                'Büyük Selçuklu': 'selcuklu',
+                'Büyük Selçuklu - Yıkılış': 'selcuklu',
+                'Şehirler': 'sehirler'
+            };
+            return classes[category] || 'genel';
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', nextQuestion);
+        
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>

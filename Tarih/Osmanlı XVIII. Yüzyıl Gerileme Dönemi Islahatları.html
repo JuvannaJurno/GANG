@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MEB-AGS Türkiye Tarihi - Gerileme Dönemi</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "🏛️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            text-align: left;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ MEB-AGS Türkiye Tarihi</h1>
+            <div class="subtitle">XVIII. Yüzyıl Gerileme Dönemi Islahatları</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                correctAnswer: "B",
+                meaning: "XVIII. yüzyıl ıslahatları yönetim, maliye ve askerlik alanında yoğunlaşmış olsa da hukuk alanında köklü bir düzenleme yapılmamıştır.",
+                question: "XVIII. yüzyıl ıslahatlarının genel özellikleri arasında aşağıdakilerden hangisi yer almaz?",
+                options: ["Islahatlarda Avrupa (Batı) örnek alınmıştır.", "Hukuk alanı dâhil olmak üzere devletin her kademesinde yenilik yapılmıştır.", "Yenilikler halka baskı ve şiddet yoluyla benimsetilmek istenmiştir.", "Yapılan yeniliklere saray, ulema ve asker karşı çıkmıştır."]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Osmanlı Devleti bu dönemde kaybettiği toprakları geri alma ümidiyle en çok askerî alanda modernleşmeye gitmiştir.",
+                question: "Gerileme Dönemi'nde (XVIII. yüzyıl) yapılan ıslahatlar en çok hangi alanda yoğunlaşmıştır?",
+                options: ["Eğitim", "Maliye", "Askerî", "Yönetim"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "IV. Murat XVII. yüzyıl (Duraklama Dönemi) padişahıdır. Diğerleri XVIII. yüzyıl ıslahatçılarıdır.",
+                question: "Aşağıdaki padişahlardan hangisi XVIII. yüzyıl (Gerileme Dönemi) ıslahatçılarından biri değildir?",
+                options: ["III. Ahmet", "I. Mahmut", "IV. Murat", "I. Abdülhamit"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Edirne Olayı ile II. Mustafa tahttan indirilmiş, yerine III. Ahmet getirilmiştir. Bu olay Lale Devri'nin önünü açmıştır.",
+                question: "1703 yılında cebecilerin çıkardığı ve II. Mustafa'nın tahttan indirilip yerine III. Ahmet'in geçirildiği isyan aşağıdakilerden hangisidir?",
+                options: ["Edirne Olayı", "Patrona Halil İsyanı", "Kabakçı Mustafa İsyanı", "Çınar Vakası"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Nevşehirli Damat İbrahim Paşa, Lale Devri'nin en önemli siyasi figürü ve sadrazamıdır.",
+                question: "1718 Pasarofça Antlaşması ile başlayıp 1730 Patrona Halil İsyanı ile sona eren Lale Devri'nin sadrazamı aşağıdakilerden hangisidir?",
+                options: ["Koca Ragıp Paşa", "Halil Hamit Paşa", "Nevşehirli Damat İbrahim Paşa", "Cezayirli Gazi Hasan Paşa"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Levni bu dönemin en ünlü minyatürcüsü, Nedim ise şarkılarıyla ünlü şairidir.",
+                question: "Lale Devri'nin ünlü minyatürcüsü ve şairi sırasıyla hangi seçenekte doğru verilmiştir?",
+                options: ["Matrakçı Nasuh - Baki", "Levni - Nedim", "Sinan Bey - Fuzuli", "Nakkaş Osman - Nef'i"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Lale Devri tabirini ilk kez Yahya Kemal kullanmış, Ahmet Refik Altınay ise bu isimle eser vererek yaygınlaştırmıştır.",
+                question: "\"Lale Devri\" kelimesini ilk kez kullanan kişi ve bu ismi bir roman adı olarak kullanarak edebiyata taşıyan yazar eşleştirmesi aşağıdakisinde doğrudur?",
+                options: ["Yahya Kemal Beyatlı - Ahmet Refik Altınay", "Ahmet Refik Altınay - Yahya Kemal Beyatlı", "İbrahim Müteferrika - Vani Mehmet Efendi", "28 Mehmet Çelebi - Sait Efendi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Lale Devri'nde askerî alanda köklü yenilikler yapılmamıştır; daha çok kültürel, sosyal ve teknik yenilikler ön plandadır.",
+                question: "Lale Devri ıslahatları ile ilgili aşağıda verilen bilgilerden hangisi yanlıştır?",
+                options: ["Islahatlarda Avrupa ilk kez örnek alınmıştır.", "Askerî alanda köklü yenilikler yapılmıştır.", "İlk defa Paris, Moskova, Viyana gibi başkentlerde geçici elçilikler açılmıştır.", "Tercüme heyetleri kurularak Doğu klasikleri çevrilmiştir."]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Turkuveri (Turquerie) akımı matbaadan ziyade elçilerin ve ticaretin etkisiyle Avrupa'da Türk modasının yayılmasıdır.",
+                question: "Osmanlı Devleti'ne getirilen ilk teknik yenilik olan matbaa ile ilgili aşağıdakilerden hangisi söylenemez?",
+                options: ["İbrahim Müteferrika ve Sait Efendi tarafından Macaristan'dan getirilmiştir.", "Şeyhülislam Yenişehirli Abdullah Efendi'nin fetvasıyla dinî eserlerin basımı yasaklanmıştır.", "Matbaada basılan ilk eser Vani Mehmet Efendi'ye ait Van Kulu Lügati'dir.", "Matbaa sayesinde Avrupa'da \"Turkuveri\" akımı başlamıştır."]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "28 Mehmet Çelebi, Paris elçiliği sonrası yazdığı Sefaretname ile Avrupa'daki gelişmeleri Osmanlı'ya rapor etmiştir.",
+                question: "Paris Sefaretnamesi'ni yazarak Osmanlı'nın Batı'ya açılan ilk penceresi kabul edilen devlet adamı kimdir?",
+                options: ["Sait Efendi", "Yusuf Agâh Efendi", "28 Mehmet Çelebi", "Ebubekir Ratıp Efendi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Lale Devri'nde kurulan Tulumbacılar Ocağı, Osmanlı'nın ilk düzenli itfaiye teşkilatıdır.",
+                question: "Lale Devri'de Gerçek Davut Ağa'nın katkılarıyla kurulan itfaiye teşkilatının adı nedir?",
+                options: ["Sekban-ı Cedit", "Tulumbacılar Ocağı", "Humbaracı Ocağı", "Sürat Topçuları"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "III. Ahmet Çeşmesi sivil mimaride, Nuruosmaniye Camii ise dini mimaride Batı etkisinin görüldüğü ilk örneklerdir.",
+                question: "Batı tarzında yapılan ilk mimari eser ve ilk cami sırasıyla aşağıdakilerin hangisinde verilmiştir?",
+                options: ["Sadabad Sarayı - Süleymaniye Camii", "III. Ahmet Çeşmesi - Nuruosmaniye Camii", "Nuruosmaniye Camii - III. Ahmet Çeşmesi", "Versay Sarayı - Sultanahmet Camii"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "I. Mahmut döneminde orduyu modernize etmek için Comte de Bonneval getirilmiştir.",
+                question: "Osmanlı'da ilk defa Batı tarzı askerî ıslahatlar yapan ve Batı'dan Comte de Bonneval'ı uzman olarak getiren padişah kimdir?",
+                options: ["I. Mahmut", "III. Mustafa", "I. Abdülhamit", "III. Selim"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Müslüman olup Ahmet ismini alan Comte de Bonneval, Humbaracı Ocağı'nı ıslah etmiş ve Hendesehane'yi kurmuştur.",
+                question: "Batı tarzında açılan ilk teknik okul olan Hendesehanenin kurulmasını sağlayan ve \"Humbaracı Ahmet\" adını alan uzman kimdir?",
+                options: ["Baron de Tott", "İbrahim Müteferrika", "Comte de Bonneval", "Cezayirli Gazi Hasan Paşa"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "III. Mustafa döneminde Baron de Tott'un etkisiyle Sürat Topçuları Ocağı kurulmuş ve ordu modernize edilmeye çalışılmıştır.",
+                question: "Sadrazamlığını Koca Ragıp Paşa'nın yaptığı ve Avrupa'dan Baron de Tott'un getirildiği dönemin padişahı hangisidir?",
+                options: ["I. Mahmut", "III. Ahmet", "III. Mustafa", "III. Selim"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Cezayirli Gazi Hasan Paşa, 1773'te Tersane Hendesehanesi'ni açarak denizci subay yetiştirilmesini sağlamıştır.",
+                question: "1773 yılında bugünkü Deniz Harp Okulunun temeli sayılan \"Tersane Hendesehanesi\" kim tarafından açılmıştır?",
+                options: ["Halil Hamit Paşa", "Koca Ragıp Paşa", "Baron de Tott", "Cezayirli Gazi Hasan Paşa"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Esham sistemi III. Mustafa zamanında hazırlanmış, ancak uygulamaya I. Abdülhamit döneminde geçilmiştir.",
+                question: "Kâğıt paraya geçişin ilk aşaması sayılan \"Esham\" (iç borçlanma senedi) sistemi hangi padişah döneminde getirilmiştir?",
+                options: ["III. Mustafa", "I. Abdülhamit", "I. Mahmut", "III. Ahmet"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "I. Abdülhamit, maliyeyi düzeltmek amacıyla Cülus bahşişini kaldırmış ve ulufe alım-satımını yasaklamıştır.",
+                question: "Cülus bahşişi verme geleneğini kaldıran ve ulufe alım-satımını yasaklayan Osmanlı padişahı hangisidir?",
+                options: ["I. Mahmut", "III. Selim", "III. Mustafa", "I. Abdülhamit"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Sürat Topçuları Ocağı I. Abdülhamit döneminde değil, III. Mustafa döneminde kurulmuştur.",
+                question: "Aşağıdakilerden hangisi I. Abdülhamit dönemi gelişmelerinden biri değildir?",
+                options: ["Bilim insanlarının kendi kıyafet ve dinlerinde kalarak çalışmasına izin verilmiştir.", "Sürat Topçuları Ocağı kurulmuştur.", "İstihkam okulu açılmıştır.", "Baron de Tott'un da etkisiyle 1775'te Mühendishane-i Bahri Hümayun açılmıştır."]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "III. Selim'in yaptığı tüm yeniliklere Nizam-ı Cedit (Yeni Düzen) denir.",
+                question: "Yaptığı tüm ıslahatlara \"Nizam-ı Cedit\" adı verilen ve ıslahatlarında Fransa'yı örnek alan ilk padişah kimdir?",
+                options: ["III. Mustafa", "I. Abdülhamit", "III. Selim", "II. Mahmut"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "1807 Kabakçı Mustafa İsyanı ile III. Selim tahttan indirilmiş ve Nizam-ı Cedit dönemi sona ermiştir.",
+                question: "III. Selim dönemi hangi gelişme ile sona ermiştir?",
+                options: ["Edirne Olayı", "Patrona Halil İsyanı", "Kabakçı Mustafa İsyanı", "31 Mart Vakası"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Osmanlı'nın ilk daimi elçisi Yusuf Agâh Efendi'dir ve Londra'ya gönderilmiştir.",
+                question: "Osmanlı Devleti'nde Londra'ya atanarak ilk kalıcı (daimî) elçi unvanını alan devlet adamı kimdir?",
+                options: ["Yusuf Agâh Efendi", "Ebubekir Ratıp Efendi", "28 Mehmet Çelebi", "Sait Efendi"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Esham sistemi III. Mustafa döneminde tasarlanmış, I. Abdülhamit döneminde uygulanmıştır; III. Selim dönemi yeniliği değildir.",
+                question: "Aşağıdakilerden hangisi III. Selim döneminde yapılan yeniliklerden biri değildir?",
+                options: ["Yeniçerilere talim yapma zorunluluğu getirilmesi", "Zahire Nazırlığı kurularak karaborsanın önüne geçilmesi", "Matbaayı Amire adıyla ilk devlet matbaasının kurulması", "Esham sisteminin ilk kez uygulamaya geçirilmesi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Mühendishane-i Berri Hümayun, III. Selim tarafından kara ordusuna subay ve teknik eleman yetiştirmek için açılmıştır.",
+                question: "III. Selim döneminde açılan ve kara subayı yetiştirmeyi amaçlayan okul hangisidir?",
+                options: ["Hendesehane", "Mühendishane-i Berri Hümayun", "Mühendishane-i Bahri Hümayun", "Tersane Hendesehanesi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "İrad-ı Cedit hazinesi, yeni kurulan Nizam-ı Cedit ordusunun masraflarını karşılamak için oluşturulmuştur.",
+                question: "Nizam-ı Cedit ordusunun masraflarını karşılamak amacıyla kurulan hazineye ne ad verilmiştir?",
+                options: ["İrad-ı Cedit", "Hazine-i Amire", "Esham-ı Cedide", "Cülus Hazinesi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Cezzar Ahmet Paşa komutasındaki Nizam-ı Cedit ordusu, Akka Kalesi önünde Napolyon'u yenilgiye uğratmıştır.",
+                question: "Nizam-ı Cedit ordusunun ilk ve son askerî başarısı aşağıdakilerden hangisidir?",
+                options: ["Prut Savaşı", "Fransa'ya karşı Akka Kalesi savunması", "Pasarofça Antlaşması öncesi savaşlar", "Kırım'ın savunulması"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Dakya Projesi, Rusya ve Avusturya'nın Balkanlar'da (Eflak-Boğdan) ortak bir devlet kurma planıdır.",
+                question: "Rusya ve Avusturya arasında planlanan, Eflâk ve Boğdan'da ortak bir devlet kurmayı amaçlayan siyasi proje hangisidir?",
+                options: ["Grek Projesi", "Şark Meselesi", "Dakya Projesi", "Megali İdea"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Grek Projesi, Bizans İmparatorluğu'nu yeniden kurma ve İstanbul merkezli bir Grek devleti oluşturma amacı taşır.",
+                question: "Rus Prensi Potemkin tarafından \"Doğu Sisteminin En Büyük Planı\" olarak adlandırılan ve Bizans'ı canlandırmayı hedefleyen proje hangisidir?",
+                options: ["Dakya Projesi", "Grek Projesi", "Panslavizm", "Turan Projesi"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "I. Abdülhamit, Avrupalı uzmanların Müslüman olma ve kıyafet değiştirme zorunluluğunu kaldırarak daha rahat çalışmalarını sağlamıştır.",
+                question: "XVIII. yüzyılda Batı'dan getirilen uzmanların \"Müslüman olma ve Osmanlı kıyafeti giyme\" zorunluluğu hangi padişah döneminde kaldırılmıştır?",
+                options: ["III. Ahmet", "I. Mahmut", "III. Mustafa", "I. Abdülhamit"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "1718 Pasarofça Antlaşması ile Osmanlı, Avrupa'nın askeri ve teknik üstünlüğünü kabul ederek Lale Devri'ne girmiştir.",
+                question: "Osmanlı Devleti, XVIII. yüzyılda hangi antlaşma ile kaybettiği toprakları geri alma ümidini kaybetmiş ve Batı'nın üstünlüğünü ilk kez kabul etmiştir?",
+                options: ["Karlofça Antlaşması", "İstanbul Antlaşması", "Pasarofça Antlaşması", "Küçük Kaynarca Antlaşması"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1774 Küçük Kaynarca Antlaşması ile Kırım bağımsız olmuş, böylece ilk kez tamamı Türk ve Müslüman bir toprak kaybedilmiştir.",
+                question: "İlk kez halkı tamamen Türk ve Müslüman olan bir toprağın (Kırım) elden çıkmasına neden olan antlaşma aşağıdakilerden hangisidir?",
+                options: ["Belgrat Antlaşması", "Küçük Kaynarca Antlaşması", "Prut Antlaşması", "Yaş Antlaşması"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "III. Selim, ıslahat yapmadan önce devlet adamlarından ve uzmanlardan durum tespiti ve çözüm içeren 'Lahiya'lar (raporlar) istemiştir.",
+                question: "III. Selim döneminde ordu ve devlet işleri hakkında bilim insanlarından istenen raporlara ne ad verilmiştir?",
+                options: ["Sefaretname", "Lahiya", "Fetva", "Kanunname"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Cezzar Ahmet Paşa, 1799'da Akka'da Napolyon'u durdurarak Nizam-ı Cedit'in gücünü kanıtlamıştır.",
+                question: "Nizam-ı Cedit ordusunun başında, Napolyon’un ordusunu Akka’da mağlup eden ünlü Osmanlı komutanı kimdir?",
+                options: ["Cezayirli Gazi Hasan Paşa", "Alemdar Mustafa Paşa", "Cezzar Ahmet Paşa", "Koca Ragıp Paşa"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Ekonomik gelirlerin ıslahatları karşılayamaması asıl sorundur; gelirlerin artması başarısızlık nedeni olamaz.",
+                question: "XVIII. yüzyılda yapılan ıslahatların başarısız olmasında aşağıdakilerden hangisinin etkisi diğerlerinden DAHA AZDIR?",
+                options: ["Yeniçerilerin çıkarlarına ters düşmesi", "Ulemanın yeniliklere karşı tavır alması", "Halkın yenilikleri tam olarak benimsememesi", "Ekonomik gelirlerin ıslahatları karşılayacak düzeyde artması"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Tercüme heyetleri, kültürel bir uyanış sağlamak ve Doğu/Batı birikimini Osmanlı'ya aktarmak için kurulmuştur.",
+                question: "Lale Devri'de açılan \"Tercüme Heyetleri\"nin temel amacı aşağıdakilerden hangisidir?",
+                options: ["Batı'daki teknik gelişmeleri takip etmek", "Doğu ve Batı klasiklerini Türkçeye kazandırarak kültür hayatını canlandırmak", "Diplomatik yazışmaları hızlandırmak", "Avrupa'daki anayasal gelişmeleri incelemek"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Mühendishane-i Berri Hümayun, 'Ber' (Kara) kelimesinden anlaşılacağı üzere Kara Kuvvetleri için kurulmuştur.",
+                question: "Mühendishane-i Berri Hümayun hangi askerî sınıfın teknik ihtiyacını karşılamak için kurulmuştur?",
+                options: ["Deniz Kuvvetleri", "Kara Kuvvetleri", "Havacı Sınıfı", "İstihbarat Sınıfı"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "III. Selim döneminde Üsküdar'da kurulan Matbaa-i Amire, Osmanlı'nın ilk resmi devlet matbaasıdır.",
+                question: "Osmanlı tarihinde \"ilk kez devlet matbaasının kurulması\" (Matbaa-i Amire) hangi padişah döneminde gerçekleşmiştir?",
+                options: ["III. Ahmet", "I. Mahmut", "I. Abdülhamit", "III. Selim"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Van Kulu Lügati, Vani Mehmet Efendi tarafından yazılmış ve Müteferrika matbaasında basılan ilk eserdir.",
+                question: "Lale Devri'nde matbaada basılan ilk eser olan \"Van Kulu Lügati\" kime aittir?",
+                options: ["İbrahim Müteferrika", "Sait Efendi", "Vani Mehmet Efendi", "Katip Çelebi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Barok ve Rokoko, Avrupa'da doğan mimari akımlardır ve Osmanlı'nın Batı'ya yönelmesiyle mimarimize girmiştir.",
+                question: "XVIII. yüzyılda Osmanlı mimarisinde görülen \"Barok ve Rokoko\" tarzı aşağıdaki hangi gelişmenin bir sonucudur?",
+                options: ["İran ile yapılan kültürel alışverişin", "Batı (Avrupa) etkisinin artmasının", "Orta Asya Türk sanatına dönüşün", "Dini mimarinin önemini yitirmesinin"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "III. Selim, Fransa'yı model aldığı için okullarda yabancı dil olarak Fransızca zorunlu tutulmuştur.",
+                question: "III. Selim döneminde resmi yabancı dil olarak okullarda (özellikle askerî) zorunlu tutulan dil hangisidir?",
+                options: ["Almanca", "İngilizce", "Fransızca", "İtalyanca"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Lale Devri'nde İran'dan örnek alınan çiçek aşısı, dönemin sağlık alanındaki en önemli gelişmesidir.",
+                question: "XVIII. yüzyılda İran'dan getirilen ve tıp alanında uygulanan tek yenilik aşağıdakilerden hangisidir?",
+                options: ["Karantina uygulaması", "Çiçek aşısı", "İlk eczane açılması", "Kadavra incelemesi"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Osmanlı Devleti, siyasi olarak kaybettiği Kırım ile kültürel ve dini bağlarını koparmamak için Halifelik makamını kullanmıştır.",
+                question: "Küçük Kaynarca Antlaşması'nda yer alan \"Kırım halkı dini açıdan halifeye bağlı kalacaktır\" maddesinin temel amacı nedir?",
+                options: ["Kırım'ın bağımsızlığını engellemek", "Rusya'nın Kırım'a girmesini yasaklamak", "Kırım halkı ile kültürel ve manevi bağları korumak", "Rusya'yı İslam dünyasına yakınlaştırmak"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Kağıthane'de Versay Sarayı örnek alınarak yapılan Sadabad Sarayı, Lale Devri'nin simgesi ve eğlence merkezidir.",
+                question: "Lale Devri'nde Versay Sarayı örnek alınarak İstanbul'da inşa edilen ve dönemin eğlence merkezi olan saray hangisidir?",
+                options: ["Dolmabahçe Sarayı", "Yıldız Sarayı", "Sadabad Sarayı", "Beylerbeyi Sarayı"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Meşveret Meclisi bir danışma meclisidir; kararları padişahı bağlamaz ancak devlet işlerinde fikir alışverişi sağlar.",
+                question: "Hangisi III. Selim'in ıslahat yaparken kurumsal olarak aktif hale getirdiği \"Meşveret Meclisi\"nin özelliğidir?",
+                options: ["Kararlarının padişah için bağlayıcı olması", "Devlet sorunlarının tartışıldığı bir danışma meclisi olması", "Üyelerinin halk tarafından seçilmesi", "Sadece askerî konuları görüşmesi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "I. Mahmut kültürel birikimi korumak için kütüphaneler kurmuş ve kıymetli eserlerin dışarı çıkışını yasaklamıştır.",
+                question: "XVIII. yüzyılda kütüphaneler açtıran ve el yazması eserlerin yurt dışına çıkışını yasaklayan padişah hangisidir?",
+                options: ["I. Mahmut", "III. Ahmet", "III. Mustafa", "III. Selim"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "II. Osman (Genç Osman) XVII. yüzyılda (Duraklama Dönemi) ıslahat yapmaya çalışmış bir padişahtır.",
+                question: "Aşağıdakilerden hangisi Gerileme Dönemi (XVIII. yüzyıl) ıslahatçı padişahlarından biri DEĞİLDİR?",
+                options: ["I. Mahmut", "III. Mustafa", "Genç Osman (II. Osman)", "III. Selim"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Tarhuncu Ahmet Paşa, XVII. yüzyılda ilk modern bütçeyi hazırlayan devlet adamıdır.",
+                question: "Aşağıdakilerden hangisi XVIII. yüzyıl ıslahatları içerisinde yer alan devlet adamlarından biri değildir?",
+                options: ["Koca Ragıp Paşa", "Tarhuncu Ahmet Paşa", "Halil Hamit Paşa", "Nevşehirli Damat İbrahim Paşa"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Tarhuncu Ahmet Paşa 17. yüzyıl figürüdür, diğerleri 18. yüzyıl uzmanları ve devlet adamlarıdır.",
+                question: "Aşağıdakilerden hangisi 18. yüzyıl ıslahatçılarından biri olmayıp, 17. yüzyılda (Duraklama Dönemi) maliyeyi düzeltmeye çalışan devlet adamıdır?",
+                options: ["Humbaracı Ahmet Paşa", "Baron de Tott", "Tarhuncu Ahmet Paşa", "Cezayirli Gazi Hasan Paşa"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Nizam-ı Cedit III. Selim'in ıslahat programıdır. IV. Murat ise 17. yüzyıl padişahıdır.",
+                question: "Aşağıdaki eşleştirmelerden hangisi yanlıştır?",
+                options: ["III. Ahmet - Lale Devri", "I. Mahmut - Hendesehane", "III. Selim - Nizam-ı Cedit", "IV. Murat - Nizam-ı Cedit"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "II. Mustafa, Karlofça sonrası Edirne'ye çekilmiş ve Edirne Olayı ile tahttan indirilmiştir; ıslahatçı kimliğiyle öne çıkmaz.",
+                question: "Aşağıdaki padişahlardan hangisi 1699-1792 yılları arasındaki \"Gerileme Dönemi\"nde tahtta kalmış olmasına rağmen bir \"ıslahatçı\" olarak nitelendirilmez?",
+                options: ["III. Ahmet", "II. Mustafa", "III. Selim", "I. Abdülhamit"]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        function shuffleArray(array) {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        function initQuiz() {
+            questions = shuffleArray(quizData);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            catCoverEl.addEventListener('click', () => catCoverEl.style.display = 'none');
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            const correctText = currentQuestion.options[currentQuestion.correctAnswer.charCodeAt(0) - 65];
+            const shuffledOptions = shuffleArray(currentQuestion.options);
+            
+            optionsEl.innerHTML = '';
+            optionsEl.appendChild(catCoverEl);
+            catCoverEl.style.display = 'flex';
+
+            shuffledOptions.forEach(optionText => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = optionText;
+                button.onclick = () => selectAnswer(optionText, correctText, currentQuestion.meaning);
+                optionsEl.appendChild(button);
+            });
+            
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        function selectAnswer(selectedOption, correctOptionText, meaning) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correctOptionText) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selectedOption) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            const isCorrect = selectedOption === correctOptionText;
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+            }
+
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            feedbackTextEl.innerHTML = isCorrect ? 
+                `<strong>✅ Doğru!</strong><br><br>${meaning}` : 
+                `<strong>❌ Yanlış!</strong><br>Doğru Cevap: ${correctOptionText}<br><br>${meaning}`;
+            
+            nextBtn.style.display = 'block';
+        }
+
+        nextBtn.onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        };
+
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            finalScoreEl.textContent = `Puanınız: ${score} / ${questions.length}`;
+            
+            wordListEl.innerHTML = '<h3 style="margin-bottom:15px;">Genel Tekrar:</h3>';
+            questions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>${q.question}</strong><br><small style="color:var(--primary)">${q.meaning}</small>`;
+                wordListEl.appendChild(card);
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (quizContainer.style.display === 'none') return;
+            if ((e.key === 'Enter' || e.code === 'Space') && nextBtn.style.display === 'block') {
+                if (e.code === 'Space') e.preventDefault();
+                nextBtn.click();
+                return;
+            }
+            if (catCoverEl.style.display !== 'none') {
+                if (['1', '2', '3', '4'].includes(e.key)) {
+                    catCoverEl.style.display = 'none';
+                }
+                return; 
+            }
+            const buttons = document.querySelectorAll('.option-btn');
+            if (buttons.length === 0 || buttons[0].disabled) return;
+            if (e.key === '1' && buttons[0]) buttons[0].click();
+            if (e.key === '2' && buttons[1]) buttons[1].click();
+            if (e.key === '3' && buttons[2]) buttons[2].click();
+            if (e.key === '4' && buttons[3]) buttons[3].click();
+        });
+
+        initQuiz();
+    </script>
+</body>
+</html>

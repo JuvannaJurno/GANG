@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Vatandaşlık Testi</title>
+    <style>
+        :root {
+            --primary: #D2691E;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #FF8C00;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #D2691E 0%, #FF8C00 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "⚖️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .context {
+            font-size: 1.1rem;
+            color: var(--primary);
+            font-style: italic;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(210, 105, 30, 0.1);
+            border-radius: 8px;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(210, 105, 30, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(210, 105, 30, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(210, 105, 30, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-anayasa { background: #D2691E; }
+        .category-tarih { background: #4B0082; }
+        .category-haklar { background: #2E8B57; }
+        .category-sistem { background: #4682B4; }
+        .category-kurumlar { background: #800080; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option-btn {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .cat-image {
+                max-width: 150px;
+                max-height: 120px;
+            }
+            
+            .cat-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ MEB-AGS Vatandaşlık</h1>
+            <div class="subtitle">1982 Anayasasına Giriş</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+                <div class="context" id="context"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // ANAYASA TARİHİ SORULARI (İlk Set - 1-40)
+            {
+                word: "1876",
+                meaning: "Türk tarihindeki ilk yazılı anayasa (Kanun-i Esasi) bu yılda ilan edilmiştir",
+                category: "Anayasa Tarihi",
+                question: "Türk tarihindeki ilk yazılı anayasa (Kanun-i Esasi) hangi yılda ilan edilmiştir?",
+                options: ["1921", "1876", "1924", "1909"],
+                context: "İlk Osmanlı Anayasası"
+            },
+            {
+                word: "1876 Kanun-i Esasi",
+                meaning: "Temel Hak ve Özgürlükler'den ilk kez bahseden anayasa",
+                category: "Anayasa Tarihi",
+                question: "Aşağıdaki anayasalardan hangisinde 'Temel Hak ve Özgürlükler'den ilk kez bahsedilmiştir?",
+                options: ["1921 Anayasası", "1924 Anayasası", "1961 Anayasası", "1876 Kanun-i Esasi"],
+                context: "Tarihsel gelişim içinde ilk anayasa"
+            },
+            {
+                word: "1921 Anayasası",
+                meaning: "Milli egemenlik ilkesini getiren ve Meclis Hükümeti sistemini benimseyen anayasa",
+                category: "Anayasa Tarihi",
+                question: "'Milli egemenlik' ilkesini getiren ve 'Meclis Hükümeti' sistemini benimseyen anayasa hangisidir?",
+                options: ["1982 Anayasası", "1921 Anayasası", "1924 Anayasası", "1876 Kanun-i Esasi"],
+                context: "Kurtuluş Savaşı dönemi anayasası"
+            },
+            {
+                word: "1921 Anayasası",
+                meaning: "Çerçeve Anayasa özelliği taşıyan ve temel haklardan bahsetmeyen anayasa",
+                category: "Anayasa Tarihi",
+                question: "Hangi anayasa 'Çerçeve Anayasa' özelliği taşımaktadır ve temel haklardan bahsetmemiştir?",
+                options: ["1924 Anayasası", "1961 Anayasası", "1921 Anayasası", "1982 Anayasası"],
+                context: "Kısa ve öz bir anayasa"
+            },
+            {
+                word: "1921 Anayasası - 1923 Değişikliği",
+                meaning: "Türk Devleti'nin rejimi Cumhuriyettir maddesi ilk kez bu anayasa ve değişiklikle eklenmiştir",
+                category: "Anayasa Tarihi",
+                question: "'Türk Devleti'nin rejimi Cumhuriyettir' maddesi ilk kez hangi yıl ve hangi anayasaya yapılan değişiklikle eklenmiştir?",
+                options: ["1921 Anayasası - 1923 Değişikliği", "1924 Anayasası - 1928 Değişikliği", "1921 Anayasası - 1921 Değişikliği", "1876 Kanun-i Esasi - 1909 Değişikliği"],
+                context: "Cumhuriyetin ilanı sonrası değişiklik"
+            },
+            {
+                word: "1924 Anayasası",
+                meaning: "Cumhuriyet'in ilk anayasası ve ilk sert anayasa (değiştirilemez maddeler içeren)",
+                category: "Anayasa Tarihi",
+                question: "Cumhuriyet'in ilk anayasası ve ilk 'sert anayasa' (değiştirilemez maddeler içeren) olan metin hangisidir?",
+                options: ["1921 Anayasası", "1961 Anayasası", "1876 Kanun-i Esasi", "1924 Anayasası"],
+                context: "Cumhuriyet döneminin ilk anayasası"
+            },
+            {
+                word: "Karma Sistem (Kuvvetler birliği ve ayrılığı beraber)",
+                meaning: "1924 Anayasası'nın benimsediği sistem",
+                category: "Anayasa Tarihi",
+                question: "1924 Anayasası için 'Ne meclis hükümeti ne parlamenter' denmiştir. Bu anayasanın benimsediği sistem aşağıdakilerden hangisidir?",
+                options: ["Saf kuvvetler ayrılığı", "Karma Sistem (Kuvvetler birliği ve ayrılığı beraber)", "Mutlak monarşi", "Başkanlık sistemi"],
+                context: "Karma sistem özellikleri"
+            },
+            {
+                word: "1928",
+                meaning: "1924 Anayasası'nda 'Devletin dini İslam'dır' hükmünün kaldırıldığı yıl",
+                category: "Anayasa Tarihi",
+                question: "1924 Anayasası'nda 'Devletin dini İslam'dır' hükmü hangi yılda yapılan değişiklikle kaldırılmıştır?",
+                options: ["1923", "1928", "1937", "1946"],
+                context: "Laikleşme süreci"
+            },
+            {
+                word: "1930",
+                meaning: "Kadınlara belediye seçimlerinde seçme ve seçilme hakkının verildiği yıl",
+                category: "Anayasa Tarihi",
+                question: "Kadınlara belediye seçimlerinde seçme ve seçilme hakkı hangi yılda verilmiştir?",
+                options: ["1930", "1933", "1934", "1924"],
+                context: "Kadın hakları tarihi"
+            },
+            {
+                word: "1934",
+                meaning: "Kadınlara milletvekili seçme ve seçilme hakkının tanındığı yıl",
+                category: "Anayasa Tarihi",
+                question: "Kadınlara milletvekili seçme ve seçilme hakkı hangi yılda tanınmıştır?",
+                options: ["1930", "1933", "1934", "1928"],
+                context: "Siyasi hakların gelişimi"
+            },
+            {
+                word: "1937",
+                meaning: "Atatürk İlkeleri'nin ilk kez anayasaya girdiği yıl",
+                category: "Anayasa Tarihi",
+                question: "'Atatürk İlkeleri' ilk kez hangi yılda anayasaya girmiştir?",
+                options: ["1924", "1928", "1937", "1961"],
+                context: "Anayasal ilkeler"
+            },
+            {
+                word: "1946",
+                meaning: "1924 Anayasası döneminde 'Tek dereceli seçim sistemi'nin benimsendiği yıl",
+                category: "Anayasa Tarihi",
+                question: "1924 Anayasası döneminde 'Tek dereceli seçim sistemi' ne zaman benimsenmiştir?",
+                options: ["1946", "1950", "1934", "1961"],
+                context: "Seçim sistemleri"
+            },
+            {
+                word: "1961 Anayasası",
+                meaning: "'İnsan haklarına dayalı devlet' ifadesini ilk kez kullanan anayasa",
+                category: "Anayasa Tarihi",
+                question: "Aşağıdaki anayasalardan hangisi 'İnsan haklarına dayalı devlet' ifadesini ilk kez kullanmıştır?",
+                options: ["1924 Anayasası", "1961 Anayasası", "1982 Anayasası", "1921 Anayasası"],
+                context: "İnsan hakları yaklaşımı"
+            },
+            {
+                word: "1961 Anayasası",
+                meaning: "Türkiye'de ilk kez parlamenter sisteme resmen geçilen anayasa",
+                category: "Anayasa Tarihi",
+                question: "Türkiye'de ilk kez parlamenter sisteme resmen hangi anayasa ile geçilmiştir?",
+                options: ["1921 Anayasası", "1924 Anayasası", "1961 Anayasası", "1982 Anayasası"],
+                context: "Sistem değişikliği"
+            },
+            {
+                word: "1961 Anayasası",
+                meaning: "'Sosyal Devlet' ilkesinin ilk kez yer aldığı anayasa",
+                category: "Anayasa Tarihi",
+                question: "'Sosyal Devlet' ilkesi ilk kez hangi anayasada yer almıştır?",
+                options: ["1924 Anayasası", "1961 Anayasası", "1982 Anayasası", "1921 Anayasası"],
+                context: "Sosyal devlet anlayışı"
+            },
+            {
+                word: "1961 Anayasası",
+                meaning: "Halkoylaması (Referandum) kurumunun ilk kez düzenlendiği anayasa",
+                category: "Anayasa Tarihi",
+                question: "Halkoylaması (Referandum) kurumu ilk kez hangi anayasa ile düzenlenmiştir?",
+                options: ["1924 Anayasası", "1961 Anayasası", "1982 Anayasası", "1921 Anayasası"],
+                context: "Demokratik katılım"
+            },
+            {
+                word: "Halkçılık, Devletçilik ve İnkılapçılık",
+                meaning: "1961 Anayasası döneminde devletin temel niteliği olmaktan çıkarılan ilkeler",
+                category: "Anayasa Tarihi",
+                question: "1961 Anayasası döneminde, aşağıdaki ilkelerden hangileri devletin temel niteliği olmaktan çıkarılmıştır?",
+                options: ["Laiklik ve Milliyetçilik", "Halkçılık, Devletçilik ve İnkılapçılık", "Cumhuriyetçilik ve Laiklik", "Demokratik Devlet ve Hukuk Devleti"],
+                context: "Anayasal ilkelerin değişimi"
+            },
+            {
+                word: "Meclis dışından da atanabilir",
+                meaning: "1961 Anayasası'na göre bakanların atanması ile ilgili doğru ifade",
+                category: "Anayasa Tarihi",
+                question: "1961 Anayasası'na göre, bakanların atanması ile ilgili aşağıdaki ifadelerden hangisi doğrudur?",
+                options: ["Sadece TBMM üyeleri arasından atanabilir", "Meclis dışından da atanabilir", "Sadece cumhurbaşkanının onayı ile atanır", "Hiçbiri"],
+                context: "Bakan atama usulü"
+            },
+            {
+                word: "Saygılı",
+                meaning: "1982 Anayasası'nın devlet tanımında 'İnsan haklarına ... devlet' ifadesi",
+                category: "1982 Anayasası",
+                question: "1982 Anayasası'nın devlet tanımında 'İnsan haklarına ... devlet' ifadesi nasıl yer alır?",
+                options: ["Dayalı", "Bağlı", "Saygılı", "Sadık"],
+                context: "Devlet tanımı"
+            },
+            {
+                word: "1982 Anayasası",
+                meaning: "Yapılış süreci ve içeriği itibariyle 'en otoriter' ve 'en kısıtlayıcı' olarak nitelendirilen anayasa",
+                category: "1982 Anayasası",
+                question: "Hangi anayasa, yapılış süreci ve içeriği itibariyle 'en otoriter' ve 'en kısıtlayıcı' olarak nitelendirilir?",
+                options: ["1924 Anayasası", "1961 Anayasası", "1982 Anayasası", "1921 Anayasası"],
+                context: "Anayasa karakteristikleri"
+            },
+            {
+                word: "Kanunla",
+                meaning: "1982 Anayasası'nda temel hak ve özgürlüklere sınırlama getirilebilmesi için öngörülen yöntem",
+                category: "1982 Anayasası",
+                question: "1982 Anayasası'nda temel hak ve özgürlüklere sınırlama getirilebilmesi için hangi yöntem öngörülmüştür?",
+                options: ["Yönetmelikle", "Kanun Hükmünde Kararname ile", "Kanunla", "Cumhurbaşkanlığı Kararnamesi ile"],
+                context: "Hak sınırlamaları"
+            },
+            {
+                word: "En kazuistik anayasadır",
+                meaning: "1982 Anayasası için doğru niteleme",
+                category: "1982 Anayasası",
+                question: "1982 Anayasası için aşağıdaki nitelemelerden hangisi doğrudur?",
+                options: ["En kazuistik anayasadır", "En çerçeve anayasadır", "En kısa anayasadır", "En az değişiklik yapılan anayasadır"],
+                context: "Anayasa tipleri"
+            },
+            {
+                word: "Cumhurbaşkanlığı Hükümet Sistemi",
+                meaning: "2017 referandumu ile 1982 Anayasası'nda yapılan değişiklikle geçilen sistem",
+                category: "1982 Anayasası",
+                question: "2017 referandumu ile 1982 Anayasası'nda yapılan değişiklikle aşağıdakilerden hangisine geçilmiştir?",
+                options: ["Meclis Hükümeti Sistemi", "Parlamenter Sistem", "Cumhurbaşkanlığı Hükümet Sistemi", "Yarı Başkanlık Sistemi"],
+                context: "Sistem değişikliği"
+            },
+            {
+                word: "Askeri Yüksek İdare Mahkemesi",
+                meaning: "2017 değişikliği ile kaldırılan yargı kurumu",
+                category: "1982 Anayasası",
+                question: "2017 değişikliği ile aşağıdaki yargı kurumlarından hangisi kaldırılmıştır?",
+                options: ["Anayasa Mahkemesi", "Yargıtay", "Askeri Yüksek İdare Mahkemesi", "Danıştay"],
+                context: "Yargı reformu"
+            },
+            {
+                word: "1982 Anayasası",
+                meaning: "Halkoylamasını mecburi kılan anayasa",
+                category: "1982 Anayasası",
+                question: "Hangi anayasa, halkoylamasını mecburi kılmıştır?",
+                options: ["1924 Anayasası", "1961 Anayasası", "1982 Anayasası", "1921 Anayasası"],
+                context: "Halkoylaması usulü"
+            },
+            {
+                word: "Kaldırılmıştır",
+                meaning: "1982 Anayasası ile milletvekili seçilme yeterliliğinde 'en az ilkokul mezunu olma' şartının durumu",
+                category: "1982 Anayasası",
+                question: "1982 Anayasası ile milletvekili seçilme yeterliliğinde 'en az ilkokul mezunu olma' şartı ne yapılmıştır?",
+                options: ["Korunmuştur", "'Ortaokul mezunu' olarak değiştirilmiştir", "Kaldırılmıştır", "'Lise mezunu' olarak değiştirilmiştir"],
+                context: "Milletvekili yeterlilik şartları"
+            },
+            {
+                word: "Devlet Denetleme Kurulu",
+                meaning: "1982 Anayasası ile doğrudan Cumhurbaşkanlığına bağlı olarak kurulan kurum",
+                category: "1982 Anayasası",
+                question: "Aşağıdaki kurumlardan hangisi 1982 Anayasası ile doğrudan Cumhurbaşkanlığına bağlı olarak kurulmuştur?",
+                options: ["TRT", "YÖK", "Devlet Denetleme Kurulu", "Danıştay"],
+                context: "Anayasal kurumlar"
+            },
+            {
+                word: "II. Abdülhamid",
+                meaning: "Kanun-i Esasi'nin ilan edildiği padişah",
+                category: "Anayasa Tarihi",
+                question: "'Kanun-i Esasi' olarak bilinen ilk anayasa hangi padişah döneminde ilan edilmiştir?",
+                options: ["V. Mehmed Reşad", "II. Abdülhamid", "VI. Mehmed Vahdettin", "Abdülmecid"],
+                context: "Osmanlı dönemi"
+            },
+            {
+                word: "Milli egemenlik ilkesinin kabul edilmesi",
+                meaning: "1921 Teşkilat-ı Esasiye Kanunu'nun getirdiği en devrimci yenilik",
+                category: "Anayasa Tarihi",
+                question: "1921 Teşkilat-ı Esasiye Kanunu'nun getirdiği en devrimci yenilik aşağıdakilerden hangisidir?",
+                options: ["Temel hak ve özgürlüklerin detaylıca düzenlenmesi", "Laiklik ilkesinin anayasaya girmesi", "Milli egemenlik ilkesinin kabul edilmesi", "Cumhuriyetin ilan edilmesi"],
+                context: "Devrimci yenilikler"
+            },
+            {
+                word: "Kuvvetler Birliği",
+                meaning: "1921 Anayasası'nda benimsenen 'Meclis-Hükümet Birliği' sisteminin ifade ettiği kavram",
+                category: "Anayasa Tarihi",
+                question: "1921 Anayasası'nda benimsenen 'Meclis-Hükümet Birliği' sistemi, aşağıdaki kavramlardan hangisiyle ifade edilir?",
+                options: ["Kuvvetler Ayrılığı", "Kuvvetler Birliği", "Yazılı Anayasa", "Olağanüstü Hal"],
+                context: "Sistem tipleri"
+            },
+            {
+                word: "1933",
+                meaning: "Kadınlara muhtar seçme ve seçilme hakkının verildiği yıl",
+                category: "Anayasa Tarihi",
+                question: "Kadınlara muhtar seçme ve seçilme hakkı hangi yılda verilmiştir?",
+                options: ["1930", "1933", "1934", "1937"],
+                context: "Yerel yönetim hakları"
+            },
+            {
+                word: "1923",
+                meaning: "1921 Anayasası'na, 'Türk devletinin dini İslam, resmi dili Türkçedir' ibaresinin eklendiği yıl",
+                category: "Anayasa Tarihi",
+                question: "1921 Anayasası'na, 'Türk devletinin dini İslam, resmi dili Türkçedir' ibaresi hangi yılda eklenmiştir?",
+                options: ["1921", "1923", "1924", "1928"],
+                context: "Anayasa değişiklikleri"
+            },
+            {
+                word: "TBMM içinden ve TBMM üyeleri tarafından",
+                meaning: "1921 Anayasası'na göre Cumhurbaşkanının seçilme şekli",
+                category: "Anayasa Tarihi",
+                question: "1921 Anayasası'na göre, Cumhurbaşkanı nasıl seçilirdi?",
+                options: ["Halk tarafından doğrudan", "TBMM içinden ve TBMM üyeleri tarafından", "Meclis dışından atanarak", "Padişah tarafından"],
+                context: "Cumhurbaşkanı seçimi"
+            },
+            {
+                word: "Bağımsız mahkemelere",
+                meaning: "1924 Anayasası'nda yargı yetkisinin bırakıldığı kurum",
+                category: "Anayasa Tarihi",
+                question: "1924 Anayasası'nda 'Yargı' yetkisi aşağıdakilerden hangisine bırakılmıştır?",
+                options: ["TBMM'ye", "Cumhurbaşkanına", "Bağımsız mahkemelere", "İçişleri Bakanlığı'na"],
+                context: "Yargı bağımsızlığı"
+            },
+            {
+                word: "Meclisin üstünlüğü ilkesini benimsemesi ve yargı denetimine kapalı olması",
+                meaning: "1924 Anayasası için 'Meclisi yorumlayan anayasa' denmesinin nedeni",
+                category: "Anayasa Tarihi",
+                question: "1924 Anayasası için 'Meclisi yorumlayan anayasa' denmesinin nedeni aşağıdakilerden hangisidir?",
+                options: ["Meclisin anayasaya aykırı kanun yapmasını engellemesi", "Meclisin üstünlüğü ilkesini benimsemesi ve yargı denetimine kapalı olması", "Meclisin yargı yetkisini de kullanması", "Meclisin cumhurbaşkanını denetlemesi"],
+                context: "Meclis üstünlüğü"
+            },
+            {
+                word: "Sivil toplum örgütlerinin katılımının ve özerk kuruluşların artması",
+                meaning: "1961 Anayasası'nın 'çoğulcu demokrasi' anlayışını yansıtan düzenleme",
+                category: "1961 Anayasası",
+                question: "1961 Anayasası'nın 'çoğulcu demokrasi' anlayışını yansıtan düzenlemesi aşağıdakilerden hangisidir?",
+                options: ["Sivil toplum örgütlerinin katılımının ve özerk kuruluşların artması", "Cumhurbaşkanının yetkilerinin genişletilmesi", "Temel hak ve özgürlüklerin kısıtlanması", "Meclisin tek meclis olması"],
+                context: "Çoğulcu demokrasi"
+            },
+            {
+                word: "Çok ayrıntılı ve detaylı düzenlemeler getirmesi",
+                meaning: "1982 Anayasası'nın 'en kazuistik anayasa' olarak nitelendirilmesinin sebebi",
+                category: "1982 Anayasası",
+                question: "1982 Anayasası'nın 'en kazuistik anayasa' olarak nitelendirilmesinin sebebi nedir?",
+                options: ["Çok az madde içermesi", "Çok ayrıntılı ve detaylı düzenlemeler getirmesi", "Hiç değiştirilememiş olmasi", "Çerçeve bir anayasa olması"],
+                context: "Kazuistik anayasa özellikleri"
+            },
+            {
+                word: "Devlet Denetleme Kurumu",
+                meaning: "1982 Anayasası ile Cumhurbaşkanlığına bağlı olarak kurulan kurum",
+                category: "1982 Anayasası",
+                question: "1982 Anayasası ile Cumhurbaşkanlığına bağlı olarak kurulan kurum aşağıdakilerden hangisidir?",
+                options: ["TRT", "YÖK", "Devlet Denetleme Kurumu", "Danıştay"],
+                context: "Anayasal kurumlar"
+            },
+            {
+                word: "Eşit oy (Herkesin oyu bir oy)",
+                meaning: "1924 Anayasası'nda 1934 yılında yapılan değişiklikle getirilen ilke",
+                category: "Anayasa Tarihi",
+                question: "1924 Anayasası'nda 1934 yılında yapılan değişiklikle aşağıdaki ilkelerden hangisi getirilmiştir?",
+                options: ["Laiklik", "Eşit oy (Herkesin oyu bir oy)", "Tek dereceli seçim", "Gizli oy"],
+                context: "Seçim ilkeleri"
+            },
+            {
+                word: "1961 Anayasası",
+                meaning: "En katılımcı anayasa olarak nitelendirilen anayasa",
+                category: "Anayasa Tarihi",
+                question: "Hangi anayasa 'en katılımcı' anayasa olarak nitelendirilmiştir?",
+                options: ["1921 Anayasası", "1924 Anayasası", "1961 Anayasası", "1982 Anayasası"],
+                context: "Katılımcılık düzeyi"
+            },
+            {
+                word: "1961 Anayasası",
+                meaning: "Temel hak ve özgürlüklerden en geniş ve ayrıntılı bahseden anayasa",
+                category: "Anayasa Tarihi",
+                question: "Temel hak ve özgürlüklerden 'en geniş ve ayrıntılı' şekilde bahseden anayasa aşağıdakilerden hangisidir?",
+                options: ["1921 Anayasası", "1924 Anayasası", "1961 Anayasası", "1982 Anayasası"],
+                context: "Hak ve özgürlüklerin düzenlenmesi"
+            },
+            {
+                word: "Demokratik devlet, sosyal devlet ve hukuk devleti ilkeleri devletin temel nitelikleri haline getirilmiştir",
+                meaning: "1961 Anayasası ile ilgili doğru ifade",
+                category: "1961 Anayasası",
+                question: "1961 Anayasası ile ilgili aşağıdaki ifadelerden hangisi doğrudur?",
+                options: ["Halkçılık, devletçilik ve inkılapçılık ilkeleri anayasaya eklenmiştir", "Demokratik devlet, sosyal devlet ve hukuk devleti ilkeleri devletin temel nitelikleri haline getirilmiştir", "Yürütme yetkisi Cumhurbaşkanında toplanmıştır", "Meclis hükümeti sistemine geçilmiştir"],
+                context: "Devlet nitelikleri"
+            },
+            {
+                word: "1982 Anayasası",
+                meaning: "En az katılımcı anayasa olarak nitelendirilen anayasa",
+                category: "1982 Anayasası",
+                question: "Hangi anayasa 'en az katılımcı' anayasa olarak nitelendirilmiştir?",
+                options: ["1921 Anayasası", "1924 Anayasası", "1961 Anayasası", "1982 Anayasası"],
+                context: "Katılımcılık düzeyi"
+            },
+            {
+                word: "Milli İstihbarat Teşkilatı",
+                meaning: "1982 Anayasası ile Cumhurbaşkanlığına bağlı olarak kurulan kurum",
+                category: "1982 Anayasası",
+                question: "1982 Anayasası ile Cumhurbaşkanlığına bağlı olarak kurulan kurum aşağıdakilerden hangisidir?",
+                options: ["TRT", "YÖK", "Milli İstihbarat Teşkilatı", "Danıştay"],
+                context: "Anayasal kurumlar"
+            }
+        ];
+
+        // DOM elements
+        const questionEl = document.getElementById('question');
+        const contextEl = document.getElementById('context');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const resultMessageEl = document.getElementById('resultMessage');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+        let masteredWords = [];
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Initialize quiz
+        function initQuiz() {
+            questions = shuffleArray([...quizData]);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            
+            // Add click event to cat cover
+            catCoverEl.addEventListener('click', removeCatCover);
+        }
+
+        // Remove cat cover to reveal answers
+        function removeCatCover() {
+            catCoverEl.style.display = 'none';
+        }
+
+        // Show current question
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            contextEl.textContent = currentQuestion.context;
+            
+            // Reset cat cover
+            catCoverEl.style.display = 'flex';
+            
+            // Shuffle options
+            const options = shuffleArray([...currentQuestion.options]);
+            
+            // Clear previous options
+            optionsEl.innerHTML = '';
+            
+            // Add cat cover back
+            optionsEl.appendChild(catCoverEl);
+            
+            // Create new option buttons
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = option;
+                button.addEventListener('click', () => selectAnswer(option, currentQuestion));
+                optionsEl.appendChild(button);
+            });
+            
+            // Reset UI for new question
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex;
+            progressBarEl.style.width = `${(currentQuestionIndex / questions.length) * 100}%`;
+        }
+
+        // Handle answer selection
+        function selectAnswer(selectedOption, currentQuestion) {
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // Disable all buttons
+            optionButtons.forEach(button => {
+                button.disabled = true;
+                
+                // Mark correct answer
+                if (button.textContent === currentQuestion.word) {
+                    button.classList.add('correct');
+                }
+                
+                // Mark incorrect selected answer
+                if (button.textContent === selectedOption && button.textContent !== currentQuestion.word) {
+                    button.classList.add('incorrect');
+                }
+            });
+            
+            // Check if answer is correct
+            const isCorrect = selectedOption === currentQuestion.word;
+            
+            // Update score if correct
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+                
+                // Add to mastered words if not already there
+                if (!masteredWords.some(w => w.word === currentQuestion.word)) {
+                    masteredWords.push(currentQuestion);
+                }
+            }
+            
+            // Show feedback
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            
+            if (isCorrect) {
+                feedbackTextEl.innerHTML = `✅ Doğru! <strong>${currentQuestion.word}</strong>: ${currentQuestion.meaning}`;
+            } else {
+                feedbackTextEl.innerHTML = `❌ Yanlış! Doğru cevap: <strong>${currentQuestion.word}</strong><br>${currentQuestion.meaning}`;
+            }
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        // End quiz and show results
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            finalScoreEl.textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            // Result message based on performance
+            if (percentage >= 90) {
+                resultMessageEl.textContent = "Mükemmel! Vatandaşlık bilginiz çok iyi! 🏆";
+            } else if (percentage >= 70) {
+                resultMessageEl.textContent = "Çok iyi! Anayasa hukukuna hakimsiniz. 👍";
+            } else if (percentage >= 50) {
+                resultMessageEl.textContent = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+            } else {
+                resultMessageEl.textContent = "Öğrenmeye devam! Anayasa hukukunu tekrar edin. 📚";
+            }
+            
+            // Display all words learned
+            wordListEl.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Kavramlar</h3>';
+            quizData.forEach(word => {
+                const wordCard = document.createElement('div');
+                wordCard.classList.add('word-card', 'fade-in');
+                wordCard.innerHTML = `
+                    <div class="word">${word.word}</div>
+                    <div class="meaning">${word.meaning}</div>
+                    <div class="category category-${getCategoryClass(word.category)}">${word.category}</div>
+                `;
+                wordListEl.appendChild(wordCard);
+            });
+        }
+
+        // Helper function to get CSS class for category
+        function getCategoryClass(category) {
+            const classes = {
+                'Anayasa Tarihi': 'anayasa',
+                '1982 Anayasası': 'anayasa',
+                '1961 Anayasası': 'anayasa',
+                'Haklar ve Özgürlükler': 'haklar',
+                'Sistemler': 'sistem',
+                'Kurumlar': 'kurumlar'
+            };
+            return classes[category] || 'tarih';
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', nextQuestion);
+        
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>

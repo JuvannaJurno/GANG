@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MEB-AGS Türkiye Tarihi</title>
+    <style>
+        :root {
+            --primary: #2E8B57;
+            --success: #228B22;
+            --danger: #B22222;
+            --light: #F5FFFA;
+            --dark: #2F4F4F;
+            --accent: #32CD32;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E8B57 0%, #32CD32 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "📜";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 139, 87, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success) !important;
+            color: white !important;
+            border-color: var(--success) !important;
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger) !important;
+            color: white !important;
+            border-color: var(--danger) !important;
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(34, 139, 34, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 139, 87, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 15px;
+            background: var(--light);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+        
+        .category-isyan { background: #B22222; }
+        .category-antlasma { background: #2E8B57; }
+        .category-savunma { background: #228B22; }
+        .category-cephe { background: #32CD32; }
+        .category-inonu { background: #228B22; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 1.4rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ MEB-AGS Türkiye Tarihi</h1>
+            <div class="subtitle">Milli Mücadele Muharebeler Dönemi IV - Büyük Taarruz, Mudanya ve Lozan Özel Testi</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Eğitim Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Başlat</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            { word: "Subaylar Savaşı", category: "cephe", question: "Aşağıdakilerden hangisi 26 Ağustos - 9 Eylül 1922 tarihleri arasında gerçekleşen Büyük Taarruz'un diğer isimlerinden biri değildir?", options: ["Rum Sındığı Savaşı", "Yurt Kurtaran Savaşı", "Dumlupınar Meydan Muharebesi", "Subaylar Savaşı"], explanation: "Subaylar Savaşı, Sakarya Meydan Muharebesi için kullanılan bir isimdir. Büyük Taarruz için kullanılmaz." },
+            { word: "Yusuf Kemal Tengirşenk", category: "antlasma", question: "Büyük Taarruz öncesinde, savaş yapılmaması adına temaslarda bulunması için Avrupa'ya gönderilen Dışişleri Bakanı kimdir?", options: ["Yusuf Kemal Tengirşenk", "Bekir Sami Bey", "Hasan Saka", "Dr. Rıza Nur"], explanation: "Taarruz öncesi barış yollarını son kez denemek için Yusuf Kemal Tengirşenk Avrupa'ya gönderilmiştir." },
+            { word: "Polatlı'dan Akşehir'e", category: "cephe", question: "Büyük Taarruz öncesi yapılan hazırlıklar kapsamında ordunun karargâh merkezi nereden nereye taşınmıştır?", options: ["Ankara'dan Eskişehir'e", "Polatlı'dan Akşehir'e", "Kayseri'den Polatlı'ya", "Afyon'dan Kütahya'ya"], explanation: "Büyük Taarruz öncesi askeri karargah Polatlı'dan Akşehir'e gizlice taşınmıştır." },
+            { word: "İtalya ve Fransa", category: "cephe", question: "Büyük Taarruz öncesi, Tekâlif-i Milliye Emirlerinden gelen yardımların yanı sıra hangi iki devletin Anadolu'dan çekilirken bıraktığı silahlar cepheye taşınmıştır?", options: ["İngiltere ve Yunanistan", "İtalya ve Fransa", "Sovyet Rusya ve İtalya", "Fransa ve İngiltere"], explanation: "Anadolu'dan çekilen İtalya ve Fransa'nın geride bıraktığı silahlar ordumuz tarafından kullanılmıştır." },
+            { word: "6 ay - Süresiz uzatıldı", category: "savunma", question: "Büyük Taarruz öncesi yapılan askeri hazırlıklar kapsamında Ankara’da açılan subay okullarının eğitim süresi ve Başkomutanlık yetkisinin uzatılma süresi aşağıdakilerin hangisinde doğru verilmiştir?", options: ["3 ay - 1 yıl uzatıldı", "6 ay - Süresiz uzatıldı", "9 ay - 6 ay uzatıldı", "1 yıl - Savaş bitene kadar uzatıldı"], explanation: "Subay ihtiyacını karşılamak için eğitimler 6 ayda tamamlanmış ve meclis tarafından Başkomutanlık yetkisi süresiz uzatılmıştır." },
+            { word: "\"...Yarım hazırlıkla, yarım tedbirlerle yapılacak taarruz, hiç taarruz etmemekten daha kötüdür.\"", category: "cephe", question: "Mustafa Kemal, mecliste Sakarya Meydan Muharebesi'nden aylar geçmesine rağmen taarruza geçilmemesi üzerine yapılan eleştirilere hangi meşhur sözüyle cevap vermiştir?", options: ["\"Hattı müdafaa yoktur, sathı müdafaa vardır.\"", "\"Ordular, ilk hedefiniz Akdeniz'dir. İleri!\"", "\"...Yarım hazırlıkla, yarım tedbirlerle yapılacak taarruz, hiç taarruz etmemekten daha kötüdür.\"", "\"Geldikleri gibi giderler.\""], explanation: "Mustafa Kemal ordunun eksiklerinin tamamlanması için beklediğini meclise bu sözlerle açıklamıştır." },
+            { word: "1 Eylül 1922", category: "cephe", question: "Büyük Taarruz'un zaferle sonuçlanmasının ardından Mustafa Kemal Paşa'nın \"Ordular, ilk hedefiniz Akdeniz'dir. İleri!\" emrini verdiği tarih aşağıdakilerden hangisidir?", options: ["26 Ağustos 1922", "30 Ağustos 1922", "1 Eylül 1922", "9 Eylül 1922"], explanation: "30 Ağustos Başkomutanlık Meydan Muharebesi'nin kazanılmasının ardından ordumuzun düşmanı takip etmesi için bu tarihi emir 1 Eylül'de verilmiştir." },
+            { word: "9 Eylül - 18 Eylül 1922", category: "cephe", question: "30 Ağustos'taki Başkomutanlık Meydan Muharebesi sonrası Yunan ordusunun takip edilmesiyle İzmir ve Batı Anadolu'nun tamamen işgalden kurtarıldığı tarihler sırasıyla hangileridir?", options: ["1 Eylül - 9 Eylül 1922", "9 Eylül - 18 Eylül 1922", "26 Ağustos - 30 Ağustos 1922", "9 Eylül - 11 Ekim 1922"], explanation: "9 Eylül'de ordumuz İzmir'e girmiş, 18 Eylül'de ise Batı Anadolu tamamen temizlenmiştir." },
+            { word: "Fevzi Çakmak", category: "cephe", question: "Büyük Taarruz sonucunda esir alınan Yunan Generali Trikopis'i esir alan ve bu başarısı üzerine TBMM tarafından kendisine Mareşallik rütbesi verilen komutanımız kimdir?", options: ["İsmet İnönü", "Kazım Karabekir", "Fevzi Çakmak", "Refet Bele"], explanation: "Büyük Taarruz'daki kritik rolü ve başarılarından dolayı Fevzi Çakmak'a Mareşallik rütbesi verilmiştir." },
+            { word: "Çanakkale Bunalımı", category: "antlasma", question: "Türk birliklerinin Yunan ordusunu yendikten sonra Çanakkale'deki İngiliz mevzilerine yönelmesi üzerine İngiltere Başbakanı Lloyd George'un diğer devletleri savaşa çağırdığı, ancak yalnız kalarak masaya oturmak zorunda kaldığı tarihi olaya ne ad verilir?", options: ["Çanakkale Bunalımı", "Boğazlar Krizi", "Mudanya Mütarekesi", "Reuter Ajansı Krizi"], explanation: "İngiltere'nin müttefiklerinden destek bulamayıp ateşkes istemek zorunda kaldığı krize Çanakkale Bunalımı denir." },
+            { word: "İsmet İnönü", category: "antlasma", question: "3-11 Ekim 1922 tarihleri arasında görüşülen Mudanya Ateşkes Antlaşması'nda Türkiye'yi kim temsil etmiştir?", options: ["Mustafa Kemal Paşa", "Rauf Orbay", "Fevzi Çakmak", "İsmet İnönü"], explanation: "Mudanya Ateşkes Görüşmeleri'nde TBMM'yi Batı Cephesi Komutanı sıfatıyla İsmet İnönü temsil etmiştir." },
+            { word: "Yunanistan", category: "antlasma", question: "Mudanya Ateşkes Antlaşması görüşmelerine delege göndermeyip, konferansı Mudanya açıklarındaki bir gemiden takip eden ve sözcülüğünü İngiltere'nin yaptığı devlet hangisidir?", options: ["İtalya", "Fransa", "Yunanistan", "Bulgaristan"], explanation: "Yunan delegeleri görüşmelere katılmamış, antlaşma kararlarını gemiden takip etmiştir." },
+            { word: "Meriç Nehri", category: "antlasma", question: "Mudanya Ateşkes Antlaşması'na göre Yunanlar 15 gün içerisinde Doğu Trakya'yı boşaltacaktır. Bu antlaşmada sınır olarak kabul edilen nehir hangisidir?", options: ["Sakarya Nehri", "Meriç Nehri", "Gediz Nehri", "Susurluk Nehri"], explanation: "Doğu Trakya ile sınır olarak Meriç Nehri kabul edilmiştir." },
+            { word: "8 bin", category: "antlasma", question: "Mudanya Antlaşması kararlarına göre, Doğu Trakya'nın güvenliğini sağlamak için TBMM Hükümetine devredilecek jandarma gücü sayısı (subaylar dâhil) ne kadar olacaktır?", options: ["5 bin", "8 bin", "10 bin", "15 bin"], explanation: "Mudanya'ya göre TBMM, Doğu Trakya'da güvenliği sağlamak için 8.000 kişilik bir jandarma birliği bulundurabilecektir." },
+            { word: "Refet Bele", category: "antlasma", question: "Doğu Trakya'yı Yunanlardan teslim almak üzere \"Trakya Yüksek Komiseri\" sıfatıyla görevlendirilen kişi kimdir?", options: ["Refet Bele", "Kazım Karabekir", "İsmet İnönü", "Ali Fuat Cebesoy"], explanation: "Doğu Trakya'yı savaşılmadan diplomasi yoluyla teslim almak üzere Refet Bele görevlendirilmiştir." },
+            { word: "Barış antlaşması (Lozan) yapılıncaya kadar", category: "antlasma", question: "Mudanya Ateşkes Antlaşması'nın maddelerine göre İtilaf Devletleri askerleri İstanbul'da ne zamana kadar kalmaya devam edecektir?", options: ["Antlaşma imzalandıktan 15 gün sonraya kadar", "TBMM jandarma birlikleri gelene kadar", "Barış antlaşması (Lozan) yapılıncaya kadar", "Yunan ordusu Trakya'yı boşaltana kadar"], explanation: "İtilaf askerleri kesin barış (Lozan) yapılana kadar İstanbul'da kalmaya devam edeceklerine dair karar alınmıştır." },
+            { word: "Mondros - Mudanya - Saltanatın Kaldırılması", category: "antlasma", question: "Osmanlı Devleti'nin fiilen, hukuken ve resmen sona ermesine neden olan tarihi gelişmeler aşağıdakilerin hangisinde sırasıyla doğru verilmiştir?", options: ["Mondros - Mudanya - Saltanatın Kaldırılması", "Sevr - Mondros - Cumhuriyetin İlanı", "Mudanya - Mondros - Halifeliğin Kaldırılması", "Balkan Savaşları - Sevr - Saltanatın Kaldırılması"], explanation: "Fiilen Mondros'la, hukuken Mudanya ile (İstanbul TBMM'ye bırakıldı), resmen ise Saltanatın kaldırılmasıyla Osmanlı sona ermiştir." },
+            { word: "Mudanya Ateşkes Antlaşması", category: "antlasma", question: "Osmanlı Devleti'nin hukuken sona ermesine yol açan gelişme aşağıdakilerden hangisidir?", options: ["Mondros Ateşkes Antlaşması", "Sevr Antlaşması", "Mudanya Ateşkes Antlaşması", "Saltanatın Kaldırılması"], explanation: "İstanbul ve Boğazların doğrudan TBMM'ye bırakılmasıyla Osmanlı Devleti hukuken yok sayılmıştır." },
+            { word: "Yunanistan ile nüfus mübadelesi kararının kesinleşmesi", category: "antlasma", question: "Aşağıdakilerden hangisi Mudanya Ateşkes Antlaşması'nın sonuçlarından biri değildir?", options: ["İngiliz Başbakanı Lloyd George'un görevinden istifa etmesi", "Millî Mücadele'nin askerî safhasının sona erip diplomasi safhasının başlaması", "Doğu Trakya, İstanbul ve Boğazların savaşılmadan (diplomasi ile) geri alınması", "Yunanistan ile nüfus mübadelesi kararının kesinleşmesi"], explanation: "Nüfus mübadelesi Mudanya'nın değil, Lozan Barış Antlaşması'nın bir kararıdır." },
+            { word: "Lozan Konferansı'na hem Osmanlı Devleti'nin hem de TBMM'nin birlikte çağrılması", category: "isyan", question: "1 Kasım 1922'de Saltanatın kaldırılmasını hızlandıran en önemli dış gelişme (neden) aşağıdakilerden hangisidir?", options: ["İstanbul Hükümetinin Anadolu'ya asker göndermesi", "Lozan Konferansı'na hem Osmanlı Devleti'nin hem de TBMM'nin birlikte çağrılması", "Cumhuriyetin ilan edilmesi için ortam hazırlanmak istenmesi", "İtilaf Devletlerinin İstanbul'u işgal etmesi"], explanation: "İtilaf Devletlerinin Lozan'da iki tarafı birden çağırarak ikilik çıkarmasını engellemek için Saltanat aceleyle kaldırılmıştır." },
+            { word: "I. TBMM'nin yapmış olduğu en önemli inkılap hareketlerinden biridir.", category: "isyan", question: "1 Kasım 1922'de Saltanatın kaldırılmasıyla ilgili aşağıda verilen bilgilerden hangisi doğrudur?", options: ["II. TBMM'nin yaptığı ilk inkılaptır.", "I. TBMM'nin yapmış olduğu en önemli inkılap hareketlerinden biridir.", "Halifelik makamının da doğrudan sonunu getirmiştir.", "Çok partili hayata geçişin ilk aşamasıdır."], explanation: "Saltanatın kaldırılması I. TBMM'nin yapmış olduğu tek ve en önemli inkılap hareketidir." },
+            { word: "Düyûn-u Umumiye İdaresi resmen kapatılmıştır.", category: "isyan", question: "Aşağıdakilerden hangisi Saltanatın kaldırılmasının sonuçları arasında yer almaz?", options: ["Laiklik yolunda ilk büyük adım atılmıştır.", "Rejim ve devlet başkanlığı sorunu ortaya çıkmıştır.", "TBMM, Lozan Konferansı'na tek devlet olarak katılmıştır.", "Düyûn-u Umumiye İdaresi resmen kapatılmıştır."], explanation: "Düyûn-u Umumiye İdaresi'nin (Genel Borçlar İdaresi) resmen kaldırılması Lozan Barış Antlaşması ile olmuştur." },
+            { word: "Rauf Orbay", category: "antlasma", question: "23 Temmuz 1923'te imzalanan Lozan Barış Antlaşması'nda Türkiye'yi temsil eden başdelegeler heyetinde aşağıdakilerden hangisi yoktur?", options: ["İsmet İnönü", "Hasan Saka", "Dr. Rıza Nur", "Rauf Orbay"], explanation: "Lozan heyetinde İsmet İnönü, Hasan Saka ve Dr. Rıza Nur vardır. Rauf Orbay heyette yer almamıştır." },
+            { word: "Yusuf Kemal Tengirşenk", category: "antlasma", question: "İsmet İnönü'nün Lozan'a Dışişleri Bakanı sıfatıyla gidebilmesi için görevinden istifa eden devlet adamı kimdir?", options: ["Yusuf Kemal Tengirşenk", "Fevzi Çakmak", "Bekir Sami Bey", "Ali Fuat Cebesoy"], explanation: "İsmet Paşa'nın Dışişleri Bakanı sıfatını alabilmesi için Yusuf Kemal Tengirşenk görevinden ayrılmıştır." },
+            { word: "Ermenilerin yurt istekleri ve Kapitülasyonlar", category: "antlasma", question: "Mustafa Kemal'in Lozan Konferansı'nda Türk heyetinden kesinlikle taviz verilmemesini istediği iki hayati konu hangileridir?", options: ["Sınırlar ve Boğazlar", "Ermenilerin yurt istekleri ve Kapitülasyonlar", "Savaş tazminatı ve Azınlıklar", "Yabancı okullar ve Dış borçlar"], explanation: "Mustafa Kemal, bu iki konuda gerekirse masadan kalkılmasını ve asla taviz verilmemesini emretmiştir." },
+            { word: "İsmet İnönü", category: "antlasma", question: "Lozan Konferansı'nda İtilaf Devletlerinin dayatmaları karşısında \"Biz buraya Mondros'tan değil, Mudanya'dan geldik\" diyerek Türkiye'nin galip bir devlet olarak masada oturduğunu vurgulayan kişi kimdir?", options: ["Mustafa Kemal Paşa", "Rauf Orbay", "İsmet İnönü", "Dr. Rıza Nur"], explanation: "İsmet İnönü bu sözüyle çok kan döktüklerini ve diğer devletlerle eşit haklar istediklerini belirtmiştir." },
+            { word: "İzmir İktisat Kongresi'nin toplanması - Seçimlerin yenilenmesi kararı", category: "savunma", question: "Lozan Görüşmeleri'nin 4 Şubat 1923'te kesintiye uğraması (ara verilmesi) sırasında Türkiye'de gerçekleşen iki önemli iç gelişme hangileridir?", options: ["Cumhuriyetin ilanı - Halifeliğin kaldırılması", "İzmir İktisat Kongresi'nin toplanması - Seçimlerin yenilenmesi kararı", "Teşkilat-ı Esasiye'nin kabulü - İstiklal Marşı'nın kabulü", "Saltanatın kaldırılması - Ankara'nın başkent olması"], explanation: "Görüşmelere ara verilen dönemde milli ekonomiyi planlamak için İzmir İktisat Kongresi toplanmış ve ardından meclis seçimleri yenilenmiştir." },
+            { word: "Rauf Orbay", category: "antlasma", question: "Lozan Görüşmeleri başladığı ve antlaşma imzalandığı sırada görevde olan Meclis Hükûmeti Başkanı (İcra Vekili ve Başbakan) aşağıdakilerden hangisidir?", options: ["İsmet İnönü", "Rauf Orbay", "Fethi Okyar", "Ali Fuat Cebesoy"], explanation: "Bu dönemde Hükümet Başkanı (İcra Vekilleri Heyeti Reisi) Rauf Orbay'dır." },
+            { word: "I. TBMM'de başlamış, II. TBMM'de onaylanmıştır.", category: "antlasma", question: "Lozan Barış Antlaşması hangi TBMM döneminde başlamış ve hangi TBMM döneminde onaylanmıştır?", options: ["I. TBMM'de başlamış, I. TBMM'de onaylanmıştır.", "II. TBMM'de başlamış, II. TBMM'de onaylanmıştır.", "I. TBMM'de başlamış, II. TBMM'de onaylanmıştır.", "II. TBMM'de başlamış, III. TBMM'de onaylanmıştır."], explanation: "Görüşmeler I. TBMM döneminde başlamış, onaylanması seçimler sonrasına kalarak II. TBMM döneminde olmuştur." },
+            { word: "ABD", category: "antlasma", question: "Lozan Barış Görüşmelerine katılan devletler arasında aşağıdakilerden hangisi bulunmaz?", options: ["Japonya", "Romanya", "Yugoslavya", "ABD"], explanation: "ABD, Lozan Konferansı'na doğrudan (masaya) katılmamış, sadece gözlemci sıfatıyla katılmıştır." },
+            { word: "Mustafa Kemal Atatürk", category: "antlasma", question: "\"Bu antlaşma, Türk Milletine karşı yüzyıllardan beri hazırlanmış ve Sevr Antlaşması ile tamamlandığı sanılmış büyük bir suikastın sonuçsuz kaldığını bildirir bir belgedir.\" Lozan Barış Antlaşması'nın imzalanmasını yukarıdaki sözlerle yorumlayan devlet adamı kimdir?", options: ["İsmet İnönü", "Rauf Orbay", "Mustafa Kemal Atatürk", "Yusuf Kemal Tengirşenk"], explanation: "Mustafa Kemal Atatürk, Nutuk'ta Lozan Antlaşması'nı bu ifadelerle değerlendirmiştir." },
+            { word: "Gündeme gelmesine rağmen çözümü sonraya bırakılmış (Dokuz ay sonra İngiltere ile görüşülmesine karar verilmiş).", category: "antlasma", question: "Lozan'da Irak sınırının durumu nasıl çözümlenmiştir?", options: ["Musul Türkiye'ye bırakılarak kesin çözüme kavuşmuştur.", "Gündeme gelmesine rağmen çözümü sonraya bırakılmış (Dokuz ay sonra İngiltere ile görüşülmesine karar verilmiş).", "Fransa'nın hakemliğinde referandum yapılmasına karar verilmiştir.", "Tamamen Milletler Cemiyeti'nin inisiyatifine bırakılmıştır."], explanation: "Musul sorunu nedeniyle Irak sınırı Lozan'da çözülememiş, Türk-İngiliz ikili görüşmelerine bırakılmıştır." },
+            { word: "Irak Sınırı - Gümrü Antlaşması", category: "antlasma", question: "Lozan Antlaşması'nda belirlenen sınırlar ve bu sınırların belirlenmesinde esas alınan antlaşmalar eşleştirmelerinden hangisi yanlıştır?", options: ["Doğu Sınırı - Kars Antlaşması", "Suriye Sınırı - Ankara Antlaşması", "Batı (Bulgaristan) Sınırı - İstanbul Antlaşması", "Irak Sınırı - Gümrü Antlaşması"], explanation: "Irak sınırı Lozan'da çözülememiştir, Gümrü Antlaşması ise doğu sınırımız (Ermenistan) ile ilgilidir." },
+            { word: "45 gün", category: "antlasma", question: "Lozan Antlaşması'na göre İstanbul'un ne kadar süre içerisinde İtilaf Devletleri tarafından boşaltılması kararı alınmıştır?", options: ["15 gün", "30 gün", "45 gün", "60 gün"], explanation: "Lozan'ın TBMM tarafından onaylanmasından sonra İtilaf askerlerinin 45 gün (6 hafta) içinde ayrılması kararlaştırıldı." },
+            { word: "Hepsi Türk vatandaşı sayılarak iç işlerimize karışılması engellenmiştir.", category: "antlasma", question: "Lozan'da azınlıklar (Ekalliyet) konusu nasıl çözüme kavuşturulmuştur?", options: ["Müslüman olmayanlara özerklik verilmiştir.", "Hepsi Türk vatandaşı sayılarak iç işlerimize karışılması engellenmiştir.", "Azınlık hakları Milletler Cemiyeti garantörlüğüne alınmıştır.", "Sadece İstanbul'daki azınlıkların hakları korunmuştur."], explanation: "Tüm azınlıklar Türk vatandaşı sayılarak iç işlerimize müdahale edilmesi tamamen engellenmiştir." },
+            { word: "Patrikhane", category: "antlasma", question: "Lozan'da tüm ısrarlara rağmen İstanbul dışına çıkarılamayan, ancak her iki taraf arasında uzlaşıp yazıya geçirilen ilk konu aşağıdakilerden hangisidir?", options: ["Yabancı Okullar", "Patrikhane", "Dış Borçlar", "Boğazlar Komisyonu"], explanation: "Patrikhane konusu, Türk tarafının tüm çabalarına rağmen İstanbul dışına çıkarılamamıştır." },
+            { word: "İngiltere", category: "antlasma", question: "Lozan'da Bozcaada ve Gökçeada Türkiye'ye bırakılırken, Kıbrıs hangi devlete bırakılmıştır?", options: ["İtalya", "Yunanistan", "Fransa", "İngiltere"], explanation: "Kıbrıs'ın 1. Dünya Savaşı sırasında fiilen el koyan İngiltere'ye ait olduğu Lozan'da kabul edilmiştir." },
+            { word: "Bosnaköy ve Karaağaç", category: "antlasma", question: "Lozan Antlaşması'nda Yunanistan'ın savaş tazminatı olarak Türkiye'ye bıraktığı yerler neresidir?", options: ["Batı Trakya ve Selanik", "Midilli ve Sakız adaları", "Bosnaköy ve Karaağaç", "Yanya ve İşkodra"], explanation: "Yunanistan, yakıp yıktığı yerlere karşılık savaş tazminatı olarak Karaağaç ve Bosnaköy'ü Türkiye'ye vermiştir." },
+            { word: "Sovyet Rusya ve Bulgaristan", category: "antlasma", question: "Lozan'da Boğazların yönetimi için kurulan ve başkanı Türk olan komisyona sadece bu konu için katılan iki devlet hangisidir?", options: ["ABD ve Japonya", "Sovyet Rusya ve Bulgaristan", "Romanya ve Yugoslavya", "İtalya ve Fransa"], explanation: "Karadeniz'e kıyısı olan Sovyet Rusya ve Bulgaristan konferansa sadece Boğazlar konusu görüşülürken katılmıştır." },
+            { word: "Yabancı Okullar", category: "antlasma", question: "Lozan'da Türk heyetinin kesinlikle dış müdahaleyi reddettiği ve \"Türk tarafının çıkaracağı kanunlara uyulması şartı\" getirilen konu hangisidir?", options: ["Azınlık hakları", "Yabancı Okullar", "Boğazlardan geçiş ücretleri", "Patrikhane'nin yetkileri"], explanation: "Yabancı okulların tamamen Türk kanunlarına ve Milli Eğitim Bakanlığı'na bağlanması kararlaştırılmıştır." },
+            { word: "Fransa", category: "antlasma", question: "Osmanlı Dış Borçları Lozan'da Osmanlı'dan ayrılan devletlere yüz ölçümleri oranında paylaştırılmıştır. Türkiye'nin kendi payına düşen borcu \"lira veya frank\" ile ödemek istemesi ve ödeme kararı alması, emsal teşkil edeceği endişesiyle en çok hangi devleti tedirgin etmiştir?", options: ["İngiltere", "İtalya", "Fransa", "Sovyet Rusya"], explanation: "En çok alacaklı olduğumuz devlet Fransa, bu ödeme şekli konusunda en fazla pürüz çıkaran devlet olmuştur." },
+            { word: "Batı Trakya'da oturan Türkler ile İstanbul'da oturan Rumlar", category: "antlasma", question: "Lozan Antlaşması'ndaki Nüfus Mübadelesi kararına göre, nerelerde yaşayan Türkler ve Rumlar yerleşik (etabli) sayılmış ve değişimin dışında tutulmuştur?", options: ["İzmir'deki Rumlar ile Selanik'teki Türkler", "Batı Trakya'da oturan Türkler ile İstanbul'da oturan Rumlar", "Anadolu'daki Rumlar ile Doğu Trakya'daki Türkler", "Ege Adalarındaki Rumlar ile Kıbrıs'taki Türkler"], explanation: "İstanbul'daki Rumlar ile Batı Trakya'daki Türkler mübadele (değişim) dışında tutulmuştur." },
+            { word: "Batı Cephesi Komutanı", category: "antlasma", question: "Lozan Barış Antlaşması için İsviçre'ye giden Türk heyetinde başdelege olan İsmet İnönü, Mudanya Ateşkes Antlaşması görüşmelerine hangi sıfatla (görevle) katılmıştır?", options: ["Dışişleri Bakanı", "Batı Cephesi Komutanı", "Genelkurmay Başkanı", "Başbakan (İcra Vekilleri Heyeti Reisi)"], explanation: "İsmet İnönü Mudanya'ya Batı Cephesi Komutanı sıfatıyla katılarak askeri başarılarını diplomasiyle taçlandırmıştır." },
+            { word: "Abdülmecid Efendi", category: "isyan", question: "1 Kasım 1922'de Saltanatın kaldırılmasıyla Osmanlı padişahı VI. Mehmet (Vahdettin) \"Malaya\" adlı İngiliz zırhlısıyla ülkeyi terk etmiştir. Bunun üzerine İngiltere'nin halifelik makamını siyasi bir araç olarak kullanmasını engellemek amacıyla TBMM tarafından halife seçilen, Osmanlı hanedanının son halifesi kimdir?", options: ["Abdülmecid Efendi", "Mehmet Reşat", "Şehzade Ömer Faruk", "Yusuf İzzeddin Efendi"], explanation: "TBMM, Vahdettin'in gidişiyle siyasi bir kriz çıkmasını önlemek için Abdülmecid Efendi'yi halife seçmiştir." },
+            { word: "Fransa", category: "antlasma", question: "Lozan Barış Antlaşması'nda Osmanlı Devleti'nden kalan dış borçlar, Osmanlı'dan ayrılan devletlere yüz ölçümleri oranında paylaştırılmıştır. Türkiye'nin kendi payına düşen bu borçlar konusunda Lozan'da en çok diplomatik mücadele verdiği (en çok borcumuzun olduğu) devlet aşağıdakilerden hangisidir?", options: ["İngiltere", "İtalya", "Sovyet Rusya", "Fransa"], explanation: "Osmanlı'nın en çok borçlandığı devlet Fransa olduğundan, borçlar konusunda en çok Fransa ile mücadele edilmiştir." },
+            { word: "Cumhuriyet'in ilan edilmesi", category: "isyan", question: "Saltanatın kaldırılması (1 Kasım 1922) ile birlikte ortaya çıkan \"Devlet Başkanlığı\" ve \"Rejim\" sorunları, aşağıdaki gelişmelerden hangisiyle kesin olarak çözüme kavuşturulmuştur?", options: ["Halifeliğin kaldırılması", "Ankara'nın başkent yapılması", "Cumhuriyet'in ilan edilmesi", "Teşkilat-ı Esasiye Kanunu'nun kabulü"], explanation: "Devletin rejimi (Cumhuriyet) ve devlet başkanı (Cumhurbaşkanı) sorunu Cumhuriyet'in ilanıyla kesin çözülmüştür." },
+            { word: "Egemenlik (bağımsızlık) haklarını", category: "antlasma", question: "Lozan Barış Antlaşması'nın \"Boğazların her iki yakası askerden arındırılacak ve başkanı Türk olan uluslararası bir komisyon tarafından yönetilecektir.\" maddesi, Türkiye'nin aşağıda verilen özelliklerinden en çok hangisini zedelemiştir?", options: ["Ekonomik bağımsızlığını", "Laik devlet yapısını", "Egemenlik (bağımsızlık) haklarını", "Uluslararası eşitlik ilkesini"], explanation: "Kendi toprağımızda uluslararası bir komisyonun varlığı ve asker bulunduramama egemenlik haklarımızı kısıtlamıştır." },
+            { word: "İkinci Grup", category: "isyan", question: "Lozan Görüşmeleri'nin 4 Şubat 1923'te kesintiye uğradığı dönemde, İsmet İnönü'nün TBMM'ye sunduğu rapora sert tepki göstererek antlaşma şartlarını bağımsızlığa aykırı bulan ve meclis çalışmalarını kilitleyerek seçimlerin yenilenmesine neden olan siyasi oluşum aşağıdakilerden hangisidir?", options: ["Birinci Grup (Anadolu ve Rumeli Müdafaa-i Hukuk Grubu)", "İkinci Grup", "İstiklal Mahkemeleri üyeleri", "Terakkiperver Cumhuriyet Fırkası"], explanation: "Meclisteki sert muhalefet olan İkinci Grup, Lozan'ı eleştirmiş ve bu kriz seçimlerin yenilenmesine yol açmıştır." },
+            { word: "Ekümenik (Evrensel) ve siyasi yetkileri", category: "antlasma", question: "Lozan'da Fener Rum Patrikhanesi'nin İstanbul dışına çıkarılması talep edilmiş ancak başarılamamıştır. Fakat Türkiye bu kurumun iç işlerimize karışmasını engellemek için Patrikhanenin hangi yetkisini kesin olarak reddetmiş ve Lozan'da kabul ettirmiştir?", options: ["İstanbul'da mülk edinme yetkisi", "Ekümenik (Evrensel) ve siyasi yetkileri", "Kendi din adamlarını yetiştirme yetkisi", "Sadece Rum cemaatine dini hizmet verme yetkisi"], explanation: "Patrikhanenin evrensel (ekümenik) ve siyasi yetkileri kesinlikle reddedilmiş, sadece dini bir kurum olması sağlanmıştır." },
+            { word: "İstanbul Hükûmeti'ni (Osmanlı Devleti'ni)", category: "antlasma", question: "Kurtuluş Savaşı'nı bitiren Mudanya Ateşkes Antlaşması'nda İstanbul, Boğazlar ve Doğu Trakya savaşılmadan, diplomasi yoluyla kurtarılmıştır. Bu bölgelerin TBMM Hükûmeti'ne (Ankara'ya) teslim edilmesi, İtilaf Devletleri'nin aşağıdakilerden hangisini hukuken yok saydığının en kesin göstergesidir?", options: ["Sovyet Rusya'yı", "İstanbul Hükûmeti'ni (Osmanlı Devleti'ni)", "Yunanistan'ın Ege'deki varlığını", "Milletler Cemiyeti'ni"], explanation: "İtilaf Devletleri'nin Osmanlı başkenti olan İstanbul'u doğrudan TBMM'ye teslim etmesi, Osmanlı'yı hukuken yok saydıklarını gösterir." }
+        ];
+
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function init() {
+            questions = shuffle([...quizData]);
+            document.getElementById('total').textContent = questions.length;
+            showQuestion();
+            document.getElementById('catCover').addEventListener('click', () => {
+                document.getElementById('catCover').style.display = 'none';
+            });
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestionIndex];
+            document.getElementById('question').textContent = q.question;
+            document.getElementById('catCover').style.display = 'flex';
+            
+            const optionsDiv = document.getElementById('options');
+            const btns = optionsDiv.querySelectorAll('.option-btn');
+            btns.forEach(b => b.remove());
+
+            const currentOptions = shuffle([...q.options]);
+            currentOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(opt, q.word, btn);
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('progress').textContent = currentQuestionIndex + 1;
+            document.getElementById('progressBar').style.width = ((currentQuestionIndex + 1) / questions.length * 100) + '%';
+        }
+
+        function checkAnswer(selected, correct, btn) {
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            const isCorrect = selected === correct;
+            if (isCorrect) {
+                score++;
+                document.getElementById('score').textContent = score;
+                btn.classList.add('correct');
+            } else {
+                btn.classList.add('incorrect');
+                allBtns.forEach(b => { if(b.textContent === correct) b.classList.add('correct'); });
+            }
+
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'block';
+            feedback.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            document.getElementById('feedbackText').innerHTML = `<strong>${isCorrect ? '✅ Tebrikler!' : '❌ Dikkat!'}</strong><br>${questions[currentQuestionIndex].explanation}`;
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        document.getElementById('nextBtn').onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) showQuestion();
+            else showResults();
+        };
+
+        function showResults() {
+            document.getElementById('quizContainer').style.display = 'none';
+            const res = document.getElementById('resultsContainer');
+            res.style.display = 'block';
+            document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
+            
+            const list = document.getElementById('wordList');
+            quizData.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>${q.word}</strong><br><small>${q.question}</small><br><span class="category category-${q.category}">${q.category.toUpperCase()}</span>`;
+                list.appendChild(card);
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türk İnkılap Tarihi Testi</title>
+    <style>
+        :root {
+            --primary: #2E8B57;
+            --success: #228B22;
+            --danger: #B22222;
+            --light: #F5FFFA;
+            --dark: #2F4F4F;
+            --accent: #32CD32;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E8B57 0%, #32CD32 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "📜";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .context {
+            font-size: 1.1rem;
+            color: var(--primary);
+            font-style: italic;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(46, 139, 87, 0.1);
+            border-radius: 8px;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 139, 87, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(46, 139, 87, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(34, 139, 34, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 139, 87, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-genel { background: #2E8B57; }
+        .category-cephesi { background: #228B22; }
+        .category-uluslararasi { background: #32CD32; }
+        .category-askeri { background: #006400; }
+        .category-siyasi { background: #556B2F; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option-btn {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .cat-image {
+                max-width: 150px;
+                max-height: 120px;
+            }
+            
+            .cat-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📜 Türk İnkılap Tarihi</h1>
+            <div class="subtitle">Mondros Ateşkes Antlaşması ve İlk İşgaller</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+                <div class="context" id="context"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+{
+    word: "Milli Mücadele döneminde toplumlar arası ortaya çıkan karışıklıkları gidermek için Damat Ferit Paşa hükümeti tarafından Anadolu'ya gönderilen kurullar aşağıdakilerden hangisidir?",
+    meaning: "Heyet-i Nasiha",
+    category: "Milli Mücadele",
+    question: "Milli Mücadele döneminde toplumlar arası ortaya çıkan karışıklıkları gidermek için Damat Ferit Paşa hükümeti tarafından Anadolu'ya gönderilen kurullar aşağıdakilerden hangisidir?",
+    options: [
+        "Heyet-i Temsiliye",
+        "Heyet-i Nasiha",
+        "Heyet-i Mebusan",
+        "Heyet-i Mahsusa"
+    ],
+    context: "İstanbul Hükümeti'nin Milli Mücadele'ye yaklaşımı",
+    explanation: "Damat Ferit Paşa hükümeti, Anadolu'da başlayan Milli Mücadele hareketini bastırmak ve halkı İstanbul Hükümeti'ne bağlı kalmaya ikna etmek için Heyet-i Nasiha (Nasihat Kurulları) adı verilen kurullar göndermiştir. Bu kurullar halka nasihatlerde bulunarak Kuvayımilliye'ye katılmalarını engellemeye çalışmıştır."
+},
+{
+    word: "İzmir'in işgalinden sonra İzmir'den ayrılıp 'Galip Hoca' takma adıyla Kuvayımilliye teşkilatlarının kurulmasına yardım eden kişi aşağıdakilerden hangisidir?",
+    meaning: "Mahmut Celal Bayar",
+    category: "Kuvayımilliye",
+    question: "İzmir'in işgalinden sonra İzmir'den ayrılıp 'Galip Hoca' takma adıyla Kuvayımilliye teşkilatlarının kurulmasına yardım eden kişi aşağıdakilerden hangisidir?",
+    options: [
+        "Rauf Orbay",
+        "Kazım Karabekir",
+        "Mahmut Celal Bayar",
+        "Ali Fuat Cebesoy"
+    ],
+    context: "Kuvayımilliye örgütlenmesi",
+    explanation: "Mahmut Celal Bayar, İzmir'in işgalinden sonra şehirden ayrılarak 'Galip Hoca' takma adıyla Anadolu'nun iç kesimlerine geçmiş ve burada Kuvayımilliye teşkilatlarının kurulmasına önemli katkılarda bulunmuştur. Daha sonra Türkiye Cumhuriyeti'nin 3. Cumhurbaşkanı olmuştur."
+},
+{
+    word: "Milne Hattı ile ilgili aşağıdaki ifadelerden hangisi doğrudur?",
+    meaning: "İzmir'in işgali sonrasında İngiliz General Milne'nin belirlediği Yunan ve Türk kuvvetleri arasındaki sınır hattıdır.",
+    category: "İşgaller",
+    question: "Milne Hattı ile ilgili aşağıdaki ifadelerden hangisi doğrudur?",
+    options: [
+        "Mondros Ateşkesi'nde belirlenen Türk-Yunan sınırıdır",
+        "İstanbul'un işgali sırasında belirlenen tarafsız bölgedir",
+        "İzmir'in işgali sonrasında İngiliz General Milne'nin belirlediği Yunan ve Türk kuvvetleri arasındaki sınır hattıdır",
+        "Doğu Anadolu'da Ermeni ve Türk kuvvetleri arasında belirlenen hattır"
+    ],
+    context: "Yunan işgali ve sınırlar",
+    explanation: "Milne Hattı, İzmir'in işgalinden sonra İngiliz General George Milne tarafından belirlenen ve Yunan işgal kuvvetleri ile Türk kuvvetleri arasındaki sınırı gösteren hattır. Bu hat, Yunanların daha fazla ilerlemesini engellemek amacıyla çizilmiştir ancak Yunanlar daha sonra bu hattı aşarak ilerlemişlerdir."
+},
+		
+            {
+                word: "Wilson İlkeleri'nin 'galip devletler, mağlup devletlerden toprak ve savaş tazminatı almayacak' maddesi, aşağıdakilerden hangisinin ortaya çıkmasında teorik zemin hazırlamıştır?",
+                meaning: "Manda ve himaye fikrinin yaygınlaşması",
+                category: "Wilson İlkeleri",
+                question: "Wilson İlkeleri'nin 'galip devletler, mağlup devletlerden toprak ve savaş tazminatı almayacak' maddesi, aşağıdakilerden hangisinin ortaya çıkmasında teorik zemin hazırlamıştır?",
+                options: [
+                    "Gizli antlaşmaların yapılması",
+                    "Milletler Cemiyeti'nin kurulması",
+                    "Manda ve himaye fikrinin yaygınlaşması",
+                    "Alsas-Loren'in Fransa'ya verilmesi"
+                ],
+                context: "Wilson İlkeleri ve uluslararası etkileri",
+                explanation: "Wilson İlkeleri'nin bu maddesi, sömürgeciliğin açıkça reddedilmesi anlamına geliyordu. Ancak galip devletler bu maddeyi aşmak için manda ve himaye sistemini geliştirdiler. Bu sistem, sömürgeciliğin değişik bir biçimi olarak uygulandı."
+            },
+            {
+                word: "Ateşkes antlaşmaları ile ilgili aşağıda verilen eşleştirmelerden hangisi yanlıştır?",
+                meaning: "Macaristan – Nöyyi",
+                category: "Ateşkes Antlaşmaları",
+                question: "Ateşkes antlaşmaları ile ilgili aşağıda verilen eşleştirmelerden hangisi yanlıştır?",
+                options: [
+                    "Almanya – Rethondes",
+                    "Osmanlı Devleti – Mondros",
+                    "Bulgaristan – Selanik",
+                    "Macaristan – Nöyyi"
+                ],
+                context: "I. Dünya Savaşı sonrası ateşkes antlaşmaları",
+                explanation: "Macaristan ile imzalanan ateşkes antlaşması Nöyyi değil, Belgrad Antlaşması'dır. Nöyyi Antlaşması Bulgaristan ile imzalanmıştır."
+            },
+            {
+                word: "Mondros Ateşkes Antlaşması'nın 'İtilaf Devletleri güvenliklerini tehdit eden herhangi bir bölgeyi işgal edebilir' hükmü aşağıdaki maddelerden hangisinde yer alır?",
+                meaning: "7. madde",
+                category: "Mondros Ateşkesi",
+                question: "Mondros Ateşkes Antlaşması'nın 'İtilaf Devletleri güvenliklerini tehdit eden herhangi bir bölgeyi işgal edebilir' hükmü aşağıdaki maddelerden hangisinde yer alır?",
+                options: [
+                    "5. madde",
+                    "7. madde",
+                    "12. madde",
+                    "24. madde"
+                ],
+                context: "Mondros Ateşkes Antlaşması'nın kritik maddeleri",
+                explanation: "7. madde, İtilaf Devletleri'ne istedikleri her yeri işgal etme yetkisi veren en tehlikeli maddedir. Bu madde işgallerin hukuki dayanağı olarak kullanılmıştır."
+            },
+            {
+                word: "Mondros Ateşkes Antlaşması'nın 24. maddesi ile 'Vilayet-i Sitte' olarak adlandırılan altı ili işgal etme hakkını kendilerinde gören İtilaf Devletleri'nin buradaki asıl amacı nedir?",
+                meaning: "Büyük Ermenistan'ı (Megali İdea) kurmak",
+                category: "Mondros Ateşkesi",
+                question: "Mondros Ateşkes Antlaşması'nın 24. maddesi ile 'Vilayet-i Sitte' olarak adlandırılan altı ili işgal etme hakkını kendilerinde gören İtilaf Devletleri'nin buradaki asıl amacı nedir?",
+                options: [
+                    "Bölgedeki demir yollarını kontrol altına almak",
+                    "Büyük Ermenistan'ı (Megali İdea) kurmak",
+                    "Bölge halkını Osmanlı yönetimine karşı kışkırtmak",
+                    "Doğu Anadolu'da bir Kürt devleti kurdurmak"
+                ],
+                context: "Vilayet-i Sitte ve Ermeni meselesi",
+                explanation: "İtilaf Devletleri, Doğu Anadolu'da Ermeni nüfusun çoğunlukta olduğunu iddia ederek bu bölgeleri işgal etmek ve Büyük Ermenistan'ı kurmak istiyorlardı. Vilayet-i Sitte; Erzurum, Van, Bitlis, Diyarbakır, Elazığ ve Sivas vilayetlerini kapsıyordu."
+            },
+            {
+                word: "I. Dünya Savaşı sonrasında imzalanan barış antlaşmaları ile ilgili aşağıdaki eşleştirmelerden hangisi doğrudur?",
+                meaning: "Bulgaristan – Nöyyi",
+                category: "Barış Antlaşmaları",
+                question: "I. Dünya Savaşı sonrasında imzalanan barış antlaşmaları ile ilgili aşağıdaki eşleştirmelerden hangisi doğrudur?",
+                options: [
+                    "Almanya – Sen Jermen",
+                    "Avusturya – Versay",
+                    "Bulgaristan – Nöyyi",
+                    "Osmanlı Devleti – Triyanon"
+                ],
+                context: "I. Dünya Savaşı barış antlaşmaları",
+                explanation: "Doğru eşleştirme: Almanya-Versay, Avusturya-Saint Germain (Sen Jermen), Bulgaristan-Neuilly (Nöyyi), Macaristan-Trianon, Osmanlı Devleti-Sevr antlaşmalarıdır."
+            },
+            {
+                word: "Mustafa Kemal Paşa, Mondros Ateşkes Antlaşması'nın hangi maddesi için 'Beyni yakan ateşten bir zehirdi.' ifadesini kullanmıştır?",
+                meaning: "İtilaf Devletleri'nin her yeri işgal edebileceğine dair madde",
+                category: "Mondros Ateşkesi",
+                question: "Mustafa Kemal Paşa, Mondros Ateşkes Antlaşması'nın hangi maddesi için 'Beyni yakan ateşten bir zehirdi.' ifadesini kullanmıştır?",
+                options: [
+                    "Boğazların işgal edileceğine dair madde",
+                    "Ordunun terhis edileceğine dair madde",
+                    "İtilaf Devletleri'nin her yeri işgal edebileceğine dair madde",
+                    "Vilayet-i Sitte'de karışıklık çıkarsa işgal edileceğine dair madde"
+                ],
+                context: "Mustafa Kemal'in Mondros değerlendirmesi",
+                explanation: "Mustafa Kemal Paşa, 7. maddeyi 'beyni yakan ateşten bir zehir' olarak nitelendirmiştir. Çünkü bu madde İtilaf Devletleri'ne Anadolu'nun herhangi bir yerini işgal etme yetkisi veriyordu."
+            },
+            {
+                word: "Mondros Ateşkes Antlaşması'ndan sonra başlayan işgallerle ilgili aşağıdaki ifadelerden hangisi yanlıştır?",
+                meaning: "İtalya, Paris Konferansı'nda kendisine verilen İzmir'i işgal etmiştir.",
+                category: "İşgaller",
+                question: "Mondros Ateşkes Antlaşması'ndan sonra başlayan işgallerle ilgili aşağıdaki ifadelerden hangisi yanlıştır?",
+                options: [
+                    "İlk işgal edilen Osmanlı toprağı Musul'dur.",
+                    "Anadolu'da ilk işgal edilen şehir Hatay'dır.",
+                    "İzmir ve Doğu Trakya, konferans kararıyla Yunanistan'a verilmiştir.",
+                    "İtalya, Paris Konferansı'nda kendisine verilen İzmir'i işgal etmiştir."
+                ],
+                context: "Mondros sonrası işgaller kronolojisi",
+                explanation: "Paris Konferansı'nda İzmir Yunanistan'a verilmiştir, İtalya'ya değil. İtalya bu karara tepki göstermiş ve İngiltere ile arası açılmıştır."
+            },
+            {
+                word: "Paris Barış Konferansı (18 Ocak 1919) ile ilgili aşağıdaki bilgilerden hangisi yanlıştır?",
+                meaning: "Konferansın başkanlığını İngiltere yapmıştır.",
+                category: "Paris Konferansı",
+                question: "Paris Barış Konferansı (18 Ocak 1919) ile ilgili aşağıdaki bilgilerden hangisi yanlıştır?",
+                options: [
+                    "Konferansın başkanlığını İngiltere yapmıştır.",
+                    "İtilaf Devletleri arasında ilk ciddi görüş ayrılıkları bu konferansta yaşanmıştır.",
+                    "Daha önce İtilaya'ya söz verilen İzmir, İngiltere'nin desteğiyle Yunanistan'a verilmiştir.",
+                    "Milletler Cemiyeti'nin kurulması kararlaştırılmıştır."
+                ],
+                context: "Paris Barış Konferansı özellikleri",
+                explanation: "Paris Barış Konferansı'nın başkanlığını İngiltere değil, Fransa Başbakanı Clemenceau yapmıştır. Konferans Fransa'nın başkenti Paris'te toplanmıştır."
+            },
+            {
+                word: "İzmir'in işgali sırasında yaşanan gelişmelerle ilgili aşağıdaki eşleştirmelerden hangisi doğrudur?",
+                meaning: "Halka cihat çağrısı yapan – Denizli Müftüsü Ahmet Hulusi Efendi",
+                category: "İzmir'in İşgali",
+                question: "İzmir'in işgali sırasında yaşanan gelişmelerle ilgili aşağıdaki eşleştirmelerden hangisi doğrudur?",
+                options: [
+                    "İlk kurşunu sıkan – Albay Süleyman Fethi Bey",
+                    "'Zito Venizelos' demeyi reddeden – Hasan Tahsin",
+                    "Halka cihat çağrısı yapan – Denizli Müftüsü Ahmet Hulusi Efendi",
+                    "İşgalin haksızlığını ortaya koyan rapor – General Harbord Raporu"
+                ],
+                context: "İzmir işgali ve direniş",
+                explanation: "Denizli Müftüsü Ahmet Hulusi Efendi, işgalden hemen sonra halka cihat çağrısı yapmış ve 'Düşman işgaline karşı silahlı direniş farzdır' fetvası vermiştir."
+            },
+            {
+                word: "Yararlı Cemiyetler'in ortak özellikleri arasında aşağıdakilerden hangisi gösterilemez?",
+                meaning: "İstanbul Hükümeti'ne karşı doğrudan bir tavır almışlardır.",
+                category: "Yararlı Cemiyetler",
+                question: "Yararlı Cemiyetler'in ortak özellikleri arasında aşağıdakilerden hangisi gösterilemez?",
+                options: [
+                    "Bölgelerinin Türklüğünü belgelerle kanıtlamaya çalışmışlardır.",
+                    "Wilson İlkeleri'nin kendi lehlerine uygulanmasını istemişlerdir.",
+                    "İstanbul Hükümeti'ne karşı doğrudan bir tavır almışlardır.",
+                    "Bölgelerini işgalcilere ve azınlık çetelerine karşı savunmuşlardır."
+                ],
+                context: "Yararlı Cemiyetler'in özellikleri",
+                explanation: "Yararlı Cemiyetler, İstanbul Hükümeti'ne karşı doğrudan bir tavır almamış, aksine hükümetin işgallere karşı etkisiz kalması üzerine bölgesel direnişi örgütlemişlerdir."
+            },
+            {
+                word: "Manda ve himaye fikrinin teorik temelini atan kişi aşağıdakilerden hangisidir?",
+                meaning: "General Jan Smuts",
+                category: "Manda Sistemi",
+                question: "Manda ve himaye fikrinin teorik temelini atan kişi aşağıdakilerden hangisidir?",
+                options: [
+                    "Woodrow Wilson",
+                    "Amiral Calthorpe",
+                    "General Jan Smuts",
+                    "Venizelos"
+                ],
+                context: "Manda sisteminin teorik temelleri",
+                explanation: "Güney Afrikalı General Jan Smuts, Wilson İlkeleri'ndeki 'sömürgeciliğin reddi' maddesini aşmak için manda sistemini önermiş ve bu sistem Paris Konferansı'nda kabul edilmiştir."
+            },
+            {
+                word: "Mondros Ateşkes Antlaşması imzalandığında Osmanlı Sadrazamı (Başbakanı) aşağıdakilerden hangisidir?",
+                meaning: "Ahmet İzzet Paşa",
+                category: "Mondros Ateşkesi",
+                question: "Mondros Ateşkes Antlaşması imzalandığında Osmanlı Sadrazamı (Başbakanı) aşağıdakilerden hangisidir?",
+                options: [
+                    "Damat Ferit Paşa",
+                    "Talat Paşa",
+                    "Rauf Orbay",
+                    "Ahmet İzzet Paşa"
+                ],
+                context: "Mondros'un imzalandığı dönem",
+                explanation: "Mondros Ateşkes Antlaşması, 30 Ekim 1918'de Ahmet İzzet Paşa hükümeti döneminde imzalanmıştır. Osmanlı heyetine Bahriye Nazırı Rauf Orbay başkanlık etmiştir."
+            },
+            {
+                word: "Anadolu'da işgale karşı atılan ilk kurşun, aşağıdaki şehirlerimizin hangisinde ve kimin tarafından atılmıştır?",
+                meaning: "Hatay - Kara Mehmet Çavuş",
+                category: "İlk Direnişler",
+                question: "Anadolu'da işgale karşı atılan ilk kurşun, aşağıdaki şehirlerimizin hangisinde ve kimin tarafından atılmıştır?",
+                options: [
+                    "İzmir - Hasan Tahsin",
+                    "Muğla - Demirci Mehmet Efe",
+                    "Hatay - Kara Mehmet Çavuş",
+                    "Maraş - Sütçü İmam"
+                ],
+                context: "Anadolu'da ilk direniş",
+                explanation: "Anadolu'da işgale karşı ilk kurşun, 11 Aralık 1918'de Hatay Dörtyol'da Kara Mehmet Çavuş tarafından atılmıştır. İzmir'in işgali ise 15 Mayıs 1919'da gerçekleşmiştir."
+            },
+            {
+                word: "İzmir'in işgali sırasında yaşanan aşağıdaki olay-eşleştirmelerinden hangisi doğrudur?",
+                meaning: "'Zito Venizelos' demediği için süngülenerek şehit edilen – Albay Süleyman Fethi Bey",
+                category: "İzmir'in İşgali",
+                question: "İzmir'in işgali sırasında yaşanan aşağıdaki olay-eşleştirmelerinden hangisi doğrudur?",
+                options: [
+                    "İşgalin haksızlığını ortaya koyan ilk rapor – General Harbord Raporu",
+                    "İşgalden bir gün önce görevden alınan komutan – Kazım Karabekir",
+                    "'Zito Venizelos' demediği için süngülenerek şehit edilen – Albay Süleyman Fethi Bey",
+                    "Halkı işgale karşı silahlı direnişe çağıran – Denizli Müftüsü Ahmet Hulusi Efendi"
+                ],
+                context: "İzmir işgali şehitleri",
+                explanation: "Albay Süleyman Fethi Bey, Yunan askerlerinin 'Zito Venizelos' (Yaşasın Venizelos) demesi için yaptığı baskıyı reddetmiş ve bu yüzden süngülenerek şehit edilmiştir."
+            },
+            {
+                word: "I. Dünya Savaşı'nı bitiren ateşkes antlaşmalarından biri olan ve Osmanlı Devleti ile İtilaf Devletleri arasında imzalanan antlaşma aşağıdakilerden hangisidir?",
+                meaning: "Mondros",
+                category: "Ateşkes Antlaşmaları",
+                question: "I. Dünya Savaşı'nı bitiren ateşkes antlaşmalarından biri olan ve Osmanlı Devleti ile İtilaf Devletleri arasında imzalanan antlaşma aşağıdakilerden hangisidir?",
+                options: [
+                    "Versay",
+                    "Mondros",
+                    "Nöyyi",
+                    "Sen Jermen"
+                ],
+                context: "I. Dünya Savaşı ateşkes antlaşmaları",
+                explanation: "Osmanlı Devleti ile İtilaf Devletleri arasında 30 Ekim 1918'de Mondros Ateşkes Antlaşması imzalanmıştır."
+            },
+            {
+                word: "I. Dünya Savaşı sonunda Almanya ile İtilaf Devletleri arasında imzalanan barış antlaşması aşağıdakilerden hangisidir?",
+                meaning: "Versay",
+                category: "Barış Antlaşmaları",
+                question: "I. Dünya Savaşı sonunda Almanya ile İtilaf Devletleri arasında imzalanan barış antlaşması aşağıdakilerden hangisidir?",
+                options: [
+                    "Versay",
+                    "Mondros",
+                    "Nöyyi",
+                    "Sen Jermen"
+                ],
+                context: "I. Dünya Savaşı barış antlaşmaları",
+                explanation: "Almanya ile 28 Haziran 1919'da Versay Barış Antlaşması imzalanmıştır."
+            },
+            {
+                word: "I. Dünya Savaşı sonunda Avusturya ile İtilaf Devletleri arasında imzalanan barış antlaşması aşağıdakilerden hangisidir?",
+                meaning: "Sen Jermen",
+                category: "Barış Antlaşmaları",
+                question: "I. Dünya Savaşı sonunda Avusturya ile İtilaf Devletleri arasında imzalanan barış antlaşması aşağıdakilerden hangisidir?",
+                options: [
+                    "Versay",
+                    "Mondros",
+                    "Nöyyi",
+                    "Sen Jermen"
+                ],
+                context: "I. Dünya Savaşı barış antlaşmaları",
+                explanation: "Avusturya ile 10 Eylül 1919'da Saint Germain (Sen Jermen) Barış Antlaşması imzalanmıştır."
+            },
+            {
+                word: "I. Dünya Savaşı sonunda Bulgaristan ile İtilaf Devletleri arasında imzalanan barış antlaşması aşağıdakilerden hangisidir?",
+                meaning: "Nöyyi",
+                category: "Barış Antlaşmaları",
+                question: "I. Dünya Savaşı sonunda Bulgaristan ile İtilaf Devletleri arasında imzalanan barış antlaşması aşağıdakilerden hangisidir?",
+                options: [
+                    "Versay",
+                    "Mondros",
+                    "Nöyyi",
+                    "Sen Jermen"
+                ],
+                context: "I. Dünya Savaşı barış antlaşmaları",
+                explanation: "Bulgaristan ile 27 Kasım 1919'da Neuilly (Nöyyi) Barış Antlaşması imzalanmıştır."
+            },
+            {
+                word: "I. Dünya Savaşı sonunda Macaristan ile İtilaf Devletleri arasında imzalanan barış antlaşması aşağıdakilerden hangisidir?",
+                meaning: "Trianon",
+                category: "Barış Antlaşmaları",
+                question: "I. Dünya Savaşı sonunda Macaristan ile İtilaf Devletleri arasında imzalanan barış antlaşması aşağıdakilerden hangisidir?",
+                options: [
+                    "Versay",
+                    "Mondros",
+                    "Trianon",
+                    "Sen Jermen"
+                ],
+                context: "I. Dünya Savaşı barış antlaşmaları",
+                explanation: "Macaristan ile 4 Haziran 1920'de Trianon Barış Antlaşması imzalanmıştır."
+            },
+            {
+                word: "I. Dünya Savaşı'ndan sonra İtilaf Devletleri ile Almanya arasında imzalanan ateşkes antlaşması aşağıdakilerden hangisidir?",
+                meaning: "Rethondes",
+                category: "Ateşkes Antlaşmaları",
+                question: "I. Dünya Savaşı'ndan sonra İtilaf Devletleri ile Almanya arasında imzalanan ateşkes antlaşması aşağıdakilerden hangisidir?",
+                options: [
+                    "Rethondes",
+                    "Selanik",
+                    "Mondros",
+                    "Villa Giusti"
+                ],
+                context: "I. Dünya Savaşı ateşkes antlaşmaları",
+                explanation: "Almanya ile 11 Kasım 1918'de Rethondes Ateşkes Antlaşması imzalanmıştır."
+            },
+            {
+                word: "I. Dünya Savaşı'ndan sonra İtilaf Devletleri ile Bulgaristan arasında imzalanan ateşkes antlaşması aşağıdakilerden hangisidir?",
+                meaning: "Selanik",
+                category: "Ateşkes Antlaşmaları",
+                question: "I. Dünya Savaşı'ndan sonra İtilaf Devletleri ile Bulgaristan arasında imzalanan ateşkes antlaşması aşağıdakilerden hangisidir?",
+                options: [
+                    "Rethondes",
+                    "Selanik",
+                    "Mondros",
+                    "Villa Giusti"
+                ],
+                context: "I. Dünya Savaşı ateşkes antlaşmaları",
+                explanation: "Bulgaristan ile 29 Eylül 1918'de Selanik Ateşkes Antlaşması imzalanmıştır."
+            },
+            {
+                word: "I. Dünya Savaşı'ndan sonra İtilaf Devletleri ile Avusturya-Macaristan İmparatorluğu arasında imzalanan ateşkes antlaşması aşağıdakilerden hangisidir?",
+                meaning: "Villa Giusti",
+                category: "Ateşkes Antlaşmaları",
+                question: "I. Dünya Savaşı'ndan sonra İtilaf Devletleri ile Avusturya-Macaristan İmparatorluğu arasında imzalanan ateşkes antlaşması aşağıdakilerden hangisidir?",
+                options: [
+                    "Rethondes",
+                    "Selanik",
+                    "Mondros",
+                    "Villa Giusti"
+                ],
+                context: "I. Dünya Savaşı ateşkes antlaşmaları",
+                explanation: "Avusturya-Macaristan İmparatorluğu ile 3 Kasım 1918'de Villa Giusti Ateşkes Antlaşması imzalanmıştır."
+            },
+            {
+                word: "Mondros Ateşkes Antlaşması'nda geçen ve Doğu Anadolu'da Ermeniler için bir hak iddia edilen 'Vilayet-i Sitte' (Altı Vilayet) aşağıdaki şehirlerden hangisini içermez?",
+                meaning: "Trabzon",
+                category: "Vilayet-i Sitte",
+                question: "Mondros Ateşkes Antlaşması'nda geçen ve Doğu Anadolu'da Ermeniler için bir hak iddia edilen 'Vilayet-i Sitte' (Altı Vilayet) aşağıdaki şehirlerden hangisini içermez?",
+                options: [
+                    "Erzurum",
+                    "Sivas",
+                    "Van",
+                    "Trabzon"
+                ],
+                context: "Vilayet-i Sitte kapsamı",
+                explanation: "Vilayet-i Sitte; Erzurum, Van, Bitlis, Diyarbakır, Elazığ (Mamuretülaziz) ve Sivas vilayetlerinden oluşur. Trabzon bu vilayetler arasında yer almaz."
+            }
+        ];
+
+        // DOM elements
+        const questionEl = document.getElementById('question');
+        const contextEl = document.getElementById('context');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const resultMessageEl = document.getElementById('resultMessage');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+        let masteredWords = [];
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Initialize quiz
+        function initQuiz() {
+            questions = shuffleArray([...quizData]);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            
+            // Add click event to cat cover
+            catCoverEl.addEventListener('click', removeCatCover);
+        }
+
+        // Remove cat cover to reveal answers
+        function removeCatCover() {
+            catCoverEl.style.display = 'none';
+        }
+
+        // Show current question
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            contextEl.textContent = currentQuestion.context;
+            
+            // Reset cat cover
+            catCoverEl.style.display = 'flex';
+            
+            // Shuffle options
+            const options = shuffleArray([...currentQuestion.options]);
+            
+            // Clear previous options
+            optionsEl.innerHTML = '';
+            
+            // Add cat cover back
+            optionsEl.appendChild(catCoverEl);
+            
+            // Create new option buttons
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = option;
+                button.addEventListener('click', () => selectAnswer(option, currentQuestion));
+                optionsEl.appendChild(button);
+            });
+            
+            // Reset UI for new question
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex;
+            progressBarEl.style.width = `${(currentQuestionIndex / questions.length) * 100}%`;
+        }
+
+        // Handle answer selection
+        function selectAnswer(selectedOption, currentQuestion) {
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // Disable all buttons
+            optionButtons.forEach(button => {
+                button.disabled = true;
+                
+                // Mark correct answer
+                if (button.textContent === currentQuestion.meaning) {
+                    button.classList.add('correct');
+                }
+                
+                // Mark incorrect selected answer
+                if (button.textContent === selectedOption && button.textContent !== currentQuestion.meaning) {
+                    button.classList.add('incorrect');
+                }
+            });
+            
+            // Check if answer is correct
+            const isCorrect = selectedOption === currentQuestion.meaning;
+            
+            // Update score if correct
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+                
+                // Add to mastered words if not already there
+                if (!masteredWords.some(w => w.word === currentQuestion.word)) {
+                    masteredWords.push(currentQuestion);
+                }
+            }
+            
+            // Show feedback
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            
+            if (isCorrect) {
+                feedbackTextEl.innerHTML = `✅ Doğru! <strong>${currentQuestion.explanation}</strong>`;
+            } else {
+                feedbackTextEl.innerHTML = `❌ Yanlış! Doğru cevap: <strong>${currentQuestion.meaning}</strong><br><br>${currentQuestion.explanation}`;
+            }
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        // End quiz and show results
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            finalScoreEl.textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            // Result message based on performance
+            if (percentage >= 90) {
+                resultMessageEl.textContent = "Mükemmel! Mondros Ateşkesi ve İlk İşgaller konusunu çok iyi biliyorsunuz! 🏆";
+            } else if (percentage >= 70) {
+                resultMessageEl.textContent = "Çok iyi! Tarihî olaylara hakimsiniz. 👍";
+            } else if (percentage >= 50) {
+                resultMessageEl.textContent = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+            } else {
+                resultMessageEl.textContent = "Öğrenmeye devam! Tarihî olayları tekrar edin. 📚";
+            }
+            
+            // Display all words learned
+            wordListEl.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Kavramlar</h3>';
+            quizData.forEach(word => {
+                const wordCard = document.createElement('div');
+                wordCard.classList.add('word-card', 'fade-in');
+                wordCard.innerHTML = `
+                    <div class="word">${word.question}</div>
+                    <div class="meaning">${word.meaning}</div>
+                    <div class="category category-${getCategoryClass(word.category)}">${word.category}</div>
+                `;
+                wordListEl.appendChild(wordCard);
+            });
+        }
+
+        // Helper function to get CSS class for category
+        function getCategoryClass(category) {
+            const classes = {
+                'Wilson İlkeleri': 'uluslararasi',
+                'Ateşkes Antlaşmaları': 'uluslararasi',
+                'Mondros Ateşkesi': 'uluslararasi',
+                'Barış Antlaşmaları': 'uluslararasi',
+                'İşgaller': 'askeri',
+                'Paris Konferansı': 'uluslararasi',
+                'İzmir\'in İşgali': 'askeri',
+                'Yararlı Cemiyetler': 'siyasi',
+                'Manda Sistemi': 'uluslararasi',
+                'İlk Direnişler': 'askeri',
+                'Vilayet-i Sitte': 'siyasi'
+            };
+            return classes[category] || 'genel';
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', nextQuestion);
+        
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>

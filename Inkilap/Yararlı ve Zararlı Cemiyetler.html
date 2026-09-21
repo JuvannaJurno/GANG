@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türk İnkılap Tarihi Testi</title>
+    <style>
+        :root {
+            --primary: #2E8B57;
+            --success: #228B22;
+            --danger: #B22222;
+            --light: #F5FFFA;
+            --dark: #2F4F4F;
+            --accent: #32CD32;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E8B57 0%, #32CD32 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "📜";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 139, 87, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(46, 139, 87, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(34, 139, 34, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 139, 87, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-yararli { background: #2E8B57; }
+        .category-zararli-azinlik { background: #B22222; }
+        .category-zararli-turk { background: #8B0000; }
+        .category-genel { background: #2E8B57; }
+        .category-kurulus { background: #228B22; }
+        .category-ozellik { background: #32CD32; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option-btn {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .cat-image {
+                max-width: 150px;
+                max-height: 120px;
+            }
+            
+            .cat-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📜 Türk İnkılap Tarihi</h1>
+            <div class="subtitle">Yararlı ve Zararlı Cemiyetler</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                word: "İzmir'in Yunanlar tarafından ilhak edilmesini önlemek amacıyla, Nurettin Paşa'nın gayretleriyle kurulan ve işgalden bir gün önce halkı Maşatlık'ta protesto için toplamaya çağıran cemiyet aşağıdakilerden hangisidir?",
+                meaning: "İzmir Müdafaa-i Hukuk-u Reddi-i İlhak Cemiyeti",
+                category: "Yararlı Cemiyetler",
+                question: "İzmir'in Yunanlar tarafından ilhak edilmesini önlemek amacıyla, Nurettin Paşa'nın gayretleriyle kurulan ve işgalden bir gün önce halkı Maşatlık'ta protesto için toplamaya çağıran cemiyet aşağıdakilerden hangisidir?",
+                options: [
+                    "Trakya Paşaeli Cemiyeti",
+                    "İzmir Müdafaa-i Hukuk-u Osmaniye Cemiyeti",
+                    "Kilikyalılar Cemiyeti",
+                    "İzmir Müdafaa-i Hukuk-u Reddi-i İlhak Cemiyeti"
+                ],
+                explanation: "İzmir Müdafaa-i Hukuk-u Reddi-i İlhak Cemiyeti, İzmir'in işgalini önlemek için kurulmuş ve 14 Mayıs 1919'da (işgalden bir gün önce) halkı Maşatlık'ta toplanmaya çağırarak büyük bir protesto mitingi düzenlemiştir."
+            },
+            {
+                word: "Trabzon ve çevresinde Pontus Rum Devleti'nin kurulmasını engellemek amacıyla kurulan, Erzurum Kongresi'nin toplanmasında etkili olan ve 'İstikbal' gazetesini çıkaran cemiyet hangisidir?",
+                meaning: "Trabzon Muhafaza-i Hukuk Cemiyeti",
+                category: "Yararlı Cemiyetler",
+                question: "Trabzon ve çevresinde Pontus Rum Devleti'nin kurulmasını engellemek amacıyla kurulan, Erzurum Kongresi'nin toplanmasında etkili olan ve 'İstikbal' gazetesini çıkaran cemiyet hangisidir?",
+                options: [
+                    "Vilayat-ı Şarkiyye Müdafaa-i Hukuk-u Milliye Cemiyeti",
+                    "Trabzon Muhafaza-i Hukuk Cemiyeti",
+                    "Kars İslam Şûrası",
+                    "Anadolu Kadınları Müdafaa-i Hukuk Cemiyeti"
+                ],
+                explanation: "Trabzon Muhafaza-i Hukuk Cemiyeti, Pontus Rum tehlikesine karşı kurulmuş, Erzurum Kongresi'nin toplanmasında aktif rol oynamış ve 'İstikbal' gazetesini çıkararak millî mücadeleye destek vermiştir."
+            },
+            {
+                word: "Aşağıdaki cemiyetlerden hangisi, Doğu Anadolu'da bağımsız bir Ermeni devleti kurulmasını engellemek amacıyla kurulmuş ve Erzurum Kongresi'ni düzenlemiştir?",
+                meaning: "Vilayat-ı Şarkiyye Müdafaa-i Hukuk-u Milliye Cemiyeti",
+                category: "Yararlı Cemiyetler",
+                question: "Aşağıdaki cemiyetlerden hangisi, Doğu Anadolu'da bağımsız bir Ermeni devleti kurulmasını engellemek amacıyla kurulmuş ve Erzurum Kongresi'ni düzenlemiştir?",
+                options: [
+                    "Kilikyalılar Cemiyeti",
+                    "Trabzon Muhafaza-i Hukuk Cemiyeti",
+                    "Vilayat-ı Şarkiyye Müdafaa-i Hukuk-u Milliye Cemiyeti",
+                    "Kars İslam Şûrası"
+                ],
+                explanation: "Bu cemiyet, Doğu Anadolu'da Ermeni devleti kurulmasını engellemek amacıyla kurulmuş, Erzurum Kongresi'ni organize etmiş ve bölgenin Türk olduğunu kanıtlamak için çalışmalar yapmıştır."
+            },
+            {
+                word: "Vilayat-ı Şarkiyye Müdafaa-i Hukuk-u Milliye Cemiyeti'nin çıkardığı yayın organları arasında aşağıdakilerden hangisi yoktur?",
+                meaning: "Trakya Gazetesi",
+                category: "Yararlı Cemiyetler",
+                question: "Vilayat-ı Şarkiyye Müdafaa-i Hukuk-u Milliye Cemiyeti'nin çıkardığı yayın organları arasında aşağıdakilerden hangisi yoktur?",
+                options: [
+                    "Le Pays (Vatan)",
+                    "Albayrak",
+                    "Hâdisat",
+                    "Trakya Gazetesi"
+                ],
+                explanation: "Vilayat-ı Şarkiyye Cemiyeti, Fransızca 'Le Pays (Vatan)', Türkçe 'Albayrak' ve 'Hâdisat' gazetelerini çıkarmıştır. 'Trakya Gazetesi' ise Trakya Paşaeli Cemiyeti'ne aittir."
+            },
+            {
+                word: "Trakya'nın Yunanlara verileceği endişesiyle kurulan, Osmanlı parçalanırsa Trakya Cumhuriyeti'ni kurmayı amaçlayan ve Paris Barış Konferansı'na rapor sunan cemiyet aşağıdakilerden hangisidir?",
+                meaning: "Trakya Paşaeli Cemiyeti",
+                category: "Yararlı Cemiyetler",
+                question: "Trakya'nın Yunanlara verileceği endişesiyle kurulan, Osmanlı parçalanırsa Trakya Cumhuriyeti'ni kurmayı amaçlayan ve Paris Barış Konferansı'na rapor sunan cemiyet aşağıdakilerden hangisidir?",
+                options: [
+                    "İzmir Reddi-i İlhak Cemiyeti",
+                    "Trakya Paşaeli Cemiyeti",
+                    "Wilson Prensipleri Cemiyeti",
+                    "Kilikyalılar Cemiyeti"
+                ],
+                explanation: "Trakya Paşaeli Cemiyeti, Edirne'de kurulmuş, Trakya'nın Yunanistan'a verilmesini önlemek için mücadele etmiş ve Paris Barış Konferansı'na heyet göndererek Türk haklarını savunmuştur."
+            },
+            {
+                word: "Trakya Paşaeli Cemiyeti'nin faaliyetleri arasında aşağıdakilerden hangisi gösterilemez?",
+                meaning: "Pozantı Kongresi'ni düzenlemek",
+                category: "Yararlı Cemiyetler",
+                question: "Trakya Paşaeli Cemiyeti'nin faaliyetleri arasında aşağıdakilerden hangisi gösterilemez?",
+                options: [
+                    "Lüleburgaz ve Edirne Kongrelerini düzenlemek",
+                    "'Trakya' ve 'Ahali' gazetelerini çıkarmak",
+                    "Pozantı Kongresi'ni düzenlemek",
+                    "Edirne Kongresi'nde TBMM'ye bağlılık kararı almak"
+                ],
+                explanation: "Pozantı Kongresi, Kilikyalılar Cemiyeti tarafından Adana bölgesinde düzenlenmiştir. Trakya Paşaeli Cemiyeti ise Trakya bölgesinde faaliyet göstermiştir."
+            },
+            {
+                word: "Adana ve çevresini Fransız işgalinden ve Ermeni taleplerinden korumak amacıyla İstanbul'da kurulan, 'Feryatname' adlı yazıyla bölgenin Türk ve Müslüman olduğunu ispatlamaya çalışan cemiyet hangisidir?",
+                meaning: "Kilikyalılar Cemiyeti",
+                category: "Yararlı Cemiyetler",
+                question: "Adana ve çevresini Fransız işgalinden ve Ermeni taleplerinden korumak amacıyla İstanbul'da kurulan, 'Feryatname' adlı yazıyla bölgenin Türk ve Müslüman olduğunu ispatlamaya çalışan cemiyet hangisidir?",
+                options: [
+                    "Kilikyalılar Cemiyeti",
+                    "Anadolu Kadınları Müdafaa-i Hukuk Cemiyeti",
+                    "Karakol Cemiyeti",
+                    "Trabzon Muhafaza-i Hukuk Cemiyeti"
+                ],
+                explanation: "Kilikyalılar Cemiyeti, Ali Münif Bey ve Ali Cenani Bey öncülüğünde kurulmuş, 'Feryatname' adlı belge ile bölgenin Türk ve Müslüman olduğunu dünyaya duyurmaya çalışmıştır."
+            },
+            {
+    word: "Milli Kongre Cemiyeti'nin, işgallere karşı direnişte başvurulacak bir yöntem olarak 'Kuvayımilliye' kurulması fikrini ilk kez ortaya attığı belirtilen raporun yazarı kimdir?",
+    meaning: "Dr. Esat Işık",
+    category: "Yararlı Cemiyetler",
+    question: "Milli Kongre Cemiyeti'nin, işgallere karşı direnişte başvurulacak bir yöntem olarak 'Kuvayımilliye' kurulması fikrini ilk kez ortaya attığı belirtilen raporun yazarı kimdir?",
+    options: [
+        "Mustafa Kemal Paşa",
+        "Melek Reşit Hanım",
+        "Dr. Esat Işık",
+        "Halide Edip Adıvar"
+    ],
+    explanation: "Dr. Esat Işık, Milli Kongre Cemiyeti'nin kurucusudur ve yayımladığı raporda işgallerin devam etmesi halinde Kuvayımilliye'nin kurulacağını ilk kez belirtmiştir. Anadolu Kadınları Müdafaa-i Hukuk Cemiyeti ile karıştırılmamalıdır."
+},
+            {
+                word: "İstanbul'dan Anadolu'ya silah, cephane ve personel kaçırılmasını sağlayan, 'Zabitan' adlı silahlı güç oluşturan ve 'ilk yararlı cemiyet' olarak nitelendirilen teşkilat hangisidir?",
+                meaning: "Karakol Cemiyeti",
+                category: "Yararlı Cemiyetler",
+                question: "İstanbul'dan Anadolu'ya silah, cephane ve personel kaçırılmasını sağlayan, 'Zabitan' adlı silahlı güç oluşturan ve 'ilk yararlı cemiyet' olarak nitelendirilen teşkilat hangisidir?",
+                options: [
+                    "Karakol Cemiyeti",
+                    "Teali İslam Cemiyeti",
+                    "Askeri Nigehban Cemiyeti",
+                    "Trabzon Muhafaza-i Hukuk Cemiyeti"
+                ],
+                explanation: "Karakol Cemiyeti, Kara Vasıf ve Kara Kemal tarafından kurulmuş, İstanbul-Anadolu arasında köprü vazifesi görmüş ve millî mücadelenin lojistik ihtiyaçlarını karşılamada kritik rol oynamıştır."
+            },
+            {
+                word: "Yakup Şevki Paşa'nın gayretleriyle, İngiliz işgali söylentisi üzerine kurulan ve kısa süreli 'Cenubi Garbi Kafkas Hükûmeti'ni kuran cemiyet aşağıdakilerden hangisidir?",
+                meaning: "Kars İslam Şûrası",
+                category: "Yararlı Cemiyetler",
+                question: "Yakup Şevki Paşa'nın gayretleriyle, İngiliz işgali söylentisi üzerine kurulan ve kısa süreli 'Cenubi Garbi Kafkas Hükûmeti'ni kuran cemiyet aşağıdakilerden hangisidir?",
+                options: [
+                    "Kars İslam Şûrası",
+                    "Vilayat-ı Şarkiyye Müdafaa-i Hukuk Cemiyeti",
+                    "Trabzon Muhafaza-i Hukuk Cemiyeti",
+                    "Hürriyet ve İtilaf Fırkası"
+                ],
+                explanation: "Kars İslam Şûrası, Kars ve çevresini Ermeni ve İngiliz tehdidinden korumak için kurulmuş ve 17 Ocak - 13 Nisan 1919 tarihleri arasında Cenubi Garbi Kafkas Hükûmeti adıyla kısa süreli bir yönetim kurmuştur."
+            },
+            {
+                word: "'Megali İdea' (Büyük Yunanistan) amacını gerçekleştirmek isteyen, Patrikhane tarafından da desteklenen Rum cemiyeti aşağıdakilerden hangisidir?",
+                meaning: "Etnik-i Eterya Cemiyeti",
+                category: "Zararlı Cemiyetler (Azınlık)",
+                question: "'Megali İdea' (Büyük Yunanistan) amacını gerçekleştirmek isteyen, Patrikhane tarafından da desteklenen Rum cemiyeti aşağıdakilerden hangisidir?",
+                options: [
+                    "Pontus Rum Cemiyeti",
+                    "Etnik-i Eterya Cemiyeti",
+                    "Mavri Mira Cemiyeti",
+                    "Hınçak Cemiyeti"
+                ],
+                explanation: "Etnik-i Eterya Cemiyeti, 1814'te kurulmuş olup asıl amacı Megali İdea'yı (Büyük Yunanistan'ı) gerçekleştirmektir. Patrikhane, Rum Göçmenleri Komisyonu ve Rum İzcilik Okulu tarafından desteklenmiştir."
+            },
+            {
+                word: "Merkezi Samsun olmak üzere, İnebolu'dan Batum'a kadar bir Rum İmparatorluğu kurmayı amaçlayan, Merzifon Amerikan Koleji'nde gizlice kurulan cemiyet hangisidir?",
+                meaning: "Pontus Rum Cemiyeti",
+                category: "Zararlı Cemiyetler (Azınlık)",
+                question: "Merkezi Samsun olmak üzere, İnebolu'dan Batum'a kadar bir Rum İmparatorluğu kurmayı amaçlayan, Merzifon Amerikan Koleji'nde gizlice kurulan cemiyet hangisidir?",
+                options: [
+                    "Etnik-i Eterya",
+                    "Pontus Rum Cemiyeti",
+                    "Taşnak Cemiyeti",
+                    "Macabi Cemiyeti"
+                ],
+                explanation: "Pontus Rum Cemiyeti, 1904'te Merzifon Amerikan Koleji'nde gizlice kurulmuş, Karadeniz bölgesinde tarihi Pontus Rum Devleti'ni yeniden canlandırmayı amaçlamış ve Rum çeteleri oluşturmuştur."
+            },
+            {
+                word: "Cenevre'de kurulan Hınçak ve Tiflis'te kurulan Taşnak cemiyetlerinin ortak amacı aşağıdakilerden hangisidir?",
+                meaning: "Doğu Anadolu'da bağımsız bir Ermeni devleti (Magna Armenia) kurmak",
+                category: "Zararlı Cemiyetler (Azınlık)",
+                question: "Cenevre'de kurulan Hınçak ve Tiflis'te kurulan Taşnak cemiyetlerinin ortacı aşağıdakilerden hangisidir?",
+                options: [
+                    "İstanbul'u başkent yapmak",
+                    "Doğu Anadolu'da bağımsız bir Ermeni devleti (Magna Armenia) kurmak",
+                    "ABD mandasını savunmak",
+                    "Osmanlı saltanatını güçlendirmek"
+                ],
+                explanation: "Hınçak ve Taşnak cemiyetleri, Doğu Anadolu'da bağımsız bir Ermeni devleti (Magna Armenia veya Büyük Ermenistan) kurmak için kurulmuştur. Ermenileri silahlandırmak ve milliyetçilik fikirlerini yaymak gibi faaliyetler yürütmüşlerdir."
+            },
+            {
+                word: "Filistin'de bir Yahudi devleti kurmayı amaçlayan azınlık cemiyeti aşağıdakilerden hangisidir?",
+                meaning: "Alyans İsrailit (Macabi Cemiyeti)",
+                category: "Zararlı Cemiyetler (Azınlık)",
+                question: "Filistin'de bir Yahudi devleti kurmayı amaçlayan azınlık cemiyeti aşağıdakilerden hangisidir?",
+                options: [
+                    "Alyans İsrailit (Macabi Cemiyeti)",
+                    "Hınçak Cemiyeti",
+                    "Etnik-i Eterya",
+                    "Pontus Rum Cemiyeti"
+                ],
+                explanation: "Macabi Cemiyeti veya Alyans İsrailit, Filistin'de bir Yahudi devleti kurmayı amaçlayan Siyonist bir cemiyettir. Anadolu'daki Yahudilerin haklarını korumak ve Filistin'e göçü teşvik etmek için çalışmıştır."
+            },
+            {
+                word: "Kurtuluşu ABD mandasında gören, Halide Edip (Adıvar) ve Ahmet Emin (Yalman) gibi isimlerin destek verdiği cemiyet aşağıdakilerden hangisidir?",
+                meaning: "Wilson Prensipleri Cemiyeti",
+                category: "Zararlı Cemiyetler (Türk)",
+                question: "Kurtuluşu ABD mandasında gören, Halide Edip (Adıvar) ve Ahmet Emin (Yalman) gibi isimlerin destek verdiği cemiyet aşağıdakilerden hangisidir?",
+                options: [
+                    "Sulh ve Selameti Osmaniye Cemiyeti",
+                    "Wilson Prensipleri Cemiyeti",
+                    "İngiliz Muhipleri Cemiyeti",
+                    "Teali İslam Cemiyeti"
+                ],
+                explanation: "Wilson Prensipleri Cemiyeti, ABD Başkanı Wilson'un ilkelerini benimseyerek kurtuluşu ABD mandasında görmüştür. Halide Edip Adıvar, Ahmet Emin Yalman ve Refik Halit Karay gibi aydınlar bu cemiyeti desteklemiştir."
+            },
+            {
+                word: "Sait Molla ve Rahip Frew'in çalışmalarıyla kurulan, padişah Vahdettin ve Damat Ferit Paşa gibi isimlerin desteklediği, 'Alemdar' gazetesinin sözcülüğünü yaptığı cemiyet hangisidir?",
+                meaning: "İngiliz Muhipleri Cemiyeti",
+                category: "Zararlı Cemiyetler (Türk)",
+                question: "Sait Molla ve Rahip Frew'in çalışmalarıyla kurulan, padişah Vahdettin ve Damat Ferit Paşa gibi isimlerin desteklediği, 'Alemdar' gazetesinin sözcülüğünü yaptığı cemiyet hangisidir?",
+                options: [
+                    "Hürriyet ve İtilaf Fırkası",
+                    "Wilson Prensipleri Cemiyeti",
+                    "Kürt Teali Cemiyeti",
+                    "İngiliz Muhipleri Cemiyeti"
+                ],
+                explanation: "İngiliz Muhipleri Cemiyeti, 20 Mayıs 1919'da İstanbul'da kurulmuş, Osmanlı-İngiliz dostluğunu savunmuş ve İngiliz mandasını desteklemiştir. 'Alemdar' ve 'İstanbul' gazeteleri bu cemiyetin yayın organlığını yapmıştır."
+            },
+            {
+                word: "Kurtuluşu saltanata ve padişahın emirlerine bağlı gören zararlı cemiyet aşağıdakilerden hangisidir?",
+                meaning: "Sulh ve Selameti Osmaniye Cemiyeti",
+                category: "Zararlı Cemiyetler (Türk)",
+                question: "Kurtuluşu saltanata ve padişahın emirlerine bağlı gören zararlı cemiyet aşağıdakilerden hangisidir?",
+                options: [
+                    "Teali İslam Cemiyeti",
+                    "Sulh ve Selameti Osmaniye Cemiyeti",
+                    "Askeri Nigehban Cemiyeti",
+                    "Wilson Prensipleri Cemiyeti"
+                ],
+                explanation: "Sulh ve Selameti Osmaniye Cemiyeti, kurtuluşun padişahın emirlerine ve saltanat otoritesine bağlı kalınarak sağlanacağını savunmuş, millî mücadeleye karşı çıkmıştır."
+            },
+            {
+                word: "İttihat ve Terakki'ye karşı 1911'de kurulan, Mustafa Kemal'in eski ittihatçı olması gerekçesiyle Millî Mücadele'ye karşı çıkan siyasi parti aşağıdakilerden hangisidir?",
+                meaning: "Hürriyet ve İtilaf Fırkası",
+                category: "Zararlı Cemiyetler (Türk)",
+                question: "İttihat ve Terakki'ye karşı 1911'de kurulan, Mustafa Kemal'in eski ittihatçı olması gerekçesiyle Millî Mücadele'ye karşı çıkan siyasi parti aşağıdakilerden hangisidir?",
+                options: [
+                    "Hürriyet ve İtilaf Fırkası",
+                    "Teali İslam Cemiyeti",
+                    "Kürt Teali Cemiyeti",
+                    "Sulh ve Selameti Osmaniye Cemiyeti"
+                ],
+                explanation: "Hürriyet ve İtilaf Fırkası, İttihat ve Terakki'ye muhalefet için kurulmuş, Mustafa Kemal'in eski ittihatçı olmasını gerekçe göstererek Millî Mücadele'yi 'hayalperestlik' olarak nitelendirmiş ve karşı çıkmıştır."
+            },
+            {
+                word: "Güneydoğu Anadolu'da bağımsız bir Kürt devleti kurmayı amaçlayan zararlı cemiyet aşağıdakilerden hangisidir?",
+                meaning: "Kürt Teali Cemiyeti",
+                category: "Zararlı Cemiyetler (Türk)",
+                question: "Güneydoğu Anadolu'da bağımsız bir Kürt devleti kurmayı amaçlayan zararlı cemiyet aşağıdakilerden hangisidir?",
+                options: [
+                    "Teali İslam Cemiyeti",
+                    "Askeri Nigehban Cemiyeti",
+                    "Kürt Teali Cemiyeti",
+                    "Hürriyet ve İtilaf Fırkası"
+                ],
+                explanation: "Kürt Teali Cemiyeti, İngilizlerin desteğiyle Güneydoğu Anadolu'da bağımsız bir Kürt devleti kurmayı amaçlamış, bölücü faaliyetlerde bulunmuştur."
+            },
+            {
+                word: "Asker kaçakları tarafından oluşturulan ve Millî Mücadele'ye karşı çıkan zararlı cemiyet aşağıdakilerden hangisidir?",
+                meaning: "Askeri Nigehban Cemiyeti",
+                category: "Zararlı Cemiyetler (Türk)",
+                question: "Asker kaçakları tarafından oluşturulan ve Millî Mücadele'ye karşı çıkan zararlı cemiyet aşağıdakilerden hangisidir?",
+                options: [
+                    "Sulh ve Selameti Osmaniye",
+                    "Askeri Nigehban Cemiyeti",
+                    "Wilson Prensipleri Cemiyeti",
+                    "İngiliz Muhipleri Cemiyeti"
+                ],
+                explanation: "Askeri Nigehban Cemiyeti, asker kaçakları tarafından kurulmuş, düzenli orduya katılmaya ve Millî Mücadele'ye karşı çıkmıştır."
+            },
+            {
+                word: "Aşağıdaki cemiyetlerden hangisi, 'İzmir Müdafaa-i Hukuk-u Osmaniye Cemiyeti'nin yerine kurulmuştur?",
+                meaning: "İzmir Müdafaa-i Hukuk-u Reddi-i İlhak Cemiyeti",
+                category: "Kuruluş",
+                question: "Aşağıdaki cemiyetlerden hangisi, 'İzmir Müdafaa-i Hukuk-u Osmaniye Cemiyeti'nin yerine kurulmuştur?",
+                options: [
+                    "Kilikyalılar Cemiyeti",
+                    "İzmir Müdafaa-i Hukuk-u Reddi-i İlhak Cemiyeti",
+                    "Trakya Paşaeli Cemiyeti",
+                    "Vilayat-ı Şarkiyye Müdafaa-i Hukuk-u Milliye Cemiyeti"
+                ],
+                explanation: "İzmir Müdafaa-i Hukuk-u Reddi-i İlhak Cemiyeti, İzmir'in işgal tehlikesinin artması üzerine daha aktif bir direniş örgütlemek amacıyla İzmir Müdafaa-i Hukuk-u Osmaniye Cemiyeti'nin yerine kurulmuştur."
+            },
+            {
+                word: "Vilayat-ı Şarkiyye Müdafaa-i Hukuk-u Milliye Cemiyeti'nin kuruluşunda öncülük eden iki isim aşağıdakilerden hangisinde doğru verilmiştir?",
+                meaning: "Raif Hoca - Süleyman Nazif (Diyarbakırlı Nazif)",
+                category: "Kuruluş",
+                question: "Vilayat-ı Şarkiyye Müdafaa-i Hukuk-u Milliye Cemiyeti'nin kuruluşunda öncülük eden iki isim aşağıdakilerden hangisinde doğru verilmiştir?",
+                options: [
+                    "Nurettin Paşa - Kara Vasıf",
+                    "Yakup Şevki Paşa - Melek Reşit Hanım",
+                    "Raif Hoca - Süleyman Nazif (Diyarbakırlı Nazif)",
+                    "Faik Kaltakkıran - Ali Münif"
+                ],
+                explanation: "Vilayat-ı Şarkiyye Müdafaa-i Hukuk-u Milliye Cemiyeti, Erzurumlu Raif Hoca ve Diyarbakırlı Süleyman Nazif Bey'in girişimleriyle 4 Aralık 1918'de İstanbul'da kurulmuştur."
+            },
+            {
+                word: "Kilikyalılar Cemiyeti'nin düzenlediği ve Fransız işgaline karşı direnişi örgütlemeyi amaçlayan kongre aşağıdakilerden hangisidir?",
+                meaning: "Pozantı Kongresi",
+                category: "Yararlı Cemiyetler",
+                question: "Kilikyalılar Cemiyeti'nin düzenlediği ve Fransız işgaline karşı direnişi örgütlemeyi amaçlayan kongre aşağıdakilerden hangisidir?",
+                options: [
+                    "Lüleburgaz Kongresi",
+                    "Pozantı Kongresi",
+                    "Edirne Kongresi",
+                    "Alaşehir Kongresi"
+                ],
+                explanation: "Kilikyalılar Cemiyeti, Adana ve çevresindeki Fransız işgaline karşı direnişi örgütlemek için 30 Mayıs 1920'de Pozantı Kongresi'ni düzenlemiştir."
+            },
+            {
+                word: "Anadolu Kadınları Müdafaa-i Hukuk Cemiyeti'nin, işgallere karşı direnişte başvurulacak bir yöntem olarak 'Kuvayımilliye' kurulması fikrini ilk kez ortaya attığı belirtilen raporun yazarı (kurucusu) kimdir?",
+                meaning: "Dr. Esat Işık",
+                category: "Kuruluş",
+                question: "Anadolu Kadınları Müdafaa-i Hukuk Cemiyeti'nin, işgallere karşı direnişte başvurulacak bir yöntem olarak 'Kuvayımilliye' kurulması fikrini ilk kez ortaya attığı belirtilen raporun yazarı (kurucusu) kimdir?",
+                options: [
+                    "Mustafa Kemal Paşa",
+                    "Melek Reşit Hanım",
+                    "Dr. Esat Işık",
+                    "Halide Edip Adıvar"
+                ],
+                explanation: "Dr. Esat Işık, Anadolu Kadınları Müdafaa-i Hukuk Cemiyeti'nin kurucusudur ve yayımladığı raporda işgallerin devam etmesi halinde Kuvayımilliye'nin kurulacağını ilk kez belirtmiştir."
+            },
+            {
+                word: "Etnik-i Eterya Cemiyeti'nin faaliyetlerini destekleyen kurum ve oluşumlar arasında aşağıdakilerden hangisi gösterilemez?",
+                meaning: "Ermeni Taşnak Komitesi",
+                category: "Zararlı Cemiyetler (Azınlık)",
+                question: "Etnik-i Eterya Cemiyeti'nin faaliyetlerini destekleyen kurum ve oluşumlar arasında aşağıdakilerden hangisi gösterilemez?",
+                options: [
+                    "Rum Patrikhanesi",
+                    "Rum Göçmenleri Komisyonu",
+                    "Rum İzcilik Okulu",
+                    "Ermeni Taşnak Komitesi"
+                ],
+                explanation: "Etnik-i Eterya Cemiyeti; Rum Patrikhanesi, Rum Göçmenleri Komisyonu, Rum İzcilik Okulu ve Kardos Cemiyeti tarafından desteklenmiştir. Ermeni Taşnak Komitesi ise Ermeni çıkarlarını savunan ayrı bir örgüttür."
+            },
+            {
+                word: "Pontus Rum Cemiyeti ile ilgili aşağıdaki ifadelerden hangisi yanlıştır?",
+                meaning: "Trabzon'u merkez alan bir Ermeni devleti kurmayı amaçlamışlardır.",
+                category: "Zararlı Cemiyetler (Azınlık)",
+                question: "Pontus Rum Cemiyeti ile ilgili aşağıdaki ifadelerden hangisi yanlıştır?",
+                options: [
+                    "Merzifon Amerikan Koleji'nde gizlice kurulmuştur.",
+                    "Yunanistan ve Rusya adına casusluk faaliyetleri yürütmüşlerdir.",
+                    "Trabzon'u merkez alan bir Ermeni devleti kurmayı amaçlamışlardır.",
+                    "Askerlikten kaçan Rum gençlerinden çeteler oluşturmuşlardır."
+                ],
+                explanation: "Pontus Rum Cemiyeti'nin amacı Ermeni devleti değil, tarihi Pontus Rum Devleti'ni yeniden canlandırmaktır. Bu nedenle 'Trabzon'u merkez alan bir Ermeni devleti' ifadesi yanlıştır."
+            },
+            {
+                word: "Hınçak ve Taşnak cemiyetlerinin, 'Magna Armenia' (Büyük Ermenistan) hedefini gerçekleştirmek için yaptıkları faaliyetler arasında aşağıdakilerden hangisi yoktur?",
+                meaning: "Osmanlı Devleti'nin toprak bütünlüğünü korumak",
+                category: "Zararlı Cemiyetler (Azınlık)",
+                question: "Hınçak ve Taşnak cemiyetlerinin, 'Magna Armenia' (Büyük Ermenistan) hedefini gerçekleştirmek için yaptıkları faaliyetler arasında aşağıdakilerden hangisi yoktur?",
+                options: [
+                    "Ermenileri silahlandırmak",
+                    "Ermeni milliyetçiliğini yaymak",
+                    "Doğu Anadolu'daki Türkleri göçe zorlamak",
+                    "Osmanlı Devleti'nin toprak bütünlüğünü korumak"
+                ],
+                explanation: "Hınçak ve Taşnak cemiyetlerinin amacı Osmanlı'nın toprak bütünlüğünü korumak değil, tam tersine Doğu Anadolu'yu Osmanlı'dan kopararak bağımsız bir Ermeni devleti kurmaktır."
+            },
+            {
+                word: "Patrik Zaven Efendi'nin öncülük ettiği, Ermeni çıkarlarını savunan ve merkezleri Cenevre ile Tiflis olan cemiyetler aşağıdakilerden hangisidir?",
+                meaning: "Hınçak ve Taşnak",
+                category: "Zararlı Cemiyetler (Azınlık)",
+                question: "Patrik Zaven Efendi'nin öncülük ettiği, Ermeni çıkarlarını savunan ve merkezleri Cenevre ile Tiflis olan cemiyetler aşağıdakilerden hangisidir?",
+                options: [
+                    "Etnik-i Eterya ve Pontus Rum",
+                    "Macabi ve Alyans İsrailit",
+                    "Hınçak ve Taşnak",
+                    "Kardos ve Mavri Mira"
+                ],
+                explanation: "Ermeni Patriği Zaven Efendi'nin desteklediği Hınçak Cemiyeti Cenevre'de, Taşnak Cemiyeti ise Tiflis'te kurulmuştur. Her ikisi de bağımsız Ermenistan hedefi için çalışmıştır."
+            },
+            {
+                word: "İngiliz Muhipleri Cemiyeti'nin yayın organlığını yapan ve bu cemiyetin fikirlerini savunan gazeteler aşağıdakilerden hangisinde doğru verilmiştir?",
+                meaning: "Alemdar ve İstanbul",
+                category: "Zararlı Cemiyetler (Türk)",
+                question: "İngiliz Muhipleri Cemiyeti'nin yayın organlığını yapan ve bu cemiyetin fikirlerini savunan gazeteler aşağıdakilerden hangisinde doğru verilmiştir?",
+                options: [
+                    "İstikbal ve Hâdisat",
+                    "Trakya ve Ahali",
+                    "Albayrak ve Le Pays",
+                    "Alemdar ve İstanbul"
+                ],
+                explanation: "İngiliz Muhipleri Cemiyeti, fikirlerini yaymak için 'Alemdar' ve 'İstanbul' gazetelerini kullanmıştır. Bu gazeteler cemiyetin sözcülüğünü yapmıştır."
+            },
+            {
+                word: "Aşağıdaki zararlı cemiyetlerden hangisinin, TBMM'ye karşı çıkan Konya Ayaklanması'nın başlamasında etkili olduğu belirtilmiştir?",
+                meaning: "Teali İslam Cemiyeti",
+                category: "Zararlı Cemiyetler (Türk)",
+                question: "Aşağıdaki zararlı cemiyetlerden hangisinin, TBMM'ye karşı çıkan Konya Ayaklanması'nın başlamasında etkili olduğu belirtilmiştir?",
+                options: [
+                    "Wilson Prensipleri Cemiyeti",
+                    "Teali İslam Cemiyeti",
+                    "Sulh ve Selameti Osmaniye Cemiyeti",
+                    "Kürt Teali Cemiyeti"
+                ],
+                explanation: "Teali İslam Cemiyeti, dini duyguları istismar ederek Konya'da başlayan ayaklanmada etkili olmuş ve TBMM'ye karşı isyanın çıkmasına zemin hazırlamıştır."
+            },
+            {
+                word: "İttihat ve Terakki'ye muhalefet amacıyla 1911'de kurulan, Millî Mücadele'yi 'hayalperestlik' ve Mustafa Kemal'i 'eski ittihatçı' olarak görerek karşı çıkan siyasi oluşum aşağıdakilerden hangisidir?",
+                meaning: "Hürriyet ve İtilaf Fırkası",
+                category: "Zararlı Cemiyetler (Türk)",
+                question: "İttihat ve Terakki'ye muhalefet amacıyla 1911'de kurulan, Millî Mücadele'yi 'hayalperestlik' ve Mustafa Kemal'i 'eski ittihatçı' olarak görerek karşı çıkan siyasi oluşum aşağıdakilerden hangisidir?",
+                options: [
+                    "Hürriyet ve İtilaf Fırkası",
+                    "Karakol Cemiyeti",
+                    "Askeri Nigehban Cemiyeti",
+                    "İngiliz Muhipleri Cemiyeti"
+                ],
+                explanation: "Hürriyet ve İtilaf Fırkası, İttihat ve Terakki'ye şiddetle muhalefet etmiş, Mustafa Kemal'in eski ittihatçı olmasını bahane ederek Millî Mücadele'ye karşı çıkmıştır."
+            },
+            {
+                word: "'Kurtuluşu padişahtan gelecek emirlere bağlamıştır.' ifadesi, aşağıdaki zararlı cemiyetlerden hangisinin temel düşüncesini en iyi özetler?",
+                meaning: "Sulh ve Selameti Osmaniye Cemiyeti",
+                category: "Zararlı Cemiyetler (Türk)",
+                question: "'Kurtuluşu padişahtan gelecek emirlere bağlamıştır.' ifadesi, aşağıdaki zararlı cemiyetlerden hangisinin temel düşüncesini en iyi özetler?",
+                options: [
+                    "Wilson Prensipleri Cemiyeti",
+                    "İngiliz Muhipleri Cemiyeti",
+                    "Kürt Teali Cemiyeti",
+                    "Sulh ve Selameti Osmaniye Cemiyeti"
+                ],
+                explanation: "Sulh ve Selameti Osmaniye Cemiyeti, saltanat yanlısı bir cemiyet olarak kurtuluşun ancak padişahın emirlerine ve otoritesine sıkı sıkıya bağlı kalınarak sağlanabileceğini savunmuştur."
+            },
+            {
+                word: "Kilikyalılar Cemiyeti'nin, bölgenin Türk ve Müslüman olduğunu ispatlamak ve uluslararası kamuoyuna duyurmak için yayınladığı yazıya ne ad verilmiştir?",
+                meaning: "Feryatname",
+                category: "Yararlı Cemiyetler",
+                question: "Kilikyalılar Cemiyeti'nin, bölgenin Türk ve Müslüman olduğunu ispatlamak ve uluslararası kamuoyuna duyurmak için yayınladığı yazıya ne ad verilmiştir?",
+                options: [
+                    "Misak-ı Milli",
+                    "Feryatname",
+                    "Megali İdea",
+                    "Müdafaa"
+                ],
+                explanation: "Kilikyalılar Cemiyeti, Adana ve çevresinin Türk ve Müslüman olduğunu belgelemek ve dünya kamuoyuna duyurmak için 'Feryatname' adlı bir yazı yayınlamıştır."
+            },
+            {
+                word: "Aşağıdaki cemiyetlerden hangisinin kuruluş amacı, 'Doğu Trakya'nın Yunanistan'a verilmesini önlemek' olarak belirtilmiştir?",
+                meaning: "Trakya Paşaeli Cemiyeti",
+                category: "Yararlı Cemiyetler",
+                question: "Aşağıdaki cemiyetlerden hangisinin kuruluş amacı, 'Doğu Trakya'nın Yunanistan'a verilmesini önlemek' olarak belirtilmiştir?",
+                options: [
+                    "Trabzon Muhafaza-i Hukuk Cemiyeti",
+                    "Trakya Paşaeli Cemiyeti",
+                    "İzmir Reddi-i İlhak Cemiyeti",
+                    "Kilikyalılar Cemiyeti"
+                ],
+                explanation: "Trakya Paşaeli Cemiyeti, Edirne ve çevresinin Yunanistan'a verileceği endişesiyle 2 Kasım 1918'de kurulmuştur. Temel amacı Doğu Trakya'nın Yunan işgalinden korunmasıdır."
+            },
+            {
+                word: "Aşağıdaki eşleştirmelerden hangisi yanlıştır?",
+                meaning: "Trabzon Muhafaza-i Hukuk Cemiyeti - Albayrak Gazetesi",
+                category: "Genel",
+                question: "Aşağıdaki eşleştirmelerden hangisi yanlıştır?",
+                options: [
+                    "Vilayat-ı Şarkiyye Cemiyeti - Le Pays (Vatan) Gazetesi",
+                    "Trakya Paşaeli Cemiyeti - Trakya Gazetesi",
+                    "Trabzon Muhafaza-i Hukuk Cemiyeti - Albayrak Gazetesi",
+                    "Anadolu Kadınları Cemiyeti - Basın-yayın yoluyla protesto"
+                ],
+                explanation: "Albayrak Gazetesi, Trabzon Muhafaza-i Hukuk Cemiyeti'ne değil, Vilayat-ı Şarkiyye Müdafaa-i Hukuk-u Milliye Cemiyeti'ne aittir. Trabzon Muhafaza-i Hukuk Cemiyeti 'İstikbal' gazetesini çıkarmıştır."
+            },
+            {
+                word: "İstanbul'dan Anadolu'ya geçişleri organize eden, istihbarat toplayan ve 'Zabitan' adlı silahlı birliği kuran ilk yararlı gizli cemiyet aşağıdakilerden hangisidir?",
+                meaning: "Karakol Cemiyeti",
+                category: "Yararlı Cemiyetler",
+                question: "İstanbul'dan Anadolu'ya geçişleri organize eden, istihbarat toplayan ve 'Zabitan' adlı silahlı birliği kuran ilk yararlı gizli cemiyet aşağıdakilerden hangisidir?",
+                options: [
+                    "Karakol Cemiyeti",
+                    "Kars İslam Şûrası",
+                    "Kilikyalılar Cemiyeti",
+                    "Wilson Prensipleri Cemiyeti"
+                ],
+                explanation: "Karakol Cemiyeti, İstanbul'da kurulmuş, Anadolu'ya silah, cephane ve personel sevkiyatını organize etmiş, 'Zabitan' adlı silahlı bir güç oluşturmuş ve ilk yararlı cemiyet olarak kabul edilmiştir."
+            },
+            {
+                word: "Aşağıdaki cemiyetlerden hangisi, Osmanlı Devleti'nin parçalanması ihtimaline karşı, Batı Trakya ile birleşerek bağımsız bir 'Trakya Cumhuriyeti' kurmayı planlamıştır?",
+                meaning: "Trakya Paşaeli Cemiyeti",
+                category: "Yararlı Cemiyetler",
+                question: "Aşağıdaki cemiyetlerden hangisi, Osmanlı Devleti'nin parçalanması ihtimaline karşı, Batı Trakya ile birleşerek bağımsız bir 'Trakya Cumhuriyeti' kurmayı planlamıştır?",
+                options: [
+                    "İzmir Reddi-i İlhak Cemiyeti",
+                    "Trakya Paşaeli Cemiyeti",
+                    "Vilayat-ı Şarkiyye Cemiyeti",
+                    "Trabzon Muhafaza-i Hukuk Cemiyeti"
+                ],
+                explanation: "Trakya Paşaeli Cemiyeti, Osmanlı Devleti'nin tamamen parçalanması durumunda, Batı Trakya ile birleşerek bağımsız bir Trakya Cumhuriyeti kurmayı amaçlamıştır."
+            },
+            {
+                word: "'Wilson İlkeleri'nin Türklere de uygulanmasını istemiş ve bu yönde protesto telgrafları çekmişlerdir.' ifadesi, aşağıdaki cemiyetlerden hangisinin faaliyetini anlatmaktadır?",
+                meaning: "Kilikyalılar Cemiyeti",
+                category: "Yararlı Cemiyetler",
+                question: "'Wilson İlkeleri'nin Türklere de uygulanmasını istemiş ve bu yönde protesto telgrafları çekmişlerdir.' ifadesi, aşağıdaki cemiyetlerden hangisinin faaliyetini anlatmaktadır?",
+                options: [
+                    "Wilson Prensipleri Cemiyeti",
+                    "Kilikyalılar Cemiyeti",
+                    "Trabzon Muhafaza-i Hukuk Cemiyeti",
+                    "İngiliz Muhipleri Cemiyeti"
+                ],
+                explanation: "Kilikyalılar Cemiyeti, Wilson İlkeleri'nin Türklere de uygulanmasını talep ederek çeşitli makamlara ve gazetelere protesto telgrafları çekmiş, uluslararası platformda haklarını savunmuştur."
+            }
+        ];
+
+        // DOM elements
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const resultMessageEl = document.getElementById('resultMessage');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+        let masteredWords = [];
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Initialize quiz
+        function initQuiz() {
+            questions = shuffleArray([...quizData]);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            
+            // Add click event to cat cover
+            catCoverEl.addEventListener('click', removeCatCover);
+        }
+
+        // Remove cat cover to reveal answers
+        function removeCatCover() {
+            catCoverEl.style.display = 'none';
+        }
+
+        // Show current question
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            // Reset cat cover
+            catCoverEl.style.display = 'flex';
+            
+            // Shuffle options
+            const options = shuffleArray([...currentQuestion.options]);
+            
+            // Clear previous options
+            optionsEl.innerHTML = '';
+            
+            // Add cat cover back
+            optionsEl.appendChild(catCoverEl);
+            
+            // Create new option buttons
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = option;
+                button.addEventListener('click', () => selectAnswer(option, currentQuestion));
+                optionsEl.appendChild(button);
+            });
+            
+            // Reset UI for new question
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex;
+            progressBarEl.style.width = `${(currentQuestionIndex / questions.length) * 100}%`;
+        }
+
+        // Handle answer selection
+        function selectAnswer(selectedOption, currentQuestion) {
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // Disable all buttons
+            optionButtons.forEach(button => {
+                button.disabled = true;
+                
+                // Mark correct answer
+                if (button.textContent === currentQuestion.meaning) {
+                    button.classList.add('correct');
+                }
+                
+                // Mark incorrect selected answer
+                if (button.textContent === selectedOption && button.textContent !== currentQuestion.meaning) {
+                    button.classList.add('incorrect');
+                }
+            });
+            
+            // Check if answer is correct
+            const isCorrect = selectedOption === currentQuestion.meaning;
+            
+            // Update score if correct
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+                
+                // Add to mastered words if not already there
+                if (!masteredWords.some(w => w.word === currentQuestion.word)) {
+                    masteredWords.push(currentQuestion);
+                }
+            }
+            
+            // Show feedback
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            
+            if (isCorrect) {
+                feedbackTextEl.innerHTML = `✅ Doğru! <strong>${currentQuestion.explanation}</strong>`;
+            } else {
+                feedbackTextEl.innerHTML = `❌ Yanlış! Doğru cevap: <strong>${currentQuestion.meaning}</strong><br><br>${currentQuestion.explanation}`;
+            }
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        // End quiz and show results
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            finalScoreEl.textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            // Result message based on performance
+            if (percentage >= 90) {
+                resultMessageEl.textContent = "Mükemmel! Yararlı ve Zararlı Cemiyetler konusunu çok iyi biliyorsunuz! 🏆";
+            } else if (percentage >= 70) {
+                resultMessageEl.textContent = "Çok iyi! Tarihî cemiyetlere hakimsiniz. 👍";
+            } else if (percentage >= 50) {
+                resultMessageEl.textContent = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+            } else {
+                resultMessageEl.textContent = "Öğrenmeye devam! Cemiyetleri tekrar edin. 📚";
+            }
+            
+            // Display all words learned
+            wordListEl.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Kavramlar</h3>';
+            quizData.forEach(word => {
+                const wordCard = document.createElement('div');
+                wordCard.classList.add('word-card', 'fade-in');
+                wordCard.innerHTML = `
+                    <div class="word">${word.question}</div>
+                    <div class="meaning">${word.meaning}</div>
+                    <div class="category category-${getCategoryClass(word.category)}">${word.category}</div>
+                `;
+                wordListEl.appendChild(wordCard);
+            });
+        }
+
+        // Helper function to get CSS class for category
+        function getCategoryClass(category) {
+            const classes = {
+                'Yararlı Cemiyetler': 'yararli',
+                'Zararlı Cemiyetler (Azınlık)': 'zararli-azinlik',
+                'Zararlı Cemiyetler (Türk)': 'zararli-turk',
+                'Kuruluş': 'kurulus',
+                'Genel': 'genel',
+                'Özellik': 'ozellik'
+            };
+            return classes[category] || 'genel';
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', nextQuestion);
+        
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>

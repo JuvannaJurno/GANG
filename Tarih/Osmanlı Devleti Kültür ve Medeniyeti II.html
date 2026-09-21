@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Osmanlı Devleti Kültür ve Medeniyeti II Testi</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "🏛️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(139, 69, 19, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(139, 69, 19, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-hukumdarlik { background: #8B4513; }
+        .category-saray { background: #B22222; }
+        .category-yonetim { background: #2E8B57; }
+        .category-hukuk { background: #D2691E; }
+        .category-genel { background: #2F4F4F; }
+        .category-vergi { background: #4B0082; }
+        .category-beylik { background: #2F4F4F; }
+        .category-ilkbeylik { background: #008080; }
+        .category-kurum { background: #800080; }
+        .category-ekonomi { background: #D2691E; }
+        .category-saglik { background: #2E8B57; }
+        .category-mimari { background: #8B4513; }
+        .category-donanma { background: #1E90FF; }
+        .category-ticaret { background: #228B22; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option-btn {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .cat-image {
+                max-width: 150px;
+                max-height: 120px;
+            }
+            
+            .cat-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ MEB-AGS Osmanlı Devleti Kültür ve Medeniyeti II Testi</h1>
+            <div class="subtitle">Osmanlı Yönetim Sistemi ve Kültür Testi</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                correctAnswer: "D",
+                meaning: "Osmanlı Devleti'nin merkez ordu kuvvetleri (Kapıkulu Ocakları) Yeniçeriler, Cebeciler ve Lağımcılar'dan oluşur. Akıncılar ise sınır bölgelerinde görev yapan hafif süvari birlikleridir ve merkez orduya dahil değildir.",
+                category: "Askeriye",
+                question: "Aşağıdakilerden hangisi Osmanlı Devleti'nin merkez ordu kuvvetlerinden biri değildir?",
+                options: ["Yeniçeriler", "Cebeciler", "Lağımcılar", "Akıncılar"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Osmanlı Devleti'nde yönetenler (askeri sınıf) Seyfiye ve İlmiyye gruplarından oluşur. Reaya ise yönetilen halkı (çiftçi, esnaf, tüccar) ifade eder.",
+                category: "Yönetim",
+                question: "Osmanlı Devleti'nde yönetenler hangi gruplardan oluşur?",
+                options: ["Seyfiye", "İlmiyye", "Reaya", "Seyfiye ve İlmiyye"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "İlk Türk İslam devletlerinde Gulam adıyla uygulanan asker yetiştirme sistemi, Osmanlı Devleti'nde Kapıkulu sistemi olarak devam etmiştir. Bu sistemde devşirilen çocuklar eğitilerek devletin çeşitli kademelerinde görevlendirilmiştir.",
+                category: "Askeriye",
+                question: "İlk Türk İslam devletlerinde Gulam adıyla uygulanan sistem, Osmanlı Devleti'nde aşağıdaki isimlerden hangisini almıştır?",
+                options: ["Tımar", "Dirlik", "İkta", "Kapıkulu"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Osmanlı Devleti'nde saray kadınlarına (özellikle padişah anneleri, eşleri ve kızlarına) gelirleri verilen topraklar Paşmaklık olarak adlandırılmıştır. Bu toprakların gelirleri doğrudan saray kadınlarının masrafları için kullanılırdı.",
+                category: "Saray",
+                question: "Osmanlı Devleti'nde saray kadınlarına gelirleri verilen topraklar aşağıdakilerden hangisi ile adlandırılmıştır?",
+                options: ["Ocaklık", "Yurtluk", "Malikane", "Paşmaklık"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Salyaneli eyaletlerde tımar sistemi uygulanmaz, bunun yerine vergiler mültezimler aracılığıyla toplanırdı.",
+                category: "Yönetim",
+                question: "Aşağıdakilerden hangisi Salyaneli (Yıllıklı) Eyaletlerin bir özelliğidir?",
+                options: ["Tımar sistemi uygulanması", "Toprakların dirliklere ayrılması", "Vergilerin iltizam usulüyle toplanması", "Devlet memurlarına doğrudan maaş verilmemesi"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Mısır, Bağdat, Yemen, Habeşistan gibi eyaletler merkeze uzak olduğu için Salyaneli eyalet statüsündeydi.",
+                category: "Yönetim",
+                question: "Aşağıdaki eyaletlerden hangisi Salyaneli Eyaletlere örnek olarak verilebilir?",
+                options: ["Rumeli", "Anadolu", "Mısır", "Karaman"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Malikâne sistemi 1695'te uygulanmaya başlanmıştır. Vergi toplama hakkını ömür boyu elde eden kişiye malikâneci denir.",
+                category: "Yönetim",
+                question: "İltizam usulünü kullanarak vergi toplama hakkını bir defalığına değil, ömür boyu elde eden kişiye verilen ad aşağıdakilerden hangisidir?",
+                options: ["Tımarlı Sipahi", "Malikâne", "Voyvoda", "Mültezim"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Salyanesiz eyaletler merkeze yakın ve verimli topraklara sahip olduğu için tımar sistemi uygulanırdı.",
+                category: "Yönetim",
+                question: "Aşağıdakilerden hangisi Salyanesiz (Yıllıksız) Eyaletlerin bir özelliğidir?",
+                options: ["Merkeze uzak olmaları", "Toprakların verimsiz olması", "Tımar sisteminin uygulanması", "Devlet memurlarına yılda bir maaş verilmesi"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Tunus, Cezayir ve Trablusgarp gibi Garp Ocakları Salyaneli eyaletlerdendir.",
+                category: "Yönetim",
+                question: "Aşağıdaki eyaletlerden hangisi Salyanesiz Eyaletler grubunda yer almaz?",
+                options: ["Halep", "Budin", "Tunus", "Sivas"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Bu eyaletler aşiretlerin yoğun olduğu sınır bölgelerinde kurulmuştur.",
+                category: "Yönetim",
+                question: "Aşağıdakilerden hangisi Yurtluk-Ocaklık Eyaletlerin temel özelliğidir?",
+                options: ["Tımar sistemi yoğun uygulanır.", "Aşiret liderlerinin yönetsel hakları vardır.", "Doğrudan merkezden atanan valilerce yönetilirler.", "Vergileri iltizam usulüyle toplanır."]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Eflak ve Boğdan bu iki prenslik özel statüye sahipti.",
+                category: "Yönetim",
+                question: "'Memleketeyn' olarak adlandırılan Osmanlı eyaletleri aşağıdakilerden hangisidir?",
+                options: ["Eflak ve Boğdan", "Tunus ve Cezayir", "Hicaz ve Yemen", "Kırım ve Erdel"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Hicaz (Mekke, Medine) dini önemi nedeniyle özel statüye sahipti ve vergi vermezdi.",
+                category: "Yönetim",
+                question: "Aşağıdakilerden hangisi İmtiyazlı Eyaletler grubundadır?",
+                options: ["Bosna", "Erzurum", "Hicaz", "Trabzon"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Cezayir, Trablusgarp ve Tunus Garp Ocakları olarak adlandırılır ve Salyaneli eyaletlerdendir.",
+                category: "Yönetim",
+                question: "Osmanlı Devleti'nde 'Garp Ocakları' olarak bilinen eyaletler hangi grupta yer alır?",
+                options: ["Salyanesiz Eyaletler", "Salyaneli Eyaletler", "Yurtluk-Ocaklık Eyaletler", "İmtiyazlı Eyaletler"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Eflak ve Boğdan'ın yöneticilerine Voyvoda unvanı verilirdi.",
+                category: "Yönetim",
+                question: "Aşağıdaki İmtiyazlı Eyalet-Yönetici Unvanı eşleştirmelerinden hangisi doğrudur?",
+                options: ["Eflak - Han", "Kırım - Emir", "Hicaz - Voyvoda", "Boğdan - Voyvoda"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Eflak ve Boğdan genellikle yıllık vergi (haraç) verir, asker vermezdi.",
+                category: "Yönetim",
+                question: "Osmanlı eyalet sisteminde, asker vermekle yükümlü olmayıp sadece vergi veren imtiyazlı eyaletler de vardı. Buna göre aşağıdakilerden hangisi bu duruma örnek olabilir?",
+                options: ["Hicaz", "Kırım Hanlığı", "Eflak", "Erdel"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Her iki eyalet türü de merkeze bağlıydı, ancak yönetim ve vergi sistemleri farklıydı.",
+                category: "Yönetim",
+                question: "Aşağıdakilerden hangisi hem Salyaneli hem de Salyanesiz eyaletler için ortak bir özelliktir?",
+                options: ["Tımar sistemi uygulanması", "Merkeze doğrudan bağlı olma", "İltizam usulünün kullanılması", "Yöneticilerin ömür boyu görev yapması"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Osmanlı hukuku İslam hukuku, Türk gelenekleri ve fethedilen bölgelerin uygulamalarından etkilenmiştir.",
+                category: "Hukuk",
+                question: "Osmanlı hukuk sisteminin oluşumunda aşağıdakilerden hangisi etkili olmamıştır?",
+                options: ["İslam'ın getirdiği esaslar", "Roma Hukuku", "Orta Asya Türk gelenekleri (örf hukuku)", "Fethedilen bölgelerdeki uygulamalar"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Bu mahkemeler Müslümanlar arasındaki ve Müslüman-gayrimüslim davalarına bakardı.",
+                category: "Hukuk",
+                question: "Tanzimat öncesi dönemde, Müslümanlarla gayrimüslimler arasındaki anlaşmazlıklara hangi mahkeme bakardı?",
+                options: ["Cemaat Mahkemeleri", "Konsolosluk Mahkemeleri", "Şer'i Mahkemeler", "Nizamiye Mahkemeleri"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Her gayrimüslim cemaat kendi dini kurallarına göre davalara bakardı.",
+                category: "Hukuk",
+                question: "Gayrimüslimlerin kendi aralarındaki nikah, miras ve aile hukuku davalarına Tanzimat öncesi dönemde hangi mahkeme bakardı?",
+                options: ["Şer'i Mahkemeler", "Cemaat Mahkemeleri", "Konsolosluk Mahkemeleri", "Ticaret Mahkemeleri"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Tanzimat'la birlikte Şer'i Mahkemelerin yetkileri daraltılmıştır.",
+                category: "Hukuk",
+                question: "Tanzimat Dönemi'nde, Şer'i Mahkemelerin görev alanı aşağıdaki konulardan hangisi ile sınırlandırılmıştır?",
+                options: ["Ticari anlaşmazlıklar", "İdari davalar", "Nikah, aile, kısas, miras", "Yabancılar arasındaki tüm davalar"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Islahat Fermanı ile cemaat mahkemelerinin yetkileri azaltılmıştır.",
+                category: "Hukuk",
+                question: "1856 Islahat Fermanı ile gayrimüslimlerin kendi aralarındaki ferdi davalar hangi mahkemeye havale edilmiştir?",
+                options: ["Konsolosluk Mahkemelerine", "Şer'i Mahkemelere", "Cemaat Mahkemelerine", "Nizamiye Mahkemelerine"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Bu mahkemeler kapitülasyonlardan kaynaklanan ayrıcalıklı yargı sistemidir.",
+                category: "Hukuk",
+                question: "Kapitülasyonlardan yararlanan devletlerin, kendi vatandaşlarının Osmanlı topraklarındaki davalarına bakan mahkeme türü aşağıdakilerden hangisidir?",
+                options: ["Nizamiye Mahkemeleri", "Konsolosluk Mahkemeleri", "Cemaat Mahkemeleri", "Ticaret Mahkemeleri"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Bu mahkemeler Tanzimat döneminde kurulmuştur.",
+                category: "Hukuk",
+                question: "Osmanlı'da her türlü ticari davaya bakan mahkeme aşağıdakilerden hangisidir?",
+                options: ["Şer'i Mahkemeler", "Nizamiye Mahkemeleri", "Ticaret Mahkemeleri", "Cemaat Mahkemeleri"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Kadılar adalet, nikah, denetim gibi görevleri yürütürdü ama asker toplama görevi yoktu.",
+                category: "Hukuk",
+                question: "Kadıların görevleri arasında aşağıdakilerden hangisi yer almaz?",
+                options: ["Nikah kıymak", "Orduya asker toplamak", "Çarşı pazar denetimi yapmak", "Vakıfları denetlemek"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Taht kadıları ise bu üç şehirde padişah tarafından atanırdı.",
+                category: "Hukuk",
+                question: "İstanbul, Edirne ve Bursa dışındaki kazalara atanan, Kazasker tarafından tayin edilen kadı türü aşağıdakilerden hangisidir?",
+                options: ["Taht Kadısı", "Mevleviyet Kadısı", "Naib", "Müftü"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Bu uygulama kadının kararını desteklerdi.",
+                category: "Hukuk",
+                question: "Kadıların, mahkemede bir karar vermeden önce danıştığı ve adeta bir 'juri' işlevi gören, bölgenin ileri gelenlerinden oluşan heyete ne ad verilir?",
+                options: ["Divan-ı Hümayun", "Şuhudü'l Hâl", "Lonca Heyeti", "Meclis-i Vükela"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Tereke defterlerinde mirasçılar, mallar, alacaklar ve borçlar kaydedilirdi.",
+                category: "Hukuk",
+                question: "Osmanlı'da kişilerin tereke (miras) kayıtlarının tutulduğu defterlerde, aşağıdaki bilgilerden hangisi genellikle yer almazdı?",
+                options: ["Mirasçıların isimleri", "Bırakılan mal varlığı", "Kişinin fizyolojik bilgileri (boy, kilo)", "Alacak ve borç durumu"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Türkiye Cumhuriyeti'nde 1926'da kabul edilen Medeni Kanun'la Osmanlı mahkeme sistemi tamamen kaldırıldı.",
+                category: "Hukuk",
+                question: "Osmanlı Devleti'ne ait tüm mahkemeler (Şer'i, Nizamiye, Cemaat vb.) hangi tarihte çıkarılan kanunla kaldırılmıştır?",
+                options: ["1839 Tanzimat Fermanı", "1876 Kanun-i Esasi", "1926 Medeni Kanun", "1921 Teşkilat-ı Esasiye"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Bu sistem sayesinde farklı dini gruplar kendi iç işlerinde özerkliğe sahipti.",
+                category: "Sosyal Hayat",
+                question: "Osmanlı toplumunu din veya mezhep esasına göre örgütleyen yönetim sistemine ne ad verilir?",
+                options: ["Tımar Sistemi", "Millet Sistemi", "İltizam Sistemi", "Hiyerarşik Sistem"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Bu eserler önemli törenleri ve şenlikleri betimler.",
+                category: "Sosyal Hayat",
+                question: "Osmanlı'da düğün, şenlik ve ziyafet gibi konuları anlatan eserlere ne ad verilir?",
+                options: ["Seyahatname", "Siyasetname", "Sûrnâme", "Tezkire"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Bu alaylar İstanbul'dan hareket eder ve Hicaz'a ulaşırdı.",
+                category: "Sosyal Hayat",
+                question: "Hacca gidenleri uğurlamak ve hediyeleri dağıtmak amacıyla düzenlenen törenlere ne ad verilir?",
+                options: ["Cülus Töreni", "Sürre Alayları", "Nevruz Şenlikleri", "Mevlid Kandili"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Bu teori Kınalızade Ali Efendi'ye aittir.",
+                category: "Sosyal Hayat",
+                question: "'Hakaniyet Çemberi' teorisine göre, adaleti sağlayan unsurların doğru sıralanışı aşağıdakilerden hangisinde verilmiştir?",
+                options: ["Padişah → Kanun → Ordu → Servet → Millet → Adalet", "Adalet → Millet → Servet → Ordu → Kanun → Padişah", "Padişah → Ordu → Servet → Millet → Kanun → Adalet", "Kanun → Padişah → Ordu → Servet → Millet → Adalet"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Orhan Bey İznik'te ilk medrese ve imareti kurarak vakıf sistemini başlatmıştır.",
+                category: "Sosyal Hayat",
+                question: "Osmanlı Devleti'nde ilk vakıf teşkilatını kuran padişah aşağıdakilerden hangisidir?",
+                options: ["Osman Gazi", "Orhan Bey", "I. Murat", "Fatih Sultan Mehmet"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Vakfeden kişiye vakıf, vakfedilen mala mevkuf adı verilir.",
+                category: "Sosyal Hayat",
+                question: "Osmanlı'da malını vakfeden kişinin irade beyanına (vakıf kurma sözleşmesine) ne ad verilir?",
+                options: ["Vakıf", "Mevkuf", "Siyga", "Mütevelli"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Bu vakıflar toplumsal dayanışmayı sağlardı.",
+                category: "Sosyal Hayat",
+                question: "Olağanüstü durumlar (yangın, deprem, savaş) için kurulan vakıf türü aşağıdakilerden hangisidir?",
+                options: ["Olağan Vakıflar", "Avarız Vakıfları", "Eğitim Vakıfları", "Sağlık Vakıfları"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Günümüzde de hizmet vermeye devam etmektedir.",
+                category: "Sosyal Hayat",
+                question: "Kimsesiz çocuklar, engelliler ve muhtaç kişilerin barınması için kurulan sosyal kurum aşağıdakilerden hangisidir?",
+                options: ["Darüşşafaka", "Darülaceze", "Darüleytam", "Himaye-i Etfal"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Savaş döneminde çok sayıda çocuğa bakmıştır.",
+                category: "Sosyal Hayat",
+                question: "I. Dünya Savaşı'ndan sonra yetim kalan çocukların sayısının artmasıyla önemi daha da artan, Osmanlı'daki 'yetim yurdu'na ne ad verilir?",
+                options: ["Darülbedayi", "Darülelhan", "Darüşşafaka", "Darüleytam"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Günümüzde Şehir Tiyatroları'nın temelini oluşturur.",
+                category: "Sosyal Hayat",
+                question: "Osmanlı'da tiyatro ve sahne sanatları eğitimi veren kurum aşağıdakilerden hangisidir?",
+                options: ["Darüleytam", "Darülbedayi", "Darülelhan", "Donanma Cemiyeti"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "1899 yılında açılan bu hastane günümüzde Şişli Etfal Hastanesi'dir.",
+                category: "Sosyal Hayat",
+                question: "Osmanlı Devleti'nde açılan ilk çocuk hastanesi (Hamidiye Etfal) hangi padişah döneminde açılmıştır?",
+                options: ["II. Mahmut", "Abdülmecid", "II. Abdülhamit", "V. Mehmet Reşat"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Günümüzde Kızılay olarak faaliyet gösteren, 1868'de 'Osmanlı Kimsesiz ve Hasta Askerlere Yardım Cemiyeti' ismiyle kurulan kuruluşun Osmanlı'daki adı Hilal-i Ahmer'dir.",
+                category: "Sosyal Hayat",
+                question: "Günümüzde Kızılay olarak faaliyet gösteren, 1868'de 'Osmanlı Kimsesiz ve Hasta Askerlere Yardım Cemiyeti' ismiyle kurulan kuruluşun Osmanlı'daki adı nedir?",
+                options: ["Hilal-i Ahmer", "Hilal-i Etfal", "Himaye-i Etfal", "Donanma Cemiyeti"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "I. Dünya Savaşı öncesinde kurulmuştur.",
+                category: "Sosyal Hayat",
+                question: "Halktan bağış toplayarak donanmayı güçlendirmeyi amaçlayan cemiyet aşağıdakilerden hangisidir?",
+                options: ["Donanma Cemiyeti", "Himaye-i Etfal", "Hilal-i Ahmer", "Darüşşafaka"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Günümüzde Sosyal Hizmetler ve Çocuk Esirgeme Kurumu olarak devam etmektedir.",
+                category: "Sosyal Hayat",
+                question: "'Çocuk Esirgeme Kurumu'nun Osmanlı Devleti'ndeki karşılığı aşağıdakilerden hangisidir?",
+                options: ["Darüleytam", "Himaye-i Etfal", "Hamidiye Etfal", "Hilal-i Etfal"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Kazasker, İlmiye sınıfına dahildir. Seyfiye askeri ve idari yöneticilerden oluşur.",
+                category: "Yönetici Grupları",
+                question: "Osmanlı yönetimindeki 'Seyfiye' sınıfı aşağıdaki görevlilerden hangisini kapsamaz?",
+                options: ["Veziriazam", "Kaptan-ı Derya", "Kazasker", "Beylerbeyi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Kadı, müftü, müderris gibi görevliler bu sınıfa girer.",
+                category: "Yönetici Grupları",
+                question: "Medreselerde yetişen, din, hukuk ve eğitim alanında görev yapan yönetici grubu aşağıdakilerden hangisidir?",
+                options: ["Seyfiye", "İlmiye", "Kalemiye", "Beraya"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Kalemiye sınıfı yazışma, maliye ve diplomasi işlerinden sorumludur.",
+                category: "Yönetici Grupları",
+                question: "Aşağıdaki görevlilerden hangisi 'Kalemiye' sınıfına dahildir?",
+                options: ["Yeniçeri Ağası", "Müderris", "Reisülküttap", "Kadı"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Nişancı, defterdar ve reisülküttap bu sınıftandır.",
+                category: "Yönetici Grupları",
+                question: "Devletin yazışma, maliye ve dış işlerinden sorumlu olan yönetici sınıfı aşağıdakilerden hangisidir?",
+                options: ["Seyfiye", "İlmiye", "Kalemiye", "Reaya"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Subaşı, güvenlik görevlisi olarak Seyfiye sınıfına dahildir.",
+                category: "Yönetici Grupları",
+                question: "Aşağıdaki eşleştirmelerden hangisi yanlıştır?",
+                options: ["Seyfiye - Sancakbeyi", "İlmiye - Müftü", "Kalemiye - Defterdar", "İlmiye - Subaşı"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Yönetici sınıfı ise Beraya olarak adlandırılır.",
+                category: "Yönetici Grupları",
+                question: "Osmanlı'da yönetilen halka (çiftçi, esnaf, tüccar) verilen genel ad aşağıdakilerden hangisidir?",
+                options: ["Beraya", "Reaya", "Seyfiye", "İlmiye"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Askeri sınıf olarak da bilinir.",
+                category: "Yönetici Grupları",
+                question: "Osmanlı'da yönetici sınıfı ifade etmek için kullanılan terim aşağıdakilerden hangisidir?",
+                options: ["Reaya", "Beraya", "İlmiye", "Umera"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Kadılar hem yargıç hem de bulundukları bölgenin eğitiminden sorumluydu.",
+                category: "Yönetici Grupları",
+                question: "Aşağıdakilerden hangisi 'İlmiye' sınıfının hem eğitim hem de yargı alanındaki temsilcisidir?",
+                options: ["Nişancı", "Müderris", "Kadı", "Şeyhülislam"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Nişancı Kalemiye sınıfındandır.",
+                category: "Yönetici Grupları",
+                question: "Osmanlı merkez teşkilatında, padişahın tuğrasını çekmek ve kanunları yazmak gibi görevleri olan Kalemiye görevlisi aşağıdakilerden hangisidir?",
+                options: ["Defterdar", "Reisülküttap", "Nişancı", "Kazasker"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Bu görevli aynı zamanda önemli protokol görevlerinde bulunurdu.",
+                category: "Yönetici Grupları",
+                question: "Peygamber soyundan gelenlerin (seyyid ve şeriflerin) işlerini düzenlemekle görevli İlmiye mensubu aşağıdakilerden hangisidir?",
+                options: ["Müftü", "Nakibü'l Eşraf", "Şeyhülislam", "Kadı"]
+            }
+        ];
+
+        // DOM elements
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const resultMessageEl = document.getElementById('resultMessage');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+        let masteredWords = [];
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Initialize quiz
+        function initQuiz() {
+            questions = shuffleArray([...quizData]);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            
+            // Add click event to cat cover
+            catCoverEl.addEventListener('click', removeCatCover);
+        }
+
+        // Remove cat cover to reveal answers
+        function removeCatCover() {
+            catCoverEl.style.display = 'none';
+        }
+
+        // Show current question
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            // Reset cat cover
+            catCoverEl.style.display = 'flex';
+            
+            // Shuffle options
+            const options = shuffleArray([...currentQuestion.options]);
+            
+            // Clear previous options
+            optionsEl.innerHTML = '';
+            
+            // Add cat cover back
+            optionsEl.appendChild(catCoverEl);
+            
+            // Create new option buttons
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = option;
+                button.addEventListener('click', () => selectAnswer(option, currentQuestion));
+                optionsEl.appendChild(button);
+            });
+            
+            // Reset UI for new question
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        // Handle answer selection
+        function selectAnswer(selectedOption, currentQuestion) {
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // Disable all buttons
+            optionButtons.forEach(button => {
+                button.disabled = true;
+                
+                // Find the correct answer by index
+                const correctOptionIndex = currentQuestion.options.findIndex(opt => 
+                    opt === currentQuestion.options[parseInt(currentQuestion.correctAnswer.charCodeAt(0) - 65)]
+                );
+                const correctOptionText = currentQuestion.options[correctOptionIndex];
+                
+                // Mark correct answer
+                if (button.textContent === correctOptionText) {
+                    button.classList.add('correct');
+                }
+                
+                // Mark incorrect selected answer
+                if (button.textContent === selectedOption && button.textContent !== correctOptionText) {
+                    button.classList.add('incorrect');
+                }
+            });
+            
+            // Check if answer is correct
+            const correctOptionIndex = parseInt(currentQuestion.correctAnswer.charCodeAt(0) - 65);
+            const isCorrect = selectedOption === currentQuestion.options[correctOptionIndex];
+            
+            // Update score if correct
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+                
+                // Add to mastered words if not already there
+                if (!masteredWords.some(w => w.question === currentQuestion.question)) {
+                    masteredWords.push(currentQuestion);
+                }
+            }
+            
+            // Show feedback
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            
+            if (isCorrect) {
+                feedbackTextEl.innerHTML = `✅ Doğru!<br><br>${currentQuestion.meaning}`;
+            } else {
+                const correctOptionIndex = parseInt(currentQuestion.correctAnswer.charCodeAt(0) - 65);
+                const correctOption = currentQuestion.options[correctOptionIndex];
+                feedbackTextEl.innerHTML = `❌ Yanlış!<br>Doğru cevap: <strong>${correctOption}</strong><br><br>${currentQuestion.meaning}`;
+            }
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        // End quiz and show results
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            finalScoreEl.textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            // Result message based on performance
+            if (percentage >= 90) {
+                resultMessageEl.textContent = "Mükemmel! Osmanlı Devleti Kültür ve Medeniyeti konusunu çok iyi biliyorsunuz! 🏆";
+            } else if (percentage >= 70) {
+                resultMessageEl.textContent = "Çok iyi! Temel bilgilere hakimsiniz. 👍";
+            } else if (percentage >= 50) {
+                resultMessageEl.textContent = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+            } else {
+                resultMessageEl.textContent = "Öğrenmeye devam! Konuyu tekrar etmeniz faydalı olacaktır. 📚";
+            }
+            
+            // Display all words learned
+            wordListEl.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Bilgiler</h3>';
+            quizData.forEach(item => {
+                const wordCard = document.createElement('div');
+                wordCard.classList.add('word-card', 'fade-in');
+                wordCard.innerHTML = `
+                    <div class="word">${item.question}</div>
+                    <div class="meaning">${item.meaning}</div>
+                    <div class="category category-${getCategoryClass(item.category)}">${item.category}</div>
+                `;
+                wordListEl.appendChild(wordCard);
+            });
+        }
+
+        // Helper function to get CSS class for category
+        function getCategoryClass(category) {
+            const classes = {
+                'Askeriye': 'donanma',
+                'Yönetim': 'yonetim',
+                'Saray': 'saray',
+                'Hukuk': 'hukuk',
+                'Sosyal Hayat': 'sosyal',
+                'Yönetici Grupları': 'yonetim'
+            };
+            return classes[category] || 'genel';
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', nextQuestion);
+        
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>

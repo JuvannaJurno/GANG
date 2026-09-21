@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MEB-AGS Etkileşimli Zaman Çizelgesi - Atatürk İnkılapları I</title>
+    <style>
+        :root {
+            /* İnkılap Tarihi Renk Paleti (Kırmızı - Beyaz) */
+            --primary: #C8102E; 
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F8F9FA;
+            --dark: #212529;
+            --accent: #8B0000;
+            --gold: #FFD700;
+            --sultan: #0056b3;
+            --state: #d9534f;
+            --auto: #663399;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            padding-bottom: 40px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+
+        header::before {
+            content: "🇹🇷";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.8;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .instruction {
+            text-align: center;
+            padding: 15px;
+            background: var(--light);
+            border-bottom: 2px solid var(--accent);
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.1rem;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            background: white;
+        }
+
+        .auto-fill-btn {
+            background: linear-gradient(135deg, var(--auto) 0%, #9370DB 100%);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(102, 51, 153, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .auto-fill-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 15px rgba(102, 51, 153, 0.5);
+        }
+
+        .event-bank-wrapper {
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            padding: 0 15px;
+            margin: 5px 0 15px 0;
+        }
+
+        .event-bank {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border: 3px solid var(--primary);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .event-btn {
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .event-btn:hover {
+            background: var(--light);
+            transform: translateY(-2px);
+        }
+
+        .event-btn.selected {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 10px rgba(200, 16, 46, 0.6);
+            transform: scale(1.05);
+        }
+
+        .event-btn.hidden {
+            display: none;
+        }
+
+        .timeline-container {
+            position: relative;
+            padding: 20px 0;
+            margin: 20px 15px;
+        }
+
+        .timeline-line {
+            position: absolute;
+            width: 6px;
+            background: var(--primary);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+            border-radius: 3px;
+        }
+
+        .timeline-slot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+            width: 100%;
+        }
+
+        .timeline-slot:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .slot-year-container {
+            width: 50%;
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 40px;
+            position: relative;
+        }
+
+        .timeline-slot:nth-child(even) .slot-year-container {
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: 40px;
+        }
+
+        .slot-year-container::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 4px solid var(--accent);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            right: -10px;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-slot.completed .slot-year-container::after {
+            background: var(--success);
+            border-color: var(--success);
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        .timeline-slot:nth-child(even) .slot-year-container::after {
+            right: auto;
+            left: -10px;
+        }
+
+        .slot-year {
+            background: var(--primary);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .timeline-slot.completed .slot-year {
+            background: var(--success);
+        }
+
+        .slot-content-container {
+            width: 50%;
+            padding-left: 40px;
+        }
+
+        .timeline-slot:nth-child(even) .slot-content-container {
+            padding-left: 0;
+            padding-right: 40px;
+        }
+
+        .dropzone {
+            background: var(--light);
+            border: 2px dashed var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .dropzone:hover {
+            background: #e2e6ea;
+            transform: scale(1.02);
+        }
+
+        .dropzone-placeholder {
+            color: #888;
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        .dropzone.correct {
+            border: 2px solid var(--success);
+            background: #f8fff8;
+            cursor: default;
+            text-align: left;
+            align-items: flex-start;
+            box-shadow: 0 8px 15px rgba(46, 139, 87, 0.15);
+            transform: scale(1);
+        }
+
+        .dropzone.correct:hover {
+            transform: none;
+        }
+
+        .correct-title {
+            color: var(--success);
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badges-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .sultan-badge {
+            background: var(--sultan);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .sultan-badge::before {
+            content: "👤 Kişi/Kurum: ";
+        }
+
+        .state-badge {
+            background: var(--state);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border: 1px solid #c9302c;
+        }
+
+        .state-badge::before {
+            content: "📌 Alan: ";
+            opacity: 0.9;
+            font-weight: normal;
+        }
+
+        .correct-desc {
+            font-size: 1rem;
+            color: var(--dark);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .cause-effect {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            width: 100%;
+        }
+
+        .cause-row {
+            margin-bottom: 8px;
+        }
+        
+        .cause-row:last-child {
+            margin-bottom: 0;
+            padding-top: 8px;
+            border-top: 1px dashed #ddd;
+        }
+
+        .cause-effect strong {
+            color: var(--primary);
+            display: inline-block;
+            min-width: 60px;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: var(--light);
+            margin: 0 15px;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, #3cb371 100%);
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .completion-modal {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+            background: white;
+            border-radius: 15px;
+            margin: 20px 15px;
+            border: 4px solid var(--gold);
+            animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .completion-modal h2 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(200, 16, 46, 0.4);
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(200, 16, 46, 0.6);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        .error-shake {
+            animation: shake 0.4s;
+            border-color: var(--danger) !important;
+            background: #fff0f0 !important;
+        }
+
+        @media (max-width: 768px) {
+            .timeline-line {
+                left: 30px;
+            }
+            .timeline-slot, .timeline-slot:nth-child(even) {
+                flex-direction: row;
+                align-items: stretch;
+                margin-bottom: 30px;
+            }
+            .slot-year-container, .timeline-slot:nth-child(even) .slot-year-container {
+                width: 120px;
+                padding: 0;
+                justify-content: flex-start;
+                align-items: flex-start;
+                padding-top: 20px;
+            }
+            .slot-year-container::after, .timeline-slot:nth-child(even) .slot-year-container::after {
+                left: -10px;
+                right: auto;
+                top: 40px;
+            }
+            .slot-year {
+                font-size: 1.1rem;
+                padding: 6px 10px;
+                margin-top: 15px;
+                width: 100%;
+            }
+            .slot-content-container, .timeline-slot:nth-child(even) .slot-content-container {
+                width: calc(100% - 120px);
+                padding-left: 20px;
+                padding-right: 0;
+            }
+            .event-bank {
+                max-height: 150px;
+            }
+            .badges-container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🏛️ Tarih Şeridi: Sebep-Sonuç Ağı</h1>
+            <div class="subtitle">Atatürk İnkılapları I: Siyasi Gelişmeler ve 3 Mart Yasaları</div>
+        </header>
+
+        <div class="instruction">
+            👆 Önce havuzdan bir olay seçin, ardından gerçekleştiği yıla tıklayın. Veya "Oto Doldur" butonu ile genel tekrar moduna geçin!
+        </div>
+
+        <div class="toolbar">
+            <button id="autoFillBtn" class="auto-fill-btn" onclick="autoFillTimeline()">⚡ Oto Doldur (Cevapları Gör)</button>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="event-bank-wrapper">
+            <div class="event-bank" id="eventBank">
+                </div>
+        </div>
+
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
+            <div id="timelineSlots">
+                </div>
+        </div>
+
+        <div class="completion-modal" id="completionModal">
+            <h2 id="modalTitle">🏆 Siyasi İnkılaplar Tamamlandı!</h2>
+            <p id="modalDesc">Devletin laikleşmesi, Kabine Sistemi'ne geçiş ve 3 Mart 1924 devrim yasalarının Neden-Sonuç zincirini başarıyla çözdünüz!</p>
+            <button class="restart-btn" onclick="location.reload()">Tekrar Çöz</button>
+        </div>
+    </div>
+
+    <script>
+        const timelineData = [
+            { id: 1, sortOrder: 1, year: "1 Kasım 1922", title: "Saltanatın Kaldırılması", leader: "Mustafa Kemal Paşa", category: "Siyasi / Laikleşme",
+              desc: "Devletin laikleşmesi yolunda atılan ilk ciddi adım olup, siyasi güç ile dini güç birbirinden ayrılmıştır.",
+              cause: "Osmanlı Hükümeti'nin Lozan Görüşmeleri'ne davet edilmesi ve Tevfik Paşa'nın 'ortak heyet' teklifi süreci hızlandırmıştır.",
+              effect: "Ortaya çıkan rejim ve devlet başkanlığı sorunları, Cumhuriyet'in ilan edilmesini hızlandırmıştır." },
+
+            { id: 2, sortOrder: 2, year: "29 Ekim 1923", title: "Cumhuriyet'in İlanı", leader: "Mustafa Kemal Paşa", category: "Siyasi / Yönetim",
+              desc: "Bakanların meclis tarafından tek tek seçildiği Meclis Hükümeti Sistemi'nden, başbakanın bakanları seçtiği Kabine Sistemi'ne geçilmiştir.",
+              cause: "İstanbul'un boşaltılmasının ardından gündeme gelen hükümet merkezi sorunu ve ortaya çıkan yönetim belirsizliği (Güz Bunalımı).",
+              effect: "İlk CB Mustafa Kemal, ilk Başbakan İsmet Paşa, Meclis Başkanı Ali Fethi Okyar, Genelkurmay Başkanı Fevzi Çakmak oldu." },
+
+            { id: 3, sortOrder: 3, year: "3 Mart 1924", title: "Halifeliğin Kaldırılması", leader: "TBMM", category: "İdeolojik / Siyasi",
+              desc: "Ümmetçilikten ulus devlet anlayışına geçişteki en önemli ideolojik sonucu doğurmuştur. Şeyhülislamlık (Bab-ı Meşihat) makamı sona erdirilmiştir.",
+              cause: "Abdülmecit Efendi'nin devlet başkanı gibi törenler yapması ve yabancı devletlerin halifeliği iç işlerimize karışmak için kullanma girişimleri.",
+              effect: "Aynı gün hanedan üyeleri yurt dışına çıkarılmış ve Şeriye Mahkemeleri kapatılarak laikleşme yolunda önemli bir adım atılmıştır." },
+
+            { id: 4, sortOrder: 4, year: "3 Mart 1924", title: "Tevhid-i Tedrisat Kanunu", leader: "TBMM", category: "Eğitim / Kültür",
+              desc: "Tüm eğitim kurumları Millî Eğitim Bakanlığı'na bağlanmıştır.",
+              cause: "Eğitim sistemindeki dağınıklığı gidermek, çağdaş ve milli bir eğitim modeli oluşturmak.",
+              effect: "Eğitim ve öğretimde ikilikler ortadan kaldırılmıştır." },
+
+            { id: 5, sortOrder: 5, year: "3 Mart 1924", title: "Şeriye ve Evkaf'ın Kaldırılması", leader: "TBMM", category: "İdari / Hukuk",
+              desc: "Şeriye ve Evkaf Vekâleti kaldırılarak din işleri ve vakıf işleri birbirinden ayrılmıştır.",
+              cause: "Din hizmetlerinin siyasetten uzaklaştırılarak laik devlet yapısına uygun hale getirilmesi amacı.",
+              effect: "Diyanet İşleri Başkanlığı ve Vakıflar Genel Müdürlüğü kurulmuştur." },
+
+            { id: 6, sortOrder: 6, year: "3 Mart 1924", title: "Erkân-ı Harbiye'nin Kaldırılması", leader: "TBMM", category: "Askeri / Siyasi",
+              desc: "Erkân-ı Harbiye-i Umumiye Vekâleti kaldırılarak ordu yönetimden ayrılmıştır.",
+              cause: "Ordunun siyasetten ayrılması ve siyasete müdahalesinin önlenmesi amacı.",
+              effect: "Yerine Genelkurmay Başkanlığı kurulmuş, askeri işler sivil siyasetten tamamen ayrılmıştır." }
+        ];
+
+        let selectedEvent = null;
+        let correctMatches = 0;
+
+        function shuffleArray(array) {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        function init() {
+            const eventBank = document.getElementById('eventBank');
+            const timelineSlots = document.getElementById('timelineSlots');
+            
+            const shuffledEvents = shuffleArray(timelineData);
+            
+            shuffledEvents.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = 'event-btn';
+                btn.textContent = item.title;
+                btn.dataset.id = item.id;
+                
+                btn.onclick = () => selectEvent(btn, item);
+                eventBank.appendChild(btn);
+            });
+
+            // Burada sortOrder üzerinden sıralıyoruz, böylece "3 Mart 1924" metni sıralamayı bozmuyor
+            timelineData.sort((a,b) => a.sortOrder - b.sortOrder).forEach(item => {
+                const slotWrapper = document.createElement('div');
+                slotWrapper.className = 'timeline-slot';
+                slotWrapper.id = `slot-${item.id}`;
+                
+                const yearContainer = document.createElement('div');
+                yearContainer.className = 'slot-year-container';
+                const yearDiv = document.createElement('div');
+                yearDiv.className = 'slot-year';
+                yearDiv.textContent = item.year;
+                yearContainer.appendChild(yearDiv);
+
+                const contentContainer = document.createElement('div');
+                contentContainer.className = 'slot-content-container';
+                const dropzone = document.createElement('div');
+                dropzone.className = 'dropzone';
+                dropzone.dataset.id = item.id;
+                dropzone.innerHTML = `<span class="dropzone-placeholder">Bu yıla ait olayı eşleştirin...</span>`;
+                
+                dropzone.onclick = () => attemptMatch(dropzone, slotWrapper, item.id, item);
+                
+                contentContainer.appendChild(dropzone);
+                slotWrapper.appendChild(yearContainer);
+                slotWrapper.appendChild(contentContainer);
+                
+                timelineSlots.appendChild(slotWrapper);
+            });
+        }
+
+        function selectEvent(btnElement, itemData) {
+            document.querySelectorAll('.event-btn').forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            selectedEvent = { element: btnElement, data: itemData };
+        }
+
+        function attemptMatch(dropzoneElement, slotWrapper, slotId, correctItemData) {
+            if (dropzoneElement.classList.contains('correct')) return;
+            // Eğer önce kutuya tıkladıysa (orijinal kodda alert yoktu, sadece uyarı veriyoruz)
+            if (!selectedEvent) return;
+
+            const isCorrect = selectedEvent.data.id === slotId;
+
+            if (isCorrect) {
+                fillSlot(dropzoneElement, slotWrapper, correctItemData);
+                selectedEvent.element.classList.add('hidden');
+                selectedEvent = null; 
+                
+                correctMatches++;
+                updateProgress();
+
+            } else {
+                // Hatalı eşleşmede orijinal dosyadaki sallanma efekti
+                dropzoneElement.classList.remove('error-shake');
+                void dropzoneElement.offsetWidth; 
+                dropzoneElement.classList.add('error-shake');
+            }
+        }
+
+        function fillSlot(dropzoneElement, slotWrapper, itemData) {
+            dropzoneElement.classList.add('correct');
+            slotWrapper.classList.add('completed');
+            
+            dropzoneElement.innerHTML = `
+                <div class="correct-title">✅ ${itemData.title}</div>
+                <div class="badges-container">
+                    <span class="sultan-badge">${itemData.leader}</span>
+                    <span class="state-badge">${itemData.category}</span>
+                </div>
+                <div class="correct-desc">${itemData.desc}</div>
+                <div class="cause-effect">
+                    <div class="cause-row"><strong>Neden:</strong> ${itemData.cause}</div>
+                    <div class="cause-row"><strong>Sonuç:</strong> ${itemData.effect}</div>
+                </div>
+            `;
+        }
+
+        function autoFillTimeline() {
+            if (correctMatches === timelineData.length) return; 
+            
+            timelineData.forEach(item => {
+                const slotWrapper = document.getElementById(`slot-${item.id}`);
+                const dropzone = slotWrapper.querySelector('.dropzone');
+                
+                if (!dropzone.classList.contains('correct')) {
+                    fillSlot(dropzone, slotWrapper, item);
+                }
+            });
+            
+            correctMatches = timelineData.length;
+            document.getElementById('progressFill').style.width = '100%';
+            document.getElementById('eventBank').parentElement.style.display = 'none';
+            document.getElementById('autoFillBtn').style.display = 'none';
+            
+            setTimeout(() => {
+                const modal = document.getElementById('completionModal');
+                document.getElementById('modalTitle').innerHTML = "⚡ Tablo Otomatik Tamamlandı!";
+                document.getElementById('modalDesc').innerHTML = "Genel tekrar modundasınız. Tarih şeridini aşağıya kaydırarak Siyasi İnkılapların Neden-Sonuç zincirlerini detaylarıyla okuyabilirsiniz.";
+                modal.style.display = 'block';
+            }, 600);
+        }
+
+        function updateProgress() {
+            const percentage = (correctMatches / timelineData.length) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+
+            if (correctMatches === timelineData.length) {
+                document.getElementById('autoFillBtn').style.display = 'none';
+                setTimeout(() => {
+                    document.getElementById('eventBank').parentElement.style.display = 'none';
+                    document.getElementById('completionModal').style.display = 'block';
+                }, 800);
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

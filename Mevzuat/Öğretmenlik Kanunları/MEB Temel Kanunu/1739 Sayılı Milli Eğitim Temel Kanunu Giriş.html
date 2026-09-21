@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1739 Sayılı Kanun - Kapsam Testi</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "📚";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 125, 50, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(46, 125, 50, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(56, 142, 60, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(198, 40, 40, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 125, 50, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-red { background: #C62828; }
+        .category-blue { background: #1565C0; }
+        .category-green { background: #2E7D32; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container { border-radius: 10px; }
+            h1 { font-size: 1.6rem; }
+            .question { font-size: 1.1rem; }
+            .option-btn { padding: 14px 16px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 1739 Sayılı Milli Eğitim Temel Kanunu</h1>
+            <div class="subtitle">Kapsam ve Harita Testi</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Harita Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Çöz</button>
+        </div>
+    </div>
+
+    <script>
+        const QUIZ_DATA = [
+            // BÖLÜM 1: KAPSAMDA MI?
+            {
+                question: "Aşağıdakilerden hangisi 1739 Sayılı Kanun'un kapsamına giren bir 'Temel İlke'dir?",
+                options: ["Karma Eğitim (Kız ve erkeklerin birlikte okuması)", "Devlet memurlarının yıllık izin süreleri", "Belediye başkanlarının eğitim yetkileri", "Üniversite sınavlarının soru sayısı"],
+                correctAnswer: 0,
+                meaning: "Karma eğitim bu kanunun en temel felsefi ilkelerinden biridir.",
+                category: "Kapsam"
+            },
+            {
+                question: "Öğretmenlik mesleğiyle ilgili hangi konu bu kanunun kapsamında yer alır?",
+                options: ["Öğretmenliğin bir 'ihtisas mesleği' olarak tanımı ve kariyer basamakları", "Sendika üyeliği ve grev şartları", "Öğretmenlerin emeklilik maaş hesaplaması", "Yeşil pasaport alma şartları"],
+                correctAnswer: 0,
+                meaning: "3. Kısım tamamen öğretmenlik mesleğinin niteliğini ve statüsünü anlatır.",
+                category: "Kapsam"
+            },
+            {
+                question: "Aşağıdaki konulardan hangisi bu kanunun 'fiziksel donanım' kapsamında yer almaz?",
+                options: ["Okul kantinindeki gıda fiyatlarının belirlenmesi", "Okul binalarının arsaları ve tesisleri", "Eğitimde kullanılan ders kitapları ve araç-gereçler", "Okullardaki akıllı tahta ve laboratuvar sistemleri"],
+                correctAnswer: 0,
+                meaning: "Kantin fiyatları idari yönetmeliklerle belirlenir, bu kanunun ana kapsamında yoktur.",
+                category: "Kapsam"
+            },
+            {
+                question: "Türk Eğitim Sistemi'nin hangi parçası bu kanunun 'Genel Yapı' kapsamına girer?",
+                options: ["Okul öncesinden üniversiteye ve halk eğitime kadar her şey", "Sadece özel kurslar ve dershaneler", "Sadece devletin ilk ve ortaokulları", "Sadece askeri okullar"],
+                correctAnswer: 0,
+                meaning: "1739, sistemin tamamını (Örgün ve Yaygın) kapsayan çatı kanundur.",
+                category: "Kapsam"
+            },
+            {
+                question: "Bakanlığın (MEB) 'denetleme ve okul açma izni' yetkisi bu kanunun kapsamında mıdır?",
+                options: ["Evet, 6. Kısım'da (Görev ve Sorumluluk) yer alır", "Hayır, bu Valiliğin özel kanunundadır", "Sadece özel okullar için evet", "Sadece büyükşehirler için evet"],
+                correctAnswer: 0,
+                meaning: "Bakanlığın gözetim ve okul açma yetkisi 6. Kısım'da düzenlenmiştir.",
+                category: "Kapsam"
+            },
+            // BÖLÜM 2: HANGİ KISIMDA NE VAR?
+            {
+                question: "Kanunun '1. Kısım' klasörünü açtığında seni karşılayan en temel iki başlık nedir?",
+                options: ["Genel Amaçlar ve 14 Temel İlke", "Okul Binaları ve Kitaplar", "Öğretmenler ve Maaşlar", "Denetim ve Yönetmelikler"],
+                correctAnswer: 0,
+                meaning: "Kanun her zaman önce 'Neyi hedefliyoruz?' ve 'Hangi ruhla yapıyoruz?' ile başlar.",
+                category: "Kısım Bilgisi"
+            },
+            {
+                question: "Sistemin iskeletini (Örgün/Yaygın) kuran '2. Kısım' başlığı nedir?",
+                options: ["Türk Milli Eğitim Sisteminin Genel Yapısı", "Öğretmenlik Mesleği", "Okul Binaları", "Yönetmelikler"],
+                correctAnswer: 0,
+                meaning: "Sistemin kademeleri ve genel yapısı 2. Kısım'dadır.",
+                category: "Kısım Bilgisi"
+            },
+            {
+                question: "Öğretmenlik Mesleği, nitelikler ve kariyer hangi 'Kısım' klasöründedir?",
+                options: ["3. Kısım", "2. Kısım", "4. Kısım", "1. Kısım"],
+                correctAnswer: 0,
+                meaning: "Öğretmenle ilgili her şey 3. Kısım'dadır.",
+                category: "Kısım Bilgisi"
+            },
+            {
+                question: "Okul binaları ve taşınmazları kapsayan '4. Kısım'ın odağı nedir?",
+                options: ["Fiziksel mekânlar ve tesisler", "Ders kitapları", "Hizmet içi eğitim", "Karma eğitim"],
+                correctAnswer: 0,
+                meaning: "4. Kısım tamamen okul binaları ve arsalarıyla ilgilidir.",
+                category: "Kısım Bilgisi"
+            },
+            {
+                question: "Kitap, materyal ve teknik araçların düzenlendiği bölüm hangisidir?",
+                options: ["5. Kısım (Eğitimdeki Araç ve Gereçler)", "4. Kısım", "3. Kısım", "6. Kısım"],
+                correctAnswer: 0,
+                meaning: "Donanım ve materyal konuları 5. Kısım'da toplanmıştır.",
+                category: "Kısım Bilgisi"
+            },
+            {
+                question: "İşin bürokrasisi, sorumluluğu ve denetimi hangi kısımdadır?",
+                options: ["6. Kısım (Görev ve Sorumluluk)", "1. Kısım", "3. Kısım", "7. Kısım"],
+                correctAnswer: 0,
+                meaning: "Yürütme, gözetim ve denetim yetkileri 6. Kısım'dadır.",
+                category: "Kısım Bilgisi"
+            },
+            {
+                question: "Yönetmelik ve yürürlük gibi teknik kapanış detayları nerede bulunur?",
+                options: ["7. Kısım (Son Hükümler)", "1. Kısım", "5. Kısım", "6. Kısım"],
+                correctAnswer: 0,
+                meaning: "Kanunun son sayfası olan 7. Kısım, kapanış ve teknik maddeleri içerir.",
+                category: "Kısım Bilgisi"
+            },
+            {
+                question: "1. Kısım içindeki '2. Bölüm'ün özel içeriği nedir?",
+                options: ["14 Temel İlke", "Genel Amaçlar", "Örgün Eğitim", "Yaygın Eğitim"],
+                correctAnswer: 0,
+                meaning: "Eğitimin anayasası sayılan 14 ilke buradadır.",
+                category: "Bölüm Bilgisi"
+            },
+            {
+                question: "Okul basamaklarını (Okul öncesi, lise vb.) anlatan 2. Kısım'ın 2. Bölümü nedir?",
+                options: ["Örgün Eğitim", "Yaygın Eğitim", "Lojmanlar", "Denetim"],
+                correctAnswer: 0,
+                meaning: "Belli yaş grubuna okulda verilen eğitim 'Örgün'dür.",
+                category: "Bölüm Bilgisi"
+            },
+            {
+                question: "Halk eğitim ve çıraklık gibi okul dışı eğitimi kapsayan 2. Kısım 3. Bölüm nedir?",
+                options: ["Yaygın Eğitim", "Örgün Eğitim", "Anaokulları", "Üniversiteler"],
+                correctAnswer: 0,
+                meaning: "Okul dışı, hayat boyu devam eden eğitim 'Yaygın' eğitimdir.",
+                category: "Bölüm Bilgisi"
+            },
+            // BÖLÜM 3: HANGİ MADDE NEREDE?
+            {
+                question: "'Süreklilik' (Hayat boyu eğitim) ilkesi nerededir?",
+                options: ["1. Kısım (İlkeler)", "2. Kısım (Sistem)", "3. Kısım (Öğretmenlik)", "6. Kısım"],
+                correctAnswer: 0,
+                meaning: "Tüm ilkeler 1. Kısım'dadır.",
+                category: "Yer Bulma"
+            },
+            {
+                question: "Uzman öğretmenlik ve kariyer basamakları nerededir?",
+                options: ["3. Kısım (Öğretmenlik Mesleği)", "1. Kısım", "2. Kısım", "6. Kısım"],
+                correctAnswer: 0,
+                meaning: "Öğretmenlik statüsü 3. Kısım'dadır.",
+                category: "Yer Bulma"
+            },
+            {
+                question: "Okul açma izni yetkisi nerededir?",
+                options: ["6. Kısım (Görev ve Sorumluluk)", "2. Kısım", "4. Kısım", "7. Kısım"],
+                correctAnswer: 0,
+                meaning: "Yetki ve sorumluluklar 6. Kısım klasöründedir.",
+                category: "Yer Bulma"
+            },
+            {
+                question: "İlköğretim ve ortaöğretim kademeleri nerede detaylandırılır?",
+                options: ["2. Kısım (Sistem Yapısı)", "1. Kısım", "3. Kısım", "5. Kısım"],
+                correctAnswer: 0,
+                meaning: "Sistemin iskeleti 2. Kısım'dır.",
+                category: "Yer Bulma"
+            },
+            {
+                question: "Ders kitaplarının hazırlanması kuralı nerededir?",
+                options: ["5. Kısım (Araç ve Gereçler)", "4. Kısım", "2. Kısım", "1. Kısım"],
+                correctAnswer: 0,
+                meaning: "Kitap bir materyaldir, yani 5. Kısım'dadır.",
+                category: "Yer Bulma"
+            },
+            {
+                question: "Öğretmen lojmanları hangi klasörün içindedir?",
+                options: ["3. Kısım (Öğretmenlik Mesleği)", "4. Kısım (Binalar)", "1. Kısım", "6. Kısım"],
+                correctAnswer: 0,
+                meaning: "Lojmanlar öğretmenlik hakkı olarak 3. Kısım'dadır.",
+                category: "Yer Bulma"
+            },
+            {
+                question: "'Karma Eğitim' kuralı nerededir?",
+                options: ["1. Kısım (Temel İlkeler)", "2. Kısım", "6. Kısım", "3. Kısım"],
+                correctAnswer: 0,
+                meaning: "Bu bir felsefi ilkedir, 1. Kısım'dadır.",
+                category: "Yer Bulma"
+            },
+            {
+                question: "Halk Eğitim Merkezlerinin işleyişi nerededir?",
+                options: ["2. Kısım (Yaygın Eğitim)", "1. Kısım", "3. Kısım", "4. Kısım"],
+                correctAnswer: 0,
+                meaning: "Halk eğitim yaygın eğitimin kalbidir (2. Kısım).",
+                category: "Yer Bulma"
+            },
+            {
+                question: "Denetim ve teftiş yetkisi nerede bulunur?",
+                options: ["6. Kısım (Görev ve Sorumluluk)", "1. Kısım", "7. Kısım", "3. Kısım"],
+                correctAnswer: 0,
+                meaning: "Sorumluluk ve denetim 6. Kısım'dadır.",
+                category: "Yer Bulma"
+            },
+            {
+                question: "Eski kanunların kaldırılması ve yönetmelikler nerededir?",
+                options: ["7. Kısım (Son Hükümler)", "1. Kısım", "5. Kısım", "6. Kısım"],
+                correctAnswer: 0,
+                meaning: "Kanun biterken yapılan teknik işlemler 7. Kısım'dadır.",
+                category: "Yer Bulma"
+            }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.questions = [];
+                this.elements = {
+                    question: document.getElementById('question'),
+                    options: document.getElementById('options'),
+                    feedback: document.getElementById('feedback'),
+                    feedbackText: document.getElementById('feedbackText'),
+                    nextBtn: document.getElementById('nextBtn'),
+                    score: document.getElementById('score'),
+                    progress: document.getElementById('progress'),
+                    total: document.getElementById('total'),
+                    progressBar: document.getElementById('progressBar'),
+                    quizContainer: document.getElementById('quizContainer'),
+                    resultsContainer: document.getElementById('resultsContainer'),
+                    finalScore: document.getElementById('finalScore'),
+                    resultMessage: document.getElementById('resultMessage'),
+                    wordList: document.getElementById('wordList'),
+                    catCover: document.getElementById('catCover')
+                };
+                this.init();
+            }
+            init() {
+                this.questions = [...QUIZ_DATA]; // Sıralı gitmesi daha iyi olabilir ama karıştırmak istersen shuffle ekleyebilirsin
+                this.elements.total.textContent = this.questions.length;
+                this.setupEventListeners();
+                this.showCurrentQuestion();
+            }
+            setupEventListeners() {
+                this.elements.catCover.addEventListener('click', () => this.elements.catCover.style.display = 'none');
+                this.elements.nextBtn.addEventListener('click', () => this.nextQuestion());
+            }
+            showCurrentQuestion() {
+                const question = this.questions[this.currentQuestionIndex];
+                this.elements.question.textContent = question.question;
+                this.elements.catCover.style.display = 'flex';
+                this.displayOptions(question);
+                this.elements.feedback.style.display = 'none';
+                this.elements.nextBtn.style.display = 'none';
+                this.elements.progress.textContent = this.currentQuestionIndex + 1;
+                this.updateProgress();
+            }
+            displayOptions(question) {
+                this.elements.options.innerHTML = '';
+                this.elements.options.appendChild(this.elements.catCover);
+                question.options.forEach((option) => {
+                    const button = document.createElement('button');
+                    button.className = 'option-btn fade-in';
+                    button.textContent = option;
+                    button.onclick = () => this.handleAnswer(option, question);
+                    this.elements.options.appendChild(button);
+                });
+            }
+            updateProgress() {
+                const percent = ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
+                this.elements.progressBar.style.width = `${percent}%`;
+            }
+            handleAnswer(selected, question) {
+                const correct = question.options[question.correctAnswer];
+                const buttons = document.querySelectorAll('.option-btn');
+                buttons.forEach(btn => {
+                    btn.disabled = true;
+                    if (btn.textContent === correct) btn.classList.add('correct');
+                    if (btn.textContent === selected && selected !== correct) btn.classList.add('incorrect');
+                });
+                const isCorrect = selected === correct;
+                if (isCorrect) {
+                    this.score++;
+                    this.elements.score.textContent = this.score;
+                }
+                this.showFeedback(isCorrect, question, correct);
+                this.elements.nextBtn.style.display = 'block';
+            }
+            showFeedback(isCorrect, question, correct) {
+                this.elements.feedback.style.display = 'block';
+                this.elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+                this.elements.feedbackText.innerHTML = isCorrect ? `✅ Doğru!<br><br>${question.meaning}` : `❌ Yanlış!<br>Doğru cevap: <strong>${correct}</strong><br><br>${question.meaning}`;
+            }
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) this.showCurrentQuestion();
+                else this.endQuiz();
+            }
+            endQuiz() {
+                this.elements.quizContainer.style.display = 'none';
+                this.elements.resultsContainer.style.display = 'block';
+                const percent = Math.round((this.score / this.questions.length) * 100);
+                this.elements.finalScore.textContent = `%${percent}`;
+                this.elements.resultMessage.textContent = percent >= 70 ? "Harika! Kanunun haritasını adımın soyadın gibi öğrendin! 🏆" : "Güzel deneme! Biraz daha tekrarla tam oturacaktır. 💪";
+                this.displayAllWords();
+            }
+            displayAllWords() {
+                this.elements.wordList.innerHTML = '<h3>Harita Özeti</h3>';
+                QUIZ_DATA.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'word-card';
+                    card.innerHTML = `<div class="word">${item.question}</div><div class="meaning">${item.meaning}</div>`;
+                    this.elements.wordList.appendChild(card);
+                });
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => new QuizManager());
+    </script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGS Hazırlık: 1739 Sayılı Kanun - Madde 26-39</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gold: #FFD700;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%); color: var(--dark); line-height: 1.6; padding: 15px; min-height: 100vh; }
+        
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow: hidden; }
+        
+        header { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; text-align: center; padding: 25px 20px; position: relative; }
+        header::before { content: "📚"; font-size: 3rem; position: absolute; top: 10px; left: 20px; opacity: 0.3; }
+        h1 { margin-bottom: 8px; font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.1rem; opacity: 0.9; line-height: 1.4; }
+
+        .notes-container { padding: 25px; animation: fadeIn 0.5s ease; }
+        .notes-title { color: var(--primary); margin-bottom: 15px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .notes-scroll-area { max-height: 55vh; overflow-y: auto; background: var(--light); border: 2px solid var(--accent); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        .notes-scroll-area::-webkit-scrollbar { width: 8px; }
+        .notes-scroll-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        .notes-scroll-area h3 { color: var(--dark); border-bottom: 2px solid var(--primary); padding-bottom: 5px; margin-top: 20px; margin-bottom: 10px; }
+        .notes-scroll-area h4 { color: #1565C0; margin-top: 15px; margin-bottom: 5px; }
+        .notes-scroll-area ul { padding-left: 20px; margin-bottom: 15px; }
+        .notes-scroll-area li { margin-bottom: 8px; }
+
+        .numbers-box { background-color: #E3F2FD; border-left: 5px solid #1976D2; padding: 15px; margin: 20px 0; border-radius: 5px; }
+        .numbers-box h3 { color: #1565C0 !important; border-bottom: 2px solid #90CAF9 !important; margin-top: 0 !important; }
+        .numbers-box li { background: white; margin-bottom: 8px; padding: 10px; border-radius: 6px; list-style: none; display: flex; align-items: center; color: #333; }
+        .num-badge { background: #1976D2; color: white; font-weight: bold; padding: 4px 10px; border-radius: 4px; margin-right: 12px; min-width: 80px; text-align: center; }
+
+        .scroll-msg { color: var(--danger); font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; text-align: center; }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        .progress-container { width: 100%; background-color: #e9ecef; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); width: 0%; transition: width 0.5s ease; }
+        .quiz-container { padding: 25px; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; background-color: var(--light); padding: 15px; border-radius: 10px; border: 2px solid var(--accent); }
+        .question-container { background: var(--light); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .options { display: grid; gap: 12px; position: relative; }
+        .cat-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(46, 125, 50, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px; z-index: 10; cursor: pointer; }
+        .cat-image { max-width: 200px; border-radius: 8px; margin-bottom: 10px; }
+        .option-btn { padding: 16px; border: 2px solid #ddd; border-radius: 10px; background: white; cursor: pointer; text-align: left; font-size: 1.1rem; transition: 0.3s; color: #333; }
+        .option-btn.correct { background-color: var(--success); color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .feedback { padding: 20px; border-radius: 10px; margin-top: 20px; display: none; line-height: 1.6; }
+        .next-btn { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none; padding: 16px; border-radius: 10px; cursor: pointer; width: 100%; max-width: 250px; display: block; margin: 20px auto; font-weight: bold; }
+        .next-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .results-container { padding: 30px; text-align: center; display: none; }
+        .final-score { font-size: 3rem; color: var(--accent); font-weight: bold; margin: 20px 0; }
+        .word-card { border: 2px solid var(--accent); padding: 15px; margin-bottom: 15px; background: var(--light); text-align: left; border-radius: 10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ 1739 Sayılı Kanun</h1>
+            <div class="subtitle">
+                ÜÇÜNCÜ VE DÖRDÜNCÜ BÖLÜM: Örgün Eğitim<br>
+                Ortaöğretim ve Yükseköğretim (Madde 26 - 39)
+            </div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <h2 class="notes-title">📖 Ders Notları</h2>
+            <div class="notes-scroll-area" id="notesScrollArea">
+                
+                <h3>3. ORTAÖĞRETİM</h3>
+                
+                <h4>Kapsam ve Yararlanma Hakkı (Madde 26-27)</h4>
+                <ul>
+                    <li><strong>Kapsam:</strong> İlköğretimi tamamlayan öğrencilerin dört yıllık zorunlu eğitimine devam ettiği <b>genel</b>, <b>mesleki ve teknik eğitim kurumları</b> ile <b>mesleki eğitim merkezlerini</b> kapsar.</li>
+                    <li><strong>Fark Dersleri:</strong> Mesleki eğitim merkezlerinden mezun olanların lise diploması alabilmeleri için MEB tarafından belirlenen <strong style="color: var(--danger);">fark derslerini</strong> tamamlaması gerekir.</li>
+                    <li><strong>Yararlanma Hakkı:</strong> İlköğretimini tamamlayan her öğrenci ilgi, istidat ve kabiliyetleri ölçüsünde ortaöğretimden yararlanma hakkına sahiptir.</li>
+                </ul>
+
+                <h4>Amaç ve Görevler (Madde 28)</h4>
+                <ul>
+                    <li>Öğrencilere asgari düzeyde <b>ortak bir genel kültür vermek</b>; toplum sorunlarını tanıma ve ekonomik/sosyal kalkınmaya katkı bilinci kazandırmak.</li>
+                    <li>Öğrencileri bireysel yeteneklerine göre <b>yükseköğretime, bir mesleğe veya hayata</b> hazırlamak.</li>
+                </ul>
+
+                <h4>Kuruluş, Yöneltme ve Geçişler (Madde 29-31)</h4>
+                <ul>
+                    <li><strong>Kuruluş:</strong> Çeşitli programlar uygulayan liselerden oluşur. Nüfusun az ve dağınık olduğu yerlerde farklı programları bir çatı altında toplayan <b>Çok Programlı Liseler</b> kurulur.</li>
+                    <li><strong>Yöneltme:</strong> <b style="color: var(--danger);">İlköğretimde başlar</b>; yanılmaları önlemek ve gelişmelere göre yeniden yöneltmeyi sağlamak için <b>ortaöğretimde de devam eder</b>.</li>
+                    <li>Yatay ve dikey geçiş şartları <b>Millî Eğitim Bakanlığınca</b> düzenlenir.</li>
+                    <li><strong>Yükseköğretime Geçiş:</strong> Giriş şartları <b>MEB ile iş birliği yapılarak Yükseköğretim Kurulu (YÖK)</b> tarafından tespit edilir.</li>
+                </ul>
+
+                <h4>İmam-Hatip Liseleri ve Güzel Sanatlar (Madde 32-33)</h4>
+                <ul>
+                    <li><strong>İmam-Hatip:</strong> İmamlık, hatiplik, Kur'an kursu öğreticiliği için eleman yetiştiren; hem mesleğe hem yükseköğrenime hazırlayan kurumlardır.</li>
+                    <li><strong>Güzel Sanatlar:</strong> Özel yetenekli çocukları küçük yaşlardan itibaren yetiştirmek için <b>ilköğretim ve ortaöğretim seviyesinde</b> ayrı okullar açılabilir. İşleyişi ayrı yönetmelikle düzenlenir.</li>
+                </ul>
+
+                <hr style="margin: 20px 0; border: 1px solid var(--accent); opacity: 0.5;">
+
+                <h3>4. YÜKSEKÖĞRETİM</h3>
+
+                <h4>Kapsam, Amaçlar ve Kurumlar (Madde 34-36)</h4>
+                <ul>
+                    <li><strong>Kapsam:</strong> Ortaöğretime dayalı <strong style="color: var(--danger);">en az iki yıllık</strong> yükseköğrenim veren kurumların tümünü kapsar.</li>
+                    <li><strong>Amaçlar:</strong> Bilimsel öğretim yapmak; bilimsel, teknik ve kültürel sorunları çözmek için <b>araştırma yapmak</b>; hükümetle işbirliği yapıp raporlar sunmak; <b>toplumu aydınlatmak ve yaygın eğitim</b> sağlamak.</li>
+                    <li><strong>Kurumlar:</strong> Üniversiteler, fakülteler, <b style="color: var(--primary);">enstitüler (lisansüstü eğitim yapar)</b>, yüksekokullar, konservatuvarlar, meslek yüksekokulları, uygulama ve araştırma merkezleri. Bu kurumların kuruluş/işleyişi <b>özel kanunla</b> belirlenir.</li>
+                </ul>
+
+                <h4>Düzenleme, Paralı Oluşu ve Planlama (Madde 37-39)</h4>
+                <ul>
+                    <li><strong>Seviyeler:</strong> Ön lisans, lisans ve lisansüstü şeklinde bütünlük içinde düzenlenir. Yatay/dikey geçişler açıktır.</li>
+                    <li><strong>Paralı Oluşu:</strong> Yükseköğretim <b>paralıdır</b>. Harç, ücret, burs esasları <b style="color: var(--danger);">Maliye Bakanlığı ile birlikte</b> hazırlanacak yönetmelikle tespit edilir. (İstisna: Mecburi hizmet karşılığı okumak).</li>
+                    <li><strong>Planlama:</strong> Tesis, eleman ve zamandan en verimli şekilde yararlanılacak; bölgesel dengeli gelişimi sağlayacak ve <b>ortaöğretimle ilgisini kuracak</b> bir planlama düzeni kurulur.</li>
+                </ul>
+
+                <div class="numbers-box">
+                    <h3>Kritik İfadeler ve Eşleşmeler</h3>
+                    <ul>
+                        <li><span class="num-badge">En az 2 Yıl</span> Yükseköğretimin tanımında geçen asgari eğitim süresidir.</li>
+                        <li><span class="num-badge">Maliye Bak.</span> Yükseköğretim harç/burs yönetmeliğinde MEB/YÖK ile çalışan bakanlıktır.</li>
+                        <li><span class="num-badge">MEB + YÖK</span> Üniversiteye giriş şartlarını ortaklaşa tespit eden kurumlardır.</li>
+                        <li><span class="num-badge">İlköğretim</span> Mesleki yöneltmenin ve güzel sanatlar eğitiminin *başlayabildiği* ilk kademedir.</li>
+                        <li><span class="num-badge">Özel Kanun</span> Yükseköğretim kurumlarının (üniversite vb.) açılış ve işleyişini belirleyen normdur.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <p id="scrollMsg" class="scroll-msg">Teste geçmek için notları sonuna kadar kaydırın 👇</p>
+                <button class="next-btn" id="startTestBtn" disabled>Testi Başlat (40 Soru)</button>
+            </div>
+        </div>
+
+        <div id="quizSection" style="display: none;">
+            <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+            <div class="quiz-container">
+                <div class="stats">
+                    <div class="score">Puan: <span id="score">0</span></div>
+                    <div>İlerleme: <span id="progress">0</span>/<span id="totalQ"></span></div>
+                </div>
+                <div class="question-container"><div class="question" id="question"></div></div>
+                <div class="options" id="options">
+                    <div class="cat-cover" id="catCover">
+                        <img src="https://cataas.com/cat" class="cat-image" alt="Cat">
+                        <div class="cat-text" style="color:white; font-weight:bold; text-align:center;">Cevapları görmek için tıkla!</div>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback"><div id="feedbackText"></div></div>
+                <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+            </div>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Modül Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p style="margin-bottom: 20px; color: #555;">Tüm soruların açıklamalı özetini aşağıda bulabilirsin:</p>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()">Tekrar Çöz</button>
+        </div>
+    </div>
+
+    <script>
+        const QUIZ_DATA = [
+            // Ortaöğretim Kapsam ve Yararlanma (M26-27)
+            { question: "1739 Sayılı Kanun'a göre ortaöğretim hangi kurumları kapsar?", options: ["Sadece Anadolu ve Fen liselerini", "Genel, mesleki ve teknik eğitim kurumları ile mesleki eğitim merkezlerini", "İlkokul ve ortaokulları", "Sadece özel liseleri"], correctAnswer: 1, meaning: "Madde 26: Ortaöğretim; genel, mesleki ve teknik eğitim kurumları ile mesleki eğitim merkezlerini kapsar." },
+            { question: "Mesleki eğitim merkezlerinden mezun olan öğrencilerin ortaöğretim diploması alabilmeleri için ne yapmaları gerekmektedir?", options: ["Üniversite sınavına girmeleri", "Çıraklık eğitimini iki katına çıkarmaları", "Milli Eğitim Bakanlığınca belirlenen fark derslerini tamamlamaları", "En az 5 yıl bir işte çalışmaları"], correctAnswer: 2, meaning: "Madde 26: Mesleki eğitim merkezlerinden mezun olanların diploma alabilmesi için fark derslerini tamamlaması şarttır." },
+            { question: "İlköğretimini tamamlayan her öğrencinin ortaöğretim imkânlarından yararlanma hakkı hangi kıstaslara bağlanmıştır?", options: ["Ailesinin maddi durumuna", "Yaşadığı şehrin büyüklüğüne", "İlgi, istidat ve kabiliyetlerine", "Ortaokul diploma notuna"], correctAnswer: 2, meaning: "Madde 27: Her öğrenci, ortaöğretime devam etmek ve imkânlarından ilgi, istidat ve kabiliyetleri ölçüsünde yararlanmak hakkına sahiptir." },
+            { question: "Aşağıdakilerden hangisi genel ortaöğretim kurumlarına örnek gösterilebilir?", options: ["Mesleki Eğitim Merkezleri", "Sağlık Meslek Liseleri", "Anadolu, Fen ve Sosyal Bilimler Liseleri", "Çıraklık Okulları"], correctAnswer: 2, meaning: "Madde 26 açıklamaları: Anadolu, fen, sosyal bilimler liseleri genel eğitim liseleridir." },
+            
+            // Ortaöğretim Amaçlar (M28)
+            { question: "Ortaöğretim kademesinde öğrencilere toplum sorunlarını tanıma ve ekonomik kalkınmaya katkı bilinci kazandırmak hangi amaç başlığı altındadır?", options: ["Yükseköğretime hazırlamak", "Ortak bir genel kültür vermek", "Hayata hazırlamak", "Mesleğe yöneltmek"], correctAnswer: 1, meaning: "Madde 28: Asgari düzeyde ortak bir genel kültür vermek amacıyla toplum sorunlarını tanıma ve kalkınmaya katkı bilinci hedeflenir." },
+            { question: "Ortaöğretim; öğrencileri ilgi, istidat ve kabiliyetlerine göre hangi alanlara hazırlamayı hedefler?", options: ["Sadece yükseköğretime", "Sadece mesleğe", "Sadece hayata", "Yükseköğretime, mesleğe veya hayata"], correctAnswer: 3, meaning: "Madde 28: Ortaöğretim öğrencileri yükseköğretime, mesleğe, iş alanlarına veya hayata hazırlar." },
+            { question: "Ortaöğretimin amaçları gerçekleştirilirken eğitim sisteminde hangi iki unsur arasında denge kurulmaya çalışılır?", options: ["Eğitim süresi ile sınav sayısı arasında", "Bireysel tercihler (istekler) ile toplumun ekonomik/sosyal ihtiyaçları arasında", "Okul mevcudu ile öğretmen sayısı arasında", "Özel okullar ile devlet okulları arasında"], correctAnswer: 1, meaning: "Madde 28 açıklaması: Bireysel kabiliyet ve istekler göz önüne alınırken, toplumun ekonomik ve sosyal ihtiyaçları da dikkate alınır." },
+            { question: "Bir coğrafya dersinde öğrencinin su kıtlığı sorunu üzerine çözüm üretmesi ortaöğretimin öncelikle hangi amacına hizmet eder?", options: ["Mesleki eğitim kazanma", "Ortak genel kültür ile toplum sorunlarını tanıma ve çözüm arama", "Doğrudan üniversiteye yerleşme", "Yatay geçiş hakkı kazanma"], correctAnswer: 1, meaning: "Toplum sorunlarına çözüm arama 'Ortak genel kültür verme' amacı (Madde 28/1) altındadır." },
+
+            // Kuruluş, Çok Programlı Liseler (M29)
+            { question: "Nüfusun az ve dağınık olduğu yerlerde, birden fazla ortaöğretim programını tek bir yönetim altında uygulayan okullara ne ad verilir?", options: ["Yatılı İlköğretim Bölge Okulu (YİBO)", "Çok Programlı Lise", "Sosyal Bilimler Lisesi", "Mesleki Eğitim Merkezi"], correctAnswer: 1, meaning: "Madde 29: Nüfusun az ve dağınık olduğu yerlerde Çok Programlı Liseler kurularak genel ve mesleki programlar bir arada uygulanır." },
+            { question: "Ortaöğretim kurumlarının öğrenim süresi genel kural olarak kim tarafından belirlenir?", options: ["Cumhurbaşkanı", "Maliye Bakanlığı", "Millî Eğitim Bakanlığı", "Yükseköğretim Kurulu (YÖK)"], correctAnswer: 2, meaning: "Madde 29: Öğrenim süresi, eğitim programının içeriği ve hedeflerine göre Millî Eğitim Bakanlığı tarafından belirlenir." },
+            { question: "Çok programlı liselerin kurulmasındaki temel amaç nedir?", options: ["Üniversite kazanma oranlarını yükseltmek", "Bölgedeki nüfus azlığı nedeniyle eğitimdeki fırsat eşitsizliklerini azaltıp farklı programları bir arada sunmak", "Sadece çıraklık eğitimi vermek", "Şehir merkezindeki okul yükünü azaltmak"], correctAnswer: 1, meaning: "Madde 29: Nüfusu dağınık/az yerlerde hem mesleki hem genel eğitimi bir arada sunarak eşitsizliği gidermektir." },
+
+            // Yöneltme ve Yükseköğretime Geçiş (M30-31)
+            { question: "Eğitim sistemimizde öğrencilerin ilgi ve yeteneklerine göre 'Yöneltme' süreci KANUNA GÖRE hangi kademede başlar?", options: ["Okul Öncesinde", "İlköğretimde", "Ortaöğretimde", "Yükseköğretimde"], correctAnswer: 1, meaning: "Madde 30: Yöneltme ilköğretimde başlar; ortaöğretimde devam eder." },
+            { question: "Yöneltme sürecinin ortaöğretimde de devam etmesinin kanundaki EN TEMEL gerekçesi nedir?", options: ["Öğretmenlerin ders yükünü azaltmak", "Yanılmaları önlemek ve muhtemel gelişmelere göre yeniden yöneltmeyi sağlamak", "Lise kontenjanlarını doldurmak", "Üniversite sınavından gelir elde etmek"], correctAnswer: 1, meaning: "Madde 30: Yanılmaları önlemek ve muhtemel gelişmelere göre yeniden yöneltmeyi sağlamak için ortaöğretimde de devam eder." },
+            { question: "Ortaöğretim okulları arasında yapılacak yatay ve dikey geçiş şartları hangi kurum tarafından düzenlenir?", options: ["ÖSYM", "Yükseköğretim Kurulu", "Millî Eğitim Bakanlığı", "Okul Müdürlükleri"], correctAnswer: 2, meaning: "Madde 30: Yöneltme esasları ile yatay ve dikey geçiş şartları Millî Eğitim Bakanlığınca düzenlenir." },
+            { question: "Lise mezunlarının yükseköğretim kurumlarına giriş şartları hangi iki kurumun İŞ BİRLİĞİ ile tespit edilir?", options: ["Maliye Bakanlığı - ÖSYM", "Millî Eğitim Bakanlığı - Yükseköğretim Kurulu (YÖK)", "İçişleri Bakanlığı - MEB", "YÖK - Cumhurbaşkanlığı"], correctAnswer: 1, meaning: "Madde 31: Giriş şartları Millî Eğitim Bakanlığı ile iş birliği yapılarak Yükseköğretim Kurulu tarafından tespit edilir." },
+
+            // İmam-Hatip ve Güzel Sanatlar (M32-33)
+            { question: "İmam-Hatip liseleri uyguladıkları programlarla öğrencileri hangi alanlara hazırlar?", options: ["Sadece imamlık mesleğine", "Sadece ilahiyat fakültelerine", "Hem mesleğe hem yükseköğrenime", "Sadece sosyal bilimler alanına"], correctAnswer: 2, meaning: "Madde 32: İmam-hatip liseleri hem mesleğe hem yükseköğrenime hazırlayıcı programlar uygulayan kurumlardır." },
+            { question: "Kanuna göre, İmam-Hatip liselerinin yetiştirmekle görevli olduğu elemanlar arasında hangisi SAYILMAMIŞTIR?", options: ["İmam", "Hatip", "Kur'an kursu öğreticisi", "Din Kültürü Öğretmeni"], correctAnswer: 3, meaning: "Madde 32: İmamlık, hatiplik ve Kur'an kursu öğreticiliği gibi dini hizmetler sayılmıştır. Öğretmenlik yükseköğretimin işidir." },
+            { question: "Güzel sanatlar alanında özel yeteneği olan çocukları yetiştirmek üzere ayrı okullar KANUNA GÖRE hangi seviyelerde açılabilir?", options: ["Sadece yükseköğretim seviyesinde", "Sadece ortaöğretim seviyesinde", "Okul öncesi ve ilköğretim seviyesinde", "İlköğretim ve ortaöğretim seviyesinde"], correctAnswer: 3, meaning: "Madde 33: İlköğretim ve ortaöğretim seviyesinde ayrı okullar açılabilir veya ayrı yetiştirme tedbirleri alınabilir." },
+            { question: "Güzel sanatlar eğitimi veren okulların kuruluş ve işleyiş esasları nasıl düzenlenir?", options: ["Genel lise yönetmeliği ile", "Ayrı bir yönetmelikle", "Cumhurbaşkanlığı Kararnamesi ile", "Kanunla"], correctAnswer: 1, meaning: "Madde 33: Özellikleri dolayısıyla bunların kuruluş, işleyiş ve yetiştirme ile ilgili esasları ayrı bir yönetmelikle düzenlenir." },
+
+            // Yükseköğretim Kapsam ve Amaçlar (M34-35)
+            { question: "Kanuna göre Yükseköğretim kurumları, ortaöğretime dayalı en az kaç yıllık eğitim veren kurumlardır?", options: ["1 yıllık", "2 yıllık", "3 yıllık", "4 yıllık"], correctAnswer: 1, meaning: "Madde 34: Yükseköğretim, ortaöğretime dayalı en az iki yıllık yükseköğrenim veren eğitim kurumlarının tümünü kapsar." },
+            { question: "Yükseköğretim kurumlarının, hükümetin talep ettiği konularda araştırmalar yapıp raporlar sunması hangi amaca hizmet eder?", options: ["İlerleme ve gelişmeyi sağlayacak sorunları araştırmak", "Yaygın eğitim yapmak", "Öğrencileri ilgi ve yeteneğe göre yetiştirmek", "Toplumu aydınlatmak"], correctAnswer: 0, meaning: "Madde 35/4: İlerleme ve kalkınmayı sağlayacak projeler geliştirip hükümetle işbirliği yapmak bu amaca girer." },
+            { question: "Halka açık konferanslar ve seminerler düzenleyerek toplumun genel bilgi seviyesini artırmak yükseköğretimin hangi görevidir?", options: ["Bilimsel öğretim yapmak", "Araştırma yapmak", "Toplumun bilimsel bilgilerle aydınlatılması ve yaygın eğitim", "Yayın yapmak"], correctAnswer: 2, meaning: "Madde 35/6: Bilgileri topluma yayarak kamuoyunu aydınlatmak ve yaygın eğitim yapmak üniversitelerin görevidir." },
+            { question: "Yeni geliştirilen bir yapay zekâ algoritmasının bilimsel bir dergide makale olarak basılması yükseköğretimin hangi amacına örnektir?", options: ["Yükseköğretim planlaması", "Yaygın eğitim", "Bilim ve teknik alanında yayınlar yapmak", "Ülke kalkınma sorunlarını çözmek"], correctAnswer: 2, meaning: "Madde 35/5: Araştırma sonuçlarını makale, kitap vb. olarak yaymak 'Bilim ve Teknik alanında yayın yapmak' görevidir." },
+            { question: "Yükseköğretim, öğrencileri ilgi ve yeteneklerine göre yetiştirirken aşağıdakilerden hangisini DİKKATE ALIR?", options: ["Sadece öğrencinin ekonomik durumunu", "Ülkenin bilim politikalarını ve insan gücü ihtiyaçlarını", "Lise bitirme sınavı notlarını", "Yerel yönetimlerin isteklerini"], correctAnswer: 1, meaning: "Madde 35/1: Ülkenin bilim politikalarına ve insan gücü ihtiyaçlarına yönelik bir eğitim verilmesi amaçlanır." },
+
+            // Yükseköğretim Kurumları ve Düzenleme (M36-37)
+            { question: "Aşağıdakilerden hangisi kanunda sayılan Yükseköğretim kurumlarından biri DEĞİLDİR?", options: ["Üniversiteler", "Enstitüler", "Konservatuvarlar", "Çok Programlı Liseler"], correctAnswer: 3, meaning: "Madde 36: Çok programlı liseler Ortaöğretim kurumlarıdır (Madde 29). Diğerleri yükseköğretim kurumudur." },
+            { question: "Yükseköğretim sistemi içerisinde 'lisansüstü eğitim ve araştırmalar' yürütmekle görevli kurum hangisidir?", options: ["Fakülteler", "Meslek Yüksekokulları", "Enstitüler", "Konservatuvarlar"], correctAnswer: 2, meaning: "Madde 36 açıklaması: Enstitüler lisansüstü eğitim ve araştırmalar yürüten kurumlardır." },
+            { question: "Öğrencilere uygulamalı eğitim sunarak belirli bir mesleğe yönelik (ön lisans) yetiştiren yükseköğretim kurumu aşağıdakilerden hangisidir?", options: ["Enstitü", "Meslek Yüksekokulu", "Fen Edebiyat Fakültesi", "Genel Lise"], correctAnswer: 1, meaning: "Madde 36 açıklaması: Meslek yüksekokulları uygulamalı meslek öğrenimi (ön lisans) sunar." },
+            { question: "Yükseköğretim kurumlarının (üniversite, fakülte vb.) amaçları, kuruluşu ve işleyişleri ne ile belirlenir?", options: ["Özel kanunla", "MEB Yönetmeliğiyle", "YÖK Genelgesiyle", "İlköğretim kanunuyla"], correctAnswer: 0, meaning: "Madde 36 son fıkra: Yükseköğretim kurumlarının açılışı, kuruluşu ve işleyişleri özel kanunlarında belirlenir." },
+            { question: "Yükseköğretimde öğrencilerin kabiliyetlerine göre kurumlar arası geçişleri (yatay ve dikey) konusunda kanundaki yaklaşım nedir?", options: ["Geçişler kesinlikle yasaktır", "Sadece vakıf üniversitelerinde serbesttir", "Geçiş yolları açık tutulur", "Sadece yatay geçişe izin verilir"], correctAnswer: 2, meaning: "Madde 37: Farklı seviyeler ve kuruluşlar arasında öğrencilere kabiliyetlerine göre yatay ve dikey geçiş yolları açık tutulur." },
+            { question: "Yükseköğretim hangi seviyelerdeki bir bütünlük içinde düzenlenir?", options: ["Sadece lisans", "Ön lisans ve lisans", "Lisans öncesi (ön lisans), lisans ve lisansüstü", "Ortaöğretim ve Lisans"], correctAnswer: 2, meaning: "Madde 37: Lisans öncesi (ön lisans), lisans ve lisansüstü seviyelerinde bir bütünlük içinde düzenlenir." },
+
+            // Paralı Oluşu ve Planlama (M38-39)
+            { question: "1739 Sayılı Kanun'a göre yükseköğretimin paralı/ücretsiz olma durumuyla ilgili KESİN HÜKÜM nedir?", options: ["Tamamen ücretsizdir", "Yükseköğretim paralıdır", "Sadece enstitüler paralıdır", "Yalnızca ikinci öğretimler paralıdır"], correctAnswer: 1, meaning: "Madde 38'in ilk cümlesi net bir şekilde 'Yükseköğretim paralıdır.' der. (Maddi imkanı olmayanlara burs vs. verilir)." },
+            { question: "Yükseköğretimde öğrencilerden alınacak öğrenim harç ve ücretleri ile burs/kredi tutarlarını belirleyen yönetmelik hangi bakanlıkla BİRLİKTE hazırlanır?", options: ["İçişleri Bakanlığı", "Millî Eğitim Bakanlığı", "Maliye Bakanlığı", "Adalet Bakanlığı"], correctAnswer: 2, meaning: "Madde 38: Harç, ücret, burs tutarları Maliye Bakanlığı ile birlikte hazırlanacak yönetmelikle tespit edilir." },
+            { question: "Yükseköğretimin paralı olması kuralının kanunda belirtilen İSTİSNASI aşağıdakilerden hangisidir?", options: ["Sporcu öğrencilerin durumu", "Açıköğretim okuyanlar", "Mecburi hizmet karşılığı öğrenci yetiştirilmesi durumu", "Yurtdışından gelen öğrenciler"], correctAnswer: 2, meaning: "Madde 38: 'Bazı alanlar için mecburi hizmet karşılığı öğrenci yetiştirilmesi hakkındaki hükümler saklıdır' ibaresi istisnayı belirtir (Örn: Sağlık Bak. uzmanlık asistanları)." },
+            { question: "Yükseköğretim kurumlarının yurt genelinde dengeli bir şekilde gelişmesini sağlamak ve ortaöğretimle ilgisini kurmak için yapılan çalışmalara ne denir?", options: ["Yöneltme", "Yatay Geçiş", "Yükseköğretim Planlaması", "Yaygın Eğitim"], correctAnswer: 2, meaning: "Madde 39: Tesis, eleman verimliliği, bölgesel dengeli gelişme ve ortaöğretimle bağ kurulması işlemleri 'Yükseköğretim Planlaması' başlığı altındadır." },
+            { question: "Yükseköğretim planlaması çerçevesinde üniversite kontenjanları belirlenirken aşağıdaki kademelerden HANGİSİYLE ilişki/bağ kurulması esastır?", options: ["Okul öncesi eğitimle", "Ortaöğretimle", "İlköğretimle", "Yaygın eğitim kurslarıyla"], correctAnswer: 1, meaning: "Madde 39: Yükseköğretimin bütününü kapsayan ve 'ortaöğretimle ilgisini sağlayan' bir planlama düzeni kurulur." },
+
+            // Karma Karşılaştırma Soruları
+            { question: "Aşağıdakilerden hangisi yükseköğretimin amaçları arasında yer alırken, ortaöğretimin amaçları arasında YER ALMAZ?", options: ["Hayata hazırlamak", "Bilim ve teknik alanında yayınlar yapmak", "Ortak genel kültür vermek", "Mesleğe yöneltmek"], correctAnswer: 1, meaning: "Yayın yapmak (Madde 35) yükseköğretimin (üniversitenin) akademik görevlerindendir." },
+            { question: "Ortaöğretimde 'Yatay ve dikey geçişleri' düzenleme görevi kime aitken, üniversiteye 'Giriş şartlarını' tespit etme yetkisi kimdedir?", options: ["MEB / MEB-YÖK işbirliği", "YÖK / ÖSYM", "MEB / Maliye Bakanlığı", "YÖK / MEB"], correctAnswer: 0, meaning: "Geçiş şartları MEB (M30); Üniversiteye giriş şartları ise MEB ile işbirliği yapılarak YÖK tarafından (M31) belirlenir." },
+            { question: "Hangi seçenekte eğitim kademesi ile yöneltme faaliyeti yanlış eşleştirilmiştir?", options: ["İlköğretim - Yöneltmenin başladığı yer", "Ortaöğretim - Yanılmaları önlemek için yöneltmenin devam ettiği yer", "Yükseköğretim - Yöneltmenin zorunlu kılındığı tek yer", "Ortaöğretim - Yatay/dikey geçişlerle esnekliğin sağlandığı yer"], correctAnswer: 2, meaning: "Yöneltme ilköğretimde başlar ve ortaöğretimde devam eder (Madde 30). Yükseköğretimde yöneltme zorunludur diye bir kural yoktur." },
+            { question: "Aşağıdaki eşleşmelerden hangisi yanlıştır?", options: ["Konservatuvar - Yükseköğretim kurumu", "Enstitü - Lisansüstü eğitim kurumu", "Mesleki Eğitim Merkezi - Ortaöğretim kurumu", "Çok Programlı Lise - Yükseköğretim kurumu"], correctAnswer: 3, meaning: "Çok programlı liseler nüfusun az olduğu yerlerde açılan Ortaöğretim (M29) kurumlarıdır." },
+            { question: "Bir çırak öğrencinin lise diploması alması ile ilgili mekanizma kanunun hangi maddesinin/kademesinin kapsamındadır?", options: ["İlköğretim (Mecburi yaş)", "Yükseköğretim (Meslek Yüksekokulları)", "Ortaöğretim (Mesleki Eğitim Merkezleri)", "Yaygın Eğitim (Halk Eğitim)"], correctAnswer: 2, meaning: "Çıraklık eğitimi veren 'Mesleki Eğitim Merkezleri' Ortaöğretim kapsamında (Madde 26) düzenlenmiştir." }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0; this.score = 0; this.questions = [];
+                this.elements = {
+                    question: document.getElementById('question'), options: document.getElementById('options'),
+                    feedback: document.getElementById('feedback'), feedbackText: document.getElementById('feedbackText'),
+                    nextBtn: document.getElementById('nextBtn'), score: document.getElementById('score'),
+                    progress: document.getElementById('progress'), totalQ: document.getElementById('totalQ'),
+                    progressBar: document.getElementById('progressBar'), catCover: document.getElementById('catCover'),
+                    resultsContainer: document.getElementById('resultsContainer'), quizSection: document.getElementById('quizSection'),
+                    finalScore: document.getElementById('finalScore'), wordList: document.getElementById('wordList')
+                };
+                this.init();
+            }
+            init() {
+                this.questions = [...QUIZ_DATA].sort(() => Math.random() - 0.5);
+                this.elements.totalQ.textContent = this.questions.length;
+                this.elements.catCover.onclick = () => this.elements.catCover.style.display = 'none';
+                this.elements.nextBtn.onclick = () => this.nextQuestion();
+                this.showQuestion();
+            }
+            showQuestion() {
+                const q = this.questions[this.currentQuestionIndex];
+                this.elements.question.textContent = q.question;
+                this.elements.catCover.style.display = 'flex';
+                this.elements.options.innerHTML = '';
+                this.elements.options.appendChild(this.elements.catCover);
+                
+                const optionsWithIndex = q.options.map((opt, i) => ({ text: opt, isCorrect: i === q.correctAnswer }));
+                optionsWithIndex.sort(() => Math.random() - 0.5);
+
+                optionsWithIndex.forEach(optData => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn'; btn.textContent = optData.text;
+                    btn.onclick = () => this.handleAnswer(optData.text, optData.isCorrect, q.options[q.correctAnswer], q);
+                    this.elements.options.appendChild(btn);
+                });
+                this.elements.feedback.style.display = 'none';
+                this.elements.nextBtn.style.display = 'none';
+                this.elements.progress.textContent = this.currentQuestionIndex + 1;
+                this.elements.progressBar.style.width = `${((this.currentQuestionIndex + 1) / this.questions.length) * 100}%`;
+            }
+            handleAnswer(selectedText, isCorrect, correctText, q) {
+                document.querySelectorAll('.option-btn').forEach(b => {
+                    b.disabled = true;
+                    if (b.textContent === correctText) b.classList.add('correct');
+                    if (b.textContent === selectedText && !isCorrect) b.classList.add('incorrect');
+                });
+                
+                if (isCorrect) { this.score++; this.elements.score.textContent = this.score; }
+                
+                this.elements.feedback.style.display = 'block';
+                this.elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+                this.elements.feedback.style.borderLeftColor = isCorrect ? 'var(--success)' : 'var(--danger)';
+                this.elements.feedback.style.backgroundColor = isCorrect ? 'rgba(56, 142, 60, 0.1)' : 'rgba(198, 40, 40, 0.1)';
+                this.elements.feedbackText.innerHTML = isCorrect 
+                    ? `✅ Doğru!<br><small style="color:#444; display:inline-block; margin-top:5px;">Açıklama: ${q.meaning}</small>` 
+                    : `❌ Yanlış!<br>Doğru Cevap: <strong>${correctText}</strong><br><small style="color:#444; display:inline-block; margin-top:5px;">Açıklama: ${q.meaning}</small>`;
+                this.elements.nextBtn.style.display = 'block';
+            }
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) this.showQuestion();
+                else this.endQuiz();
+            }
+            endQuiz() {
+                this.elements.quizSection.style.display = 'none';
+                this.elements.resultsContainer.style.display = 'block';
+                const p = Math.round((this.score / this.questions.length) * 100);
+                this.elements.finalScore.textContent = `${this.score}/${this.questions.length} (%${p})`;
+                QUIZ_DATA.forEach((i, index) => {
+                    const d = document.createElement('div'); d.className = 'word-card';
+                    d.innerHTML = `<strong>${index + 1}. ${i.question}</strong><p style="margin-top:5px; color:#1B5E20">✅ ${i.options[i.correctAnswer]}</p><p style="margin-top:5px; font-size:0.9em; color:#555"><em>Açıklama: ${i.meaning}</em></p>`;
+                    this.elements.wordList.appendChild(d);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const scroll = document.getElementById('notesScrollArea');
+            const btn = document.getElementById('startTestBtn');
+            const msg = document.getElementById('scrollMsg');
+            
+            const checkScroll = () => {
+                if (scroll.scrollTop + scroll.clientHeight >= scroll.scrollHeight - 20) { 
+                    btn.disabled = false; msg.style.display = 'none'; 
+                }
+            };
+            
+            scroll.addEventListener('scroll', checkScroll);
+            setTimeout(checkScroll, 500);
+
+            btn.onclick = () => {
+                document.getElementById('notesContainer').style.display = 'none';
+                document.getElementById('quizSection').style.display = 'block';
+                new QuizManager();
+            };
+        });
+    </script>
+</body>
+</html>

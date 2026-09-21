@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🏛️ MEB-AGS Türkiye Tarihi - Eksiksiz Islahatçı Eşleştirme</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --bg: #faf8f5;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 10px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            width: 100%;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 15px 10px;
+        }
+        
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        /* KLAVYE KISAYOL BİLGİSİ */
+        .keyboard-info {
+            background: #eee;
+            color: #555;
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 4px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        @media (min-width: 768px) {
+            .keyboard-info {
+                display: block;
+            }
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            height: 8px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+        
+        .quiz-body {
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding: 0 5px;
+        }
+        
+        .question-box {
+            background: var(--light);
+            border: 3px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            min-height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .question-box::before {
+            content: "Soru";
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        /* --- SEKMELER (TABS) --- */
+        .tabs-container {
+            display: flex;
+            background: #eee;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 5px;
+            border: none;
+            background: transparent;
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #666;
+            border-radius: 8px;
+            transition: 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* --- KAYDIRILABİLİR ALAN (SWIPE TRACK) --- */
+        .swipe-wrapper {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            flex: 1;
+            padding: 5px 0;
+            touch-action: pan-y;
+        }
+
+        .swipe-track {
+            display: flex;
+            width: 300%;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            height: 100%;
+        }
+
+        .period-panel {
+            width: 33.333%;
+            padding: 0 5px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .reformist-btn {
+            background: white;
+            border: 2px solid var(--accent);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            text-align: center;
+            width: 100%;
+        }
+
+        .reformist-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* KLAVYE KISAYOL ROZETİ EKLENTİSİ */
+        .key-badge {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            background: var(--primary);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 767px) {
+            .key-badge {
+                display: none;
+            }
+        }
+
+        /* --- DOĞRU / YANLIŞ EFEKTLERİ --- */
+        .wrong {
+            background: var(--danger) !important;
+            color: white !important;
+            border-color: #8b0000 !important;
+            animation: shake 0.4s;
+        }
+        
+        .wrong::after {
+            content: "❌";
+            position: absolute;
+            right: 15px;
+        }
+
+        .correct {
+            background: var(--success) !important;
+            color: white !important;
+            border-color: #1e5c3a !important;
+        }
+
+        .correct::after {
+            content: "✅";
+            position: absolute;
+            right: 15px;
+        }
+
+        .correct-highlight {
+            background: var(--success) !important;
+            color: white !important;
+            border-color: #1e5c3a !important;
+            animation: pulseGreen 1.5s infinite;
+            z-index: 10;
+        }
+        
+        .correct-highlight::after {
+            content: "✅";
+            position: absolute;
+            right: 15px;
+        }
+
+        /* --- ALT AKSİYON ALANI (GEÇ BUTONU) --- */
+        .action-area {
+            margin-top: 15px;
+            min-height: 60px;
+        }
+
+        .next-btn {
+            display: none;
+            width: 100%;
+            background: linear-gradient(135deg, #2E8B57 0%, #3cb371 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(46, 139, 87, 0.4);
+            animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .next-btn:active {
+            transform: scale(0.98);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        @keyframes pulseGreen {
+            0% { box-shadow: 0 0 0 0 rgba(46, 139, 87, 0.6); }
+            70% { box-shadow: 0 0 0 10px rgba(46, 139, 87, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(46, 139, 87, 0); }
+        }
+        @keyframes popUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .results-container {
+            display: none;
+            text-align: center;
+            padding: 30px 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ Tarih: Islahatçı Eşleştirme</h1>
+        </header>
+        <div class="keyboard-info">
+            ⌨️ Kısayollar: [⬅️ / ➡️] Sekmeler | [1-5] Cevaplar | [Enter/Space] Geç
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-body" id="quizContainer">
+            <div class="stats">
+                <div>Doğru: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">1</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-box" id="questionBox">
+                <div class="question-text" id="questionText">Soru yükleniyor...</div>
+            </div>
+            
+            <div class="tabs-container">
+                <button class="tab-btn active" onclick="goToTab(0)">17. Yüzyıl</button>
+                <button class="tab-btn" onclick="goToTab(1)">18. Yüzyıl</button>
+                <button class="tab-btn" onclick="goToTab(2)">19. Yüzyıl</button>
+            </div>
+            
+            <div class="swipe-wrapper" id="swipeWrapper">
+                <div class="swipe-track" id="swipeTrack">
+                    <div class="period-panel" id="panel-0">
+                        <button class="reformist-btn" data-id="tarhuncu" onclick="checkAnswer('tarhuncu', this)"><span class="key-badge">1</span>Tarhuncu Ahmet Paşa</button>
+                        <button class="reformist-btn" data-id="genc_osman" onclick="checkAnswer('genc_osman', this)"><span class="key-badge">2</span>II. Osman (Genç Osman)</button>
+                        <button class="reformist-btn" data-id="iv_murat" onclick="checkAnswer('iv_murat', this)"><span class="key-badge">3</span>IV. Murat</button>
+                    </div>
+
+                    <div class="period-panel" id="panel-1">
+                        <button class="reformist-btn" data-id="iii_ahmet" onclick="checkAnswer('iii_ahmet', this)"><span class="key-badge">1</span>III. Ahmet (Lale Devri)</button>
+                        <button class="reformist-btn" data-id="i_mahmut" onclick="checkAnswer('i_mahmut', this)"><span class="key-badge">2</span>I. Mahmut</button>
+                        <button class="reformist-btn" data-id="iii_mustafa" onclick="checkAnswer('iii_mustafa', this)"><span class="key-badge">3</span>III. Mustafa</button>
+                        <button class="reformist-btn" data-id="i_abdulhamit" onclick="checkAnswer('i_abdulhamit', this)"><span class="key-badge">4</span>I. Abdülhamit</button>
+                        <button class="reformist-btn" data-id="iii_selim" onclick="checkAnswer('iii_selim', this)"><span class="key-badge">5</span>III. Selim</button>
+                    </div>
+
+                    <div class="period-panel" id="panel-2">
+                        <button class="reformist-btn" data-id="ii_mahmut" onclick="checkAnswer('ii_mahmut', this)"><span class="key-badge">1</span>II. Mahmut</button>
+                        <button class="reformist-btn" data-id="abdulmecit" onclick="checkAnswer('abdulmecit', this)"><span class="key-badge">2</span>Sultan Abdülmecit</button>
+                        <button class="reformist-btn" data-id="abdulaziz" onclick="checkAnswer('abdulaziz', this)"><span class="key-badge">3</span>Sultan Abdülaziz</button>
+                        <button class="reformist-btn" data-id="ii_abdulhamit" onclick="checkAnswer('ii_abdulhamit', this)"><span class="key-badge">4</span>II. Abdülhamit</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-area">
+                <button id="nextBtn" class="next-btn" onclick="nextQuestion()">GEÇ (Enter) ➔</button>
+            </div>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 style="color:var(--primary); font-size:2rem; margin-bottom:15px;">🏆 Bitti!</h2>
+            <p style="font-size: 1.1rem; color: var(--dark);">Tebrikler! Dağılma Dönemi ve öncesine ait tüm bilgileri başardın.</p>
+            <div style="font-size: 3rem; color: var(--accent); margin: 20px 0; font-weight: bold;" id="finalScore"></div>
+            <button class="next-btn" style="display:block;" onclick="location.reload()">Tekrar Çöz (Enter)</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // 17. Yüzyıl Islahatçıları
+            { id: "tarhuncu", text: "Osmanlı Devleti'nde ilk modern ve denk bütçeyi hazırlayan devlet adamıdır." },
+            { id: "tarhuncu", text: "XVII. yüzyılda (Duraklama Dönemi) maliyeyi düzeltmek için saray masraflarını kısan devlet adamıdır." },
+            { id: "genc_osman", text: "Yeniçeri Ocağı'nı kaldırmayı düşünen İLK Osmanlı padişahıdır." },
+            { id: "iv_murat", text: "XVII. yüzyılda devletin kötüye gidiş nedenlerini araştırmak için Koçi Bey ve Kâtip Çelebi'ye risaleler (raporlar) hazırlatmıştır." },
+            
+            // 18. Yüzyıl Islahatçıları
+            { id: "iii_ahmet", text: "1703 Edirne Olayı ile tahta çıkan ve Patrona Halil İsyanı ile tahttan indirilen Lale Devri padişahıdır." },
+            { id: "iii_ahmet", text: "Sadrazam Nevşehirli Damat İbrahim Paşa'nın görev yaptığı, Avrupa'nın ilk kez örnek alındığı dönemin padişahıdır." },
+            { id: "iii_ahmet", text: "İlk defa Avrupa başkentlerinde geçici elçiliklerin açıldığı dönemin padişahıdır." },
+            { id: "iii_ahmet", text: "Osmanlı'ya getirilen ilk teknik yenilik olan matbaanın (İbrahim Müteferrika) kurulduğu Lale Devri'nin padişahıdır." },
+            { id: "iii_ahmet", text: "Paris Sefaretnamesi'ni yazan 28 Mehmet Çelebi'nin elçi olarak gönderildiği dönemin padişahıdır." },
+            { id: "iii_ahmet", text: "Gerçek Davut Ağa'nın katkılarıyla ilk düzenli itfaiye teşkilatı olan Tulumbacılar Ocağı'nı kurdurtmuştur." },
+            { id: "iii_ahmet", text: "Batı tarzında yapılan ilk mimari eser olan kendi adıyla anılan çeşmeyi ve Sadabad Sarayı'nı yaptıran padişahtır." },
+            { id: "iii_ahmet", text: "İran'dan örnek alınan çiçek aşısının sağlık alanında ilk kez uygulandığı dönemin padişahıdır." },
+            { id: "iii_ahmet", text: "Doğu/Batı birikimini Osmanlı'ya aktarmak için Tercüme Heyetleri'ni kurdurtan padişahtır." },
+            { id: "i_mahmut", text: "Osmanlı'da ilk defa Batı tarzı askerî ıslahatlar yapan ve Batı'dan Comte de Bonneval'ı (Humbaracı Ahmet) getiren padişahtır." },
+            { id: "i_mahmut", text: "Batı tarzında açılan ilk teknik okul olan Hendesehanenin kurulmasını sağlayan padişahtır." },
+            { id: "iii_mustafa", text: "Sadrazamlığını Koca Ragıp Paşa'nın yaptığı ve Avrupa'dan Baron de Tott'un getirildiği dönemin padişahıdır." },
+            { id: "iii_mustafa", text: "Kağıt paraya geçişin ilk aşaması sayılan 'Esham' (iç borçlanma senedi) sistemini hazırlayan padişahtır." },
+            { id: "iii_mustafa", text: "Baron de Tott'un çalışmalarıyla Sürat Topçuları Ocağı'nın kurulduğu dönemin padişahıdır." },
+            { id: "iii_mustafa", text: "Deniz subayı yetiştirmek amacıyla Tersane Hendesehanesi'nin açıldığı dönemin padişahıdır." },
+            { id: "i_abdulhamit", text: "Esham (iç borçlanma) sistemini ilk defa uygulamaya geçiren padişahtır." },
+            { id: "i_abdulhamit", text: "Maliyeyi düzeltmek amacıyla Cülus bahşişini kaldıran ve ulufe alım-satımını yasaklayan padişahtır." },
+            { id: "i_abdulhamit", text: "Yabancı uzmanların kendi kıyafet ve dinlerinde kalarak çalışmasına izin veren padişahtır." },
+            { id: "iii_selim", text: "Nizam-ı Cedit ordusunu kuran ve ıslahatları Kabakçı Mustafa İsyanı ile sona eren padişahtır." },
+            { id: "iii_selim", text: "Nizam-ı Cedit ordusunun masraflarını karşılamak amacıyla İrad-ı Cedit hazinesini kurdurtmuştur." },
+            { id: "iii_selim", text: "Avrupa'da daimi elçiliklerin açılmasını sağlayan ve ilk daimi elçi Yusuf Agâh Efendi'yi Londra'ya gönderen padişahtır." },
+            { id: "iii_selim", text: "Batı tarzı ordu subayı yetiştirmek için Mühendishane-i Berri Hümayun'u açan padişahtır." },
+            { id: "iii_selim", text: "Devlet işleri hakkında bilim insanlarından Lahiya (rapor) isteyerek ıslahat programı hazırlayan padişahtır." },
+            { id: "iii_selim", text: "Osmanlı askerî okullarında Fransızcayı ilk kez zorunlu yabancı dil kılan padişahtır." },
+
+            // II. Mahmut Islahatları
+            { id: "ii_mahmut", text: "Âyanlarla Sened-i İttifak'ı imzalayarak padişahın mutlak otoritesini ilk kez kısıtlayan kişidir." },
+            { id: "ii_mahmut", text: "Âyanların varlığının ilk kez resmiyet kazandığı Sened-i İttifak'ı imzalayan padişahtır." },
+            { id: "ii_mahmut", text: "Osmanlı'nın ilk demokratikleşme hareketi sayılan ve Magna Carta'ya benzetilen Sened-i İttifak'ın tarafıdır." },
+            { id: "ii_mahmut", text: "Âyanlığın kaldırılmasıyla merkezî otoriteyi güçlendirmek için köylere muhtar, eyaletlere müşir atamıştır." },
+            { id: "ii_mahmut", text: "Özel mülkiyetin önünü açmak amacıyla Tımar ve Müsadere sistemlerini kaldırmıştır." },
+            { id: "ii_mahmut", text: "Devlet dairelerine kendi resmini astırması uygulaması olan 'Tasvir-i Hümayun'u başlatmıştır." },
+            { id: "ii_mahmut", text: "Vakıfları tek çatı altında toplamak için Evkâf Vekâleti'ni (Vakıflar Müdürlüğü) kurmuştur." },
+            { id: "ii_mahmut", text: "Belediye işlerini düzenlemek amacıyla İhtisab Nezareti'ni kurmuştur." },
+            { id: "ii_mahmut", text: "Ülke dışına çıkışları kontrol altına almak için Osmanlı'da ilk kez 'Pasaport' uygulamasına geçmiştir." },
+            { id: "ii_mahmut", text: "Anadolu ve Rumeli'den İstanbul'a gelecekler için 'Mürur Tezkeresi' (iç vize) düzenletmiştir." },
+            { id: "ii_mahmut", text: "İdari işlemleri ve ıslahatları düzenlemek amacıyla danışma meclisi niteliğindeki Dar-ı Şûrayı Babıali'yi kurmuştur." },
+            { id: "ii_mahmut", text: "Memurların yargılanması ve terfi işlemleriyle ilgilenmek üzere Meclisi Valayı Ahkam-ı Adliye'yi kurmuştur." },
+            { id: "ii_mahmut", text: "Osmanlı Devleti'nin ilk resmî gazetesi olan Takvim-i Vekâyi'yi çıkarmıştır." },
+            { id: "ii_mahmut", text: "Memurları dâhiliye ve hariciye olarak ikiye ayıran ve onlara düzenli maaş bağlayan padişahtır." },
+            { id: "ii_mahmut", text: "Devlet memurlarının ceket, pantolon ve fes giymesini zorunlu hâle getirmiştir." },
+            { id: "ii_mahmut", text: "Modern anlamda devlet memuru yetiştirmek için Mekteb-i Maarif-i Adliye'yi açmıştır." },
+            { id: "ii_mahmut", text: "Divan-ı Hümayun'u tamamen kaldırarak yerine Heyet-i Vükela'yı (Bakanlar Kurulu) kurmuştur." },
+            { id: "ii_mahmut", text: "Divan'ın kalkmasıyla Sadrazamlık makamını Başvekâlet'e dönüştürmüştür." },
+            { id: "ii_mahmut", text: "Divan'ın kalkmasıyla Reisülküttablık makamını Hariciye Nezareti'ne dönüştürmüştür." },
+            { id: "ii_mahmut", text: "Divan'ın kalkmasıyla Sadaret Kethüdası makamını Dâhiliye Nezareti'ne dönüştürmüştür." },
+            { id: "ii_mahmut", text: "Divan'ın kalkmasıyla Şeyhülislamlık makamını Babımeşihat Dairesi'ne dönüştürmüştür." },
+            { id: "ii_mahmut", text: "Adalete önem verdiği ve yeni kanunnameler hazırlattığı için 'Adlî' ünvanı verilen padişahtır." },
+            { id: "ii_mahmut", text: "Yeniçeri Ocağı'na alternatif olarak Sekban-ı Cedit ve Eşkinci ocaklarını kurmuştur." },
+            { id: "ii_mahmut", text: "1826 yılında Vakay-ı Hayriyye (Hayırlı Olay) olarak bilinen olayla Yeniçeri Ocağı'nı tamamen kaldıran padişahtır." },
+            { id: "ii_mahmut", text: "Kaldırılan Yeniçeri Ocağının yerine Asakir-i Mansure-i Muhammediye ordusunu kurmuştur." },
+            { id: "ii_mahmut", text: "Modern ordu ve devlet teşkilatlarındaki asıl modernleşmenin (Yeniçeri'nin kaldırılmasıyla) başladığı dönemdir." },
+            { id: "ii_mahmut", text: "Asakir-i Mansure-i Muhammediye ordusunun subay ihtiyacını karşılamak için Mekteb-i Fünun-ı Harbiye'yi açmıştır." },
+            { id: "ii_mahmut", text: "İleride Asakir-i Nizamiye ordusuna dönüşecek olan ilk modern ordu temellerini atan padişahtır." },
+            { id: "ii_mahmut", text: "Askerlik çağına gelmiş kişileri tespit etmek ve vergi almak amacıyla Osmanlı'da ilk nüfus sayımını yaptırmıştır." },
+            { id: "ii_mahmut", text: "Yapılan ilk nüfus sayımında sadece erkeklerin, hayvanların ve mülklerin sayıldığı dönemin padişahıdır." },
+            { id: "ii_mahmut", text: "Askeri şubeler olarak görev yapmak üzere Dar-ı Şûrayı Askerî'yi kurmuştur." },
+            { id: "ii_mahmut", text: "Askeri alanda yüksek eğitim vermek üzere Mektebi Şahane (Harbiye) ve Mektebi Tıbbiye'yi açmıştır." },
+            { id: "ii_mahmut", text: "Köylerin ve kasabaların güvenliğini sağlamak amacı ile Redif Birliklerini kurmuştur." },
+            { id: "ii_mahmut", text: "Günümüzdeki Genelkurmay Başkanlığı'nın temeli sayılan Seraskerlik makamını kurmuştur." },
+            { id: "ii_mahmut", text: "Eğitim amaçlı olarak Avrupa'ya ilk kez öğrenci gönderen padişahtır." },
+            { id: "ii_mahmut", text: "Ortaokul düzeyinde eğitim vermek amacıyla Mekteb-i Ulum-u Edebiye ve Rüştiyeleri açmıştır." },
+            { id: "ii_mahmut", text: "Bulaşıcı hastalıkların yayılmasını önlemek amacıyla Osmanlı'da ilk kez karantina uygulamasına geçmiştir." },
+            { id: "ii_mahmut", text: "Halkın durumunu yerinde görmek amacıyla yurt içine geziler düzenleyen ilk Osmanlı padişahıdır." },
+            { id: "ii_mahmut", text: "İlköğretimi (başlangıçta sadece İstanbul'da geçerli olmak üzere) zorunlu hâle getiren padişahtır." },
+            { id: "ii_mahmut", text: "Mehterhaneyi kapatarak yerine Donizetti Paşa'ya Mızıkayı Hümayun'u (bando) kurdurtmuştur." },
+            { id: "ii_mahmut", text: "Yabancı dil bilen Müslüman diplomat yetiştirmek amacıyla Tercüme Odaları'nı kurmuştur." },
+            { id: "ii_mahmut", text: "'Ben tebaamın Müslüman'ını camide, Hristiyan'ını kilisede...' diyerek Osmanlıcılık politikasını başlatan kişidir." },
+            { id: "ii_mahmut", text: "Tarım ve ticaret işlerini düzene koymak amacıyla Ticaret Nezareti'ni kurmuştur." },
+            { id: "ii_mahmut", text: "Yabancı malların etkisini kırmak için yerli malı kullanımını teşvik eden padişahtır." },
+            { id: "ii_mahmut", text: "Tekstil alanında üretim yapmak üzere Bakırköy'de bez fabrikası açtırtmıştır." },
+            { id: "ii_mahmut", text: "Osmanlı tüccarlarının Avrupalı tüccarlarla rekabet edebilmesi için gümrük vergilerinde kolaylıklar sağlamıştır." },
+            { id: "ii_mahmut", text: "Ordunun başlık ihtiyacını karşılamak için Feshane üretim tesisini kurmuştur." },
+            { id: "ii_mahmut", text: "Ekonomik bağımsızlık için devlet memurlarının giyeceği kıyafetlerin yerli malı olma zorunluluğunu getirmiştir." },
+
+            // Sultan Abdülmecid Islahatları
+            { id: "abdulmecit", text: "1839 yılında Gülhane-i Hattı Hümayun olarak da bilinen Tanzimat Fermanı'nı ilan eden padişahtır." },
+            { id: "abdulmecit", text: "Tanzimat Fermanı'nın ilan edilmesinde, Mısır Meselesi'nin görüşüleceği Londra Konferansı'ndan önce Avrupalı devletlerin desteğini kazanma arzusu etkili olmuştur." },
+            { id: "abdulmecit", text: "Tanzimat Fermanı'nı Avrupa'nın baskısı olmadan, kendi tek taraflı iradesiyle ilan eden padişahtır." },
+            { id: "abdulmecit", text: "Tanzimat Fermanı'nın (Mustafa Reşit Paşa tarafından hazırlanan) ilan edildiği dönemin padişahıdır." },
+            { id: "abdulmecit", text: "Tanzimat ve Islahat fermanlarında etkili olan, herkesi eşit saymayı hedefleyen 'Osmanlıcılık' fikrinin uygulayıcısıdır." },
+            { id: "abdulmecit", text: "Tanzimat Fermanı ile padişahın kendi gücünden hariç 'kanun gücünü' ilk defa kabul ettiği dönemdir." },
+            { id: "abdulmecit", text: "Fermanlarında 'Herkes' kelimesinin Tanzimat'ı, 'Gayrimüslim' kelimesinin Islahat'ı işaret ettiği padişahtır." },
+            { id: "abdulmecit", text: "Tanzimat ile Müslüman ve Hristiyan bütün tebaanın can güvenliği, malı, ırzı ve namusunun korunmasını emretmiştir." },
+            { id: "abdulmecit", text: "Tanzimat Fermanı'nda verginin, herkesin gücü oranında tahsil edileceğini karara bağlamıştır." },
+            { id: "abdulmecit", text: "Askerliği tüm Osmanlı tebaası için zorunlu (vatan hizmeti) hâle getirip süresini 4-5 yıl olarak belirleyen Tanzimat'ı ilan etmiştir." },
+            { id: "abdulmecit", text: "Herkesin malını mülkünü istediği gibi tasarruf edebileceği maddesiyle müsadereyi resmen ve tamamen kaldıran fermana imza atmıştır." },
+            { id: "abdulmecit", text: "Tanzimat Fermanı'nda ülkenin harap olmasına yol açan rüşveti önlemek için etkili bir kanun hazırlanacağını duyurmuştur." },
+            { id: "abdulmecit", text: "1856 yılında, Paris Barış Konferansı kararlarında etkili olabilmek için Islahat Fermanı'nı ilan eden padişahtır." },
+            { id: "abdulmecit", text: "Müslüman-gayrimüslim eşitliğini tam olarak sağlayan ve Müslümanların tepkisini çeken Islahat Fermanı'nı çıkarmıştır." },
+            { id: "abdulmecit", text: "Islahat Fermanı'nın ilan edilmesinde Avrupalı devletlerin doğrudan baskısının etkili olduğu padişah dönemidir." },
+            { id: "abdulmecit", text: "Devlet hizmetlerine, askerliğe ve okullara ayrım gözetmeksizin tüm tebaanın kabul edileceği kararını Islahat ile almıştır." },
+            { id: "abdulmecit", text: "Gayrimüslimlerden alınan cizye vergisini kaldıran ve askerlik bedelini nakit ödeme imkanı getiren padişahtır." },
+            { id: "abdulmecit", text: "Karma mahkemelerin kurulduğu, gayrimüslim şahitliğinin kabul edildiği ve herkesin kendi inancına göre yemin edebildiği Islahat'ı ilan etmiştir." },
+            { id: "abdulmecit", text: "Halkın ve memurların söyleminde gayrimüslimleri aşağılayan tabirlerin (gavur vb.) kullanılmasını yasaklamıştır." },
+            { id: "abdulmecit", text: "Osmanlı sınırları içerisinde yabancıların da mülk sahibi olabileceği maddesini Islahat Fermanı ile hukuk sistemine eklemiştir." },
+            { id: "abdulmecit", text: "İltizam usulünün kaldırılacağını ve bütün tebaanın aynı vergiyi ödeyeceğini Islahat Fermanı ile duyurmuştur." },
+            { id: "abdulmecit", text: "Kanun hazırlamak ve yargı işlerine bakmak için Meclis-i Ali Tanzimat ve Meclis-i Ahkam-ı Adliye'yi açmıştır." },
+            { id: "abdulmecit", text: "Günümüzdeki MEB'in temeli sayılan Meclis-i Maarif-i Umumiye Nezareti'ni kurmuştur." },
+            { id: "abdulmecit", text: "Fen kitaplarının tercümesini yapmak üzere, Redhouse ve Hammer'ın da çalışmalar yaptığı Encümen-i Daniş'i kurmuştur." },
+            { id: "abdulmecit", text: "Osmanlı'da erkek öğretmen yetiştirmek amacıyla Darülmuallim'i açmıştır." },
+            { id: "abdulmecit", text: "İç güvenlik, asayiş ve iletişim ihtiyaçları için Jandarma, Polis ve Posta teşkilatlarını kurmuştur." },
+            { id: "abdulmecit", text: "Osmanlı Devleti sınırları içerisindeki ilk demiryolu hattını (İzmir - Aydın arasına) inşa ettirmiştir." },
+            { id: "abdulmecit", text: "Deniz ulaşımını ve vapur işlerini düzenlemek amacıyla Şirket-i Hayriye'yi kurmuştur." },
+            { id: "abdulmecit", text: "Osmanlı'da ilk telgraf hattını (Edirne-İstanbul-Şumnu güzergahına) çektiren padişahtır." },
+            { id: "abdulmecit", text: "Taşrada vergi toplama işlerini düzenli hale getirmek için Muhassıllık Meclisleri'ni açmıştır." },
+            { id: "abdulmecit", text: "Toprak sistemini ve mülkiyet haklarını düzenlemek amacıyla Arazi Kanunnamesi'ni çıkarmıştır." },
+            { id: "abdulmecit", text: "Kırım Savaşı sırasında dış borçlanmaya giderek İngiltere'den ilk dış borcu alan Osmanlı padişahıdır." },
+            { id: "abdulmecit", text: "Osmanlı Devleti'nin 'Kaime' adındaki ilk kağıt parasını bastıran padişahtır." },
+            { id: "abdulmecit", text: "Osmanlı Devleti'nin ilk bankası olan Bank-ı Dersaadet'i açmıştır." },
+            { id: "abdulmecit", text: "Para basma yetkisine (emisyon) sahip ilk yabancı sermayeli İngiliz bankası olan Bank-ı Osmani'yi açtırmıştır." },
+            { id: "abdulmecit", text: "Osmanlı'nın ilk dergisi olan 'Vekayi Tıbbiye' onun döneminde basılmıştır." },
+            { id: "abdulmecit", text: "Şinasi ve Agâh Efendi tarafından çıkarılan ilk özel gazete 'Tercüman-ı Ahval' bu dönemde basılmıştır." },
+            { id: "abdulmecit", text: "Yarı resmi gazete statüsünde çıkarılan 'Ceride-i Havadis' onun döneminde yayın hayatına başlamıştır." },
+            { id: "abdulmecit", text: "Güllü Agop'un ilk Osmanlı modern tiyatrosunu kurduğu dönem bu padişahın devrine rastlar." },
+            { id: "abdulmecit", text: "Sivil devlet memuru ve yönetici ihtiyacını karşılamak amacıyla Mekteb-i Mülkiye'yi açmıştır." },
+            { id: "abdulmecit", text: "Sanayi eğitimi vermek, gümrükleri düzenlemek ve esnaf şirketleri kurmak için 1860'da Islah-ı Sanayi Komisyonu'nu kurmuştur." },
+            { id: "abdulmecit", text: "1859'da Tanzimat ve Islahat fermanlarına tepki duyan Fedailer Cemiyeti'nin kendisini devirmek istediği (Kuleli Vakası) padişahtır." },
+
+            // Sultan Abdülaziz Islahatları (Yeni Eklenenler)
+            { id: "abdulaziz", text: "Ahmet Cevdet Paşa başkanlığında İslami medeni kanun olan Mecelle onun döneminde hazırlanmış ve yürürlüğe girmiştir." },
+            { id: "abdulaziz", text: "Denizciliğe verdiği önemle Osmanlı donanmasını İngiltere ve Fransa'nın ardından dünyada 3. sıraya yükseltmiştir." },
+            { id: "abdulaziz", text: "Yetim çocukların eğitimi için Darüşşafaka onun döneminde açılmıştır." },
+            { id: "abdulaziz", text: "Günümüz Kızılay'ının temeli olan Hilal-i Ahmer Cemiyeti onun döneminde kurulmuştur." },
+            { id: "abdulaziz", text: "Modern hukuk kurallarını uygulamak üzere Nizamiye Mahkemeleri'ni kurdurtmuştur." },
+            { id: "abdulaziz", text: "1875 yılında devletin borç faizlerini bile ödeyemeyeceğini ilan ettiği Ramazan Kararnamesi'ni yayımlamıştır." },
+            { id: "abdulaziz", text: "Taşra yönetimini 'Köy-Nahiye-Kaza-Liva-Vilayet' hiyerarşisine göre düzenleyen Vilayet Nizamnamesi'ni çıkarmıştır." },
+            { id: "abdulaziz", text: "Seyahat amacıyla yurt dışına çıkan (ilk olarak Fransa'yı ziyaret eden) ilk Osmanlı padişahıdır." },
+            { id: "abdulaziz", text: "Borç para bulmak ve Rusya'nın planlarını anlatmak amacıyla Avrupa (İngiltere, Fransa, Avusturya vb.) seyahatine çıkmıştır." },
+            { id: "abdulaziz", text: "İstanbul Boğazı'nın simgelerinden olan Beylerbeyi ve Çırağan saraylarını inşa ettirmiştir." },
+            { id: "abdulaziz", text: "Fransa örnek alınarak eğitimi kademelendiren Maarif Nizamnamesi'ni yayımlamıştır." },
+            { id: "abdulaziz", text: "Kız öğretmen okulu olan Darülmuallimat'ı açmıştır." },
+            { id: "abdulaziz", text: "Batılı tarzda eğitim veren Robert Koleji ve Galatasaray Sultanisi onun döneminde açılmıştır." },
+            { id: "abdulaziz", text: "Meşrutiyeti ilan etmediği ve yenilik yapmadığı gerekçesiyle Genç Osmanlılar (Jön Türkler) tarafından tahttan indirilmiştir." },
+
+             // II. Abdülhamit Dönemi Olayları ve Kurumları (Yeni Eklenenler)
+            { id: "ii_abdulhamit", text: "V. Murat'ın tahttan indirilmesi üzerine meşrutiyeti ilan edeceği garantisiyle tahta çıkan padişahtır." },
+            { id: "ii_abdulhamit", text: "Tahta çıkar çıkmaz Türk tarihinin ilk yazılı anayasası olan Kanunuesasi'yi ilan etmiştir." },
+            { id: "ii_abdulhamit", text: "I. Meşrutiyet ile açılan ve üyelerini ömür boyu görevde kalmak üzere atadığı meclis Âyan Meclisi'dir." },
+            { id: "ii_abdulhamit", text: "I. Meşrutiyet ile üyeleri halk tarafından seçilen Mebusan Meclisi'nin açıldığı dönemin padişahıdır." },
+            { id: "ii_abdulhamit", text: "Camiden çok okul yaptırdığı için kendisine 'Maarifperver' unvanı verilen padişahtır." },
+            { id: "ii_abdulhamit", text: "Güzel Sanatlar Fakültesi'nin temeli olan Sanayi-i Nefise Mektebi'ni ve Polis Mektebi'ni açmıştır." },
+            { id: "ii_abdulhamit", text: "Günümüzdeki illerde lise isimlerinin birçoğunun kurucusu olan ve yönetimi Yıldız Sarayı'na taşıyan padişahtır." },
+            { id: "ii_abdulhamit", text: "Kadınların mesleki eğitim alması için Kız Sanayi Mektebi'ni açtırmıştır." },
+            { id: "ii_abdulhamit", text: "Mithat Paşa'nın gayretleriyle Memleket Sandıkları'nın Ziraat Bankası'na dönüştürüldüğü dönemin padişahıdır." },
+            { id: "ii_abdulhamit", text: "Ermeni isyanlarına karşı ve yerel savunma sağlamak amacıyla Hamidiye Alayları'nı kurmuştur." },
+            { id: "ii_abdulhamit", text: "Haberleşme ve istihbarat akışını sağlamak için Jurnal (Hafiye) Teşkilatı'nı kurmuştur." },
+            { id: "ii_abdulhamit", text: "Osmanlı'nın ilk çocuk hastanesi olan Hamidiye Etfal'i açtırmıştır." },
+            { id: "ii_abdulhamit", text: "Müze-i Hümayun'un (Asar-ı Atika) başına Osman Hamdi Bey'i getirdiği dönemdir." },
+            { id: "ii_abdulhamit", text: "Alman İmparatoru II. Wilhelm'in desteğiyle dev 3B Projesi'ni (Berlin-Boğazlar-Bağdat) başlatan padişahtır." },
+            { id: "ii_abdulhamit", text: "Kimsesizleri, yaşlıları ve engellileri koruyan ilk sosyal yardım kurumu olan Darülaceze'yi 1895'te açmıştır." },
+            { id: "ii_abdulhamit", text: "Ermeni olayları sonucu yetim kalan çocuklar için Darülhayr-ı Ali'yi (1903) açtırmıştır." },
+            { id: "ii_abdulhamit", text: "Kimsesiz çocuklar için (günümüz Çocuk Hizmetleri Genel Müdürlüğü) Himaye-i Etfal Cemiyeti'ni kurdurtmuştur." },
+            { id: "ii_abdulhamit", text: "1881'de Osmanlı'nın resmen iflas ettiğini duyuran Muharrem Kararnamesi'ni yayımlamış ve Duyun-u Umumiye'nin kurulmasına yol açmıştır." },
+            { id: "ii_abdulhamit", text: "V. Murat'ı tekrar tahta geçirmek amacıyla Ali Suavi önderliğinde kendisine karşı yapılan başarısız Çırağan Vakası'nı atlatmıştır." },
+            { id: "ii_abdulhamit", text: "Reval Görüşmeleri sonrası İttihat ve Terakki'nin isyanıyla II. Meşrutiyet'i ilan ederek Çok Partili dönemi başlatan padişahtır." },
+            { id: "ii_abdulhamit", text: "Rejimi değiştirmeyi hedefleyen 31 Mart Vakası (Hareket Ordusu bastırmıştır) sonucunda tahttan indirilen padişahtır." }
+        ];
+
+        let queue = [];
+        let correctCount = 0;
+        const totalQuestions = quizData.length;
+        let isWaitingForNext = false;
+        let currentCorrectId = "";
+        
+        // SWIPE DEĞİŞKENLERİ
+        let currentTabIndex = 0; // 0: 17, 1: 18, 2: 19
+        let touchstartX = 0;
+        let touchendX = 0;
+
+        const swipeWrapper = document.getElementById('swipeWrapper');
+        const swipeTrack = document.getElementById('swipeTrack');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+
+        // KAYDIRMA (SWIPE) ALGILAYICILARI
+        swipeWrapper.addEventListener('touchstart', e => {
+            touchstartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+
+        swipeWrapper.addEventListener('touchend', e => {
+            touchendX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
+
+        function handleSwipe() {
+            const threshold = 40; 
+            if (touchendX < touchstartX - threshold) {
+                if (currentTabIndex < 2) goToTab(currentTabIndex + 1);
+            }
+            if (touchendX > touchstartX + threshold) {
+                if (currentTabIndex > 0) goToTab(currentTabIndex - 1);
+            }
+        }
+
+        // SEKME DEĞİŞTİRME FONKSİYONU
+        function goToTab(index) {
+            currentTabIndex = index;
+            swipeTrack.style.transform = `translateX(-${index * 33.333}%)`;
+            
+            tabBtns.forEach((btn, i) => {
+                if(i === index) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function initQuiz() {
+            queue = [...quizData];
+            shuffleArray(queue);
+            document.getElementById('total').textContent = totalQuestions;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (queue.length === 0) return endQuiz();
+            
+            isWaitingForNext = false;
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            // Tüm butonları temizle ve aktifleştir
+            document.querySelectorAll('.reformist-btn').forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('correct', 'wrong', 'correct-highlight');
+            });
+
+            const qBox = document.getElementById('questionText');
+            qBox.textContent = queue[0].text;
+            
+            currentCorrectId = queue[0].id;
+
+            document.getElementById('progress').textContent = Math.min(correctCount + 1, totalQuestions);
+            updateProgressBar();
+            
+            document.getElementById('quizContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function checkAnswer(selectedId, btnElement) {
+            if (isWaitingForNext) return;
+            isWaitingForNext = true;
+            
+            document.querySelectorAll('.reformist-btn').forEach(btn => btn.disabled = true);
+
+            const isCorrect = (selectedId === currentCorrectId);
+
+            if (isCorrect) {
+                btnElement.classList.add('correct');
+                correctCount++;
+                document.getElementById('score').textContent = correctCount;
+                queue.shift(); 
+            } else {
+                btnElement.classList.add('wrong');
+                
+                const correctBtn = document.querySelector(`.reformist-btn[data-id="${currentCorrectId}"]`);
+                if (correctBtn) {
+                    const parentPanel = correctBtn.closest('.period-panel');
+                    const panelIndex = parseInt(parentPanel.id.split('-')[1]);
+                    
+                    goToTab(panelIndex);
+                    correctBtn.classList.add('correct-highlight');
+                }
+                
+                const failedQuestion = queue.shift();
+                queue.push(failedQuestion);
+            }
+            
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+        
+        function nextQuestion() {
+            if (queue.length > 0) {
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function updateProgressBar() {
+            const percentage = (correctCount / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = percentage + '%';
+        }
+
+        function endQuiz() {
+            document.getElementById('progressBar').style.width = '100%';
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'block';
+            document.getElementById('finalScore').textContent = `${correctCount} / ${totalQuestions}`;
+        }
+
+        // --- KLAVYE KISAYOLLARI DİNLEYİCİSİ EKLENDİ ---
+        document.addEventListener('keydown', function(e) {
+            // Eğer quiz bittiyse ve sonuç ekranındaysak, Enter ile sayfayı yenile
+            if (document.getElementById('resultsContainer').style.display === 'block') {
+                if (e.key === 'Enter') location.reload();
+                return;
+            }
+
+            if (isWaitingForNext) {
+                // Soru cevaplandıysa ve "GEÇ" butonunu bekliyorsak
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault(); // Boşluk tuşunun sayfayı aşağı kaydırmasını engelle
+                    nextQuestion();
+                }
+            } else {
+                // Soru henüz cevaplanmadıysa
+                if (e.key === 'ArrowLeft') {
+                    if (currentTabIndex > 0) goToTab(currentTabIndex - 1);
+                } else if (e.key === 'ArrowRight') {
+                    if (currentTabIndex < 2) goToTab(currentTabIndex + 1);
+                } else if (e.key >= '1' && e.key <= '5') {
+                    // Bulunduğumuz aktif sekmeyi bul
+                    const activePanel = document.getElementById('panel-' + currentTabIndex);
+                    const buttons = activePanel.querySelectorAll('.reformist-btn');
+                    // Basılan rakamı index'e çevir (1 -> 0, 2 -> 1 vb.)
+                    const index = parseInt(e.key) - 1;
+                    
+                    // Eğer o index'te bir buton varsa ve disabled değilse tıkla
+                    if (buttons[index] && !buttons[index].disabled) {
+                        buttons[index].click();
+                    }
+                }
+            }
+        });
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>

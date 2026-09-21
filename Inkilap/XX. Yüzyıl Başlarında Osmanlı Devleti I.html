@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türk İnkılap Tarihi Testi</title>
+    <style>
+        :root {
+            --primary: #2E8B57;
+            --success: #228B22;
+            --danger: #B22222;
+            --light: #F5FFFA;
+            --dark: #2F4F4F;
+            --accent: #32CD32;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E8B57 0%, #32CD32 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "📜";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 139, 87, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(46, 139, 87, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(34, 139, 34, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 139, 87, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-trablusgarp { background: #2E8B57; }
+        .category-balkan { background: #228B22; }
+        .category-uluslararasi { background: #32CD32; }
+        .category-askeri { background: #006400; }
+        .category-siyasi { background: #556B2F; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option-btn {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .cat-image {
+                max-width: 150px;
+                max-height: 120px;
+            }
+            
+            .cat-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📜 Türk İnkılap Tarihi</h1>
+            <div class="subtitle">XX. Yüzyıl Başlarında Osmanlı Devleti I</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                word: "Trablusgarp Savaşı, Mustafa Kemal'in askeri kariyeri açısından hangi özelliği taşır?",
+                meaning: "İlk defa bir savaşa gönüllü olarak katıldığı savaştır.",
+                category: "Trablusgarp Savaşı",
+                question: "Trablusgarp Savaşı, Mustafa Kemal'in askeri kariyeri açısından hangi özelliği taşır?",
+                options: [
+                    "İlk defa bir savaşa gönüllü olarak katıldığı savaştır.",
+                    "İlk defa bir cepheye komutan olarak atandığı savaştır.",
+                    "İlk defa bir devletle ittifak yaptığı savaştır.",
+                    "İlk defa bir deniz harekâtını yönettiği savaştır."
+                ],
+                explanation: "Mustafa Kemal, resmi görevle değil gönüllü olarak katıldığı bu savaşta Derne ve Tobruk'ta başarılı mücadeleler vermiştir."
+            },
+            {
+                word: "Mustafa Kemal, Trablusgarp Savaşı'na hangi takma ad ve meslek kimliğiyle katılmış ve hangi şehirlerde çarpışmıştır?",
+                meaning: "Gazeteci Mustafa Şerif - Derne ve Tobruk",
+                category: "Trablusgarp Savaşı",
+                question: "Mustafa Kemal, Trablusgarp Savaşı'na hangi takma ad ve meslek kimliğiyle katılmış ve hangi şehirlerde çarpışmıştır?",
+                options: [
+                    "Tüccar Hamdi - Bingazi",
+                    "Gazeteci Mustafa Şerif - Derne ve Tobruk",
+                    "Öğretmen Mehmet - Trablusgarp",
+                    "Kuyumcu Hamdi - Fizan"
+                ],
+                explanation: "Osmanlı subayları, İtalya'nın deniz ablukası nedeniyle bölgeye gizlice giderek yerel halkı örgütlemişlerdir. Enver Paşa da 'Tüccar Hamdi Bey' takma adını kullanmıştır."
+            },
+            {
+                word: "Trablusgarp Savaşı'nda Osmanlı Devleti'nin bölgeye karadan asker sevk edememesinin temel nedeni neydi?",
+                meaning: "Mısır'ın İngiliz işgali altında olması",
+                category: "Trablusgarp Savaşı",
+                question: "Trablusgarp Savaşı'nda Osmanlı Devleti'nin bölgeye karadan asker sevk edememesinin temel nedeni neydi?",
+                options: [
+                    "İtalyan ordusunun Mısır sınırını tutması",
+                    "Mısır'ın İngiliz işgali altında olması",
+                    "Sahra çölünün geçit vermemesi",
+                    "Yerel Arap aşiretlerinin izin vermemesi"
+                ],
+                explanation: "Mısır'ın İngiliz kontrolünde olması, Osmanlı'nın karadan asker sevkiyatını imkansız hale getirmiştir."
+            },
+            {
+                word: "Trablusgarp Savaşı'nda Osmanlı Devleti'nin bölgeye denizden asker sevk edememesinin temel nedeni aşağıdakilerden hangisidir?",
+                meaning: "Osmanlı donanmasının çürümüş olması ve İtalya'nın Çanakkale Boğazı'nı abluka altına alması",
+                category: "Trablusgarp Savaşı",
+                question: "Trablusgarp Savaşı'nda Osmanlı Devleti'nin bölgeye denizden asker sevk edememesinin temel nedeni aşağıdakilerden hangisidir?",
+                options: [
+                    "Osmanlı donanmasının çürümüş olması ve İtalya'nın Çanakkale Boğazı'nı abluka altına alması",
+                    "Yunan donanmasının Ege Denizi'ni kontrol etmesi",
+                    "Rus donanmasının Karadeniz'de üstünlük kurması",
+                    "Süveyş Kanalı'nın trafiğe kapatılmış olması"
+                ],
+                explanation: "İtalya'nın deniz gücü karşısında Osmanlı donanmasının yetersiz kalması ve Çanakkale Boğazı'nın abluka altına alınması deniz yolunu kapatmıştır."
+            },
+            {
+                word: "Uşi Antlaşması'na göre, On İki Ada ve Rodos'un geçici olarak İtalya'ya bırakılmasının resmi gerekçesi neydi?",
+                meaning: "Adaların Balkan Savaşları sırasında Yunanistan'a karşı İtalya tarafından korunacağının düşünülmesi",
+                category: "Trablusgarp Savaşı",
+                question: "Uşi Antlaşması'na göre, On İki Ada ve Rodos'un geçici olarak İtalya'ya bırakılmasının resmi gerekçesi neydi?",
+                options: [
+                    "Adaların Balkan Savaşları sırasında Yunanistan'a karşı İtalya tarafından korunacağının düşünülmesi",
+                    "Adaların İtalya'ya olan coğrafi yakınlığı",
+                    "Osmanlı'nın adalardan askeri bir üs olarak faydalanmak istememesi",
+                    "Adalar halkının İtalyan yönetimini talep etmesi"
+                ],
+                explanation: "Bu geçici bırakma maddesi, Balkan Savaşları'nın başlaması üzerine adaların Yunanistan'a geçmesini engellemek amacıyla eklenmiştir."
+            },
+            {
+                word: "I. Balkan Savaşı'nı resmen başlatan ilk devlet aşağıdakilerden hangisidir?",
+                meaning: "Karadağ",
+                category: "Balkan Savaşları",
+                question: "I. Balkan Savaşı'nı resmen başlatan ilk devlet aşağıdakilerden hangisidir?",
+                options: [
+                    "Yunanistan",
+                    "Sırbistan",
+                    "Bulgaristan",
+                    "Karadağ"
+                ],
+                explanation: "Karadağ, 8 Ekim 1912'de Osmanlı Devleti'ne savaş ilan ederek I. Balkan Savaşı'nı başlatmıştır."
+            },
+            {
+                word: "I. Balkan Savaşı'nda Osmanlı Devleti'nin mağlup olmasının sebepleri arasında aşağıdakilerden hangisi gösterilemez?",
+                meaning: "İtilaf Devletleri'nin (İngiltere, Fransa, Rusya) topyekûn Osmanlı'ya savaş açması",
+                category: "Balkan Savaşları",
+                question: "I. Balkan Savaşı'nda Osmanlı Devleti'nin mağlup olmasının sebepleri arasında aşağıdakilerden hangisi gösterilemez?",
+                options: [
+                    "Ordunun siyasete karışması ve subaylar arasındaki çekişmeler",
+                    "Dört ayrı cephede aynı anda savaşmak zorunda kalınması",
+                    "İtilaf Devletleri'nin (İngiltere, Fransa, Rusya) topyekûn Osmanlı'ya savaş açması",
+                    "Silah, teçhizat ve lojistik eksiklikleri"
+                ],
+                explanation: "İtilaf Devletleri doğrudan savaşa katılmamış, ancak Balkan devletlerini desteklemişlerdir."
+            },
+            {
+                word: "I. Balkan Savaşı sonucunda, çok uluslu bir yapıyı hedefleyen 'Osmanlıcılık' fikri geçersiz hale gelmiş ve ağırlık kazanan fikir akımı hangisi olmuştur?",
+                meaning: "Türkçülük",
+                category: "Siyasi Gelişmeler",
+                question: "I. Balkan Savaşı sonucunda, çok uluslu bir yapıyı hedefleyen 'Osmanlıcılık' fikri geçersiz hale gelmiş ve ağırlık kazanan fikir akımı hangisi olmuştur?",
+                options: [
+                    "Batıcılık",
+                    "Türkçülük",
+                    "İslamcılık",
+                    "Adem-i Merkeziyetçilik"
+                ],
+                explanation: "Balkan Savaşları sonunda Balkanlardaki Hristiyan unsurların kaybedilmesi, Osmanlıcılık fikrinin geçersiz kalmasına neden olmuştur."
+            },
+            {
+                word: "I. Balkan Savaşı'nın kötü gidişatı üzerine, İttihat ve Terakki Cemiyeti'nin hükümeti zorla devirerek iktidarı ele geçirdiği askeri müdahale hangisidir?",
+                meaning: "Babıali Baskını",
+                category: "Siyasi Gelişmeler",
+                question: "I. Balkan Savaşı'nın kötü gidişatı üzerine, İttihat ve Terakki Cemiyeti'nin hükümeti zorla devirerek iktidarı ele geçirdiği askeri müdahale hangisidir?",
+                options: [
+                    "31 Mart Vakası",
+                    "Babıali Baskını",
+                    "Çanakkale Direnişi",
+                    "Sarıkamış Harekatı"
+                ],
+                explanation: "23 Ocak 1913'te Enver Paşa önderliğinde gerçekleşen bu darbe ile İttihat ve Terakki iktidarı ele geçirmiştir."
+            },
+            {
+                word: "Osmanlı Devleti'nin Balkanlar'dan ayrılarak bağımsızlığını ilan eden son devlet hangisidir?",
+                meaning: "Arnavutluk",
+                category: "Balkan Savaşları",
+                question: "Osmanlı Devleti'nin Balkanlar'dan ayrılarak bağımsızlığını ilan eden son devlet hangisidir?",
+                options: [
+                    "Sırbistan",
+                    "Bulgaristan",
+                    "Arnavutluk",
+                    "Karadağ"
+                ],
+                explanation: "Arnavutluk, 28 Kasım 1912'de bağımsızlığını ilan ederek Osmanlı'dan ayrılan son Balkan devleti olmuştur."
+            },
+            {
+                word: "II. Balkan Savaşı sonunda Osmanlı Devleti, hangi antlaşma ile Edirne ve Kırklareli'ni geri alarak batı sınırını Meriç Nehri'ne kadar çekmiştir?",
+                meaning: "İstanbul Antlaşması (Bulgaristan ile)",
+                category: "Balkan Savaşları",
+                question: "II. Balkan Savaşı sonunda Osmanlı Devleti, hangi antlaşma ile Edirne ve Kırklareli'ni geri alarak batı sınırını Meriç Nehri'ne kadar çekmiştir?",
+                options: [
+                    "Atina Antlaşması",
+                    "Londra Antlaşması",
+                    "İstanbul Antlaşması (Bulgaristan ile)",
+                    "Bükreş Antlaşması"
+                ],
+                explanation: "29 Eylül 1913'te imzalanan bu antlaşma ile Osmanlı, Edirne ve Kırklareli'ni geri alarak batı sınırını Meriç Nehri'ne kadar genişletmiştir."
+            },
+            {
+                word: "II. Balkan Savaşı sırasında Edirne'yi Bulgar işgalinden kurtaran ve 'Edirne Fatihi' unvanını alan Osmanlı komutanı kimdir?",
+                meaning: "Enver Paşa",
+                category: "Askeri Tarih",
+                question: "II. Balkan Savaşı sırasında Edirne'yi Bulgar işgalinden kurtaran ve 'Edirne Fatihi' unvanını alan Osmanlı komutanı kimdir?",
+                options: [
+                    "Mustafa Kemal",
+                    "Enver Paşa",
+                    "Fuat Bulca",
+                    "Ali Çetinkaya"
+                ],
+                explanation: "Enver Paşa, 22 Temmuz 1913'te Edirne'yi Bulgarlardan geri alarak 'Edirne Fatihi' unvanını kazanmıştır."
+            },
+            {
+                word: "Osmanlı Devleti, Atina Antlaşması ile hangi adaların geleceğini Büyük Devletlerin (İtilaf) kararına bırakmak zorunda kalmıştır?",
+                meaning: "On İki Ada ve Ege Adaları",
+                category: "Uluslararası İlişkiler",
+                question: "Osmanlı Devleti, Atina Antlaşması ile hangi adaların geleceğini Büyük Devletlerin (İtilaf) kararına bırakmak zorunda kalmıştır?",
+                options: [
+                    "Kıbrıs Adası",
+                    "On İki Ada ve Ege Adaları",
+                    "Girit Adası",
+                    "Rodos ve Sakız Adası"
+                ],
+                explanation: "14 Kasım 1913'te imzalanan Atina Antlaşması ile Ege adalarının geleceği büyük devletlerin kararına bırakılmıştır."
+            },
+            {
+                word: "Trablusgarp Savaşı'nda dünya tarihinde bir ilk olarak kullanılan savaş aracı nedir?",
+                meaning: "Uçak",
+                category: "Askeri Tarih",
+                question: "Trablusgarp Savaşı'nda dünya tarihinde bir ilk olarak kullanılan savaş aracı nedir?",
+                options: [
+                    "Denizaltı",
+                    "Tank",
+                    "Uçak",
+                    "Zırhlı tren"
+                ],
+                explanation: "İtalya, Trablusgarp Savaşı'nda uçağı keşif ve bombardıman amacıyla kullanarak dünya savaş tarihinde bir ilke imza atmıştır."
+            },
+            {
+                word: "Uşi Antlaşması'na göre, İtalya'ya bırakılan Trablusgarp ve Bingazi'de yaşayan halk, hangi konuda Osmanlı Halifesi'ne bağlı kalacaktı?",
+                meaning: "Dini",
+                category: "Trablusgarp Savaşı",
+                question: "Uşi Antlaşması'na göre, İtalya'ya bırakılan Trablusgarp ve Bingazi'de yaşayan halk, hangi konuda Osmanlı Halifesi'ne bağlı kalacaktı?",
+                options: [
+                    "Askeri ve siyasi",
+                    "Dini",
+                    "Ticari ve ekonomik",
+                    "Hukuki ve idari"
+                ],
+                explanation: "Bu madde, Osmanlı'nın bölge üzerindeki manevi nüfuzunu korumak amacıyla antlaşmaya eklenmiştir."
+            },
+            {
+                word: "I. Balkan Savaşı'nda Osmanlı'ya karşı savaşan dört Balkan devletinin (Yunanistan, Bulgaristan, Sırbistan, Karadağ) arkasındaki en büyük destekçi ve kışkırtıcı devlet hangisidir?",
+                meaning: "Rusya",
+                category: "Uluslararası İlişkiler",
+                question: "I. Balkan Savaşı'nda Osmanlı'ya karşı savaşan dört Balkan devletinin (Yunanistan, Bulgaristan, Sırbistan, Karadağ) arkasındaki en büyük destekçi ve kışkırtıcı devlet hangisidir?",
+                options: [
+                    "İngiltere",
+                    "Almanya",
+                    "Rusya",
+                    "Avusturya-Macaristan"
+                ],
+                explanation: "Rusya, Panislavizm politikası çerçevesinde Balkan devletlerini Osmanlı'ya karşı kışkırtmış ve desteklemiştir."
+            },
+            {
+                word: "Mustafa Kemal, Trablusgarp Savaşı'ndaki başarılarından dolayı hangi rütbeye terfi etmiştir?",
+                meaning: "Binbaşı",
+                category: "Askeri Tarih",
+                question: "Mustafa Kemal, Trablusgarp Savaşı'ndaki başarılarından dolayı hangi rütbeye terfi etmiştir?",
+                options: [
+                    "Yüzbaşı",
+                    "Binbaşı",
+                    "Albay",
+                    "Kıdemli Yüzbaşı"
+                ],
+                explanation: "Mustafa Kemal, Derne'deki başarılarından dolayı 1911'de binbaşı rütbesine terfi etmiştir."
+            },
+            {
+                word: "Balkan Savaşları sonucunda Anadolu'ya yapılan büyük göçlerin aşağıdaki etkilerinden hangisi olumlu bir katkı olarak değerlendirilebilir?",
+                meaning: "Yerli halka yeni bilgi ve teknikler öğretmeleri",
+                category: "Sosyal Tarih",
+                question: "Balkan Savaşları sonucunda Anadolu'ya yapılan büyük göçlerin aşağıdaki etkilerinden hangisi olumlu bir katkı olarak değerlendirilebilir?",
+                options: [
+                    "Yerli halka yeni bilgi ve teknikler öğretmeleri",
+                    "Şehirlerde barınma sorunları yaratmaları",
+                    "İşsizlik oranlarını artırmaları",
+                    "Yoksulluğun yaygınlaşmasına neden olmaları"
+                ],
+                explanation: "Balkanlardan gelen göçmenler, ticaret ve zanaat alanındaki bilgi ve becerilerini Anadolu'ya taşımışlardır."
+            },
+            {
+                word: "İtalya, 1909'da Rusya ile imzaladığı Racconigi Antlaşması ile neyi garantilemeyi amaçlamıştır?",
+                meaning: "Trablusgarp'ı işgal ettiğinde Rusya'nın ve diğer büyük devletlerin müdahalesini engellemeyi",
+                category: "Uluslararası İlişkiler",
+                question: "İtalya, 1909'da Rusya ile imzaladığı Racconigi Antlaşması ile neyi garantilemeyi amaçlamıştır?",
+                options: [
+                    "Trablusgarp'ı işgal ettiğinde Rusya'nın ve diğer büyük devletlerin müdahalesini engellemeyi",
+                    "Osmanlı donanmasının gücünü paylaşmayı",
+                    "Balkan devletleri ile bir ittifak kurmayı",
+                    "Süveyş Kanalı'ndan geçiş hakkını"
+                ],
+                explanation: "Bu antlaşma ile İtalya, Trablusgarp'ı işgal ettiğinde Rusya'nın tarafsız kalmasını sağlamayı hedeflemiştir."
+            },
+            {
+                word: "Osmanlı Devleti, Balkan Savaşları sonunda genel olarak toprak kaybetmesine rağmen, hangi antlaşma ile sınırlı da olsa (Edirne, Kırklareli) toprak kazanımı sağlayabilmiştir?",
+                meaning: "İstanbul Antlaşması (Bulgaristan ile - 1913)",
+                category: "Balkan Savaşları",
+                question: "Osmanlı Devleti, Balkan Savaşları sonunda genel olarak toprak kaybetmesine rağmen, hangi antlaşma ile sınırlı da olsa (Edirne, Kırklareli) toprak kazanımı sağlayabilmiştir?",
+                options: [
+                    "Londra Antlaşması (1913)",
+                    "Atina Antlaşması (1913)",
+                    "İstanbul Antlaşması (Sırbistan ile - 1914)",
+                    "İstanbul Antlaşması (Bulgaristan ile - 1913)"
+                ],
+                explanation: "II. Balkan Savaşı sırasında Bulgaristan'ın diğer Balkan devletleriyle savaşmasını fırsat bilen Osmanlı, Edirne ve Kırklareli'ni geri almıştır."
+            },
+            {
+                word: "Trablusgarp Savaşı hangi padişah döneminde gerçekleşmiştir?",
+                meaning: "V. Mehmed Reşad",
+                category: "Siyasi Tarih",
+                question: "Trablusgarp Savaşı hangi padişah döneminde gerçekleşmiştir?",
+                options: [
+                    "II. Abdülhamid",
+                    "V. Mehmed Reşad",
+                    "VI. Mehmed Vahdettin",
+                    "Abdülmecid"
+                ],
+                explanation: "V. Mehmed Reşad, 1909-1918 yılları arasında tahtta kalmış ve Trablusgarp Savaşı onun saltanatı döneminde gerçekleşmiştir."
+            },
+            {
+                word: "İtalya'nın Trablusgarp'ı işgal etmesinin sebepleri arasında aşağıdakilerden hangisi yer almaz?",
+                meaning: "Osmanlı Devleti'nin bölgede askeri açıdan güçlü olması",
+                category: "Trablusgarp Savaşı",
+                question: "İtalya'nın Trablusgarp'ı işgal etmesinin sebepleri arasında aşağıdakilerden hangisi yer almaz?",
+                options: [
+                    "Siyasi birliğini geç tamamlayıp sömürge yarışına katılma isteği",
+                    "Bölgenin hammadde kaynakları açısından zengin olması",
+                    "Osmanlı Devleti'nin bölgede askeri açıdan güçlü olması",
+                    "Bölgenin İtalya'ya coğrafi olarak yakın olması"
+                ],
+                explanation: "Osmanlı Devleti'nin bölgedeki askeri varlığı zayıftı, bu da İtalya'nın işgal kararını kolaylaştıran faktörlerden biriydi."
+            },
+            {
+                word: "Trablusgarp Savaşı sırasında aşağıdaki Osmanlı subaylarından hangisi bölgeye giden gönüllüler arasında değildir?",
+                meaning: "İsmet İnönü",
+                category: "Askeri Tarih",
+                question: "Trablusgarp Savaşı sırasında aşağıdaki Osmanlı subaylarından hangisi bölgeye giden gönüllüler arasında değildir?",
+                options: [
+                    "İsmet İnönü",
+                    "Enver Paşa",
+                    "Ali Fethi Okyar",
+                    "Mustafa Kemal"
+                ],
+                explanation: "İsmet İnönü, Trablusgarp Savaşı'na katılmamış, Yemen'de görev yapmıştır."
+            },
+            {
+                word: "İtalya, Trablusgarp Savaşı'nda kara harekâtlarında başarısız olunca, Osmanlı'yı barışa zorlamak için aşağıdaki hangi harekâtı gerçekleştirmiştir?",
+                meaning: "Beyrut Limanı'nı bombalamış, On İki Ada ve Rodos'u işgal etmiştir.",
+                category: "Trablusgarp Savaşı",
+                question: "İtalya, Trablusgarp Savaşı'nda kara harekâtlarında başarısız olunca, Osmanlı'yı barışa zorlamak için aşağıdaki hangi harekâtı gerçekleştirmiştir?",
+                options: [
+                    "İstanbul'u topa tutmuştur.",
+                    "Beyrut Limanı'nı bombalamış, On İki Ada ve Rodos'u işgal etmiştir.",
+                    "Süveyş Kanalı'nı ele geçirmiştir.",
+                    "Balkan devletleriyle ittifak kurmuştur."
+                ],
+                explanation: "İtalya, Ege adalarını işgal ederek Osmanlı'yı barış masasına oturmaya zorlamıştır."
+            },
+            {
+                word: "Uşi Antlaşması ile Osmanlı Devleti, Kuzey Afrika'daki son toprağını kaybetmiştir. Osmanlı'nın Afrika kıtasındaki İLK kaybı ise hangisidir?",
+                meaning: "Cezayir (1830)",
+                category: "Siyasi Tarih",
+                question: "Uşi Antlaşması ile Osmanlı Devleti, Kuzey Afrika'daki son toprağını kaybetmiştir. Osmanlı'nın Afrika kıtasındaki İLK kaybı ise hangisidir?",
+                options: [
+                    "Trablusgarp",
+                    "Tunus",
+                    "Mısır",
+                    "Cezayir (1830)"
+                ],
+                explanation: "Cezayir, 1830'da Fransız işgaline uğrayarak Osmanlı'nın Afrika'daki ilk kaybı olmuştur."
+            },
+            {
+                word: "Hamidiye Kahramanı olarak bilinen Osmanlı deniz subayı kimdir?",
+                meaning: "Rauf Orbay",
+                category: "Askeri Tarih",
+                question: "Hamidiye Kahramanı olarak bilinen Osmanlı deniz subayı kimdir?",
+                options: [
+                    "Rauf Orbay",
+                    "Enver Paşa",
+                    "Mustafa Kemal",
+                    "Cevat Çobanlı"
+                ],
+                explanation: "Rauf Orbay, Balkan Savaşları sırasında Hamidiye kruvazörü ile yaptığı başarılı akınlardan dolayı 'Hamidiye Kahramanı' olarak anılmıştır."
+            },
+            {
+                word: "Trablusgarp Savaşı'nda İtalyanlara karşı yerel halkı örgütleyen ve 'Çöl Aslanı' lakabıyla anılan direniş lideri kimdir?",
+                meaning: "Ömer Muhtar",
+                category: "Askeri Tarih",
+                question: "Trablusgarp Savaşı'nda İtalyanlara karşı yerel halkı örgütleyen ve 'Çöl Aslanı' lakabıyla anılan direniş lideri kimdir?",
+                options: [
+                    "Enver Paşa",
+                    "Mustafa Kemal",
+                    "Ömer Muhtar",
+                    "Ali Fethi Okyar"
+                ],
+                explanation: "Ömer Muhtar, İtalyan işgaline karşı Senusi tarikatı ile birlikte direniş örgütlemiş ve 'Çöl Aslanı' olarak anılmıştır."
+            },
+            {
+                word: "Balkan Savaşları'ndan en karlı çıkan devlet hangisidir?",
+                meaning: "Bulgaristan",
+                category: "Balkan Savaşları",
+                question: "Balkan Savaşları'ndan en karlı çıkan devlet hangisidir?",
+                options: [
+                    "Yunanistan",
+                    "Sırbistan",
+                    "Bulgaristan",
+                    "Karadağ"
+                ],
+                explanation: "I. Balkan Savaşı'nda Bulgaristan, en geniş toprak kazancını elde etmiş ve Balkan Savaşları'ndan en karlı çıkan devlet olmuştur."
+            },
+            {
+                word: "Balkan devletleri kendi aralarında hangi antlaşmayı imzalayarak II. Balkan Savaşı'nı sona erdirmişlerdir?",
+                meaning: "Bükreş Antlaşması",
+                category: "Balkan Savaşları",
+                question: "Balkan devletleri kendi aralarında hangi antlaşmayı imzalayarak II. Balkan Savaşı'nı sona erdirmişlerdir?",
+                options: [
+                    "Londra Antlaşması",
+                    "İstanbul Antlaşması",
+                    "Bükreş Antlaşması",
+                    "Atina Antlaşması"
+                ],
+                explanation: "10 Ağustos 1913'te imzalanan Bükreş Antlaşması ile II. Balkan Savaşı sona ermiş, Bulgaristan I. Balkan Savaşı'nda elde ettiği toprakların büyük bölümünü kaybetmiştir."
+            }
+        ];
+
+        // DOM elements
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const resultMessageEl = document.getElementById('resultMessage');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+        let masteredWords = [];
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Initialize quiz
+        function initQuiz() {
+            questions = shuffleArray([...quizData]);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            
+            // Add click event to cat cover
+            catCoverEl.addEventListener('click', removeCatCover);
+        }
+
+        // Remove cat cover to reveal answers
+        function removeCatCover() {
+            catCoverEl.style.display = 'none';
+        }
+
+        // Show current question
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            // Reset cat cover
+            catCoverEl.style.display = 'flex';
+            
+            // Shuffle options
+            const options = shuffleArray([...currentQuestion.options]);
+            
+            // Clear previous options
+            optionsEl.innerHTML = '';
+            
+            // Add cat cover back
+            optionsEl.appendChild(catCoverEl);
+            
+            // Create new option buttons
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = option;
+                button.addEventListener('click', () => selectAnswer(option, currentQuestion));
+                optionsEl.appendChild(button);
+            });
+            
+            // Reset UI for new question
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex;
+            progressBarEl.style.width = `${(currentQuestionIndex / questions.length) * 100}%`;
+        }
+
+        // Handle answer selection
+        function selectAnswer(selectedOption, currentQuestion) {
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // Disable all buttons
+            optionButtons.forEach(button => {
+                button.disabled = true;
+                
+                // Mark correct answer
+                if (button.textContent === currentQuestion.meaning) {
+                    button.classList.add('correct');
+                }
+                
+                // Mark incorrect selected answer
+                if (button.textContent === selectedOption && button.textContent !== currentQuestion.meaning) {
+                    button.classList.add('incorrect');
+                }
+            });
+            
+            // Check if answer is correct
+            const isCorrect = selectedOption === currentQuestion.meaning;
+            
+            // Update score if correct
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+                
+                // Add to mastered words if not already there
+                if (!masteredWords.some(w => w.word === currentQuestion.word)) {
+                    masteredWords.push(currentQuestion);
+                }
+            }
+            
+            // Show feedback
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            
+            if (isCorrect) {
+                feedbackTextEl.innerHTML = `✅ Doğru! <strong>${currentQuestion.explanation}</strong>`;
+            } else {
+                feedbackTextEl.innerHTML = `❌ Yanlış! Doğru cevap: <strong>${currentQuestion.meaning}</strong><br><br>${currentQuestion.explanation}`;
+            }
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        // End quiz and show results
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            finalScoreEl.textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            // Result message based on performance
+            if (percentage >= 90) {
+                resultMessageEl.textContent = "Mükemmel! Türk İnkılap Tarihi'ni çok iyi biliyorsunuz! 🏆";
+            } else if (percentage >= 70) {
+                resultMessageEl.textContent = "Çok iyi! Tarihî olaylara hakimsiniz. 👍";
+            } else if (percentage >= 50) {
+                resultMessageEl.textContent = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+            } else {
+                resultMessageEl.textContent = "Öğrenmeye devam! Tarihî olayları tekrar edin. 📚";
+            }
+            
+            // Display all words learned
+            wordListEl.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Kavramlar</h3>';
+            quizData.forEach(word => {
+                const wordCard = document.createElement('div');
+                wordCard.classList.add('word-card', 'fade-in');
+                wordCard.innerHTML = `
+                    <div class="word">${word.word}</div>
+                    <div class="meaning">${word.meaning}</div>
+                    <div class="category category-${getCategoryClass(word.category)}">${word.category}</div>
+                `;
+                wordListEl.appendChild(wordCard);
+            });
+        }
+
+        // Helper function to get CSS class for category
+        function getCategoryClass(category) {
+            const classes = {
+                'Trablusgarp Savaşı': 'trablusgarp',
+                'Balkan Savaşları': 'balkan',
+                'Uluslararası İlişkiler': 'uluslararasi',
+                'Askeri Tarih': 'askeri',
+                'Siyasi Tarih': 'siyasi',
+                'Siyasi Gelişmeler': 'siyasi',
+                'Sosyal Tarih': 'siyasi'
+            };
+            return classes[category] || 'trablusgarp';
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', nextQuestion);
+        
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>

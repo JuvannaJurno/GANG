@@ -1,0 +1,514 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MEB-AGS Tarih - Mimari Eserler ve Yaptıranlar</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "🏛️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .mode-selection {
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .mode-selection h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .mode-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .mode-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+            display: none;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .structure-image {
+            max-width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border: 3px solid var(--primary);
+        }
+
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+            text-align: left;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-letter {
+            font-weight: bold;
+            color: var(--primary);
+            margin-right: 15px;
+            font-size: 1.2rem;
+            min-width: 25px;
+        }
+        
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .option-btn.correct .option-letter {
+            color: white;
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        .option-btn.incorrect .option-letter {
+            color: white;
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            text-align: left;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ MEB-AGS Türkiye Tarihi</h1>
+            <div class="subtitle">Sık Sorulan Mimari Yapılar ve Yaptıranlar</div>
+        </header>
+
+        <div id="modeSelection" class="mode-selection">
+            <h2>Hangi Konuda Kendini Test Etmek İstersin?</h2>
+            <button class="mode-btn" onclick="startQuiz('who')">👤 Mimarı / Padişahı / Devleti Bilme</button>
+            <button class="mode-btn" onclick="startQuiz('name')">🕌 Yapının Adını Bilme</button>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <img id="structureImg" src="" alt="Mimari Yapı" class="structure-image">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <!-- Options injected via JS -->
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;" onclick="nextQuestion()">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Ana Menüye Dön</button>
+        </div>
+    </div>
+
+    <script>
+        const rawData = [{"name": "Nizamiye Medreseleri", "who": "Tuğrul Bey / Nizamülmülk (Büyük Selçuklu)", "feature": "Sünni İslam'ı korumak ve devlet memuru yetiştirmek amacıyla kurulan dönemin en modern üniversiteleri (Bağdat vs).", "img": "https://derstarih.com/wp-content/uploads/2020/04/nizamiye-medreseleri.jpg"}, {"name": "Ribatlar", "who": "Büyük Selçuklular", "feature": "Başlangıçta askeri güvenlik amacıyla sınır boylarında inşa edilen, sonrasında tüccarların konakladığı kervansaraylara dönüşen yapılar.", "img": "https://turkmaarifansiklopedisi.org.tr/uploads/matter/original/ribat-167d7cb6a7c3f7.webp"}, {"name": "Gök Medrese", "who": "Sahip Ata Fahrettin Ali (Anadolu Selçuklu)", "feature": "Taç kapısındaki muazzam mermer işçiliği ve çifte minaresiyle Sivas'ın sembolü olan medrese.", "img": "https://upload.wikimedia.org/wikipedia/commons/3/3a/G%C3%B6k_medrese_-_Sivas_-_Turquie.jpg"}, {"name": "Çifte Minareli Medrese", "who": "Hüdavent Hatun / İlhanlılar", "feature": "Anadolu'nun en büyük açık avlulu medreselerinden olan, Erzurum'daki şaheser.", "img": "https://upload.wikimedia.org/wikipedia/commons/7/71/Erzurum%2C_madrasa_dei_minareti_gemelli%2C_1253_ca.%2C_esterno_01.jpg"}, {"name": "İnce Minareli Medrese", "who": "Selçuklu Veziri Sahip Ata", "feature": "Hadis ilmi okutulmak üzere yapılan ve taç kapısındaki taş işçiliğiyle ünlü Konya'daki eser.", "img": "https://www.kulturportali.gov.tr/contents/images/20181127153157511_ince%20minareli%20medrese_9.jpg"}, {"name": "Karatay Medresesi", "who": "Celaleddin Karatay (Anadolu Selçuklu)", "feature": "Çini sanatının en güzel örneklerini barındıran ve Anadolu Selçuklu devrinin önemli bir eğitim merkezi olan Konya'daki yapı.", "img": "https://okuryazarim.com/wp-content/uploads/2017/02/Konya-Karatay-Medresesi.jpg"}, {"name": "Alaeddin Camii", "who": "I. Alaeddin Keykubat", "feature": "Avlusunda Selçuklu sultanlarının türbelerini barındıran, Konya'nın en eski ve büyük camisi.", "img": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Alaedin_Camii.JPG"}, {"name": "Sultanhanı Kervansarayı", "who": "I. Alaeddin Keykubat", "feature": "Aksaray'da bulunan, Anadolu'nun en büyük kervansarayı olma özelliğini taşıyan yapı.", "img": "https://www.gezire.com/wp-content/uploads/2025/09/Sultanhani-Kervansarayi.jpg"}, {"name": "Divriği Ulu Camii ve Darüşşifası", "who": "Mengücekliler (Ahmet Şah ve Turan Melek)", "feature": "Taş işlemeciliğindeki gölge oyunları (namaz kılan insan silüeti) ile UNESCO Dünya Mirası Listesi'nde yer alan muazzam Sivas eseri.", "img": "https://kvmgm.ktb.gov.tr/Resim/33393,unescodivrigijpg.png?0"}, {"name": "İsa Bey Camii", "who": "Aydınoğulları", "feature": "Efes/Selçuk'ta bulunan, Anadolu'nun en eski avlulu ve sütunlu cami örneklerinden.", "img": "https://upload.wikimedia.org/wikipedia/commons/7/78/%C4%B0sa_Bey_Camii.jpg"}, {"name": "Manisa Ulu Camii", "who": "Saruhanoğulları", "feature": "İçerisinde medrese bölümleri de bulunan ve muazzam ahşap minberiyle bilinen yapı.", "img": "https://www.kulturportali.gov.tr/contents/images/DJI_20240421135501_0168_D%20kopya.jpg"}, {"name": "Malabadi Köprüsü", "who": "Artuklular", "feature": "Batman Çayı üzerinde bulunan ve dünyadaki en geniş kemerli taş köprü unvanına sahip mimari eser.", "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOofyUYT8SRH3clcyS4iBCrAZVY8oR66PuQw&s"}, {"name": "Zinciriye Medresesi", "who": "Artuklular", "feature": "Mardin'de dilimli kubbeleriyle dikkat çeken, şehre hâkim bir tepede kurulmuş olan ilim merkezi.", "img": "https://okuldisiogrenme-cdn-small.eba.gov.tr/uploads/places/68c03275290ed.jpg"}, {"name": "Mesudiye Medresesi", "who": "Artuklular", "feature": "Anadolu'nun ilk üniversitesi sayılan, yazıtları ve taş işçiliğiyle bilinen yapı.", "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Diyarbak%C4%B1r_Mesudiye_Medresesi_3694.jpg/1280px-Diyarbak%C4%B1r_Mesudiye_Medresesi_3694.jpg"}, {"name": "Mardin Ulu Cami", "who": "Artuklular", "feature": "Dilimli kubbesi ve ince taş işçiliğine sahip minaresiyle Mardin'in sembol camisi.", "img": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Minare_%C3%BB_qubleya_medresey%C3%AA%2C_M%C3%AArd%C3%AEn%2C_2008.jpg"}, {"name": "Babüsur Camisi", "who": "Artuklular", "feature": "Artuklular döneminden günümüze ulaşan tarihi cami.", "img": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg8mXtSAxAzYyKCVGqqRZNl93lGTBtZk2JHuWtTtGueiZuqUegnQycVdz0I_gjiLUCHNb4kto7pliRoFS9IwFt-I3y0Yyu9W-0rGGTM_1rmmmDWzAvn0rtjet-0h9QaqUe3VeLyH5SKesQ/s1600/HARPUT_ULU_CAMI.jpg"}, {"name": "Gevher Nesibe Darüşşifası", "who": "I. Gıyaseddin Keyhüsrev (Anadolu Selçuklu)", "feature": "Anadolu'daki ilk tıp fakültesi / şifahane olarak bilinen Kayseri'deki yapı.", "img": "https://www.kayseri.bel.tr/uploads/kesfet/medreseler/gevher_nesibe_medrese_3.jpg"}, {"name": "Eşrefoğlu Camii", "who": "Eşrefoğulları", "feature": "Konya-Beyşehir'de bulunan, Anadolu'daki ahşap direkli ve ahşap çatılı camilerin en büyük ve en güzel örneği.", "img": "https://upload.wikimedia.org/wikipedia/commons/1/10/Beysehir_Eshrefoglu_Camii_4369.jpg"}, {"name": "İznik Yeşil Cami", "who": "Çandarlı Hayreddin Paşa (Osmanlı Erken Dönem)", "feature": "Erken dönem Osmanlı mimarisinin ilk çinili ve tek kubbeli cami örneği.", "img": "https://belediye-assets.s3.eu-central-1.amazonaws.com/public/files/places/images/684c6cd50f8b3.webp"}, {"name": "Bursa Ulu Camii", "who": "Yıldırım Bayezid", "feature": "Çok kubbeli cami mimarisinin ilk ve en görkemli örneği olan, 'Bursa'nın Ayasofyası'.", "img": "https://www.kulturportali.gov.tr/repoKulturPortali/large/SehirRehberi//GezilecekYer/20260123161745234_Bursa_%20Ulu%20Cami%20(11)%20kopya.jpg?format=jpg&quality=50"}, {"name": "Bursa Yeşil Cami", "who": "Çelebi Mehmet", "feature": "Ters 'T' (zaviyeli) planlı camilerin en ünlü örneği.", "img": "https://www.kulturportali.gov.tr/contents/images/Bursa%20Ye%C5%9Fil%20Camii(1).jpg"}, {"name": "Yeşil Türbe", "who": "Çelebi Mehmet", "feature": "Tüm cepheleri çiniyle kaplı tek Osmanlı türbesi olan ve Bursa'nın sembolü sayılan yapı.", "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXxPfY59J7Ci31qhQCX8j-e-FcOHcNQA21Lw&s"}, {"name": "Muradiye Külliyesi", "who": "II. Murat", "feature": "Bursa'da Osmanlı padişahları tarafından inşa ettirilen son külliye.", "img": "https://upload.wikimedia.org/wikipedia/commons/2/23/Muradiye_Complex_01.jpg"}, {"name": "Üç Şerefeli Cami", "who": "II. Murat", "feature": "Merkezi kubbeli cami planına geçişin ilk büyük adımı olan ve her minaresine farklı merdivenlerden çıkılan Edirne yapısı.", "img": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Edirne_view_of_%C3%9C%C3%A7_%C5%9Eerefeli_Mosque_%28cropped%29.jpg"}, {"name": "Selimiye Camii", "who": "II. Selim (Mimar Sinan)", "feature": "Mimar Sinan'ın 'Ustalık eserim' dediği ve UNESCO Dünya Mirası olan muazzam Edirne camisi.", "img": "https://www.kulturportali.gov.tr/contents/images/THK-ORHAN%20%C3%96ZG%C3%9CLBA%C5%9E-ED%C4%B0RNE-Selimiye%20Camii%20kopya%202.jpg?format=jpg&quality=50&width=1200"}, {"name": "Fatih Camii", "who": "Fatih Sultan Mehmet", "feature": "İstanbul'un fethinden sonra şehre vurulan ilk büyük Türk-İslam mührü olan selatin camii.", "img": "https://upload.wikimedia.org/wikipedia/commons/1/13/Sultan_Muhammet_Fatih_camii_%28cropped%29.jpg"}, {"name": "Süleymaniye Camii", "who": "Kanuni Sultan Süleyman (Mimar Sinan)", "feature": "Mimar Sinan'ın 'Kalfalık eserim' dediği, akustik dehası ve külliyesiyle İstanbul'un siluetini çizen yapı.", "img": "https://upload.wikimedia.org/wikipedia/commons/3/38/S%C3%BCleymaniyeMosqueIstanbul_%28cropped%29.jpg"}, {"name": "Şehzade Camii", "who": "Kanuni Sultan Süleyman (Mimar Sinan)", "feature": "Mimar Sinan'ın 'Çıraklık eserim' dediği ve ideal merkezi planlı camilerin öncüsü olan yapı.", "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRHAROhZcPB_XX1jgr4JhWnbESxLhIvG7ksg&s"}, {"name": "Sultanahmet Camii", "who": "I. Ahmet (Sedefkar Mehmet Ağa)", "feature": "Altı minareli ilk Osmanlı camisi olan ve dünyada 'Blue Mosque' olarak bilinen yapı.", "img": "https://cdn.akkahotels.com/Uploads/Blog/sultanahmet-cami-istanbul1_15.jpg"}, {"name": "Haseki Külliyesi", "who": "Hürrem Sultan", "feature": "Mimar Sinan'ın İstanbul'da baş mimar olarak yaptığı ilk Haseki ve Külliye yapısı.", "img": "https://turkmaarifansiklopedisi.org.tr/uploads/matter/original/haseki-kulliyesi-1677633343ae04.webp"}, {"name": "Dolmabahçe Camii", "who": "Abdülmecid", "feature": "Ampir ve Barok üsluplarının karışımıyla yapılan, denize nazır büyük pencereleriyle dikkat çeken cami.", "img": "https://img.piri.net/resim/imagecrop/2020/06/11/01/58/resized_0129d-3dece889mansetc.jpg"}, {"name": "İshak Paşa Sarayı", "who": "Osmanlı (18. Yüzyıl)", "feature": "Osmanlı'nın Lale Devri'nden sonra inşa edilen, hem Batı (Barok/Gotik) hem Doğu esintileri taşıyan dünyanın ilk alttan ısıtmalı sarayı.", "img": "https://web-cdnprod.aa.com.tr/uploads/Contents/2016/12/20/thumbs_b_c_e55d688d94f1d5916b37efe17eba1e3c.jpg"}, {"name": "Mostar Köprüsü", "who": "Mimar Hayreddin (Osmanlı)", "feature": "Mimar Sinan'ın öğrencisi Mimar Hayreddin tarafından Bosna-Hersek'te inşa edilen ve Osmanlı'nın Balkanlardaki en önemli simgelerinden olan yapı.", "img": "https://web-cdnprod.aa.com.tr/uploads/Contents/2023/07/23/thumbs_b_c_0f58651ef16efd3dc683fc3b04ec9135.jpg?v=143359"}];
+        
+        let quizMode = 'who';
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function generateQuestions(mode) {
+            let generated = [];
+            
+            const allWhos = [...new Set(rawData.map(item => item.who))];
+            const allNames = rawData.map(item => item.name);
+
+            rawData.forEach(item => {
+                let correctAnswer, questionText, pool;
+                
+                if (mode === 'who') {
+                    correctAnswer = item.who;
+                    questionText = `Görseldeki yapı: <strong>${item.name}</strong><br><br><em>Özellik: ${item.feature}</em><br><br>Bu yapıyı <strong>kim / hangi devlet</strong> yaptırmıştır?`;
+                    pool = allWhos;
+                } else {
+                    correctAnswer = item.name;
+                    questionText = `<strong>${item.who}</strong> tarafından yaptırılan görseldeki eser:<br><br><em>Özellik: ${item.feature}</em><br><br>Bu yapının adı nedir?`;
+                    pool = allNames;
+                }
+
+                // Generate wrong options
+                let wrongOptions = pool.filter(opt => opt !== correctAnswer);
+                wrongOptions = shuffleArray(wrongOptions).slice(0, 3);
+                
+                let options = shuffleArray([correctAnswer, ...wrongOptions]);
+
+                generated.push({
+                    correctAnswer: correctAnswer,
+                    meaning: `${item.name}, ${item.who} tarafından yaptırılmıştır. Özelliği: ${item.feature}`,
+                    question: questionText,
+                    img: item.img,
+                    options: options
+                });
+            });
+
+            return shuffleArray(generated);
+        }
+
+        function startQuiz(mode) {
+            quizMode = mode;
+            document.getElementById('modeSelection').style.display = 'none';
+            document.getElementById('quizContainer').style.display = 'block';
+            
+            questions = generateQuestions(mode);
+            document.getElementById('total').textContent = questions.length;
+            
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestionIndex];
+            document.getElementById('progress').textContent = currentQuestionIndex + 1;
+            document.getElementById('progressBar').style.width = `${((currentQuestionIndex) / questions.length) * 100}%`;
+            
+            document.getElementById('structureImg').src = q.img;
+            document.getElementById('question').innerHTML = q.question;
+            
+            const optionsEl = document.getElementById('options');
+            optionsEl.innerHTML = '';
+            
+            const letters = ['A', 'B', 'C', 'D'];
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn fade-in';
+                btn.style.animationDelay = `${index * 0.1}s`;
+                
+                btn.innerHTML = `<span class="option-letter">${letters[index]}.</span> <span class="option-text">${opt}</span>`;
+                btn.onclick = () => checkAnswer(opt, btn);
+                optionsEl.appendChild(btn);
+            });
+            
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function checkAnswer(selectedOpt, btn) {
+            const q = questions[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            buttons.forEach(b => {
+                b.disabled = true;
+                const textSpan = b.querySelector('.option-text').textContent;
+                if (textSpan === q.correctAnswer) {
+                    b.classList.add('correct');
+                }
+            });
+            
+            const feedbackEl = document.getElementById('feedback');
+            const feedbackText = document.getElementById('feedbackText');
+            
+            if (selectedOpt === q.correctAnswer) {
+                score += 10;
+                document.getElementById('score').textContent = score;
+                feedbackEl.className = 'feedback correct-feedback fade-in';
+                feedbackText.innerHTML = `<strong>Tebrikler! 🎉</strong><br>${q.meaning}`;
+            } else {
+                btn.classList.add('incorrect');
+                feedbackEl.className = 'feedback incorrect-feedback fade-in';
+                feedbackText.innerHTML = `<strong>Yanlış! Doğru Cevap: ${q.correctAnswer}</strong><br>${q.meaning}`;
+            }
+            
+            feedbackEl.style.display = 'block';
+            document.getElementById('nextBtn').style.display = 'block';
+            document.getElementById('progressBar').style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'block';
+            
+            const maxScore = questions.length * 10;
+            const percentage = (score / maxScore) * 100;
+            
+            let message = '';
+            if (percentage >= 90) message = "Muazzam! Tarih dehasısın! 👑";
+            else if (percentage >= 70) message = "Harika! Sınav için çok hazırsın! 🌟";
+            else if (percentage >= 50) message = "İyi ama biraz daha tekrar fena olmaz! 📚";
+            else message = "Flash kartlara geri dönüş vakti! 💪";
+            
+            document.getElementById('finalScore').innerHTML = `${score} / ${maxScore}<br><small style="font-size:1.2rem;color:var(--dark)">${message}</small>`;
+            
+            const wordListEl = document.getElementById('wordList');
+            wordListEl.innerHTML = '<h3 style="margin-bottom:15px;color:var(--primary)">Genel Tekrar Özeti:</h3>';
+            
+            questions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>${q.correctAnswer}</strong><br><small style="color:var(--dark)">${q.meaning}</small>`;
+                wordListEl.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

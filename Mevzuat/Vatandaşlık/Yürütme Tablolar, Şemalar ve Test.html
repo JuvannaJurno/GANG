@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Vatandaşlık - Yürütme Sayıları & Şema Etkinliği</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gold: #FFD700;
+            --flow-bg: #E8F5E9;
+            --flow-border: #81C784;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%); color: var(--dark); line-height: 1.6; padding: 15px; min-height: 100vh; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow: hidden; }
+        header { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; text-align: center; padding: 25px 20px; position: relative; }
+        header::before { content: "🧩"; font-size: 3rem; position: absolute; top: 10px; left: 20px; opacity: 0.3; }
+        h1 { margin-bottom: 8px; font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.1rem; opacity: 0.9; }
+
+        /* NOTLAR KISMI */
+        .notes-container { padding: 25px; animation: fadeIn 0.5s ease; }
+        .notes-title { color: var(--primary); margin-bottom: 15px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .notes-scroll-area { max-height: 55vh; overflow-y: auto; background: var(--light); border: 2px solid var(--accent); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        .notes-scroll-area::-webkit-scrollbar { width: 8px; }
+        .notes-scroll-area::-webkit-scrollbar-track { background: #e9ecef; border-radius: 10px; }
+        .notes-scroll-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        .notes-scroll-area h3 { color: var(--dark); border-bottom: 2px solid var(--primary); padding-bottom: 5px; margin-top: 20px; margin-bottom: 10px; }
+        .notes-scroll-area h3:first-child { margin-top: 0; }
+        .table-responsive { overflow-x: auto; margin-bottom: 25px; border-radius: 8px; }
+        .notes-table { width: 100%; border-collapse: collapse; min-width: 600px; background: white; }
+        .notes-table th, .notes-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        .notes-table th { background-color: var(--primary); color: white; font-size: 1.05rem; }
+        .notes-table tr:nth-child(even) { background-color: #f8fcf8; }
+        .notes-table tr:hover { background-color: #e8f5e9; }
+
+        .start-quiz-wrapper { text-align: center; padding: 10px 0; }
+        .scroll-msg { color: var(--danger); font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; }
+        .next-btn { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none; padding: 16px 32px; border-radius: 10px; font-size: 1.2rem; cursor: pointer; display: block; margin: 25px auto 0; transition: all 0.3s ease; font-weight: 600; width: 100%; max-width: 350px; }
+        .next-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(46, 125, 50, 0.3); }
+        .next-btn:disabled { background: #cccccc; color: #666666; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* ETKİNLİK KISMI (ŞEMALAR) */
+        .activity-container { padding: 25px; display: none; animation: fadeIn 0.5s ease; }
+        .activity-header { text-align: center; margin-bottom: 20px; }
+        .activity-header h2 { color: var(--primary); font-size: 1.6rem; margin-bottom: 5px; }
+        .activity-header p { color: #555; font-size: 1rem; }
+        
+        .word-bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 25px; padding: 15px; background: #E3F2FD; border-radius: 10px; border: 2px dashed #90CAF9; }
+        .word-item { background: white; border: 2px solid #1976D2; color: #1565C0; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); user-select: none; }
+        .word-item:hover { background: #1976D2; color: white; transform: scale(1.05); }
+        .word-item.selected { background: var(--gold); border-color: #F57F17; color: #333; transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .word-item.used { opacity: 0; pointer-events: none; transform: scale(0); }
+
+        .flowcharts-wrapper { display: flex; flex-direction: column; gap: 30px; }
+        .flowchart { background: var(--flow-bg); border: 2px solid var(--flow-border); border-radius: 15px; padding: 20px; position: relative; }
+        .flowchart h3 { text-align: center; color: var(--dark); border-bottom: 2px dashed var(--flow-border); padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase; font-size: 1.2rem; }
+        
+        .flow-step { text-align: center; margin-bottom: 15px; position: relative; }
+        .flow-step::after { content: "↓"; display: block; font-size: 1.5rem; color: var(--primary); margin-top: 5px; font-weight: bold; }
+        .flow-step:last-child::after { display: none; }
+        .flow-box { display: inline-block; background: white; border: 2px solid var(--primary); padding: 10px 20px; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 2; position: relative; }
+        
+        .dropzone { display: inline-block; min-width: 150px; min-height: 40px; background: #FFF9C4; border: 2px dashed #FBC02D; border-radius: 6px; padding: 8px 15px; margin: 5px; color: #757575; font-style: italic; cursor: pointer; transition: all 0.3s; vertical-align: middle; }
+        .dropzone:hover { background: #FFF59D; }
+        .dropzone.active { background: #FFF176; border-color: #F57F17; transform: scale(1.05); box-shadow: 0 0 10px rgba(245, 127, 23, 0.5); }
+        .dropzone.filled { background: var(--success); border: 2px solid #2E7D32; color: white; font-weight: bold; font-style: normal; cursor: default; transform: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .dropzone.error { background: var(--danger); border-color: #B71C1C; color: white; animation: shake 0.5s; }
+
+        .split-flow { display: flex; justify-content: center; gap: 20px; margin-top: -10px; }
+        .split-branch { display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; }
+        .split-branch::before { content: ""; display: block; width: 2px; height: 20px; background: var(--primary); margin-bottom: 5px; }
+        
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } }
+
+        /* TEST KISMI */
+        .progress-container { width: 100%; background-color: #e9ecef; border-radius: 10px; margin: 15px 0; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); width: 0%; transition: width 0.5s ease; border-radius: 10px; }
+        .quiz-container { padding: 25px; display: none; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 1.1rem; background-color: var(--light); padding: 15px; border-radius: 10px; border: 2px solid var(--accent); }
+        .score { color: var(--primary); font-weight: bold; font-size: 1.2rem; }
+        .question-container { background: var(--light); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .question { font-size: 1.3rem; margin-bottom: 10px; color: var(--dark); line-height: 1.5; font-weight: 600; }
+        .options { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; position: relative; }
+        .option-btn { padding: 16px 20px; border: 2px solid #ddd; border-radius: 10px; background-color: white; color: var(--dark); font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; text-align: left; font-weight: 500;}
+        .option-btn:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .option-btn.correct { background-color: var(--success); color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .feedback { padding: 20px; border-radius: 10px; margin-top: 20px; display: none; font-size: 1.1rem; line-height: 1.6; animation: fadeIn 0.5s ease; }
+        .correct-feedback { background-color: rgba(56, 142, 60, 0.1); border-left: 5px solid var(--success); }
+        .incorrect-feedback { background-color: rgba(198, 40, 40, 0.1); border-left: 5px solid var(--danger); }
+        .results-container { padding: 30px; text-align: center; display: none; }
+        .results-title { color: var(--primary); margin-bottom: 20px; font-size: 2rem; }
+        .final-score { font-size: 3rem; color: var(--accent); margin: 20px 0; font-weight: bold; }
+        .word-list { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 30px; text-align: left; }
+        .word-card { border: 2px solid var(--accent); border-radius: 12px; padding: 20px; background: var(--light); }
+        .word { font-weight: bold; font-size: 1.2rem; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .split-flow { flex-direction: column; gap: 10px; }
+            .split-branch::before { display: none; }
+            .dropzone { min-width: 120px; font-size: 0.9rem; padding: 6px 10px; }
+            .word-item { padding: 6px 10px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔢 MEB-AGS Vatandaşlık</h1>
+            <div class="subtitle">Yürütme: Tablolar, Şemalar ve Test</div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <h2 class="notes-title">📖 Yürütme Sayısal Tabloları</h2>
+            
+            <div class="notes-scroll-area" id="notesScrollArea">
+                <h3 style="color: #1976D2; border-bottom-color: #1976D2;">1. Yürütme Organı Çoğunluk ve Oylama Oranları</h3>
+                <div class="table-responsive">
+                    <table class="notes-table">
+                        <thead style="background-color: #1976D2;">
+                            <tr><th>Durum / İşlem</th><th>Oran / Şart</th><th>Sayısal Karşılık</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>İlk Turda CB Seçilme Şartı</td><td><strong>Geçerli Oyların Salt Çoğunluğu</strong></td><td><strong>%50 + 1</strong></td></tr>
+                            <tr><td>Partilerin CB Adayı Gösterme Şartı</td><td><strong>Oyların Tek Başına veya Birlikte</strong></td><td><strong>En az %5'i</strong></td></tr>
+                            <tr><td>Halkın Doğrudan CB Adayı Göstermesi</td><td><strong>Seçmen İmzası</strong></td><td><strong>100.000</strong> Seçmen</td></tr>
+                            <tr><td>CB Soruşturma Açılması <b>İstemi (Teklif)</b></td><td><strong>Üye Tamsayısının Salt Çoğunluğu</strong></td><td><strong>301</strong> Milletvekili</td></tr>
+                            <tr><td>CB Soruşturma Açılması <b>Kararı</b></td><td><strong>Üye Tamsayısının 3/5'i</strong></td><td><strong>360</strong> Milletvekili</td></tr>
+                            <tr><td>CB Yüce Divan'a <b>Sevk Kararı</b></td><td><strong>Üye Tamsayısının 2/3'ü</strong></td><td><strong>400</strong> Milletvekili</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="color: #2E7D32; border-bottom-color: #2E7D32;">2. Yürütme Süreleri ve Diğer Önemli Sayılar</h3>
+                <div class="table-responsive">
+                    <table class="notes-table">
+                        <thead style="background-color: #2E7D32;">
+                            <tr><th>Kavram / Kural</th><th>Sayı / Süre</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Cumhurbaşkanı Seçilme Yaşı</td><td><strong>40</strong> Yaş</td></tr>
+                            <tr><td>Cumhurbaşkanı Görev Süresi</td><td><strong>5</strong> Yıl (En fazla 2 defa)</td></tr>
+                            <tr><td>Makam Boşalması (Genel Seçime > 1 Yıl Varsa)</td><td><strong>45</strong> Gün içindeki son Pazar</td></tr>
+                            <tr><td>Makam Boşalması (Genel Seçime ≤ 1 Yıl Varsa)</td><td><strong>60</strong> Gün içindeki ilk Pazar</td></tr>
+                            <tr><td>OHAL İlk İlan Süresi (CB Tarafından)</td><td>En fazla <strong>6</strong> Ay</td></tr>
+                            <tr><td>OHAL Uzatma Süresi (TBMM Tarafından)</td><td>Her defasında en fazla <strong>4</strong> Ay</td></tr>
+                            <tr><td>MGK Olağan Toplanma Süresi</td><td><strong>2</strong> Ayda bir</td></tr>
+                            <tr><td>Soruşturma Komisyonu Rapor Süresi (Maksimum)</td><td>En fazla <strong>3</strong> Ay</td></tr>
+                            <tr><td>Yüce Divan Normal Yargılama Süresi</td><td><strong>3</strong> Ay</td></tr>
+                            <tr><td>CB Kararnamelerine (CBK) İptal Davası Açma</td><td><strong>60</strong> Gün</td></tr>
+                            <tr><td>Genelkurmay Başkanı Görev Süresi</td><td><strong>4</strong> Yıl</td></tr>
+                            <tr><td>OHAL CBK'nın Meclis Onayı (Görüşülme Süresi)</td><td><strong>3</strong> Ay (içinde görüşülmezse düşer)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <p id="scrollMsg" class="scroll-msg">Sıradaki aşama için tabloları sonuna kadar okuyun 👇</p>
+                <button class="next-btn" id="goActivityBtn" disabled>Tabloları İnceledim, Etkinliğe Geç</button>
+            </div>
+        </div>
+
+        <div class="activity-container" id="activityContainer">
+            <div class="activity-header">
+                <h2>🧩 Bilgi Yerleştirme Etkinliği</h2>
+                <p>İleride buraya gelecek şemalarınız için hazırlık niteliğinde! Kelime havuzundan seçip boşluklara yerleştirin.</p>
+            </div>
+
+            <div class="word-bank" id="wordBank">
+                <div class="word-item" data-val="100b_secmen">100.000 Seçmen</div>
+                <div class="word-item" data-val="50_arti_1">%50 + 1</div>
+                <div class="word-item" data-val="301_oy">301 (Salt Çoğunluk)</div>
+                <div class="word-item" data-val="360_oy">360 (Üye Tam 3/5)</div>
+                <div class="word-item" data-val="400_oy">400 (Üye Tam 2/3)</div>
+                <div class="word-item" data-val="45_gun">45 Gün (Son Pazar)</div>
+                <div class="word-item" data-val="60_gun">60 Gün (İlk Pazar)</div>
+            </div>
+
+            <div class="flowcharts-wrapper">
+                <div class="flowchart">
+                    <h3>🗳️ Cumhurbaşkanı Adaylık ve Seçim</h3>
+                    <div class="flow-step">
+                        <div class="flow-box">Aday Gösterme: Parti Grubu / %5 Oy veya <br><span class="dropzone" data-answer="100b_secmen">Boşluk 1</span></div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-box">İlk Tur Kazanma Şartı: <br><span class="dropzone" data-answer="50_arti_1">Boşluk 2</span></div>
+                    </div>
+                    <div class="split-flow" style="margin-top:20px;">
+                        <div class="split-branch">
+                            <div class="flow-box" style="margin-bottom:10px;">Makam Boşaldı (Seçime > 1 Yıl)</div>
+                            <span class="dropzone" data-answer="45_gun">Boşluk 3</span>
+                        </div>
+                        <div class="split-branch">
+                            <div class="flow-box" style="margin-bottom:10px;">Makam Boşaldı (Seçime ≤ 1 Yıl)</div>
+                            <span class="dropzone" data-answer="60_gun">Boşluk 4</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flowchart">
+                    <h3>⚖️ Cumhurbaşkanı Cezai Sorumluluk</h3>
+                    <div class="flow-step">
+                        <div class="flow-box">Soruşturma İstemi (Teklifi):<br><span class="dropzone" data-answer="301_oy">Boşluk 5</span></div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-box">Soruşturma Açılmasına Karar Verilmesi:<br><span class="dropzone" data-answer="360_oy">Boşluk 6</span></div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-box">Yüce Divan'a Sevk Kararı:<br><span class="dropzone" data-answer="400_oy">Boşluk 7</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <button class="next-btn" id="startTestBtn" disabled>Şemaları Tamamladım, Teste Geç</button>
+            </div>
+        </div>
+        
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options"></div>
+            
+            <div class="feedback" id="feedback"><div id="feedbackText"></div></div>
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Yürütme Sayıları Testi Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. AŞAMA: NOTLAR -> ETKİNLİK GEÇİŞİ
+        const notesScrollArea = document.getElementById('notesScrollArea');
+        const goActivityBtn = document.getElementById('goActivityBtn');
+        const scrollMsg = document.getElementById('scrollMsg');
+
+        notesScrollArea.addEventListener('scroll', () => {
+            if (notesScrollArea.scrollTop + notesScrollArea.clientHeight >= notesScrollArea.scrollHeight - 10) {
+                goActivityBtn.disabled = false;
+                scrollMsg.style.display = 'none';
+            }
+        });
+
+        if (notesScrollArea.scrollHeight <= notesScrollArea.clientHeight) {
+            goActivityBtn.disabled = false;
+            scrollMsg.style.display = 'none';
+        }
+
+        goActivityBtn.addEventListener('click', () => {
+            document.getElementById('notesContainer').style.display = 'none';
+            document.getElementById('activityContainer').style.display = 'block';
+        });
+
+        // 2. AŞAMA: ŞEMA ETKİNLİĞİ MANTIĞI
+        let selectedWordBtn = null;
+        let correctPlacements = 0;
+        const totalPlacements = 7;
+        
+        const wordBtns = document.querySelectorAll('.word-item');
+        const dropzones = document.querySelectorAll('.dropzone');
+        const startTestBtn = document.getElementById('startTestBtn');
+
+        wordBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.classList.contains('used')) return;
+                wordBtns.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedWordBtn = btn;
+            });
+        });
+
+        dropzones.forEach(zone => {
+            zone.addEventListener('click', () => {
+                if (zone.classList.contains('filled')) return;
+                if (!selectedWordBtn) {
+                    zone.classList.add('error');
+                    setTimeout(() => zone.classList.remove('error'), 500);
+                    return;
+                }
+
+                if (zone.getAttribute('data-answer') === selectedWordBtn.getAttribute('data-val')) {
+                    zone.textContent = selectedWordBtn.textContent;
+                    zone.classList.add('filled');
+                    selectedWordBtn.classList.remove('selected');
+                    selectedWordBtn.classList.add('used');
+                    selectedWordBtn = null;
+                    correctPlacements++;
+
+                    if (correctPlacements === totalPlacements) {
+                        startTestBtn.disabled = false;
+                        startTestBtn.textContent = "Harika! Şimdi Testi Başlat";
+                        startTestBtn.style.animation = "pulse 1.5s infinite";
+                    }
+                } else {
+                    zone.classList.add('error');
+                    setTimeout(() => zone.classList.remove('error'), 500);
+                }
+            });
+        });
+
+        // ETKİNLİK -> TEST GEÇİŞİ
+        startTestBtn.addEventListener('click', () => {
+            document.getElementById('activityContainer').style.display = 'none';
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('quizContainer').style.display = 'block';
+            new QuizManager();
+        });
+
+        // 3. AŞAMA: TEST MANTIĞI (Sadece Tablodaki Sayı ve Oranlar)
+        const QUIZ_DATA = [
+            { question: "Cumhurbaşkanı seçilmek için doldurulması gereken asgari yaş kaçtır?", options: ["30 Yaş", "35 Yaş", "40 Yaş", "45 Yaş"], correctAnswer: 2, meaning: "Cumhurbaşkanı adayı olabilmek için 40 yaşını doldurmuş olmak şarttır." },
+            { question: "Cumhurbaşkanının görev süresi kaç yıldır ve en fazla kaç defa seçilebilir?", options: ["4 Yıl - Sınırsız", "5 Yıl - 2 Defa", "6 Yıl - 2 Defa", "7 Yıl - 1 Defa"], correctAnswer: 1, meaning: "Görev süresi 5 yıldır ve kural olarak bir kişi en fazla 2 defa Cumhurbaşkanı seçilebilir." },
+            { question: "Cumhurbaşkanı seçiminde ilk turda seçilebilmek için geçerli oyların en az hangi oranda alınması gerekir?", options: ["Salt Çoğunluk (%50+1)", "En çok oyu almak", "Üye tamsayısının 3/5'i", "%60"], correctAnswer: 0, meaning: "İlk turda seçilebilmek için geçerli oyların salt çoğunluğu (%50+1) gereklidir." },
+            { question: "Siyasi partilerin (tek başına veya birlikte) Cumhurbaşkanı adayı gösterebilmesi için son seçimde almaları gereken geçerli oy oranı en az kaçtır?", options: ["%3", "%5", "%7", "%10"], correctAnswer: 1, meaning: "Geçerli oyların en az %5'ini alan partiler aday gösterebilir." },
+            { question: "Siyasi partiler dışında, halkın doğrudan Cumhurbaşkanı adayı gösterebilmesi için en az kaç seçmenin imzası gereklidir?", options: ["50.000 Seçmen", "100.000 Seçmen", "250.000 Seçmen", "500.000 Seçmen"], correctAnswer: 1, meaning: "En az 100.000 seçmen imza toplayarak Cumhurbaşkanı adayı gösterebilir." },
+            { question: "Cumhurbaşkanlığı makamı herhangi bir sebeple boşalır ve genel seçimlere 1 yıldan FAZLA süre varsa, yeni seçim ne zaman yapılır?", options: ["30 gün içinde", "45 gün içindeki son Pazar", "60 gün içindeki ilk Pazar", "90 gün sonraki ilk Pazar"], correctAnswer: 1, meaning: "Seçime 1 yıldan fazla süre varken makam boşalırsa, takip eden 45 gün içindeki son Pazar günü seçim yapılır." },
+            { question: "Cumhurbaşkanlığı makamı boşalır ve genel seçimlere 1 yıl veya DAHA AZ süre kalmışsa, TBMM ve CB seçimleri birlikte ne zaman yenilenir?", options: ["45 gün içindeki son Pazar", "60 gün içindeki ilk Pazar", "90 gün sonraki ilk Pazar", "Normal seçim tarihinde"], correctAnswer: 1, meaning: "Seçime 1 yıl veya daha az süre varken makam boşalırsa, takip eden 60 gün içindeki ilk Pazar günü iki seçim birlikte yapılır." },
+            { question: "Cumhurbaşkanı hakkında meclis soruşturması açılması İSTEMİNDE (teklifinde) bulunabilmek için en az kaç milletvekilinin imzası şarttır?", options: ["200 (Üye Tam 1/3)", "301 (Salt Çoğunluk)", "360 (Üye Tam 3/5)", "400 (Üye Tam 2/3)"], correctAnswer: 1, meaning: "Soruşturma açılması istemi için üye tamsayısının salt çoğunluğu olan 301 imza gereklidir." },
+            { question: "Cumhurbaşkanı hakkında meclis soruşturması açılmasına KARAR verilebilmesi için gizli oylamada en az kaç kabul oyu çıkması gerekir?", options: ["301 (Salt Çoğunluk)", "360 (Üye Tam 3/5)", "400 (Üye Tam 2/3)", "450 (Üye Tam 3/4)"], correctAnswer: 1, meaning: "Soruşturma açılması kararı mecliste üye tamsayısının 3/5'i yani 360 oyla alınır." },
+            { question: "Cumhurbaşkanının Yüce Divan'a SEVK edilebilmesi (yargılanması) için mecliste aranacak karar yeter sayısı kaçtır?", options: ["301 (Salt Çoğunluk)", "360 (Üye Tam 3/5)", "400 (Üye Tam 2/3)", "450 (Üye Tam 3/4)"], correctAnswer: 2, meaning: "Yüce Divan'a sevk edebilmek için üye tamsayısının 2/3'ü olan 400 oy şarttır." },
+            { question: "Cumhurbaşkanı tarafından OHAL ilk aşamada yurdun tamamında veya bir bölgesinde en fazla kaç ay süreliğine ilan edilebilir?", options: ["3 Ay", "4 Ay", "6 Ay", "1 Yıl"], correctAnswer: 2, meaning: "İlk ilan süresi en fazla 6 aydır." },
+            { question: "Cumhurbaşkanının talebi üzerine TBMM, OHAL süresini her defasında en fazla kaç ay uzatabilir?", options: ["2 Ay", "3 Ay", "4 Ay", "6 Ay"], correctAnswer: 2, meaning: "Uzatma süresi her defasında en fazla 4 aydır (savaş durumunda bu sınır aranmaz)." },
+            { question: "Milli Güvenlik Kurulu (MGK) olağan olarak ne sıklıkla toplanır?", options: ["Ayda bir", "2 ayda bir", "3 ayda bir", "6 ayda bir"], correctAnswer: 1, meaning: "MGK, normal şartlarda 2 ayda bir toplanır." },
+            { question: "Cumhurbaşkanlığı Kararnamelerine (CBK) karşı şekil veya esas bakımından iptal davası açma süresi kaç gündür?", options: ["10 Gün", "30 Gün", "60 Gün", "90 Gün"], correctAnswer: 2, meaning: "CBK'ların iptali için Anayasa Mahkemesine dava açma süresi 60 gündür." },
+            { question: "OHAL döneminde çıkarılan ve yargı denetimi kapalı olan Cumhurbaşkanlığı Kararnamesi, TBMM'ye sunulduktan sonra kaç ay içinde görüşülmezse yürürlükten kalkar (düşer)?", options: ["1 Ay", "2 Ay", "3 Ay", "6 Ay"], correctAnswer: 2, meaning: "OHAL Kararnameleri mecliste 3 ay içinde görüşülüp karara bağlanmazsa kendiliğinden yürürlükten kalkar." },
+            { question: "Genelkurmay Başkanı'nın görev süresi kaç yıldır?", options: ["2 Yıl", "3 Yıl", "4 Yıl", "5 Yıl"], correctAnswer: 2, meaning: "Genelkurmay Başkanı 4 yıllığına görevlendirilir." },
+            { question: "Mecliste kurulan Soruşturma Komisyonunun (Cumhurbaşkanı veya bakanlar için) raporunu hazırlayabileceği en uzun süre (ek süreler dahil) nedir?", options: ["1 Ay", "2 Ay", "3 Ay", "6 Ay"], correctAnswer: 2, meaning: "Komisyon raporunu normalde 2 ayda hazırlar, yetmezse 1 ay ek süre verilir. Toplam en fazla 3 aydır." },
+            { question: "Yüce Divan'da Cumhurbaşkanının veya bakanların yargılanmasının normal süresi (ek süre verilmeden önceki hali) kaç aydır?", options: ["1 Ay", "2 Ay", "3 Ay", "6 Ay"], correctAnswer: 2, meaning: "Yüce Divan normal şartlarda yargılamayı 3 ayda bitirmelidir (bitiremezse 3 aylık ek süre alabilir)." }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                // Soruları zorluk/tablo sırasına göre stabil tutmak için karıştırmıyoruz
+                this.questions = [...QUIZ_DATA];
+                this.init();
+            }
+            
+            init() {
+                document.getElementById('total').textContent = this.questions.length;
+                document.getElementById('nextBtn').addEventListener('click', () => this.nextQuestion());
+                this.showCurrentQuestion();
+            }
+            
+            showCurrentQuestion() {
+                const q = this.questions[this.currentQuestionIndex];
+                document.getElementById('question').textContent = `${this.currentQuestionIndex + 1}. ${q.question}`;
+                
+                const optionsDiv = document.getElementById('options');
+                optionsDiv.innerHTML = '';
+                
+                // Seçenekleri de sırayla gösteriyoruz
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn fade-in';
+                    btn.textContent = opt;
+                    btn.addEventListener('click', () => this.handleAnswer(idx, q));
+                    optionsDiv.appendChild(btn);
+                });
+                
+                document.getElementById('feedback').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('progress').textContent = this.currentQuestionIndex + 1;
+                document.getElementById('progressBar').style.width = `${((this.currentQuestionIndex + 1) / this.questions.length) * 100}%`;
+            }
+            
+            handleAnswer(selected, q) {
+                const btns = document.querySelectorAll('.option-btn');
+                btns.forEach((b, i) => {
+                    b.disabled = true;
+                    if (i === q.correctAnswer) b.classList.add('correct');
+                    else if (i === selected) b.classList.add('incorrect');
+                });
+                
+                if (selected === q.correctAnswer) {
+                    this.score++;
+                    document.getElementById('score').textContent = this.score;
+                    this.showFeedback(true, q);
+                } else {
+                    this.showFeedback(false, q);
+                }
+                document.getElementById('nextBtn').style.display = 'block';
+            }
+            
+            showFeedback(isCorrect, q) {
+                const fb = document.getElementById('feedback');
+                fb.style.display = 'block';
+                fb.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+                document.getElementById('feedbackText').innerHTML = 
+                    isCorrect ? `✅ Doğru!<br><br>${q.meaning}` : `❌ Yanlış! Doğru cevap: <strong>${q.options[q.correctAnswer]}</strong><br><br>${q.meaning}`;
+            }
+            
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) this.showCurrentQuestion();
+                else this.endQuiz();
+            }
+            
+            endQuiz() {
+                document.getElementById('quizContainer').style.display = 'none';
+                document.getElementById('resultsContainer').style.display = 'block';
+                const p = Math.round((this.score / this.questions.length) * 100);
+                document.getElementById('finalScore').textContent = `${this.score}/${this.questions.length} (${p}%)`;
+                
+                let msg = p >= 90 ? "Kusursuz! Yürütmenin sayıları tamamen oturdu." : p >= 70 ? "Çok iyi! Rakamlara hakimsin." : "Tabloları bir kez daha gözden geçirmelisin.";
+                document.getElementById('resultMessage').textContent = msg;
+                
+                const wl = document.getElementById('wordList');
+                this.questions.forEach((q, i) => {
+                    wl.innerHTML += `<div class="word-card fade-in"><div class="word">${i+1}. ${q.question}</div><div style="color:var(--success); font-weight:bold; margin-bottom:5px;">Cevap: ${q.options[q.correctAnswer]}</div><div class="meaning">${q.meaning}</div></div>`;
+                });
+            }
+        }
+    </script>
+</body>
+</html>

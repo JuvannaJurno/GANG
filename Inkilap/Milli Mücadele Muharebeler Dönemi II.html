@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MEB-AGS Türkiye Tarihi</title>
+    <style>
+        :root {
+            --primary: #2E8B57;
+            --success: #228B22;
+            --danger: #B22222;
+            --light: #F5FFFA;
+            --dark: #2F4F4F;
+            --accent: #32CD32;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E8B57 0%, #32CD32 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "📜";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 139, 87, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success) !important;
+            color: white !important;
+            border-color: var(--success) !important;
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger) !important;
+            color: white !important;
+            border-color: var(--danger) !important;
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(34, 139, 34, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 139, 87, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 15px;
+            background: var(--light);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+        
+        .category-isyan { background: #B22222; }
+        .category-antlasma { background: #2E8B57; }
+        .category-savunma { background: #228B22; }
+        .category-cephe { background: #32CD32; }
+        .category-inonu { background: #228B22; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 1.4rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ MEB-AGS Türkiye Tarihi</h1>
+            <div class="subtitle">Cepheler, İsyanlar, Antlaşmalar ve I. İnönü Süreci</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Eğitim Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Başlat</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // DOSYA II - İLKLER VE DİPLOMASİ
+            { word: "Rusya (SSCB)", category: "antlasma", question: "TBMM'nin ilk ilişki kurduğu devlet aşağıdakilerden hangisidir?", options: ["Ermenistan", "Fransa", "İngiltere", "Rusya (SSCB)"], explanation: "TBMM'nin ilk ilişki kurduğu devlet Rusya (SSCB) olmuştur." },
+            { word: "Rusya (SSCB)", category: "antlasma", question: "TBMM'yi tanıyan ilk Batılı büyük devlet hangisidir?", options: ["İngiltere", "Fransa", "İtalya", "Rusya (SSCB)"], explanation: "TBMM'yi tanıyan ilk Batılı büyük devlet Rusya (SSCB)'dir." },
+            { word: "Londra Konferansı", category: "antlasma", question: "İtilaf Devletleri, TBMM'nin hukuki varlığını ilk kez nerede resmen tanımışlardır?", options: ["Mudanya Ateşkes Antlaşması", "Londra Konferansı", "Paris Barış Konferansı", "Lozan Barış Antlaşması"], explanation: "İtilaflar TBMM'yi Londra Konferansı'nda tanımışlardır." },
+            { word: "İngiltere ve İtalya", category: "antlasma", question: "TBMM'yi tanıyan son İtilaf Devletleri aşağıdakilerin hangisinde birlikte verilmiştir?", options: ["Fransa ve Yunanistan", "İngiltere ve İtalya", "ABD ve İngiltere", "Fransa ve İtalya"], explanation: "TBMM'yi tanıyan son İtilaf devletleri İngiltere ve İtalya'dır." },
+            { word: "Afganistan", category: "antlasma", question: "Ankara’da büyükelçilik açan ilk Müslüman devlet aşağıdakilerden hangisidir?", options: ["İran", "Pakistan", "Afganistan", "Mısır"], explanation: "Ankara'da büyükelçilik açan ilk Müslüman devlet Afganistan'dır." },
+            
+            // DOSYA II - GÜNEY CEPHESİ
+            { word: "İngiliz birlikleri", category: "cephe", question: "Mondros sonrası Hatay, Antep, Maraş, Adana ve Urfa'yı İLK işgal edenler kimlerdir?", options: ["Fransız birlikleri", "İngiliz birlikleri", "İtalyan birlikleri", "Ermeni çeteleri"], explanation: "Mondros'tan sonra bu bölgeleri ilk olarak İngiliz birlikleri işgal etmiştir." },
+            { word: "15 Eylül 1919 - Suriye İtilafnamesi", category: "antlasma", question: "İngiltere'nin güney illerini Fransızlara bıraktığı protokol hangisidir?", options: ["Ankara Antlaşması", "Mondros Ateşkes Antlaşması", "15 Eylül 1919 - Suriye İtilafnamesi", "Sykes-Picot Antlaşması"], explanation: "İngiltere, Suriye İtilafnamesi ile bu illeri Fransa'ya devretmiştir." },
+            { word: "Musul", category: "cephe", question: "İngiltere, Güney illerini Fransa'ya bırakırken karşılığında nerenin denetimini almıştır?", options: ["Kerkük", "Halep", "Musul", "Kıbrıs"], explanation: "İngilizler Musul'a karşılık bu illeri Fransızlara bırakmıştır." },
+            { word: "Ermeni İntikam Alayı", category: "cephe", question: "Fransızların katliam yapmak için kullandıkları Ermeni birliğinin adı nedir?", options: ["Kuvâ-yi İnzibatiye", "Makarios Birliği", "Ermeni İntikam Alayı", "Pontus Çeteleri"], explanation: "Katliamlara kalkışan birlik Fransızların getirdiği 'Ermeni İntikam Alayı'dır." },
+            { word: "Kuvayımilliye", category: "savunma", question: "Güney Cephesi'nde halkın kendi kendini savunmak için kurduğu teşkilatlanma nedir?", options: ["Düzenli Ordu", "Kuvayımilliye", "Heyet-i Temsiliye", "İstiklal Mahkemeleri"], explanation: "Halkın kendi kendini savunduğu teşkilatlanma Kuvayımilliye'dir." },
+            { word: "Sakarya Meydan Muharebesi", category: "savunma", question: "Fransa, Güney Cephesi'nden çekilmeye hangi savaştan sonra kesin karar vermiştir?", options: ["I. İnönü Muharebesi", "Gediz Muharebesi", "Sakarya Meydan Muharebesi", "Büyük Taarruz"], explanation: "Sakarya Zaferi sonrasında Fransa bölgede tutunamayacağını anlamıştır." },
+            { word: "Hatay", category: "cephe", question: "1921 Ankara Antlaşması ile Fransızlar çekilirken neresi Misakımillî dışında kalmıştır?", options: ["Adana", "Urfa", "Maraş", "Hatay"], explanation: "Fransızlar Ankara Antlaşması'nda Hatay dışında işgal ettiği yerlerden çekilmiştir." },
+            { word: "Maraş ve Urfa", category: "savunma", question: "Güney'de antlaşmayı beklemeden kendi kendini kurtaran iki şehrimiz hangileridir?", options: ["Adana ve Antep", "Maraş ve Urfa", "Antep ve Urfa", "Hatay ve Maraş"], explanation: "Maraş ve Urfa kendi direnişleriyle düşmanı kovmayı başarmıştır." },
+            { word: "Adana ve Antep", category: "savunma", question: "Güney'de ancak Ankara Antlaşması imzalandıktan sonra kurtulabilen şehirler hangileridir?", options: ["Maraş ve Urfa", "Antep ve Maraş", "Adana ve Antep", "Hatay ve Adana"], explanation: "Adana ve Antep, ancak Ankara Antlaşması ile kurtarılabilmiştir." },
+            { word: "Antep (1921) - Maraş (1973) - Urfa (1984)", category: "cephe", question: "Şehirlere verilen unvanların tarihsel sırası hangisinde doğrudur?", options: ["Antep (1921) - Maraş (1973) - Urfa (1984)", "Maraş (1921) - Antep (1973) - Urfa (1984)", "Antep (1921) - Urfa (1973) - Maraş (1984)", "Urfa (1921) - Maraş (1973) - Antep (1984)"], explanation: "Sıralama Antep (Gazi), Maraş (Kahraman), Urfa (Şanlı) şeklindedir." },
+            { word: "Adana", category: "cephe", question: "Güney illerinden hangisine TBMM tarafından herhangi bir unvan verilmemiştir?", options: ["Antep", "Maraş", "Urfa", "Adana"], explanation: "Güney illerinden Adana'ya herhangi bir unvan verilmemiştir." },
+            { word: "Gaziantep 2008'de, Urfa 2016'da almıştır", category: "cephe", question: "Şehirlerin İstiklal Madalyası alma tarihleriyle ilgili hangisi doğrudur?", options: ["Gaziantep 1921'de, Urfa 1984'te almıştır", "Gaziantep 2008'de, Urfa 2016'da almıştır", "Maraş 2012'de, İnebolu 2018'de almıştır", "Hepsi aynı anda almıştır"], explanation: "Antep 2008'de, Urfa ise 2016'da madalya almıştır." },
+            { word: "Mustafa Kemal, TBMM ve Antep", category: "cephe", question: "Türk tarihinde 'Gazi' unvanı alan kişi ve kurumlar kimlerdir?", options: ["Sadece Mustafa Kemal", "Mustafa Kemal ve TBMM", "Mustafa Kemal, TBMM ve Antep", "TBMM ve tüm ordu"], explanation: "Gazi unvanı alanlar: Mustafa Kemal, TBMM ve Antep'tir." },
+            { word: "Yörük Selim Bey", category: "savunma", question: "Maraş savunmasının önemli komutanı kimdir?", options: ["Yörük Selim Bey", "Ali Saip Bey", "Şahin Bey", "Kılıç Ali Bey"], explanation: "Maraş'ta Yörük Selim Bey ve Sütçü İmam öncüdür." },
+            { word: "Yüzbaşı Ali Saip Bey", category: "savunma", question: "Urfa savunmasının önde gelen komutanı kimdir?", options: ["Yörük Selim Bey", "Yüzbaşı Ali Saip Bey", "Şahin Bey", "Karayılan"], explanation: "Urfa savunmasında Ali Saip Bey (Ursavaş) kilit isimdir." },
+            { word: "Teğmen Sait Bey (Şahin Bey), Kılıç Ali Bey, Karayılan", category: "savunma", question: "Antep savunmasında görev alan kahramanlar kimlerdir?", options: ["Ali Saip Bey", "Sütçü İmam", "Teğmen Sait Bey (Şahin Bey), Kılıç Ali Bey, Karayılan", "Yörük Selim Bey"], explanation: "Antep'te Şahin Bey, Kılıç Ali ve Karayılan öne çıkar." },
+            { word: "Topçu Kemal Bey, Piyade Yüzbaşı Osman Bey, Yüzbaşı Ratip Bey", category: "savunma", question: "Adana savunmasını yöneten komutanlar kimlerdir?", options: ["Topçu Kemal Bey, Piyade Yüzbaşı Osman Bey, Yüzbaşı Ratip Bey", "Şahin Bey ve ekibi", "Sütçü İmam", "Yörük Selim"], explanation: "Adana'da Kemal Bey, Osman Bey ve Ratip Bey görev yapmıştır." },
+            { word: "Batı Cephesi", category: "cephe", question: "Güney Cephesi'nin kaderini belirleyen asıl cephe hangisidir?", options: ["Doğu Cephesi", "Batı Cephesi", "Çanakkale", "Irak"], explanation: "Batıdaki zaferler Güneyin de kurtuluşunu hızlandırmıştır." },
+            { word: "Yunanlarla aralarındaki anlaşmazlıklardan dolayı", category: "cephe", question: "İtalyanların Milli Mücadele'ye kısmen destek verme nedeni nedir?", options: ["TBMM ile dostluk", "Yunanlarla aralarındaki anlaşmazlıklardan dolayı", "Rusya'nın baskısı", "Para yardımı"], explanation: "İtalyanlar, İzmir'in Yunanlara verilmesine kızmışlardır." },
+            { word: "II. İnönü Muharebesi", category: "cephe", question: "İtalyanlar hangi zaferden sonra Anadolu'dan çekilmeye başlamıştır?", options: ["I. İnönü", "II. İnönü Muharebesi", "Sakarya", "Gediz"], explanation: "II. İnönü sonrası İtalyanlar çekilme sürecini başlatmıştır." },
+            { word: "Düzenli ordunun katkısı olmadan yöre halkının bölgesel güçleriyle kurtarılması", category: "savunma", question: "Güney Cephesi'nin temel farkı nedir?", options: ["Sadece savunma olması", "Düzenli ordunun katkısı olmadan yöre halkının bölgesel güçleriyle kurtarılması", "Deniz savaşı olması", "En kısa süren cephe olması"], explanation: "Güney halkın kendi direnişiyle (Kuvayımilliye) kurtulmuştur." },
+
+            // DOSYA II - BATI CEPHESİ GİRİŞ
+            { word: "Yunanlara ve destekçileri İngilizlere karşı", category: "cephe", question: "Batı Cephesi'nde kime karşı savaşılmıştır?", options: ["Fransızlara", "Ruslara", "Yunanlara ve destekçileri İngilizlere karşı", "İtalyanlara"], explanation: "Ana düşman Yunanlar ve onları destekleyen İngiliz siyasetidir." },
+            { word: "Balıkesir ve Alaşehir Kongreleri", category: "savunma", question: "Batı Cephesi resmen hangi kongrelerle kurulmuştur?", options: ["Erzurum-Sivas", "Balıkesir ve Alaşehir Kongreleri", "Amasya", "Afyon"], explanation: "Batı Cephesi bu iki kongre ile şekillenmiştir." },
+            { word: "Ali Fuat Paşa'nın atanmasıyla", category: "savunma", question: "Temsil Heyeti kimi atayarak Batı Cephesi'ni ulusallaştırmıştır?", options: ["İsmet Paşa", "Ali Fuat Paşa'nın atanmasıyla", "Fevzi Çakmak", "Kazım Karabekir"], explanation: "Sivas Kongresi sonrası Ali Fuat Paşa atanmıştır." },
+            { word: "Kuzeye Albay İsmet, güneye Albay Refet", category: "cephe", question: "Düzenli ordu sonrası Batı Cephesi ikiye nasıl bölünmüştür?", options: ["Kuzey: Kazım, Güney: İsmet", "Kuzeye Albay İsmet, güneye Albay Refet", "Kuzey: Refet, Güney: İsmet", "İkiye bölünmemiştir"], explanation: "İsmet Bey Kuzey, Refet Bey Güney bölümüne verilmiştir." },
+            { word: "Refet Bey'in Dumlupınar ve Aslıhanlar'da başarısız olması", category: "savunma", question: "Batı Cephesi'nin tekrar tek komutada birleşme nedeni nedir?", options: ["İsmet Bey'in isteği", "Refet Bey'in Dumlupınar ve Aslıhanlar'da başarısız olması", "Mustafa Kemal'in emri", "Lozan'ın imzalanması"], explanation: "Aslıhanlar başarısızlığı sonrası Refet Bey görevden alınmış, cephe birleşmiştir." },
+            { word: "Öncelikle Sevr'i kabul ettirmek ve uygulamaya koydurmak", category: "cephe", question: "Yunanların ileri hareketinin temel amacı nedir?", options: ["Hazineyi ele geçirmek", "Öncelikle Sevr'i kabul ettirmek ve uygulamaya koydurmak", "İstanbul'u yakmak", "Rusya'ya saldırmak"], explanation: "Yunanlar zorla Sevr'i kabul ettirmek istiyordu." },
+            { word: "11 Ekim 1922 Mudanya Ateşkes Antlaşması", category: "antlasma", question: "Batı Cephesi'ndeki SAVAŞLAR hangi olayla bitmiştir?", options: ["Lozan", "Ankara Ant.", "11 Ekim 1922 Mudanya Ateşkes Antlaşması", "Gümrü"], explanation: "Sıcak savaş dönemi Mudanya ile bitmiştir." },
+
+            // DOSYA III - I. İNÖNÜ VE ANAYASA SÜRECİ
+            { word: "On Beşinci Kolordu", category: "cephe", question: "Doğu Cephesi'nin temelini oluşturan dağıtılmamış ordu birliği hangisidir?", options: ["On Beşinci Kolordu", "Yıldırım Orduları", "Kuvâ-yi Seyyare", "Merkez Ordusu"], explanation: "Kazım Karabekir'in 15. Kolordusu dağıtılmadan Milli Mücadele'ye katılmıştır." },
+            { word: "Birinci İnönü Muharebesi", category: "inonu", question: "Fevzi Çakmak'ın 'Anadolu Yunan ordusu için mezar olacak' dediği zafer hangisidir?", options: ["Gediz", "Birinci İnönü Muharebesi", "II. İnönü", "Büyük Taarruz"], explanation: "Bu sözler I. İnönü zaferi üzerine telgrafla bildirilmiştir." },
+            { word: "Osmanlı hukuk kurallarının geçersiz olduğu hükmüne yer verilmiştir.", category: "savunma", question: "1921 Anayasası için hangisi YANLIŞTIR?", options: ["Egemenlik milletindir", "Meclis hükümeti sistemi vardır", "Seçimler 2 yıldadır", "Osmanlı hukuk kurallarının geçersiz olduğu hükmüne yer verilmiştir."], explanation: "1921 Anayasası'nda Osmanlı hukukunun bittiğine dair bir madde yoktu; eski yasalarla birlikte uygulandı." },
+            { word: "Metris Tepe - Taarruz-ı Keşif", category: "inonu", question: "I. İnönü'nün mevkisi ve Yunanların bu saldırıya verdiği isim nedir?", options: ["Kocatepe - Baskın", "Metris Tepe - Taarruz-ı Keşif", "Dumlupınar - Keşif", "Sakarya - Savunma"], explanation: "Savaş Metris Tepe'de geçmiş, Yunanlar 'Keşif Taarruzu' demiştir." },
+            { word: "İsmet İnönü", category: "inonu", question: "I. İnönü sonrası generalliğe yükseltilen komutan kimdir?", options: ["İsmet İnönü", "Fevzi Çakmak", "Refet Bele", "Ali Fuat Cebesoy"], explanation: "İsmet Bey bu zaferle generallik rütbesini almıştır." },
+            { word: "I. İnönü Zaferi", category: "inonu", question: "Mustafa Kemal 'Vatanın bağrına düşman dayasın hançerini...' konuşmasını ne zaman yapmıştır?", options: ["Meclis açılışı", "I. İnönü Zaferi", "Sakarya", "Cumhuriyet ilanı"], explanation: "Moral artırmak için bu şiiri I. İnönü zaferinde okumuştur." },
+            { word: "Kuvvetler Birliği - Meclis Hükûmeti Sistemi", category: "savunma", question: "1921 Anayasası'nın benimsediği sistem nedir?", options: ["Güçler Ayrılığı", "Kuvvetler Birliği - Meclis Hükûmeti Sistemi", "Başkanlık", "Parlamenter Sistem"], explanation: "Savaş şartları nedeniyle hızlı karar almak için Kuvvetler Birliği seçilmiştir." },
+            { word: "1921 Anayasası (Teşkilat-ı Esasiye)", category: "savunma", question: "Ulusal egemenliğin İLK KEZ yazılı geçtiği, laik olmayan anayasa hangisidir?", options: ["1921 Anayasası (Teşkilat-ı Esasiye)", "1876 Kanun-u Esasi", "1924 Anayasası", "1961 Anayasası"], explanation: "1921 Anayasası 'Egemenlik kayıtsız şartsız milletindir' diyen ilk belgedir." },
+            { word: "'Devletin rejimi Cumhuriyet'tis.' maddesinin eklenmesi", category: "savunma", question: "1921 Anayasası'nda 1923 yılında yapılan İLK değişiklik nedir?", options: ["Başkent Ankara", "Dili Türkçe", "'Devletin rejimi Cumhuriyet'tis.' maddesinin eklenmesi", "Dini İslam"], explanation: "29 Ekim 1923'te rejim maddesi eklenerek ilk değişiklik yapılmıştır." },
+            { word: "Kahraman Ordumuza", category: "savunma", question: "Mehmet Akif, İstiklal Marşı'nı kime ithaf etmiştir?", options: ["Mustafa Kemal'e", "Türk Milletine", "Kahraman Ordumuza", "Gençliğe"], explanation: "Akif, marşı ordunun moralini yükseltmek için orduya adamıştır." },
+            { word: "Tevfik Paşa", category: "antlasma", question: "Londra'da 'Söz milletin asıl temsilcisidir' diyerek sırasını TBMM'ye bırakan Osmanlı temsilcisi kimdir?", options: ["Damat Ferit", "Tevfik Paşa", "Salih Paşa", "Ali Rıza Paşa"], explanation: "Tevfik Paşa vatansever bir tutumla sözü Bekir Sami Bey'e bırakmıştır." },
+            { word: "TBMM'nin ilk defa büyük bir Avrupa devleti tarafından resmen tanınması", category: "antlasma", question: "Moskova Antlaşması'nın diplomatik açıdan EN önemli sonucu nedir?", options: ["Savaşın bitmesi", "Para yardımı", "TBMM'nin ilk defa büyük bir Avrupa devleti tarafından resmen tanınması", "Hatay'ın alınması"], explanation: "Rusya gibi dev bir gücün TBMM'yi tanıması en büyük diplomatik zaferdir." },
+            { word: "Batum'un Gürcistan'a verilmesi", category: "antlasma", question: "Misakımillî'den verilen İLK taviz hangisidir?", options: ["Hatay", "Musul", "Batum'un Gürcistan'a verilmesi", "Boğazlar"], explanation: "Moskova Antlaşması ile Batum'un bırakılması ilk tavizdir." },
+            
+            // YENİ EKLENEN SORULAR
+            { word: "Ankara Antlaşması", category: "antlasma", question: "Hakimiyet-i Milliye gazetesinde yayımlanan bir makalede; 'Bu antlaşma ile Sevr direklerinden biri yıkıldı' ifadesiyle önemi vurgulanan, Fransa ile TBMM arasında imzalanan antlaşma aşağıdakilerden hangisidir?", options: ["Gümrü Antlaşması", "Moskova Antlaşması", "Ankara Antlaşması", "Kars Antlaşması"], explanation: "20 Ekim 1921 tarihinde Fransa ile imzalanan Ankara Antlaşması, bir İtilaf devletinin Misakımillî'yi resmen tanıması ve Sevr Antlaşması'ndan vazgeçmesi anlamına geldiği için tarihi bir öneme sahiptir." },
+            { word: "Yüzbaşı Ali Saip Bey", category: "savunma", question: "Güney Cephesi'nde Urfa savunmasını örgütleyen ve yöre halkıyla birlikte Fransızları şehirden çıkaran, gösterdiği bu eşsiz kahramanlıktan dolayı daha sonra kendisine 'Ursavaş' soyadı verilen Kuvayımilliye komutanı aşağıdakilerden hangisidir?", options: ["Şahin Bey", "Yüzbaşı Ali Saip Bey", "Sütçü İmam", "Yörük Selim Bey"], explanation: "Urfa savunmasının önderi Yüzbaşı Ali Saip Bey'dir. Gösterdiği başarılardan dolayı kendisine daha sonra 'Ursavaş' soyadı verilmiştir. Şahin Bey Antep'te; Sütçü İmam ve Yörük Selim Bey ise Maraş'ta görev yapmıştır." },
+            { word: "Yüzbaşı Ali Saip (Ursavaş)", category: "savunma", question: "4 Eylül 1919'da Kale Mahallesi'nde bulunan Güllüzade Osman Efendi'nin evinde, Belediye Reisi Hacı Mustafa Efendi'nin hazırladığı ve 'On İkiler'den oluşan Müdafaa-i Hukuk Cemiyeti'ni teşkilatlandırarak Urfa'yı Fransızlara karşı savunan komutan kimdir?", options: ["Şahin Bey", "Yüzbaşı Ali Saip (Ursavaş)", "Sütçü İmam", "Kılıç Ali Bey"], explanation: "Urfa'da 12 vatanseveri (On İkiler) örgütleyerek Fransızları şehirden çıkaran kişi Ali Saip Bey'dir." },
+            { word: "Çerkez Ethem ve adamlarının isyan etmesi", category: "isyan", question: "Mustafa Kemal’in Nutuk’ta; 'Askeri harekâtı çapulculuk sanan... bu kardeşleri ellerindeki bütün kuvvetler ve dayandıkları düşmanlarla birlikte tepeleyip yola getireceğiz.' sözleriyle tepki gösterdiği gelişme aşağıdakilerden hangisidir?", options: ["Kuvayımilliye’nin Gediz Taarruzu’nda başarısız olması", "Kütahya-Eskişehir Muharebelerinin kaybedilmesi", "Çerkez Ethem ve adamlarının isyan etmesi", "Ahmet Anzavur’un ayaklanma çıkarması"], explanation: "Mustafa Kemal bu sert sözleri, I. İnönü Savaşı sırasında düzenli orduya katılmayı reddederek isyan eden Çerkez Ethem ve kardeşleri için söylemiştir." },
+            { word: "Vecihi Hürkuş", category: "inonu", question: "I. İnönü Savaşı sırasında, Yunan ordusunun durumunu havadan keşfetmek için havalanan ve uçağı isabet alarak mecburi iniş yapmak zorunda kalan ünlü Türk pilotu aşağıdakilerden hangisidir?", options: ["Sabiha Gökçen", "Vecihi Hürkuş", "Hüseyin Münif", "Mehmet Fesa Evrensev"], explanation: "Milli Mücadele'nin efsanevi pilotu Vecihi Hürkuş, I. İnönü Savaşı'nda keşif uçuşu yaparken uçağı isabet almış ve mecburi iniş yapmıştır." },
+            { word: "Nureddin Paşa (Sakallı)", category: "cephe", question: "Milli Mücadele döneminde, Karadeniz bölgesindeki Rum çetelerinin faaliyetlerini ve Koçgiri İsyanı'nı bastırmak amacıyla kurulan Merkez Ordusu'nun komutanı kimdir?", options: ["Kazım Karabekir", "Nureddin Paşa (Sakallı)", "Refet Bele", "Ali Fuat Cebesoy"], explanation: "Amasya merkezli olarak kurulan Merkez Ordusu'nun komutanı Sakallı Nureddin Paşa'dır. Pontus Rum çeteleri ve Koçgiri isyanının bastırılmasında önemli rol oynamıştır." }
+        ];
+
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function init() {
+            questions = shuffle([...quizData]);
+            document.getElementById('total').textContent = questions.length;
+            showQuestion();
+            document.getElementById('catCover').addEventListener('click', () => {
+                document.getElementById('catCover').style.display = 'none';
+            });
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestionIndex];
+            document.getElementById('question').textContent = q.question;
+            document.getElementById('catCover').style.display = 'flex';
+            
+            const optionsDiv = document.getElementById('options');
+            const btns = optionsDiv.querySelectorAll('.option-btn');
+            btns.forEach(b => b.remove());
+
+            const currentOptions = shuffle([...q.options]);
+            currentOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(opt, q.word, btn);
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('progress').textContent = currentQuestionIndex + 1;
+            document.getElementById('progressBar').style.width = ((currentQuestionIndex + 1) / questions.length * 100) + '%';
+        }
+
+        function checkAnswer(selected, correct, btn) {
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            const isCorrect = selected === correct;
+            if (isCorrect) {
+                score++;
+                document.getElementById('score').textContent = score;
+                btn.classList.add('correct');
+            } else {
+                btn.classList.add('incorrect');
+                allBtns.forEach(b => { if(b.textContent === correct) b.classList.add('correct'); });
+            }
+
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'block';
+            feedback.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            document.getElementById('feedbackText').innerHTML = `<strong>${isCorrect ? '✅ Tebrikler!' : '❌ Dikkat!'}</strong><br>${questions[currentQuestionIndex].explanation}`;
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        document.getElementById('nextBtn').onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) showQuestion();
+            else showResults();
+        };
+
+        function showResults() {
+            document.getElementById('quizContainer').style.display = 'none';
+            const res = document.getElementById('resultsContainer');
+            res.style.display = 'block';
+            document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
+            
+            const list = document.getElementById('wordList');
+            quizData.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>${q.word}</strong><br><small>${q.question}</small><br><span class="category category-${q.category}">${q.category.toUpperCase()}</span>`;
+                list.appendChild(card);
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>

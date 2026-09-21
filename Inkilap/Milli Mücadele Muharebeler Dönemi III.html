@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milli Mücadele Muharebeler Dönemi III</title>
+    <style>
+        :root {
+            --primary: #2E8B57;
+            --success: #228B22;
+            --danger: #B22222;
+            --light: #F5FFFA;
+            --dark: #2F4F4F;
+            --accent: #32CD32;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E8B57 0%, #32CD32 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "📜";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 139, 87, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success) !important;
+            color: white !important;
+            border-color: var(--success) !important;
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger) !important;
+            color: white !important;
+            border-color: var(--danger) !important;
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(34, 139, 34, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 139, 87, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 15px;
+            background: var(--light);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+        
+        .category-isyan { background: #B22222; }
+        .category-antlasma { background: #2E8B57; }
+        .category-savunma { background: #228B22; }
+        .category-cephe { background: #32CD32; }
+        .category-inonu { background: #228B22; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 1.4rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📜 Milli Mücadele Muharebeler Dönemi III</h1>
+            <div class="subtitle">II. İnönü, Kütahya-Eskişehir ve Sakarya Meydan Muharebesi Özel Testi</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Eğitim Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Başlat</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            { word: "Tekâlif-i Milliye emirlerinin uygulanmasını engellemek", category: "inonu", question: "Aşağıdakilerden hangisi Yunan ordusunun II. İnönü Taarruzu'nu başlatmasının nedenlerinden biri değildir?", options: ["İngiltere’nin desteğini kaybetmemek istemeleri", "I. İnönü Savaşı’nın öcünü almak istemeleri", "Londra Konferansı’nın başarısızlıkla sonuçlanması", "Tekâlif-i Milliye emirlerinin uygulanmasını engellemek"], explanation: "Tekâlif-i Milliye emirleri II. İnönü'den çok sonra, Kütahya-Eskişehir savaşlarının ardından çıkarılmıştır." },
+            { word: "Koçgiri ve Pontus İsyanları", category: "isyan", question: "II. İnönü Muharebesi devam ederken düzenli ordunun aynı anda bastırmak zorunda kaldığı iç isyanlar aşağıdakilerin hangisinde birlikte verilmiştir?", options: ["Çerkez Ethem ve Demirci Mehmet Efe İsyanları", "Koçgiri ve Pontus İsyanları", "Şeyh Sait ve Menemen İsyanları", "Yozgat ve Afyon İsyanları"], explanation: "Savaş devam ederken içeride Koçgiri ve Pontus isyanları ile mücadele edilmiştir." },
+            { word: "İsmet İnönü - II. İnönü Savaşı", category: "inonu", question: "\"Siz orada sadece düşmanı değil bu devletin makûs talihini de yendiniz...\" Mustafa Kemal'in bu tarihi telgrafı kime ve hangi savaşın ardından gönderdiği doğru verilmiştir?", options: ["Kazım Karabekir - Doğu Cephesi Zaferi", "İsmet İnönü - I. İnönü Savaşı", "Fevzi Çakmak - Sakarya Meydan Muharebesi", "İsmet İnönü - II. İnönü Savaşı"], explanation: "Mustafa Kemal, İsmet İnönü'ye II. İnönü Zaferi sonrası bu telgrafı çekmiştir." },
+            { word: "İtalya'nın Anadolu'dan tamamen (kesin olarak) çekilmesi", category: "inonu", question: "Aşağıdakilerden hangisi II. İnönü Savaşı'nın sonuçları arasında yer almaz?", options: ["İtalya'nın Anadolu'dan tamamen (kesin olarak) çekilmesi", "Fransa'nın TBMM'ye ateşkes teklif etmesi", "İngiltere'nin Malta'da bulunan 40 Türk'ü serbest bırakması", "Fransa'nın Zonguldak'tan çekilmesi"], explanation: "İtalya II. İnönü sonrası çekilmeye *başlamıştır*. Tamamen çekilmesi Sakarya Meydan Muharebesi sonrasındır." },
+            { word: "II. İnönü Savaşı", category: "cephe", question: "Gediz Taarruzu'ndaki başarısızlık sonrası Kuzey ve Güney olarak ikiye ayrılan Batı Cephesi, hangi savaşın ardından tekrar birleştirilmiştir?", options: ["I. İnönü Savaşı", "II. İnönü Savaşı", "Kütahya-Eskişehir Muharebeleri", "Sakarya Meydan Muharebesi"], explanation: "II. İnönü Savaşı sonrası Güney cephesi kaldırılarak tüm cephe İsmet Paşa'nın komutasına verilmiştir." },
+            { word: "Aslıhanlar ve Dumlupınar", category: "cephe", question: "Türk ordusu, II. İnönü Zaferi'nden sonra geriye çekilen Yunan ordusunu tamamen dağıtabilmek için 15 Nisan'a kadar hangi bölgeler üzerinden taarruza geçmiş ancak bir sonuç alamamıştır?", options: ["Gediz ve Uşak", "Aslıhanlar ve Dumlupınar", "Polatlı ve Haymana", "Afyon ve Kütahya"], explanation: "Aslıhanlar ve Dumlupınar taarruzu, ordumuzun henüz saldırı gücüne ulaşmadığını göstermiştir." },
+            { word: "TBMM Başkanı Mustafa Kemal Paşa", category: "savunma", question: "Kütahya-Eskişehir Muharebelerinde ordumuzun aldığı yenilgi sonrasında \"Sakarya Irmağı'nın doğusuna çekilmesi\" emrini kim vermiştir?", options: ["TBMM (Meclis Kararı ile)", "Batı Cephesi Komutanı İsmet Paşa", "Genelkurmay Başkanı Fevzi Çakmak", "TBMM Başkanı Mustafa Kemal Paşa"], explanation: "Mustafa Kemal Paşa ordunun toparlanması ve zayiat vermemesi için bu kritik emri vermiştir." },
+            { word: "Doğu sınırımızın kesin olarak çizilmesi", category: "savunma", question: "Aşağıdakilerden hangisi Kütahya-Eskişehir Muharebelerinin sonuçları arasında gösterilemez?", options: ["Eskişehir, Kütahya, Bilecik ve Afyon'un kaybedilmesi", "Meclisin Ankara'dan Kayseri'ye taşınmasının gündeme gelmesi", "Doğu sınırımızın kesin olarak çizilmesi", "İtalya'nın Anadolu'yu boşaltma kararından vazgeçmesi"], explanation: "Doğu sınırımızın kesin olarak çizildiği Kars Antlaşması, Sakarya Meydan Muharebesi'nden sonradır." },
+            { word: "Hızlı ve kesin kararlar alarak ordunun ihtiyaçlarını karşılamak", category: "savunma", question: "Kütahya-Eskişehir yenilgisi sonrasında Meclisin (TBMM) üç aylığına tüm yetkilerini Başkomutanlık Kanunu ile Mustafa Kemal'e devretmesinin temel amacı nedir?", options: ["Cumhuriyetin ilanını hızlandırmak", "Çıkan iç isyanları İstiklal Mahkemeleri ile bastırmak", "İstanbul Hükümeti ile anlaşma zemini aramak", "Hızlı ve kesin kararlar alarak ordunun ihtiyaçlarını karşılamak"], explanation: "Kriz anında tartışmalarla vakit kaybetmemek ve kararları anında uygulayabilmek için yetkiler devredilmiştir." },
+            { word: "I. Maarif Kongresi", category: "savunma", question: "Kütahya-Eskişehir Savaşlarının top sesleri Ankara'da duyulurken, TBMM Başkanı Mustafa Kemal'in öğretmenleri toplayarak gerçekleştirdiği organizasyon hangisidir?", options: ["I. İktisat Kongresi", "I. Maarif Kongresi", "Pozantı Kongresi", "Ulusal Eğitim Şurası"], explanation: "Eğitime verilen önemi göstermek amacıyla savaş devam ederken I. Maarif Kongresi düzenlenmiştir." },
+            { word: "Bütün yabancı işletmelerin derhal millileştirilip devlete katılması", category: "savunma", question: "Başkomutan Mustafa Kemal'in ordunun ihtiyaçlarını gidermek amacıyla yayımladığı \"Tekâlif-i Milliye\" emirlerinde aşağıdakilerden hangisi yer almaz?", options: ["Taşıt sahiplerinin ayda bir defa ücretsiz askerî malzeme taşıması", "Her ailenin birer kat çamaşır, birer çift çorap ve çarık vermesi", "Bütün yabancı işletmelerin derhal millileştirilip devlete katılması", "Demirci, marangoz, dökümcü gibi esnafın askerî malzeme üretmesi"], explanation: "Yabancı işletmelerin millileştirilmesi bu emirlerin arasında yoktur." },
+            { word: "%40", category: "savunma", question: "Tekâlif-i Milliye komisyonları aracılığıyla halktan ve tüccardan bedeli sonradan ödenmek üzere malların ne kadarına (% kaçına) el konulması kararlaştırılmıştır?", options: ["%10", "%20", "%40", "%50"], explanation: "Askerin işine yarayacak malların yüzde 40'ına, binek hayvanlarının ise yüzde 20'sine el konulmuştur." },
+            { word: "Sakarya Meydan Muharebesi", category: "savunma", question: "Topyekûn savaşa örnek olan, mevkileri arasında \"Duatepe, Çal Dağı, Alagöz Köyü ve Mangal Dağı\" bulunan savaş aşağıdakilerden hangisidir?", options: ["Büyük Taarruz", "Sakarya Meydan Muharebesi", "Kütahya-Eskişehir Savaşları", "I. İnönü Savaşı"], explanation: "Sakarya Muharebesi, bu tepelerde çok kanlı çatışmalara sahne olmuştur." },
+            { word: "Sakarya Meydan Muharebesi", category: "savunma", question: "\"Hattı müdafaa yoktur, sathı müdafaa vardır. O satıh tüm vatandır...\" emriyle tarihe geçen ve 1683 II. Viyana'dan beri devam eden geri çekilişini sona erdiren savaş hangisidir?", options: ["II. İnönü Muharebesi", "Sakarya Meydan Muharebesi", "Büyük Taarruz", "Dumlupınar Meydan Muharebesi"], explanation: "Sakarya Zaferi ile son savunma savaşımız bitmiş, geri çekiliş durmuştur." },
+            { word: "Sakarya Meydan Muharebesi", category: "savunma", question: "Bu savaşta 350 subay, 2900 erimiz şehit olmuştur. Çok sayıda subay kaybı yaşandığı için \"Subaylar Savaşı\", kanlı çatışmalardan dolayı da \"Melhame-i Kübra\" olarak bilinen savaş hangisidir?", options: ["Sakarya Meydan Muharebesi", "Çanakkale Savaşları", "Başkomutanlık Meydan Muharebesi", "Aslıhanlar ve Dumlupınar Muharebeleri"], explanation: "Sakarya Meydan Muharebesi çok kanlı geçmiş ve subay kaybı had safhaya ulaştığı için bu isimlerle anılmıştır." },
+            { word: "Yunan ordusunun denize dökülerek savaşın tamamen bitirilmesi", category: "savunma", question: "Aşağıdakilerden hangisi Sakarya Meydan Muharebesi'nin sonuçları arasında yer almaz?", options: ["Ukrayna ile Dostluk Antlaşması imzalanması", "Mustafa Kemal'e \"Gazilik\" ünvanı ve \"Mareşallik\" rütbesi verilmesi", "İngiltere ile Esir Mübadelesi Antlaşması yapılması", "Yunan ordusunun denize dökülerek savaşın tamamen bitirilmesi"], explanation: "Yunanların kesin olarak denize dökülüp savaşın bitirilmesi Büyük Taarruz'un sonucudur." },
+            { word: "İtalya", category: "cephe", question: "Anadolu'yu işgal eden İtilaf devletleri arasında, bölgesinden İLK olarak ve \"tamamen\" çekilen devlet hangisidir?", options: ["Yunanistan", "İngiltere", "İtalya", "Fransa"], explanation: "İtalya, Sakarya Zaferi sonrası Anadolu'dan ilk tamamen çekilen itilaf devletidir." },
+            { word: "Kâzım Karabekir", category: "antlasma", question: "13 Ekim 1921'de Kafkas Cumhuriyetleri (Azerbaycan, Ermenistan, Gürcistan) ile Kars Antlaşması'nı TBMM adına imzalayan komutan hangisidir?", options: ["Ali Fuat Cebesoy", "Kâzım Karabekir", "Rauf Orbay", "Refet Bele"], explanation: "Kars Antlaşmasını Şark Fatihi Kâzım Karabekir imzalamıştır." },
+            { word: "Doğu Trakya savaşılmadan diplomatik yollarla kurtarılmıştır.", category: "antlasma", question: "Aşağıdakilerden hangisi Kars Antlaşması'nın maddelerinden ve sonuçlarından biri değildir?", options: ["Ardahan'ın tamamı Türkiye'ye bırakılmıştır.", "Misakımilli sınırları içindeki Batum'un Gürcistan'da kalacağı bir kez daha kabul edilmiştir.", "Taraflar birbirlerine zorla kabul ettirilmek istenen antlaşmaları benimsemeyeceklerdir.", "Doğu Trakya savaşılmadan diplomatik yollarla kurtarılmıştır."], explanation: "Doğu Trakya'nın kurtarılması Mudanya Ateşkes Antlaşması iledir." },
+            { word: "Misakımilli'den ikinci kez taviz verilmesi", category: "antlasma", question: "Fransa ile imzalanan 1921 Ankara Antlaşması'nda Hatay'ın Fransa yönetimindeki Suriye'ye bırakılmasının tarihi anlamı nedir?", options: ["Güney Cephesi savaşlarının yeniden başlaması", "Fransa'nın Misakımilli'yi tamamen reddetmesi", "Misakımilli'den ikinci kez taviz verilmesi", "İngiltere'nin bölgeye yerleşmesinin sağlanması"], explanation: "İlk taviz Batum, ikinci taviz Hatay'ın bırakılmasıdır." },
+            { word: "Yusuf Kemal Tengirşenk - Franklin Bouillion", category: "antlasma", question: "Fransa ile 20 Ekim 1921'de imzalanan Ankara Antlaşması'nda TBMM'yi temsil eden Dışişleri Bakanı ile Fransa'yı temsil eden diplomat hangi seçenekte doğru eşleştirilmiştir?", options: ["Bekir Sami Bey - General Harrington", "Yusuf Kemal Tengirşenk - Franklin Bouillion", "İsmet İnönü - Lord Curzon", "Tevfik Rüştü Aras - Aristide Briand"], explanation: "Ankara Antlaşmasını TBMM adına Yusuf Kemal Bey imzalamıştır." },
+            { word: "Caber Kalesi", category: "antlasma", question: "1921 Ankara Antlaşması'na göre Süleyman Şah'ın türbesinin bulunduğu, Türk toprağı sayılarak asker bulundurup bayrak çekilmesine izin verilen yer neresidir?", options: ["Halep Kalesi", "Şam Emeviye Camii", "Caber Kalesi", "Rakka Kalesi"], explanation: "Caber Kalesi antlaşma gereği Türk toprağı sayılmıştır." },
+            { word: "Hatay halkının kendi geleceğini halk oylaması (referandum) ile belirlemesi", category: "antlasma", question: "Ankara Antlaşması'na göre Fransa'nın Suriye'den çekilmesi durumunda Hatay'ın geleceğinin nasıl belirleneceği kararlaştırılmıştır?", options: ["Doğrudan TBMM'ye bağlanması", "Cemiyet-i Akvam'ın kararına bırakılması", "İngiltere'nin inisiyatifine bırakılması", "Hatay halkının kendi geleceğini halk oylaması (referandum) ile belirlemesi"], explanation: "Hatay'ın durumunun halk oylaması ile belirleneceği maddesi yer almıştır." },
+            { word: "Eskişehir-Kütahya Muharebeleri", category: "savunma", question: "Kurtuluş Savaşı yıllarında TBMM'nin Ankara'dan Kayseri'ye taşınması fikri aşağıdaki gelişmelerin hangisi sırasında gündeme gelmiştir?", options: ["I. İnönü Savaşı", "Eskişehir-Kütahya Muharebeleri", "Sakarya Meydan Muharebesi", "Büyük Taarruz"], explanation: "Ordunun Sakarya'nın doğusuna çekilmesi ve Yunan ilerleyişi mecliste bu korkuyu ve tartışmayı yaratmıştır." },
+            { word: "Sakarya Meydan Muharebesi", category: "savunma", question: "Mustafa Kemal Paşa'ya TBMM tarafından \"Mareşal\" rütbesi ve \"Gazi\" unvanı verilmesine neden olan gelişme aşağıdakilerden hangisidir?", options: ["I. İnönü Savaşı", "Büyük Taarruz", "Sakarya Meydan Muharebesi", "Eskişehir-Kütahya Savaşları"], explanation: "Melhame-i Kübra olarak da bilinen bu büyük savunma zaferinin ardından TBMM bu unvanları takdim etmiştir." },
+            { word: "Eğitime", category: "savunma", question: "Milli Mücadele Dönemi'nde, cephede savaş devam ederken Ankara'da I. Maarif Kongresi'nin toplanması aşağıdakilerden hangisine önem verildiğinin doğrudan bir göstergesidir?", options: ["Ekonomiye", "Eğitime", "Dış politikaya", "Askeri düzene"], explanation: "Maarif, eğitim ve öğretim demektir. Kütahya-Eskişehir savaşları sırasında toplanmıştır." },
+            { word: "İstiklal Marşı'nın TBMM'de kabul edilmesi", category: "savunma", question: "Aşağıdakilerden hangisi Sakarya Meydan Muharebesi'nin sonuçlarından biri değildir?", options: ["İtalya'nın Anadolu'dan tamamen çekilmesi", "Fransa ile Ankara Antlaşması'nın imzalanması", "İstiklal Marşı'nın TBMM'de kabul edilmesi", "Kafkas Cumhuriyetleri ile Kars Antlaşması'nın imzalanması"], explanation: "İstiklal Marşı'nın kabulü Sakarya'nın değil, I. İnönü Muharebesi'nin sonucudur." },
+            { word: "Başkomutanlık Kanunu", category: "savunma", question: "Ordunun Sakarya Nehri'nin doğusuna çekilmesinin ardından TBMM'nin tüm yetkilerini üç aylığına Mustafa Kemal Paşa'ya devrettiği kanun aşağıdakilerden hangisidir?", options: ["Hıyanet-i Vataniye Kanunu", "Firariler Kanunu", "Takrir-i Sükun Kanunu", "Başkomutanlık Kanunu"], explanation: "Kütahya-Eskişehir yenilgisi üzerine kriz durumunu yönetmek için çıkarılmıştır." },
+            { word: "İsmet Paşa - II. İnönü Muharebesi", category: "inonu", question: "Mustafa Kemal Paşa'nın \"Siz orada yalnız düşmanı değil, milletin makus talihini de yendiniz.\" telgrafını çektiği komutan ve savaş aşağıdakilerin hangisinde doğru verilmiştir?", options: ["Kazım Karabekir - Doğu Cephesi", "Fevzi Çakmak - Sakarya Muharebesi", "İsmet Paşa - II. İnönü Muharebesi", "Refet Bele - Aslıhanlar Taarruzu"], explanation: "İsmet İnönü'nün art arda kazandığı ikinci savunma zaferi üzerine söylenmiştir." },
+            { word: "Sakarya Meydan Muharebesi", category: "savunma", question: "İtilaf Devletleri'nin, Anadolu'daki durumu yeniden değerlendirerek TBMM'ye barış teklifinde bulunmaları ve İtalya ile Fransa'nın işgal ettikleri yerleri tamamen boşaltmaları hangi savaşın sonucudur?", options: ["I. İnönü Savaşı", "II. İnönü Savaşı", "Sakarya Meydan Muharebesi", "Eskişehir-Kütahya Savaşları"], explanation: "Sakarya zaferi ile Türk ordusunun yenilemeyeceği anlaşılmış ve İtilaf bloğu parçalanmıştır." }
+        ];
+
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function init() {
+            questions = shuffle([...quizData]);
+            document.getElementById('total').textContent = questions.length;
+            showQuestion();
+            document.getElementById('catCover').addEventListener('click', () => {
+                document.getElementById('catCover').style.display = 'none';
+            });
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestionIndex];
+            document.getElementById('question').textContent = q.question;
+            document.getElementById('catCover').style.display = 'flex';
+            
+            const optionsDiv = document.getElementById('options');
+            const btns = optionsDiv.querySelectorAll('.option-btn');
+            btns.forEach(b => b.remove());
+
+            const currentOptions = shuffle([...q.options]);
+            currentOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(opt, q.word, btn);
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('progress').textContent = currentQuestionIndex + 1;
+            document.getElementById('progressBar').style.width = ((currentQuestionIndex + 1) / questions.length * 100) + '%';
+        }
+
+        function checkAnswer(selected, correct, btn) {
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            const isCorrect = selected === correct;
+            if (isCorrect) {
+                score++;
+                document.getElementById('score').textContent = score;
+                btn.classList.add('correct');
+            } else {
+                btn.classList.add('incorrect');
+                allBtns.forEach(b => { if(b.textContent === correct) b.classList.add('correct'); });
+            }
+
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'block';
+            feedback.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            document.getElementById('feedbackText').innerHTML = `<strong>${isCorrect ? '✅ Tebrikler!' : '❌ Dikkat!'}</strong><br>${questions[currentQuestionIndex].explanation}`;
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        document.getElementById('nextBtn').onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) showQuestion();
+            else showResults();
+        };
+
+        function showResults() {
+            document.getElementById('quizContainer').style.display = 'none';
+            const res = document.getElementById('resultsContainer');
+            res.style.display = 'block';
+            document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
+            
+            const list = document.getElementById('wordList');
+            quizData.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>${q.word}</strong><br><small>${q.question}</small><br><span class="category category-${q.category}">${q.category.toUpperCase()}</span>`;
+                list.appendChild(card);
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌿 TBMM ve Diplomasi: Gizli Kalmış Anılar</title>
+    <style>
+        :root {
+            --primary: #114B24;    /* Koyu Zümrüt Yeşili */
+            --success: #27AE60;    /* Doğru Cevap Yeşili */
+            --danger: #C0392B;     /* Yanlış Cevap Kırmızısı */
+            --light: #E9F7EF;      /* Açık Yeşil / Krem */
+            --dark: #1A2520;       /* Koyu Metin Rengi */
+            --accent: #2E8B57;     /* Vurgu Yeşili */
+            --gold: #F4D03F;       /* Daha Okunabilir Altın Sarısı */
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body {
+            background: linear-gradient(135deg, #0B2B15 0%, #1E5631 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px 15px; /* Mobilde daraltılacak */
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            overflow: hidden;
+            border: 2px solid var(--gold);
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--gold);
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+            border-bottom: 3px solid var(--gold);
+        }
+        
+        header::before {
+            content: "📜";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.2;
+        }
+        
+        h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin-bottom: 5px; color: white;}
+        .subtitle { font-size: 1.05rem; opacity: 0.95; color: var(--gold); font-style: italic;}
+
+        .progress-container { width: 100%; background-color: #d1e2d6; height: 10px; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--gold) 0%, #FFA500 100%); width: 0%; transition: width 0.4s ease; }
+        
+        .quiz-container { padding: 25px; background-color: #fcfdfc; }
+        .stats { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: bold; background: var(--light); padding: 15px; border-radius: 10px; border: 1px solid var(--accent); color: var(--primary); }
+        
+        .question-container { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 5px solid var(--gold); box-shadow: 0 4px 10px rgba(17, 75, 36, 0.08); }
+        .question { font-size: 1.15rem; font-weight: 500; color: var(--dark); line-height: 1.7; }
+        
+        .options { display: grid; grid-template-columns: 1fr; gap: 12px; position: relative; }
+        
+        .cat-cover {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(17, 75, 36, 0.95);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border-radius: 10px; z-index: 10; cursor: pointer;
+            backdrop-filter: blur(3px);
+            transition: opacity 0.3s;
+        }
+        .cat-image { max-width: 130px; border-radius: 8px; margin-bottom: 10px; border: 3px solid var(--gold); }
+        .cat-text { color: var(--gold); font-weight: bold; font-size: 1.2rem; text-shadow: 1px 1px 2px black; text-align: center; padding: 0 10px; }
+
+        .option-btn {
+            padding: 14px 18px; border: 2px solid #ccd1ce; border-radius: 10px;
+            background: white; cursor: pointer; transition: 0.2s; text-align: left; font-size: 1.05rem; color: var(--dark); font-weight: 500;
+        }
+        .option-btn:hover { border-color: var(--accent); background-color: var(--light); }
+        .option-btn.correct { background-color: var(--success) !important; color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger) !important; color: white; border-color: var(--danger); }
+        
+        .feedback { padding: 18px; border-radius: 10px; margin-top: 20px; display: none; border-left: 5px solid; line-height: 1.5; font-size: 1.05rem; }
+        .correct-feedback { background: rgba(39, 174, 96, 0.1); border-color: var(--success); color: #145a32; }
+        .incorrect-feedback { background: rgba(192, 57, 43, 0.1); border-color: var(--danger); color: #7b241c; }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white; border: none; padding: 16px;
+            border-radius: 10px; font-size: 1.15rem; cursor: pointer; display: block;
+            margin: 25px auto 0; width: 100%; max-width: 300px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .next-btn:active { transform: scale(0.98); }
+
+        .results-container { padding: 30px 20px; text-align: center; display: none; background-color: var(--light); }
+        .final-score { font-size: 2.8rem; color: var(--primary); margin: 15px 0; font-weight: bold; text-shadow: 1px 1px 0px var(--gold); }
+        .word-list { text-align: left; margin-top: 25px; }
+        .word-card { background: white; padding: 18px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--gold); box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 0.95rem;}
+
+        /* Mobil Optimizasyonları */
+        @media (max-width: 600px) {
+            body { padding: 0; }
+            .container { border-radius: 0; border: none; min-height: 100vh; }
+            header { padding: 20px 15px; }
+            h1 { font-size: 1.5rem; }
+            header::before { font-size: 2.2rem; top: 15px; left: 15px; }
+            .quiz-container { padding: 15px; }
+            .stats { flex-direction: row; font-size: 0.95rem; padding: 12px; }
+            .question-container { padding: 15px; }
+            .question { font-size: 1.05rem; }
+            .option-btn { font-size: 1rem; padding: 12px 15px; }
+            .cat-image { max-width: 100px; }
+            .cat-text { font-size: 1.1rem; }
+            .results-container { padding: 20px 15px; }
+            .final-score { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌿 TBMM ve Diplomasi</h1>
+            <div class="subtitle">Gizli Kalmış Anılar: Kim, Nerede, Hangi Olayda?</div>
+        </header>
+        <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <span>Puan: <span id="score">0</span></span>
+                <span>Anı: <span id="progress">1</span>/30</span>
+            </div>
+            <div class="question-container"><div class="question" id="question"></div></div>
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Cat" class="cat-image">
+                    <div class="cat-text">Hatıratı Görmek İçin Tıkla!</div>
+                </div>
+            </div>
+            <div class="feedback" id="feedback"></div>
+            <button class="next-btn" id="nextBtn" style="display: none;">Sıradaki Anıya Geç</button>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <h2 style="color: var(--primary); font-size: 1.5rem;">🏆 Tarih Arşivi Analizi Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()">Tekrar Çöz</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            { 
+                q: "«Karargah çadırına girdiğimde o mavi gözlü başkomutan beni ayakta karşıladı. Bana bir esir gibi değil, misafir gibi davrandı. 'Üzülmeyin general, askerlikte yenilmek de vardır. Napolyon da esir düşmüştü' diyerek beni teselli etti...»\n\nYukarıdaki anı hangi esir komutana aittir ve hangi muharebenin ardından yaşanmıştır?", 
+                a: "General Trikopis - Büyük Taarruz", 
+                m: "Yunan Başkomutanı Trikopis, Uşak'ta esir düştükten sonra bizzat Mustafa Kemal'in çadırına getirilmiş ve Atatürk'ün büyük komutanlık ahlakına şahit olmuştur." 
+            },
+            { 
+                q: "«Türk'ün Ateşle İmtihanı adlı eserimde de anlattığım gibi; ordunun Polatlı'ya kadar çekilmesi Ankara'da ölüm sessizliği yaratmıştı. Top sesleri meclisten duyuluyordu. Herkes panik halinde 'Meclisi Kayseri'ye mi taşıyoruz?' diye fısıldaşıyordu.»\n\nBu hatırat kime aittir ve Ankara'daki bu panik havası hangi gelişme sonrası yaşanmıştır?", 
+                a: "Halide Edip Adıvar - Kütahya/Eskişehir Muharebeleri", 
+                m: "Kütahya-Eskişehir yenilgisi sonrası ordunun Sakarya'nın doğusuna çekilmesi mecliste büyük bir kaosa ve başkenti taşıma tartışmalarına sebep olmuştur." 
+            },
+            { 
+                q: "«Konferans tutanaklarına geçen o meşhur tehdidimde Türk Başdelegesi'ne açıkça dedim ki: 'Burada reddettiğiniz her şeyi cebime atıyorum. Memleketiniz viranedir, yarın para istemeye geldiğinizde bunları cebimden çıkarıp önünüze koyacağım!'»\n\nTürk heyetine ekonomik şantaj yapan bu İtilaf diplomatı kimdir ve olay nerede yaşanmıştır?", 
+                a: "Lord Curzon - Lozan Konferansı", 
+                m: "İngiliz Dışişleri Bakanı Lord Curzon, kapitülasyonları kaldırmak isteyen İsmet Paşa'yı bu meşhur cümleyle tehdit etmiştir." 
+            },
+            { 
+                q: "«İstiklal Harbimizin Buhranlı Günleri adlı eserimde anlattığım üzere; ordumuzla Kars'ı ve Gümrü'yü geri aldıktan sonra karşı taraf barış istemek zorunda kaldı. Onlara masada, o lanet olası Sevr'in geçersiz olduğunu kendi elleriyle imzalattım.»\n\nBu tarihi zaferi anlatan komutan kimdir ve bahsettiği antlaşma hangisidir?", 
+                a: "Kâzım Karabekir - Gümrü Antlaşması", 
+                m: "15. Kolordu Komutanı Kâzım Karabekir, Ermenileri mağlup ederek TBMM'nin ilk siyasi ve askeri antlaşması olan Gümrü'yü imzalatmış ve Sevr'i fiilen yırtmıştır." 
+            },
+            { 
+                q: "«Görüşmeler çok gergin geçiyordu. İngiliz General masaya yumruğunu vurarak boğazdaki donanmalarını hatırlattı. Ben de 'Biz buraya Mondros'tan değil, muzaffer bir ordunun başından geldik. Gerekirse o toplara göğsümüzü siper etmesini biliriz!' diyerek rest çektim.»\n\nDiplomatik masada bu resti çeken Türk delegesi kimdir ve bu olay hangi mütareke görüşmelerinde geçmiştir?", 
+                a: "İsmet İnönü - Mudanya Mütarekesi", 
+                m: "Mudanya görüşmelerinde İngiliz General Harrington'un oyalama taktiklerine karşı İsmet Paşa askeri harekatı yeniden başlatma tehdidiyle masaya ağırlığını koymuştur." 
+            },
+            { 
+                q: "«Hayat ve Hatıratım'da uzun uzun yazdım. Müzakerelerde karşı taraf utanmadan Doğu Anadolu'da bir 'Yurt' istediklerini beyan etti. Oturumu yöneten başkana dönüp 'Biz buraya İstiklal Savaşı'nı kazanarak geldik, galip devletiz, bu lafları dinlemeyiz!' diyerek salonu terk ettim.»\n\nBu tavizsiz duruşu sergileyen Türk delegesi kimdir ve terk ettiği konferans/konu eşleşmesi nedir?", 
+                a: "Dr. Rıza Nur - Lozan Konferansı (Ermeni Yurdu)", 
+                m: "TBMM'nin kesin talimatı olan 'Ermeni Yurdu' ve 'Kapitülasyonlar' konusunda asla taviz verilmemiş, Rıza Nur Ermeni meselesi açılınca toplantıyı protesto etmiştir." 
+            },
+            { 
+                q: "«Moskova Hatıraları kitabımda da bahsettiğim gibi; Batı Cephesi'ndeki o talihsiz taarruzumuz, düzensiz Kuva-yi Milliye birlikleriyle yola devam edilemeyeceğini acı bir şekilde gösterdi. Bunun üzerine cephe komutanlığından alınıp Rusya'ya elçi olarak gönderildim.»\n\nBu hatıranın sahibi kimdir ve komutanlıktan alınmasına sebep olan başarısız askeri harekat hangisidir?", 
+                a: "Ali Fuat Cebesoy - Gediz Taarruzu", 
+                m: "Gediz Taarruzu'ndaki başarısızlık, düzenli orduya geçişin zorunlu olduğunu kanıtlamış ve Batı Cephesi ikiye (Kuzey/Güney) bölünerek Ali Fuat Paşa Moskova'ya atanmıştır." 
+            },
+            { 
+                q: "«Nutuk'ta metnini aynen yayımladığım o telgrafta, cephedeki ordu komutanımıza sadece bir askeri başarıyı değil, yüzyıllardır süren bir makus talihin, yani tersine dönmüş kaderin yenildiğini müjdelemiştim.»\n\nMustafa Kemal'in \"Siz orada yalnız düşmanı değil, milletin makus talihini de yendiniz\" dediği komutan kimdir ve bu telgraf hangi zaferin ardından çekilmiştir?", 
+                a: "İsmet İnönü - II. İnönü Muharebesi", 
+                m: "Yunan ordusunun ikinci kez aynı hatta durdurulması, Türk halkının TBMM'ye ve düzenli orduya olan inancını zirveye taşımıştır." 
+            },
+            { 
+                q: "«Cehennem Değirmeni adlı hatıratımda itiraf ettiğim gibi; benim Ege'de bir adada, o meşum İngiliz zırhlısının içinde imzaladığım teslimiyet belgesinin utancını, kardeşim yıllar sonra Marmara kıyısındaki o ahşap yalıda diplomatik bir zaferle silip atmıştı.»\n\nBu itirafın sahibi kimdir ve birbirinin rövanşı olarak nitelendirdiği iki antlaşma hangileridir?", 
+                a: "Rauf Orbay - Mondros ile Mudanya", 
+                m: "Mondros Mütarekesi'ni imzalayan Rauf Orbay, Mudanya Mütarekesi'ni imzalayan İsmet Paşa'yı tebrik ederken bu tarihi kıyaslamayı yapmıştır." 
+            },
+            { 
+                q: "«Paris'e çektiğim telgrafta hükümetime şöyle dedim: 'Mustafa Kemal ve ordusu 22 gün 22 gece süren bir kan banyosundan galip çıktılar. Artık bu milletle savaşılmaz, anlaşılır.' Ve o meclisle masaya oturup savaşı bitiren ilk büyük İtilaf devleti biz olduk.»\n\nBu raporu yazan Fransız diplomat kimdir ve hangi muharebe sonrası hangi antlaşmayı imzalamıştır?", 
+                a: "Franklin Bouillon - Sakarya Sonrası Ankara Antlaşması", 
+                m: "Sakarya Zaferi'nin en büyük siyasi sonucu, Fransa'nın TBMM'yi tanıyarak İtilaf bloğunu parçalaması ve Ankara Antlaşması'nı imzalamasıdır." 
+            },
+            { 
+                q: "«Osmanlı delegasyonu başkanı olarak o görkemli salona girdiğimde, İtilaf Devletleri'nin iki Türk heyetini birbirine düşürmek istediğini anladım. Söz sırası bana geldiğinde, 'Söz, milletin asıl temsilcisi olan Ankara heyetinindir' diyerek bu sinsi oyunu bozdum.»\n\nİstanbul hükümeti adına bu tarihi konuşmayı yapan diplomat kimdir ve olay nerede geçmiştir?", 
+                a: "Tevfik Paşa - Londra Konferansı", 
+                m: "I. İnönü zaferi sonrası toplanan Londra Konferansı'nda Tevfik Paşa, sözü TBMM temsilcisi Bekir Sami Bey'e bırakarak ikilik çıkarma planını yerle bir etmiştir." 
+            },
+            { 
+                q: "«Dışişleri Bakanı olarak Avrupa'ya gittim. Orada İngilizlerle ve Fransızlarla esir mübadelesi ve ekonomik tavizler içeren bazı özel metinler imzaladım. Döndüğümde Ankara hükümeti 'Tam bağımsızlığa aykırı!' diyerek anlaşmaları yırttı ve beni görevden aldı.»\n\nTBMM'nin haberi olmadan ikili anlaşmalar imzaladığı için istifa ettirilen dönemin Dışişleri Bakanı kimdir ve bu olay hangi konferans dönüşü yaşanmıştır?", 
+                a: "Bekir Sami Bey - Londra Konferansı", 
+                m: "Misak-ı Milli'ye ve eşitlik ilkesine uymayan (örneğin İngilizlerin tüm esirleri değil bir kısmını vermesi gibi) anlaşmalar TBMM tarafından reddedilmiştir." 
+            },
+            { 
+                q: "«Çankaya adlı eserimde tasvir ettiğim o tarihi sabah... Şafak sökerken topçularımızın ateşiyle dağlar inledi. Başkomutan, dudaklarında bir sigara, bir kayanın ucuna kadar gelmiş, dürbünüyle o cehennemi izliyordu.»\n\nYukarıdaki betimlemenin yazarı kimdir ve Başkomutan'ı anlattığı bu taarruz noktası neresidir?", 
+                a: "Falih Rıfkı Atay - Kocatepe (Büyük Taarruz)", 
+                m: "Büyük Taarruz, 26 Ağustos 1922 sabahı Afyonkarahisar sınırları içindeki Kocatepe'den bizzat Mustafa Kemal'in idaresinde topçu ateşiyle başlamıştır." 
+            },
+            { 
+                q: "«Büyük Millet Meclisi'nin ahşap sıraları arasında, cepheden yeni gelmiş bir zafer telgrafının müjdesiyle ayağa kalktım. Mehmet Akif'in o muazzam şiirini okuduğumda, salondaki herkes gözyaşları içinde ayakta alkışlıyordu.»\n\nİstiklal Marşı'nı mecliste okuyan bu Maarif Vekili (Eğitim Bakanı) kimdir ve marş hangi zaferin coşkusuyla kabul edilmiştir?", 
+                a: "Hamdullah Suphi Tanrıöver - I. İnönü Muharebesi", 
+                m: "Düzenli ordunun ilk zaferi olan I. İnönü'nün ardından 12 Mart 1921'de İstiklal Marşı büyük bir coşkuyla milli marş olarak kabul edilmiştir." 
+            },
+            { 
+                q: "«Hatıratımda 'Haklıydım' desem de tarih beni isyancı yazdı. Yunanlılar Bursa'dan ilerlerken, ben Ankara hükümetinin emrine, o 'düzenli ordu' dedikleri yapıya girmeyi reddettim ve kendi hükümetime silah çektim.»\n\nKendi kurduğu \"Kuvâ-yi Seyyare\" isimli devasa birliğiyle TBMM'ye isyan eden komutan kimdir ve Yunanlılar bu krizi fırsat bilip hangi taarruzu başlatmıştır?", 
+                a: "Çerkez Ethem - I. İnönü Muharebesi", 
+                m: "Düzenli ordu bir yandan Yunan ilerleyişini durdurmaya çalışırken (I. İnönü), diğer yandan arkadan vuran Çerkez Ethem isyanını bastırmak zorunda kalmıştır." 
+            },
+            { 
+                q: "«Hatıratımda 'O gün hayatımın en zor günüydü' diye yazarım. Türk ordusu İzmir'i almış, Çanakkale'de bizim tel örgülerimize kadar dayanmıştı. Londra 'Savaşın!' diyordu ama ben ateşkes masasını kurmayı tercih ettim, yoksa donanmam ve ordum yok olacaktı.»\n\nBüyük Taarruz sonrası ordumuzla Çanakkale Boğazı'nda karşı karşıya gelen ve hükümetinin savaş emrine rağmen ateşkes isteyen İngiliz General kimdir, doğan krizin adı nedir?", 
+                a: "General Harrington - Çanakkale Krizi", 
+                m: "Türk ordusunun boğazlara yönelmesi üzerine İngiltere'de savaş paniği yaşanmış, Başbakan Lloyd George istifa etmiş ve Mudanya Mütarekesi'ne giden yol açılmıştır." 
+            },
+            { 
+                q: "«Askeri hatıratlarımda belirttiğim gibi, ordunun 100 kilometre geriye, nehrin doğusuna çekilme emrini vermek mecburi bir hamleydi. Meclisteki feryatlara ve panik havasına rağmen bu stratejik çekilmeyi uyguladık ki ordu tamamen yok olmasın.»\n\nMecliste büyük tartışmalara yol açan bu stratejik geri çekilmeyi uygulayan/savunan komutanlardan biri kimdir ve bu çekilme hangi savaşa hazırlık (veya hangi savaşın sonucu) içindir?", 
+                a: "Fevzi Çakmak - Sakarya Muharebesi (Geri Çekilme)", 
+                m: "Kütahya-Eskişehir Savaşlarındaki ağır kayıplar üzerine orduyu tamamen kaybetmemek için Mustafa Kemal ve Fevzi Çakmak'ın kararıyla ordu Sakarya Nehri'nin doğusuna çekilmiştir." 
+            },
+            { 
+                q: "«Mütareke imzalanmış, şanlı ordumuz tek kurşun atmadan Rumeli'ye geçiş hakkı kazanmıştı. Ankara'nın emriyle İstanbul'a gelip, padişahın burnunun dibinden geçerek 'TBMM Trakya Yüksek Komiseri' sıfatıyla Edirne ve Kırklareli'yi teslim almaya gittim.»\n\nTek kurşun atılmadan kurtarılan Doğu Trakya'yı TBMM adına teslim almak üzere görevlendirilen komutan kimdir ve bu olay hangi mütareke sonrası gerçekleşmiştir?", 
+                a: "Refet Bele - Mudanya Mütarekesi Sonrası", 
+                m: "Mudanya kararları uyarınca Yunanistan'ın boşalttığı Doğu Trakya, askeri idareden ziyade mülki idareyi kurmak üzere Refet Bele tarafından teslim alınmıştır." 
+            },
+            { 
+                q: "«Ordumuz Sakarya'da düşmanı durdurmuştu ancak henüz taarruz gücümüz yoktu. Mecliste aylarca süren 'Neden taarruz etmiyoruz?' şiddetli eleştirilerine karşı 'Yarım hazırlıkla taarruz, hiç taarruz etmemekten kötüdür' diyerek ordunun eğitimini bir yıl boyunca bizzat idare ettim.»\n\nMeclisteki muhalefete göğüs gererek orduyu tam 1 yıl (Ağustos 1921 - Ağustos 1922) gizlilikle savaşa hazırlayan komutan kimdir ve hazırlığı yapılan savaş hangisidir?", 
+                a: "Mustafa Kemal - Büyük Taarruz Hazırlık Evresi", 
+                m: "Sakarya'dan sonra yaklaşık 1 yıl süren bekleyiş, ordunun taarruz eğitimi alması, silah ikmali yapması ve harekatın eksiksiz planlanması içindir." 
+            },
+            { 
+                q: "«Kafkas Cumhuriyetleri'nin Tiflis ve Erivan temsilcileriyle masaya oturduk. Sakarya'dan muzaffer çıkmamız onların bize bakışını tamamen değiştirmişti. Sovyet Rusya'nın da onayıyla doğu sınırımızı bir daha değişmemek üzere, kesin olarak güvence altına aldık.»\n\nDoğu sınırımızın \"Kesin\" halini aldığı bu diplomatik gelişme hangi antlaşmadır ve hangi savaşın ardından (kimin önderliğindeki Türk heyetiyle) imzalanmıştır?", 
+                a: "Kars Antlaşması - Kâzım Karabekir (Sakarya Sonrası)", 
+                m: "Gümrü ve Moskova ile şekillenen Doğu sınırı, Sakarya Meydan Muharebesi'nin ardından Azerbaycan, Gürcistan ve Ermenistan ile imzalanan Kars Antlaşması ile KESİN halini almıştır." 
+            },
+            {
+                q: "«Ordunun durumu kritikti. Düşman Ankara'ya yaklaşmıştı. Top sesleri duyulurken ben öğretmenleri topladım ve onlara hitap ettim: 'Cehille savaş, düşmanla savaştan daha az önemli değildir!'»\n\nOrdunun yenilgi aldığı en zor günlerde dahi eğitimi aksatmayan Başkomutan kimdir ve bu tarihi olay hangi muharebe esnasında (Maarif Kongresi) yaşanmıştır?",
+                a: "Mustafa Kemal - Kütahya/Eskişehir Muharebeleri",
+                m: "Kütahya-Eskişehir Savaşları sırasında ordunun zor durumuna rağmen Atatürk Maarif Kongresi'ni iptal etmeyerek eğitime verdiği büyük değeri göstermiştir."
+            },
+            {
+                q: "«Düşman Sakarya nehrini aşmıştı. Cephe yarılmıştı. Karargaha dönüp o güne kadar askerlik tarihinde eşi görülmemiş o emri yazdırdım: 'Hattı müdafaa yoktur, sathı müdafaa vardır. O satıh bütün vatandır!'»\n\nTüm yurdu savunma hattı ilan eden Başkomutan kimdir ve bu emir hangi savaşta verilmiştir?",
+                a: "Mustafa Kemal - Sakarya Meydan Muharebesi",
+                m: "Mustafa Kemal'in verdiği bu tarihi taktiksel emir, dünya askerlik tarihine geçmiş ve savunma anlayışını tamamen değiştirmiştir."
+            },
+            {
+                q: "«30 Ağustos'ta düşman ordusunun ana gövdesini Dumlupınar'da imha etmiştik. Kaçan düşmanı İzmir'e kadar kovalamak ve onlara toparlanma fırsatı vermemek için ordularıma o meşhur emri telsizle geçtim: 'İlk hedefiniz Akdeniz'dir, ileri!'»\n\nBu harekat emrini veren komutan kimdir ve emrin verildiği savaşın diğer adı nedir?",
+                a: "Mustafa Kemal - Başkomutanlık Meydan Muharebesi",
+                m: "Büyük Taarruz içinde yer alan ve düşman ana gövdesinin imha edildiği Dumlupınar Meydan Muharebesi'nin ardından İzmir'e yürüyüş başlamıştır."
+            },
+            {
+                q: "«Namık Kemal'in o karamsar dizelerini meclis kürsüsünden okudum: 'Vatanın bağrına düşman dayamış hançerini / Yok mudur kurtaracak bahtı kara maderini'. Sonra sesimi yükselttim ve cevabı yapıştırdım: 'Vatanın bağrına düşman dayasın hançerini / Bulunur kurtaracak bahtı kara maderini!'»\n\nBu umut dolu meclis konuşmasını yapan lider kimdir ve hangi kritik muharebenin hazırlık evresinde (zor günlerde) yapılmıştır?",
+                a: "Mustafa Kemal - I. İnönü Öncesi",
+                m: "Mustafa Kemal, meclisteki moralsizliği ve umutsuzluğu Namık Kemal'in şiirini değiştirerek okumuş ve yepyeni bir motivasyon kaynağı yaratmıştır."
+            },
+            {
+                q: "«Adana treninden inip Haydarpaşa'ya geçtiğimde, Boğaziçi'ne demirlemiş o devasa İtilaf donanmasını gördüm. Yanımdaki yaverim Cevat Abbas gözyaşlarını tutamıyordu. Ona dönüp tarihe geçecek o sözü söyledim: Geldikleri gibi giderler!»\n\nBu hatıra kime aittir ve hangi olayın hemen sonrasında İstanbul'da yaşanmıştır?",
+                a: "Mustafa Kemal - Mondros Mütarekesi Sonrası İşgal",
+                m: "13 Kasım 1918'de İstanbul'un fiilen işgal edildiği gün, Mustafa Kemal Kartal İstimbotu'nda düşman gemilerine bakarak bu tarihi sözü söylemiştir."
+            },
+            {
+                q: "«Damat Ferit Paşa hükümeti ve padişah bizi isyancı ilan etmiş, Elazığ valisi Ali Galip'i üzerimize yollamıştı. Ancak biz kongreyi topladık ve İstanbul'a şu tarihi mesajı çektik: 'Artık İstanbul Anadolu'ya hakim değil, tabi olmak mecburiyetindedir!'»\n\nİstanbul hükümetine karşı bu tarihi resti çeken lider kimdir ve hangi kongrenin ardından bu söz söylenmiştir?",
+                a: "Mustafa Kemal - Sivas Kongresi",
+                m: "Sivas Kongresi kararları ile Anadolu hareketi İstanbul hükümetine karşı siyasi üstünlüğünü resmen ilan etmiş ve Damat Ferit hükümeti düşürülmüştür."
+            },
+            {
+                q: "«Paşam, sivil olarak da ben ve kolordum emrinizdeyiz!» diyerek, askerlikten istifa eden ve hakkında tutuklama kararı olan Mustafa Kemal'e en zor anında destek veren komutan kimdir ve olay nerede geçmiştir?",
+                a: "Kâzım Karabekir - Erzurum",
+                m: "Mustafa Kemal'in askerlik görevinden ve tüm resmi sıfatlarından istifa ettiği (Sine-i Millete dönüş) gece, Kâzım Karabekir ona en büyük desteği vermiştir."
+            },
+            {
+                q: "«Yunan taarruzu öncesinde Londra'da İtilaf Devletleri yetkililerine durumu bildirdim. Ancak beni dinlemediler. Barış görüşmelerinden sonuç alamayınca Ankara'ya döndüm ve 'Bizim davamız ancak silahla çözülecektir. Bize barış taarruzu da lazımdır' diyerek ordunun taarruza hazırlanması gerektiğini savundum.»\n\nBüyük Taarruz öncesi Avrupa'da diplomatik yolları deneyip sonuç alamayan bu Türk elçisi kimdir?",
+                a: "Fethi Okyar - Büyük Taarruz Öncesi Diplomasi",
+                m: "Fethi Okyar'ın Avrupa'daki temaslarından sonuç çıkmaması üzerine, TBMM'de askeri harekat (Büyük Taarruz) için düğmeye basılmıştır."
+            },
+            {
+                q: "«Düşman kuvvetlerinin İzmir'i işgal etmesi üzerine bölgeye gönderildim. Hazırladığım raporda açıkça yazdım: 'Bölgede Hristiyanların katledildiği iddiaları asılsızdır. Aksine, Türkler çoğunluktadır ve Yunan işgali haksızdır.'»\n\nMilli Mücadele'nin haklılığını uluslararası alanda kanıtlayan ilk belgeyi hazırlayan bu Amerikalı diplomat kimdir?",
+                a: "Amiral Bristol - İzmir'in İşgali (Amiral Bristol Raporu)",
+                m: "Amiral Bristol Raporu, İzmir'deki Yunan işgalinin Paris Barış Konferansı kararlarına dahi aykırı olduğunu ve Türklerin haklılığını kanıtlayan ilk uluslararası belgedir."
+            },
+            {
+                q: "«Yunanlılar İzmir'e asker çıkarırken, o gazeteci dayanamadı ve kalabalığın arasına dalarak 'Olamaz, böyle ellerini kollarını sallayarak giremezler!' diye bağırıp düşmana ilk kurşunu sıktı.»\n\nGerçek adı Osman Nevres olan ve bu sözlerle ilk kurşunu sıkan yiğit gazeteci kimdir, nerede şehit düşmüştür?",
+                a: "Hasan Tahsin - İzmir'in İşgali",
+                m: "Hukuk-u Beşer Gazetesi başyazarı Hasan Tahsin (Osman Nevres), İzmir'de Yunan Efzon alayına karşı milli onuru savunarak ilk kurşunu sıkmış ve şehit edilmiştir."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let shuffledQuiz = [];
+
+        function shuffleArray(array) {
+            let temp = [...array];
+            for (let i = temp.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [temp[i], temp[j]] = [temp[j], temp[i]];
+            }
+            return temp;
+        }
+
+        function startQuiz() {
+            shuffledQuiz = shuffleArray(quizData);
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = shuffledQuiz[currentQuestion];
+            document.getElementById('question').innerText = q.q;
+            document.getElementById('progress').innerText = currentQuestion + 1;
+            document.getElementById('progressBar').style.width = ((currentQuestion + 1) / 30 * 100) + "%";
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = `
+                <div class="cat-cover" id="catCover" onclick="revealOptions()">
+                    <img src="https://cataas.com/cat" class="cat-image">
+                    <div class="cat-text">Şıkları Görmek İçin Tıkla!</div>
+                </div>
+            `;
+            
+            // Tüm şıkları oluşturmak için dinamik çeldirici üretimi (2x2 Mantığı)
+            let basePerson = q.a.split(" - ")[0];
+            let baseEvent = q.a.split(" - ")[1];
+            
+            // Alternatif Kişiler ve Olaylar (Basit çeldirici havuzu)
+            let altPersons = ["Fevzi Çakmak", "İsmet İnönü", "Rauf Orbay", "Ali Fuat Cebesoy", "Refet Bele", "Yakup Kadri", "Lord Curzon", "Kâzım Karabekir", "Mustafa Kemal"];
+            let altEvents = ["Sakarya Muharebesi", "I. İnönü Muharebesi", "Büyük Taarruz", "Lozan Konferansı", "Mudanya Mütarekesi", "Gümrü Antlaşması", "Erzurum Kongresi", "Londra Konferansı"];
+            
+            let wPerson = altPersons.find(p => p !== basePerson) || "Kâzım Karabekir";
+            let wEvent = altEvents.find(e => !baseEvent.includes(e) && !e.includes(baseEvent)) || "Kütahya-Eskişehir Muharebeleri";
+
+            // Sadece bu soruya özel 4 şık (Doğru, Yarı Doğru 1, Yarı Doğru 2, Tam Yanlış)
+            let currentOptions = [
+                q.a,
+                `${basePerson} - ${wEvent}`,
+                `${wPerson} - ${baseEvent}`,
+                `${wPerson} - ${wEvent}`
+            ];
+
+            // Şıkları Karıştır
+            currentOptions = shuffleArray(currentOptions);
+
+            currentOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt, q.a, q.m);
+                optionsDiv.appendChild(btn);
+            });
+            
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function revealOptions() {
+            document.getElementById('catCover').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('catCover').style.display = 'none';
+            }, 300);
+        }
+
+        function checkAnswer(selected, correct, meaning) {
+            const btns = document.getElementsByClassName('option-btn');
+            
+            for (let btn of btns) {
+                btn.disabled = true;
+                if (btn.innerText === correct) btn.classList.add('correct');
+                else if (btn.innerText === selected) btn.classList.add('incorrect');
+            }
+
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'block';
+            if (selected === correct) {
+                score += 5; // 30 soru üzerinden (Tamamı bilinirse 150 Puan)
+                feedback.className = 'feedback correct-feedback';
+                feedback.innerHTML = `<strong>✅ Tarihi Doğru Okudun!</strong><br><br>${meaning}`;
+                document.getElementById('score').innerText = score;
+            } else {
+                feedback.className = 'feedback incorrect-feedback';
+                feedback.innerHTML = `<strong>❌ Hatıraları Karıştırdın!</strong><br>Doğru Eşleşme: <b>${correct}</b><br><br>${meaning}`;
+            }
+            
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        document.getElementById('nextBtn').onclick = () => {
+            currentQuestion++;
+            if (currentQuestion < 30) showQuestion();
+            else finishQuiz();
+        };
+
+        function finishQuiz() {
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'block';
+            document.getElementById('finalScore').innerText = `${score} / 150`;
+            
+            const list = document.getElementById('wordList');
+            list.innerHTML = "<h3 style='color: var(--primary); margin-bottom: 15px;'>Tarihi Kesitler Genel Tekrar:</h3>";
+            shuffledQuiz.forEach(q => {
+                list.innerHTML += `<div class="word-card"><strong style="color:var(--dark);">${q.q}</strong><br><br><span style="color:var(--accent); font-weight:bold;">Cevap: ${q.a}</span><br><small style="color:#555; display:block; margin-top:8px;">${q.m}</small></div>`;
+            });
+        }
+
+        startQuiz();
+    </script>
+</body>
+</html>

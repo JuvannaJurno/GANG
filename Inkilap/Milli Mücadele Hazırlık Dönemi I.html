@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milli Mücadele Hazırlık Dönemi I</title>
+    <style>
+        :root {
+            --primary: #2E8B57;
+            --success: #228B22;
+            --danger: #B22222;
+            --light: #F5FFFA;
+            --dark: #2F4F4F;
+            --accent: #32CD32;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E8B57 0%, #32CD32 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "📜";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 139, 87, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(46, 139, 87, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(34, 139, 34, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 139, 87, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-mustafakemal { background: #2E8B57; }
+        .category-havza { background: #228B22; }
+        .category-amastgenelgesi { background: #32CD32; }
+        .category-istifa { background: #2E8B57; }
+        .category-bolgeselkongreler { background: #228B22; }
+        .category-erzurumkongresi { background: #32CD32; }
+        .category-sivaskongresi { background: #2E8B57; }
+        .category-tanimkronoloji { background: #228B22; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option-btn {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .cat-image {
+                max-width: 150px;
+                max-height: 120px;
+            }
+            
+            .cat-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📜 Milli Mücadele Hazırlık Dönemi I</h1>
+            <div class="subtitle">Havza, Amasya, Erzurum ve Sivas Kongreleri Testi</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        // GÜNCELLENMİŞ 42 SORULUK MİLLİ MÜCADELE HAZIRLIK DÖNEMİ TESTİ
+        const quizData = [
+            // BÖLÜM 1: MUSTAFA KEMAL'İN İSTANBUL'A GELİŞİ VE SAMSUN'A ÇIKIŞI (1-7)
+            {
+                word: "Mondros Ateşkesi (30 Ekim 1918) imzalandığı sırada, Mustafa Kemal hangi cephede ve hangi görevde bulunuyordu?",
+                meaning: "Suriye-Filistin Cephesi – Yıldırım Orduları Grup Komutanı",
+                category: "Mustafa Kemal",
+                question: "Mondros Ateşkesi (30 Ekim 1918) imzalandığı sırada, Mustafa Kemal hangi cephede ve hangi görevde bulunuyordu?",
+                options: [
+                    "Kafkas Cephesi – Kolordu Komutanı",
+                    "Çanakkale Cephesi – Tümen Komutanı",
+                    "Suriye-Filistin Cephesi – Yıldırım Orduları Grup Komutanı",
+                    "Irak Cephesi – Ordu Komutanı"
+                ],
+                explanation: "Mustafa Kemal, Mondros Ateşkesi imzalandığında Suriye-Filistin Cephesi'nde Yıldırım Orduları Grup Komutanı olarak görev yapıyordu."
+            },
+            {
+                word: "Mustafa Kemal, 13 Kasım 1918'de İstanbul'a geldiğinde, Haydarpaşa'dan baktığı limanda gördüğü İtilaf Devletleri donanması için yaverine hangi tarihî sözü söylemiştir?",
+                meaning: "Geldikleri gibi giderler",
+                category: "Mustafa Kemal",
+                question: "Mustafa Kemal, 13 Kasım 1918'de İstanbul'a geldiğinde, Haydarpaşa'dan baktığı limanda gördüğü İtilaf Devletleri donanması için yaverine hangi tarihî sözü söylemiştir?",
+                options: [
+                    "İşte geldikleri gibi kalacaklar.",
+                    "Bu gördükleriniz bizi korumaya gelmiştir.",
+                    "Artık vatan elden gidiyor.",
+                    "Geldikleri gibi giderler."
+                ],
+                explanation: "Mustafa Kemal, İstanbul'a geldiğinde limanda demirlemiş İtilaf donanmasını görünce yaveri Cevat Abbas'a 'Geldikleri gibi giderler' sözünü söylemiştir."
+            },
+            {
+                word: "Mustafa Kemal, İstanbul'da bulunduğu süre içerisinde arkadaşı Ali Fethi Okyar ile birlikte hangi gazeteyi çıkarmıştır?",
+                meaning: "Minber",
+                category: "Mustafa Kemal",
+                question: "Mustafa Kemal, İstanbul'da bulunduğu süre içerisinde arkadaşı Ali Fethi Okyar ile birlikte hangi gazeteyi çıkarmıştır?",
+                options: [
+                    "İrade-i Milliye",
+                    "Hakimiyet-i Milliye",
+                    "Minber",
+                    "Tanin"
+                ],
+                explanation: "Mustafa Kemal, İstanbul'da Millî Mücadele fikirlerini yaymak için Ali Fethi Okyar ile birlikte 'Minber' gazetesini çıkarmıştır."
+            },
+            {
+                word: "Mustafa Kemal'in İstanbul'da bulunduğu sürede, etkin bir hükûmet kurulması, ordunun terhisinin ve silahların tesliminin engellenmesi yönünde çalışma yapmasının temel amacı aşağıdakilerden hangisidir?",
+                meaning: "Mondros Ateşkesi'nin olumsuz şartlarını fiilen etkisiz hale getirmeye çalışmak",
+                category: "Mustafa Kemal",
+                question: "Mustafa Kemal'in İstanbul'da bulunduğu sürede, etkin bir hükûmet kurulması, ordunun terhisinin ve silahların tesliminin engellenmesi yönünde çalışma yapmasının temel amacı aşağıdakilerden hangisidir?",
+                options: [
+                    "Padişah VI. Mehmet'i tahttan indirmek",
+                    "Mondros Ateşkesi'nin olumsuz şartlarını fiilen etkisiz hale getirmeye çalışmak",
+                    "Derhal cumhuriyeti ilan etmek",
+                    "İtilaf Devletleri ile barış antlaşması imzalamak"
+                ],
+                explanation: "Mustafa Kemal, Mondros'un yıkıcı şartlarını uygulamayarak fiilen etkisiz hale getirmeye ve direniş için zaman kazanmaya çalışmıştır."
+            },
+            {
+                word: "Mustafa Kemal'in, 9. Ordu Müfettişi olarak Samsun'a çıkışında kendisine verilen resmî görevler arasında aşağıdakilerden hangisi YOKTUR?",
+                meaning: "Bölgede işgallere karşı hemen direniş cemiyetleri kurmak ve yönetmek",
+                category: "Mustafa Kemal",
+                question: "Mustafa Kemal'in, 9. Ordu Müfettişi olarak Samsun'a çıkışında kendisine verilen resmî görevler arasında aşağıdakilerden hangisi YOKTUR?",
+                options: [
+                    "Bölgede iç güvenliği sağlamak ve asayiş sorunlarının nedenlerini araştırmak",
+                    "Bölgede işgallere karşı hemen direniş cemiyetleri kurmak ve yönetmek",
+                    "Mondros Ateşkesi hükümlerine göre dağınık haldeki silah ve cephaneyi toplatıp korumak",
+                    "Osmanlı Hükümeti'nin otoritesini bölgede yeniden tesis etmek"
+                ],
+                explanation: "Mustafa Kemal'in resmi görevi direniş cemiyetleri kurmak değil, tam tersine bölgedeki direnişi kontrol altına almak ve İstanbul Hükümeti'nin otoritesini sağlamaktı."
+            },
+            {
+                word: "Mustafa Kemal, Samsun'dan sonra güvenlik gerekçesiyle nereye geçerek ilk önemli bildirisini yayımlamıştır?",
+                meaning: "Havza",
+                category: "Havza",
+                question: "Mustafa Kemal, Samsun'dan sonra güvenlik gerekçesiyle nereye geçerek ilk önemli bildirisini yayımlamıştır?",
+                options: [
+                    "Amasya",
+                    "Tokat",
+                    "Havza",
+                    "Erzurum"
+                ],
+                explanation: "Mustafa Kemal, Samsun'dan sonra güvenlik nedeniyle 25 Mayıs 1919'da Havza'ya geçmiş ve ilk önemli bildirisi olan Havza Genelgesi'ni burada yayımlamıştır."
+            },
+            {
+                word: "Mustafa Kemal'in Samsun'a çıktıktan sonra bölgede yaptığı incelemelerin sonuçlarını içeren ve İstanbul Hükümeti'ne sunduğu 'Samsun Raporu', aşağıdaki gelişmelerden hangisinin hemen öncesinde hazırlanmıştır?",
+                meaning: "Havza Genelgesi",
+                category: "Havza",
+                question: "Mustafa Kemal'in Samsun'a çıktıktan sonra bölgede yaptığı incelemelerin sonuçlarını içeren ve İstanbul Hükümeti'ne sunduğu 'Samsun Raporu', aşağıdaki gelişmelerden hangisinin hemen öncesinde hazırlanmıştır?",
+                options: [
+                    "Amasya Genelgesi",
+                    "Havza Genelgesi",
+                    "Erzurum Kongresi",
+                    "Sivas Kongresi"
+                ],
+                explanation: "Samsun Raporu, bölgedeki durumu tespit eden ve Havza Genelgesi'nin hazırlanmasına zemin hazırlayan önemli bir belgedir."
+            },
+
+            // BÖLÜM 2: HAVZA GENELGESİ (28-29 MAYIS 1919) (8-11)
+            {
+                word: "Havza Genelgesi'nin yayımlanmasının temel amacı nedir?",
+                meaning: "Türk halkında millî bilinci ve direniş ruhunu uyandırmak",
+                category: "Havza",
+                question: "Havza Genelgesi'nin yayımlanmasının temel amacı nedir?",
+                options: [
+                    "İstanbul Hükümeti'ni doğrudan devirmek",
+                    "Bölgesel direniş cemiyetlerini birleştirmek",
+                    "Türk halkında millî bilinci ve direniş ruhunu uyandırmak",
+                    "İtilaf Devletleri'ne resmen savaş ilan etmek"
+                ],
+                explanation: "Havza Genelgesi'nin temel amacı, İzmir'in işgali gibi olayları protesto ettirerek halkta millî bilinç uyandırmak ve direniş ruhunu canlandırmaktır."
+            },
+            {
+                word: "Aşağıdakilerden hangisi Havza Genelgesi'nin maddeleri arasında yer almaz?",
+                meaning: "Saltanatın kaldırılacağı ilan edilecektir",
+                category: "Havza",
+                question: "Aşağıdakilerden hangisi Havza Genelgesi'nin maddeleri arasında yer almaz?",
+                options: [
+                    "İzmir'in işgali her yerde protesto edilecektir",
+                    "Saltanatın kaldırılacağı ilan edilecektir",
+                    "Protestolarda masum azınlıklara zarar verilmeyecektir",
+                    "Ordular dağıtılmayacak ve silahlar teslim edilmeyecektir"
+                ],
+                explanation: "Havza Genelgesi'nde saltanatın kaldırılması gibi radikal bir madde yoktur. Genelge daha çok protesto ve direniş örgütleme üzerine odaklanmıştır."
+            },
+            {
+                word: "İzmir'in işgali, Mustafa Kemal'in önderliğinde ilk kez nerede ve hangi bildiri ile protesto edilmiştir?",
+                meaning: "Havza Genelgesi ile - Havza",
+                category: "Havza",
+                question: "İzmir'in işgali, Mustafa Kemal'in önderliğinde ilk kez nerede ve hangi bildiri ile protesto edilmiştir?",
+                options: [
+                    "Amasya Genelgesi ile - Amasya",
+                    "Erzurum Kongresi kararları ile - Erzurum",
+                    "Havza Genelgesi ile - Havza",
+                    "Sivas Kongresi kararları ile - Sivas"
+                ],
+                explanation: "İzmir'in işgaline karşı ilk organize protesto çağrısı Havza Genelgesi ile yapılmıştır. Bu genelge ile tüm yurtta işgali protesto eden mitingler düzenlenmesi istenmiştir."
+            },
+            {
+                word: "Havza Genelgesi'nin yayımlanmasının ardından Mustafa Kemal için hangi gelişme yaşanmıştır?",
+                meaning: "İstanbul Hükümeti tarafından ilk kez görevinden alınmak üzere geri çağrılmıştır",
+                category: "Havza",
+                question: "Havza Genelgesi'nin yayımlanmasının ardından Mustafa Kemal için hangi gelişme yaşanmıştır?",
+                options: [
+                    "Padişah tarafından resmen nişanla ödüllendirilmiştir",
+                    "İstanbul Hükümeti tarafından ilk kez görevinden alınmak üzere geri çağrılmıştır",
+                    "İtilaf Devletleri temsilcileriyle doğrudan görüşmelere başlamıştır",
+                    "Doğu cephesine komutan olarak atanmıştır"
+                ],
+                explanation: "Havza Genelgesi'nin yayımlanması ve işgale karşı protestoların başlaması üzerine İstanbul Hükümeti, Mustafa Kemal'i ilk kez görevinden almak için geri çağırmıştır."
+            },
+
+            // BÖLÜM 3: AMASYA GENELGESİ (22 HAZİRAN 1919) (12-24)
+            {
+                word: "Amasya Genelgesi, Mustafa Kemal ve silah arkadaşları tarafından nerede hazırlanmıştır?",
+                meaning: "Amasya'daki Saraydüzü Kışlası'nda",
+                category: "Amasya Genelgesi",
+                question: "Amasya Genelgesi, Mustafa Kemal ve silah arkadaşları tarafından nerede hazırlanmıştır?",
+                options: [
+                    "Sivas Lise'sinde",
+                    "Amasya'daki Saraydüzü Kışlası'nda",
+                    "Erzurum Kongresi binasında",
+                    "Ankara'daki Türkiye Büyük Millet Meclisi'nde"
+                ],
+                explanation: "Amasya Genelgesi, 22 Haziran 1919'da Amasya'daki Saraydüzü Kışlası'nda Mustafa Kemal ve silah arkadaşları tarafından hazırlanmıştır."
+            },
+            {
+                word: "Amasya Genelgesi'ni Mustafa Kemal'in emriyle kaleme alan kişi aşağıdakilerden hangisidir?",
+                meaning: "Cevat Abbas Gürer",
+                category: "Amasya Genelgesi",
+                question: "Amasya Genelgesi'ni Mustafa Kemal'in emriyle kaleme alan kişi aşağıdakilerden hangisidir?",
+                options: [
+                    "Ali Fuat Cebesoy",
+                    "Rauf Orbay",
+                    "Cevat Abbas Gürer",
+                    "Refet Bele"
+                ],
+                explanation: "Amasya Genelgesi, Mustafa Kemal'in yaveri ve yakın çalışma arkadaşı Cevat Abbas Gürer tarafından kaleme alınmıştır."
+            },
+            {
+                word: "Aşağıdaki isimlerden hangisi, Amasya Genelgesi'ni imzalayan veya onay veren kişiler arasında yer almamıştır?",
+                meaning: "Fevzi Çakmak",
+                category: "Amasya Genelgesi",
+                question: "Aşağıdaki isimlerden hangisi, Amasya Genelgesi'ni imzalayan veya onay veren kişiler arasında yer almamıştır?",
+                options: [
+                    "Rauf Orbay",
+                    "Ali Fuat Cebesoy",
+                    "Kâzım Karabekir (telgrafla onay)",
+                    "Fevzi Çakmak"
+                ],
+                explanation: "Amasya Genelgesi'ni Mustafa Kemal, Rauf Orbay, Ali Fuat Cebesoy, Refet Bele imzalamış; Kâzım Karabekir ve Cemal Paşa telgrafla onay vermiştir. Fevzi Çakmak imzacılar arasında yer almamıştır."
+            },
+            {
+                word: "Aşağıdakilerden hangisi, Amasya Genelgesi'nde imzası olmadığı halde Millî Mücadele'nin önemli komutanları arasında yer alan isimlerdendir?",
+                meaning: "İsmet İnönü",
+                category: "Amasya Genelgesi",
+                question: "Aşağıdakilerden hangisi, Amasya Genelgesi'nde imzası olmadığı halde Millî Mücadele'nin önemli komutanları arasında yer alan isimlerdendir?",
+                options: [
+                    "Rauf Orbay",
+                    "İsmet İnönü",
+                    "Refet Bele",
+                    "Ali Fuat Cebesoy"
+                ],
+                explanation: "İsmet İnönü, Amasya Genelgesi'ne imza atmamış olmasına rağmen Millî Mücadele'nin ve daha sonra Cumhuriyet'in en önemli komutan ve devlet adamlarından biridir."
+            },
+            {
+                word: "Mustafa Kemal'in, Amasya Genelgesi'ni yakın silah arkadaşlarıyla birlikte yayımlamasının temel amaçları arasında aşağıdakilerden hangisi yoktur?",
+                meaning: "İstanbul Hükümeti'ni derhal devirip yerine geçmek",
+                category: "Amasya Genelgesi",
+                question: "Mustafa Kemal'in, Amasya Genelgesi'ni yakın silah arkadaşlarıyla birlikte yayımlamasının temel amaçları arasında aşağıdakilerden hangisi yoktur?",
+                options: [
+                    "İstanbul Hükümeti'ni derhal devirip yerine geçmek",
+                    "Millî Mücadele'yi kişisel bir hareket olmaktan çıkarmak",
+                    "Ülkenin farklı bölgelerindeki komutanların desteğini ve katılımını sağlamak",
+                    "Hareketin bir ekip işi olduğunu göstermek"
+                ],
+                explanation: "Amasya Genelgesi'nin amacı İstanbul Hükümeti'ni derhal devirmek değil, Millî Mücadele'yi örgütlemek ve geniş tabanlı bir hareket haline getirmektir."
+            },
+            {
+                word: "Amasya Genelgesi'nin 'Millî Mücadele'nin gerekçesi belirlenmiştir' şeklinde özetlenen önemi, genelgede aşağıdaki maddelerden hangileriyle somutlaştırılmıştır?",
+                meaning: "Vatanın bütünlüğü ve milletin istiklali tehlikededir / İstanbul Hükümeti üzerine aldığı sorumluluğu yerine getirememektedir",
+                category: "Amasya Genelgesi",
+                question: "Amasya Genelgesi'nin 'Millî Mücadele'nin gerekçesi belirlenmiştir' şeklinde özetlenen önemi, genelgede aşağıdaki maddelerden hangileriyle somutlaştırılmıştır?",
+                options: [
+                    "Sivas'ta kongre toplanacaktır / Temsilciler kimlik gizleyecektir",
+                    "Vatanın bütünlüğü ve milletin istiklali tehlikededir / İstanbul Hükümeti üzerine aldığı sorumluluğu yerine getirememektedir",
+                    "Milletin bağımsızlığını milletin azmi kurtaracaktır / Yeni bir kurul oluşturulacaktır",
+                    "Ordular dağıtılmayacak / İzmir'in işgali protesto edilecektir"
+                ],
+                explanation: "Amasya Genelgesi'nin ilk iki maddesi Millî Mücadele'nin gerekçesini oluşturur: 1) Vatanın bütünlüğü ve milletin bağımsızlığı tehlikededir, 2) İstanbul Hükümeti üzerine düşen görevi yapamamaktadır."
+            },
+            {
+                word: "Amasya Genelgesi'nin en önemli maddelerinden biri olan 'Milletin istiklalini yine milletin azim ve kararı kurtaracaktır' ifadesi, aşağıdaki ilkelerden özellikle hangisinin habercisi niteliğindedir?",
+                meaning: "Millî Egemenlik",
+                category: "Amasya Genelgesi",
+                question: "Amasya Genelgesi'nin en önemli maddelerinden biri olan 'Milletin istiklalini yine milletin azim ve kararı kurtaracaktır' ifadesi, aşağıdaki ilkelerden özellikle hangisinin habercisi niteliğindedir?",
+                options: [
+                    "Halkçılık",
+                    "Laiklik",
+                    "Millî Egemenlik",
+                    "Devletçilik"
+                ],
+                explanation: "Bu madde, kurtuluşun padişahtan veya dışarıdan gelecek bir kurtarıcıdan değil, doğrudan milletin kendi iradesinden geleceğini belirttiği için millî egemenlik ilkesinin ilk işaretidir."
+            },
+            {
+                word: "Amasya Genelgesi'nde, 'İstanbul Hükûmeti görevini yapmamaya devam ederse yerine her türlü etki ve denetiminden uzak yeni bir kurul oluşturilacaktır.' kararı aşağıdakilerden hangisinin temelini atmıştır?",
+                meaning: "Temsil Heyeti (Heyet-i Temsiliye) oluşturulmasının",
+                category: "Amasya Genelgesi",
+                question: "Amasya Genelgesi'nde, 'İstanbul Hükûmeti görevini yapmamaya devam ederse yerine her türlü etki ve denetiminden uzak yeni bir kurul oluşturulacaktır.' kararı aşağıdakilerden hangisinin temelini atmıştır?",
+                options: [
+                    "Misak-ı Millî'nin ilanının",
+                    "Temsil Heyeti (Heyet-i Temsiliye) oluşturulmasının",
+                    "TBMM'nin açılışının",
+                    "Cumhuriyetin ilanının"
+                ],
+                explanation: "Bu karar, daha sonra Erzurum Kongresi'nde kurulacak olan Temsil Heyeti'nin (Heyet-i Temsiliye) fikri ve hukuki temelini oluşturmuştur."
+            },
+            {
+                word: "Alman doğu bilimci Gotthard Jöschke'nin, 'Mustafa Kemal Paşa'nın isyan bayrağını açtığı ilk yer' olarak nitelendirdiği gelişme aşağıdakilerden hangisidir?",
+                meaning: "Amasya Genelgesi",
+                category: "Amasya Genelgesi",
+                question: "Alman doğu bilimci Gotthard Jöschke'nin, 'Mustafa Kemal Paşa'nın isyan bayrağını açtığı ilk yer' olarak nitelendirdiği gelişme aşağıdakilerden hangisidir?",
+                options: [
+                    "Samsun'a çıkış",
+                    "Havza Genelgesi",
+                    "Amasya Genelgesi",
+                    "Erzurum Kongresi"
+                ],
+                explanation: "Alman tarihçi Jöschke, Amasya Genelgesi'ni Mustafa Kemal'in 'isyan bayrağını açtığı ilk yer' olarak nitelendirmiştir çünkü bu genelge ile İstanbul Hükümeti'ne karşı açık bir tavır alınmıştır."
+            },
+            {
+                word: "Amasya Genelgesi, 'Mukaddes İttifak' olarak kim tarafından nitelendirilmiştir?",
+                meaning: "Ali Fuat Cebesoy",
+                category: "Amasya Genelgesi",
+                question: "Amasya Genelgesi, 'Mukaddes İttifak' olarak kim tarafından nitelendirilmiştir?",
+                options: [
+                    "Mustafa Kemal Paşa",
+                    "Ali Fuat Cebesoy",
+                    "Rauf Orbay",
+                    "Refet Bele"
+                ],
+                explanation: "Ali Fuat Cebesoy, Amasya Genelgesi'ni farklı bölgelerdeki komutanların bir araya gelerek verdiği ortak karar nedeniyle 'Mukaddes İttifak' olarak adlandırmıştır."
+            },
+            {
+                word: "Mustafa Kemal’in, 'Artık İstanbul Anadolu’ya hâkim değil, tâbi olmak zorundadır.' sözü aşağıdaki kongrelerden hangisinde dile getirilmiş olup bu sözle asıl olarak ne anlatılmak istenmiştir?",
+                meaning: "Sivas Kongresi – Millî iradenin ve mücadelenin merkezinin artık Anadolu olduğu, İstanbul’un bu iradeye uyması gerektiği",
+                category: "Amasya Genelgesi",
+                question: "Mustafa Kemal’in, 'Artık İstanbul Anadolu’ya hâkim değil, tâbi olmak zorundadır.' sözü aşağıdaki kongrelerden hangisinde dile getirilmiş olup bu sözle asıl olarak ne anlatılmak istenmiştir?",
+                options: [
+                    "Erzurum Kongresi – Anadolu’da yeni bir saltanat merkezi kurulacağı",
+                    "Sivas Kongresi – Padişahın derhal Anadolu’ya gelmesi gerektiği",
+                    "Erzurum Kongresi – İstanbul’un coğrafi olarak Anadolu’ya bağlı olduğu",
+                    "Sivas Kongresi – Millî iradenin ve mücadelenin merkezinin artık Anadolu olduğu, İstanbul’un bu iradeye uyması gerektiği"
+                ],
+                explanation: "Bu söz, Sivas Kongresi sürecinde Millî Mücadele'nin merkezinin artık Anadolu olduğunu ve İstanbul'un bu iradeye uymak zorunda kalacağını vurgulamaktadır."
+            },
+            {
+                word: "Aşağıdakilerden hangisi Amasya Genelgesi'nde alınan kongre kararları arasında yer almaz?",
+                meaning: "Ankara'da Türkiye Büyük Millet Meclisi'nin derhal açılması sağlanacaktır",
+                category: "Amasya Genelgesi",
+                question: "Aşağıdakilerden hangisi Amasya Genelgesi'nde alınan kongre kararları arasında yer almaz?",
+                options: [
+                    "Erzurum'da toplanacak kongreye katılım sağlanacaktır",
+                    "Ankara'da Türkiye Büyük Millet Meclisi'nin derhal açılması sağlanacaktır",
+                    "Sivas'ta millî bir kongre toplanacaktır",
+                    "Delegeler gerekli görülen yerlerde kimliklerini gizleyecektir"
+                ],
+                explanation: "TBMM'nin açılması Amasya Genelgesi'nde değil, çok daha sonra 23 Nisan 1920'de gerçekleşmiştir. Amasya Genelgesi'nde Erzurum ve Sivas kongrelerinin toplanması kararlaştırılmıştır."
+            },
+            {
+                word: "Amasya Genelgesi'nde, Sivas'ta toplanacak kongreye delegelerin 'her sancaktan halkın güvenini kazanmış belediye ve cemiyetlerce belirlenen üç kişi' şeklinde seçileceği belirtilmiştir. Bu karar aşağıdakilerden öncelikle hangisini sağlamaya yöneliktir?",
+                meaning: "Kongrenin, halk temsilcilerinden oluşan meşru ve güvenilir bir yapı olmasını",
+                category: "Amasya Genelgesi",
+                question: "Amasya Genelgesi'nde, Sivas'ta toplanacak kongreye delegelerin 'her sancaktan halkın güvenini kazanmış belediye ve cemiyetlerce belirlenen üç kişi' şeklinde seçileceği belirtilmiştir. Bu karar aşağıdakilerden öncelikle hangisini sağlamaya yöneliktir?",
+                options: [
+                    "Kongrenin sayısal olarak çok kalabalık olmasını",
+                    "Kongrenin, halk temsilcilerinden oluşan meşru ve güvenilir bir yapı olmasını",
+                    "Sadece askerlerin kongreye katılmasını",
+                    "İstanbul Hükümeti'nin onayını hızlıca almayı"
+                ],
+                explanation: "Bu karar, kongrenin halkın gerçek temsilcilerinden oluşmasını ve meşruiyetinin sağlam temellere dayanmasını amaçlamaktadır."
+            },
+
+            // BÖLÜM 4: MUSTAFA KEMAL'İN ASKERLİKTEN İSTİFASI (25-28)
+            {
+                word: "Mustafa Kemal, Amasya Genelgesi'nin ardından, Erzurum'da hangi tarihte ve hangi göreviyle birlikte askerlik mesleğinden istifa etmiştir?",
+                meaning: "8/9 Temmuz 1919 – 9. Ordu Müfettişliği",
+                category: "İstifa",
+                question: "Mustafa Kemal, Amasya Genelgesi'nin ardından, Erzurum'da hangi tarihte ve hangi göreviyle birlikte askerlik mesleğinden istifa etmiştir?",
+                options: [
+                    "22 Haziran 1919 – 9. Ordu Müfettişliği",
+                    "8/9 Temmuz 1919 – 9. Ordu Müfettişliği",
+                    "23 Temmuz 1919 – Heyet-i Temsiliye Başkanlığı",
+                    "4 Eylül 1919 – Temsil Heyeti Üyeliği"
+                ],
+                explanation: "Mustafa Kemal, İstanbul Hükümeti tarafından görevden alındığını öğrenince, 8/9 Temmuz 1919'da Erzurum'da 9. Ordu Müfettişliği görevinden istifa etmiştir."
+            },
+            {
+                word: "Mustafa Kemal, istifa metninde askerlikten ayrılma gerekçesi olarak aşağıdakilerden hangisini göstermiştir?",
+                meaning: "Askerî ve resmî sıfatının, milletle birlikte serbestçe çalışmasına engel olduğunu",
+                category: "İstifa",
+                question: "Mustafa Kemal, istifa metninde askerlikten ayrılma gerekçesi olarak aşağıdakilerden hangisini göstermiştir?",
+                options: [
+                    "Padişahın emirlerine artık uyamayacağını",
+                    "Askerî ve resmî sıfatının, milletle birlikte serbestçe çalışmasına engel olduğunu",
+                    "Yeni bir devlet kurma sürecini başlatmak istediğini",
+                    "İstanbul Hükümeti ile tüm bağlarını koparmak istediğini"
+                ],
+                explanation: "Mustafa Kemal istifa metninde, 'askerî ve resmî sıfatımın milletle beraber serbest surette çalışmaya engel olmaya başladığını' belirterek sivil olarak mücadeleye devam etme kararını açıklamıştır."
+            },
+            {
+                word: "Mustafa Kemal'in istifa metninde kullandığı 'sine-i millette bir ferd-i mücahit suretiyle bulunmak' ifadesi, onun bundan sonraki mücadelesini hangi temel üzerine oturtmayı planladığını göstermektedir?",
+                meaning: "Doğrudan milletin bir ferdi ve temsilcisi olma",
+                category: "İstifa",
+                question: "Mustafa Kemal'in istifa metninde kullandığı 'sine-i millette bir ferd-i mücahit suretiyle bulunmak' ifadesi, onun bundan sonraki mücadelesini hangi temel üzerine oturtmayı planladığını göstermektedir?",
+                options: [
+                    "Doğrudan milletin bir ferdi ve temsilcisi olma",
+                    "İstanbul Hükümeti'ndeki sivil bir memur olma",
+                    "Yeni kurulacak ordunun başkomutanı olma",
+                    "Uluslararası alanda diplomat olma"
+                ],
+                explanation: "Bu ifade, Mustafa Kemal'in artık bir devlet memuru veya asker olarak değil, doğrudan milletin bir ferdi ve temsilcisi olarak mücadeleye devam edeceğini göstermektedir."
+            },
+            {
+                word: "Mustafa Kemal'in askerlikten istifa ettikten sonra sivil olarak katıldığı ilk millî faaliyet nedir?",
+                meaning: "Erzurum Kongresi'ne katılarak başkan seçilmek",
+                category: "İstifa",
+                question: "Mustafa Kemal'in askerlikten istifa ettikten sonra sivil olarak katıldığı ilk millî faaliyet nedir?",
+                options: [
+                    "TBMM'nin açılmasına öncülük etmek",
+                    "Kuvayımilliye birliklerinin kurulmasını sağlamak",
+                    "Erzurum Kongresi'ne katılarak başkan seçilmek",
+                    "İrade-i Milliye gazetesini çıkarmak"
+                ],
+                explanation: "Mustafa Kemal, askerlikten istifasının hemen ardından sivil olarak katıldığı Erzurum Kongresi'nde (23 Temmuz 1919) kongre başkanı seçilmiştir."
+            },
+
+            // BÖLÜM 5: BÖLGESEL KONGRELER (BALIKESİR, ALAŞEHİR, POZANTI) (29-31)
+            {
+                word: "Hacim Muhittin Bey (Çarıklı) tarafından toplanan, Batı Cephesi'nin kurulması kararının alındığı ve gerektiğinde Yunanlara karşı İtilaf devletlerinden yardım alınabileceğinin görüşüldüğü kongre aşağıdakilerden hangisidir?",
+                meaning: "Balıkesir Kongresi",
+                category: "Bölgesel Kongreler",
+                question: "Hacim Muhittin Bey (Çarıklı) tarafından toplanan, Batı Cephesi'nin kurulması kararının alındığı ve gerektiğinde Yunanlara karşı İtilaf devletlerinden yardım alınabileceğinin görüşüldüğü kongre aşağıdakilerden hangisidir?",
+                options: [
+                    "Sivas Kongresi",
+                    "Erzurum Kongresi",
+                    "Pozantı Kongresi",
+                    "Balıkesir Kongresi"
+                ],
+                explanation: "Balıkesir Kongresi, Hacim Muhittin Bey başkanlığında toplanmış, Batı Cephesi'nin kurulması kararlaştırılmış ve İtilaf devletlerinden yardım alınabileceği görüşülmüştür."
+            },
+            {
+                word: "Aşağıdaki kongrelerden hangisi, Batı Anadolu'daki direnişin durumunu gözden geçirmek, teşkilatlanmayı tamamlamak ve Paris Barış Konferansı'nın 'Yunan Zulümlerini İnceleme Komisyonu'na rapor hazırlamak amacıyla toplanmıştır?",
+                meaning: "Alaşehir Kongresi",
+                category: "Bölgesel Kongreler",
+                question: "Aşağıdaki kongrelerden hangisi, Batı Anadolu'daki direnişin durumunu gözden geçirmek, teşkilatlanmayı tamamlamak ve Paris Barış Konferansı'nın 'Yunan Zulümlerini İnceleme Komisyonu'na rapor hazırlamak amacıyla toplanmıştır?",
+                options: [
+                    "Sivas Kongresi",
+                    "Balıkesir Kongresi",
+                    "Alaşehir Kongresi",
+                    "Erzurum Kongresi"
+                ],
+                explanation: "Alaşehir Kongresi, Batı Anadolu'daki direnişi koordine etmek, teşkilatlanmayı tamamlamak ve Yunan zulümlerini belgeleyerek uluslararası komisyona rapor hazırlamak amacıyla toplanmıştır."
+            },
+            {
+                word: "Millî Mücadele'nin son kongresi kabul edilen, Mustafa Kemal ve Fevzi Çakmak'ın birlikte katıldığı ve Adana düşman işgalinden kurtuluncaya kadar Pozantı'nın vilayet merkezi yapıldığı kongre aşağıdakilerden hangisidir?",
+                meaning: "Pozantı Kongresi",
+                category: "Bölgesel Kongreler",
+                question: "Millî Mücadele'nın son kongresi kabul edilen, Mustafa Kemal ve Fevzi Çakmak'ın birlikte katıldığı ve Adana düşman işgalinden kurtuluncaya kadar Pozantı'nın vilayet merkezi yapıldığı kongre aşağıdakilerden hangisidir?",
+                options: [
+                    "Alaşehir Kongresi",
+                    "Pozantı Kongresi",
+                    "Sivas Kongresi",
+                    "Balıkesir Kongresi"
+                ],
+                explanation: "Pozantı Kongresi, Millî Mücadele'nın son kongresi kabul edilir. Mustafa Kemal ve Fevzi Çakmak'ın katıldığı bu kongrede, Adana işgalden kurtuluncaya kadar Pozantı'nın vilayet merkezi yapılması kararlaştırılmıştır."
+            },
+
+            // BÖLÜM 6: ERZURUM KONGRESİ (23 TEMMUZ - 7 AĞUSTOS 1919) (32-42)
+            {
+                word: "Mustafa Kemal'in 'Siz bundan evvel olduğu gibi, bundan böyle de bizim kumandanımızsınız...' sözleriyle kongre sürecinde en büyük desteği verdiği ve bu desteğin kongrenin toplanabilmesinde hayati önemi olan komutan kimdir?",
+                meaning: "Kâzım Karabekir Paşa",
+                category: "Erzurum Kongresi",
+                question: "Mustafa Kemal'in 'Siz bundan evvel olduğu gibi, bundan böyle de bizim kumandanımızsınız...' sözleriyle kongre sürecinde en büyük desteği verdiği ve bu desteğin kongrenin toplanabilmesinde hayati önemi olan komutan kimdir?",
+                options: [
+                    "Rauf Orbay",
+                    "Ali Fuat Cebesoy",
+                    "Kâzım Karabekir Paşa",
+                    "Refet Bele"
+                ],
+                explanation: "15. Kolordu Komutanı Kâzım Karabekir Paşa, Mustafa Kemal'e verdiği bu destekle hem onun askeri otoritesini korumuş hem de Erzurum Kongresi'nin toplanmasını sağlamıştır."
+            },
+            {
+                word: "Erzurum Kongresi'nde istifa eden ve yerlerine delege seçilen kişiler arasında aşağıdakilerden hangisi yer almaz?",
+                meaning: "Kâzım Karabekir",
+                category: "Erzurum Kongresi",
+                question: "Erzurum Kongresi'nde istifa eden ve yerlerine delege seçilen kişiler arasında aşağıdakilerden hangisi yer almaz?",
+                options: [
+                    "Mustafa Kemal",
+                    "Rauf Orbay",
+                    "Kâzım Karabekir",
+                    "Cevat Dursunoğlu"
+                ],
+                explanation: "Mustafa Kemal ve Rauf Orbay istifa eden delegelerdir, yerlerine Kâzım Yurdalan ve Cevat Dursunoğlu seçilmiştir. Kâzım Karabekir ise askeri komutan olarak kongreye destek vermiştir."
+            },
+            {
+                word: "9 Temmuz 1919'da Erzurum'da Mustafa Kemal ile görüşen ve kongrenin açılmaması yönünde tehdit içeren ifadeler kullanan İngiliz Yarbay kimdir?",
+                meaning: "Yarbay Rawlinson",
+                category: "Erzurum Kongresi",
+                question: "9 Temmuz 1919'da Erzurum'da Mustafa Kemal ile görüşen ve kongrenin açılmaması yönünde tehdit içeren ifadeler kullanan İngiliz Yarbay kimdir?",
+                options: [
+                    "General Harrington",
+                    "Yarbay Rawlinson",
+                    "Amiral de Robeck",
+                    "General Milne"
+                ],
+                explanation: "İngiliz Yarbay Rawlinson, Mustafa Kemal ile görüşerek Erzurum Kongresi'nin toplanmamasını istemiş, aksi takdirde 'sorumlu tutulacağını' belirterek tehdit etmiştir."
+            },
+            {
+                word: "Aşağıdaki kongrelerden hangisinin toplanış amacı bölgesel olmakla birlikte aldığı kararlar ulusal niteliktedir ve bu kongrede 'Manda ve himaye kabul edilemez' kararı ilk kez alınmıştır?",
+                meaning: "Erzurum Kongresi",
+                category: "Erzurum Kongresi",
+                question: "Aşağıdaki kongrelerden hangisinin toplanış amacı bölgesel olmakla birlikte aldığı kararlar ulusal niteliktedir ve bu kongrede 'Manda ve himaye kabul edilemez' kararı ilk kez alınmıştır?",
+                options: [
+                    "Sivas Kongresi",
+                    "Alaşehir Kongresi",
+                    "Erzurum Kongresi",
+                    "Balıkesir Kongresi"
+                ],
+                explanation: "Erzurum Kongresi, Doğu Anadolu'da Ermeni tehdidine karşı toplanmış bölgesel bir kongre olmasına rağmen, aldığı kararlar tüm yurdu ilgilendiren ulusal niteliktedir ve manda-himayenin reddi ilk kez bu kongrede kararlaştırılmıştır."
+            },
+            {
+                word: "Erzurum Kongresi kararlarından 'Millî sınırlar içinde vatan bir bütündür, bölünemez.' maddesi ile ilgili aşağıdaki yargılardan hangisi yanlıştır?",
+                meaning: "Bu karar, Sivas Kongresi'nde tartışılmış ve reddedilmiştir",
+                category: "Erzurum Kongresi",
+                question: "Erzurum Kongresi kararlarından 'Millî sınırlar içinde vatan bir bütündür, bölünemez.' maddesi ile ilgili aşağıdaki yargılardan hangisi yanlıştır?",
+                options: [
+                    "Vatanın sınırlarından ilk kez bu kararla bahsedilmiştir",
+                    "Bu karar, Sivas Kongresi'nde tartışılmış ve reddedilmiştir",
+                    "Misakımillî'de aynen kabul edilmiştir",
+                    "Ulusal bağımsızlığın toprak bütünlüğü boyutunu ortaya koyar"
+                ],
+                explanation: "Bu karar Sivas Kongresi'nde reddedilmemiş, aksine genişletilerek kabul edilmiş ve daha sonra Misakımillî'de de yer almıştır."
+            },
+            {
+                word: "Erzurum Kongresi'nde alınan 'Kuvayımilliye'yi etkin, millî iradeyi hâkim kılmak esastır.' kararı, aşağıdaki ilkelerden hangilerinin birlikte gerçekleşeceğini vurgulamıştır?",
+                meaning: "Ulusal bağımsızlık – Ulusal egemenlik",
+                category: "Erzurum Kongresi",
+                question: "Erzurum Kongresi'nde alınan 'Kuvayımilliye'yi etkin, millî iradeyi hâkim kılmak esastır.' kararı, aşağıdaki ilkelerden hangilerinin birlikte gerçekleşeceğini vurgulamıştır?",
+                options: [
+                    "Tam bağımsızlık – Halkçılık",
+                    "Ulusal bağımsızlık – Ulusal egemenlik",
+                    "Devletçilik – Laiklik",
+                    "Cumhuriyetçilik – İnkılapçılık"
+                ],
+                explanation: "Kuvayımilliye ulusal bağımsızlığı, millî irade ise ulusal egemenliği temsil eder. Bu kararla iki ilkenin birlikte gerçekleştirileceği vurgulanmıştır."
+            },
+            {
+                word: "'Hristiyan azınlıklara, siyasi ve sosyal dengemizi bozucu ayrıcalıklar verilemez.' kararı aşağıdaki kongrelerin hangisinde alınmış olup bu kararla asıl olarak ne amaçlanmıştır?",
+                meaning: "Erzurum Kongresi – Ülkenin siyasi ve sosyal bütünlüğünün korunması, ayrıcalıkların önlenmesi",
+                category: "Erzurum Kongresi",
+                question: "'Hristiyan azınlıklara, siyasi ve sosyal dengemizi bozucu ayrıcalıklar verilemez.' kararı aşağıdaki kongrelerin hangisinde alınmış olup bu kararla asıl olarak ne amaçlanmıştır?",
+                options: [
+                    "Sivas Kongresi – Azınlık haklarının genişletilmesi",
+                    "Erzurum Kongresi – Ülkenin siyasi ve sosyal bütünlüğünün korunması, ayrıcalıkların önlenmesi",
+                    "Balıkesir Kongresi – Yabancı devletlerle iş birliğinin kolaylaştırılması",
+                    "Amasya Genelgesi – Misakımillî sınırlarının daraltılması"
+                ],
+                explanation: "Bu karar Erzurum Kongresi'nde alınmıştır ve Osmanlı döneminde azınlıklara verilen kapitülasyon benzeri ayrıcalıklara son vererek ülkenin siyasi ve sosyal bütünlüğünü korumayı amaçlamaktadır."
+            },
+            {
+                word: "'Ulusal güçler, padişahı ve saltanat makamını düştüğü bu durumdan kurtaracaktır.' kararı aşağıdaki kongrelerin hangisinde alınmış olup bu kararla asıl olarak ne amaçlanmıştır?",
+                meaning: "Erzurum Kongresi – Saltanat yanlılarının Millî Mücadele’ye çekilmesi",
+                category: "Erzurum Kongresi",
+                question: "'Ulusal güçler, padişahı ve saltanat makamını düştüğü bu durumdan kurtaracaktır.' kararı aşağıdaki kongrelerin hangisinde alınmış olup bu kararla asıl olarak ne amaçlanmıştır?",
+                options: [
+                    "Sivas Kongresi – İstanbul Hükûmeti ile doğrudan çatışmaya girilmesi",
+                    "Erzurum Kongresi – Saltanat yanlılarının Millî Mücadele’ye çekilmesi",
+                    "Sivas Kongresi – Halifelik makamının ortadan kaldırılması",
+                    "Erzurum Kongresi – Padişahın siyasi gücünün artırılması"
+                ],
+                explanation: "Bu karar, ulusal egemenlik ilkesiyle çelişse de stratejik olarak saltanat ve halifelik yanlılarının desteğini almak ve geniş bir toplumsal taban oluşturmak için Erzurum Kongresi'nde alınmıştır."
+            },
+            {
+                word: "'Ulusal sınırları amacı olmayan herhangi bir devletten dış yardım alınabilir.' kararı aşağıdaki kongrelerin hangisinde alınmış olup Millî Mücadele’ye bu doğrultuda en fazla destek veren devlet hangisidir?",
+                meaning: "Erzurum Kongresi – Sovyet Rusya",
+                category: "Erzurum Kongresi",
+                question: "'Ulusal sınırları amacı olmayan herhangi bir devletten dış yardım alınabilir.' kararı aşağıdaki kongrelerin hangisinde alınmış olup Millî Mücadele’ye bu doğrultuda en fazla destek veren devlet hangisidir?",
+                options: [
+                    "Sivas Kongresi – Amerika Birleşik Devletleri",
+                    "Erzurum Kongresi – Sovyet Rusya",
+                    "Balıkesir Kongresi – Fransa",
+                    "Amasya Genelgesi – İngiltere"
+                ],
+                explanation: "Bu karar Erzurum Kongresi'nde alınmıştır. Sovyet Rusya, Millî Mücadele'ye silah, cephane ve para yardımı yaparak en büyük dış desteği sağlamıştır."
+            },
+            {
+                word: "Erzurum Kongresi'nin sonucunda oluşturulan ve başkanlığını Mustafa Kemal'in yaptığı yapı aşağıdakilerden hangisidir?",
+                meaning: "Heyet-i Temsiliye",
+                category: "Erzurum Kongresi",
+                question: "Erzurum Kongresi'nin sonucunda oluşturulan ve başkanlığını Mustafa Kemal'in yaptığı yapı aşağıdakilerden hangisidir?",
+                options: [
+                    "Kuvayımilliye Grubu",
+                    "Heyet-i Temsiliye",
+                    "Müdafaa-i Hukuk Cemiyeti",
+                    "İcra Vekilleri Heyeti"
+                ],
+                explanation: "Erzurum Kongresi sonunda 9 kişiden oluşan ve başkanlığını Mustafa Kemal'in yaptığı Temsil Heyeti (Heyet-i Temsiliye) kurulmuştur. Bu heyet daha sonra Sivas Kongresi'nde genişletilmiştir."
+            },
+            {
+                word: "'Damat Ferit Paşa Hükûmetinin yaptığı faaliyetlerin denetlenmesini sağlamak' amacıyla alınan aşağıdaki kararlardan hangisi, hangi kongrede kabul edilmiştir?",
+                meaning: "İstanbul’da Osmanlı Mebusan Meclisinin açılarak hükûmetin bu yolla denetlenmesi – Erzurum Kongresi",
+                category: "Erzurum Kongresi",
+                question: "'Damat Ferit Paşa Hükûmetinin yaptığı faaliyetlerin denetlenmesini sağlamak' amacıyla alınan aşağıdaki kararlardan hangisi, hangi kongrede kabul edilmiştir?",
+                options: [
+                    "Hükümet üyelerinin tutuklanması – Sivas Kongresi",
+                    "İstanbul’da Osmanlı Mebusan Meclisinin açılarak hükûmetin bu yolla denetlenmesi – Erzurum Kongresi",
+                    "İtilaf Devletleri nezdinde protesto edilmesi – Balıkesir Kongresi",
+                    "Doğrudan yeni bir meclisin Ankara’da toplanması – Amasya Genelgesi"
+                ],
+                explanation: "Erzurum Kongresi, İstanbul Hükümeti'ni denetleyebilmek için Osmanlı Mebusan Meclisi'nin açılmasını istemiştir. Bu meclis daha sonra Misakımillî'yi kabul edecektir."
+            }
+        ];
+
+        // DOM elements
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const resultMessageEl = document.getElementById('resultMessage');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+        let masteredWords = [];
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Initialize quiz
+        function initQuiz() {
+            questions = shuffleArray([...quizData]);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            
+            // Add click event to cat cover
+            catCoverEl.addEventListener('click', removeCatCover);
+        }
+
+        // Remove cat cover to reveal answers
+        function removeCatCover() {
+            catCoverEl.style.display = 'none';
+        }
+
+        // Show current question
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            // Reset cat cover
+            catCoverEl.style.display = 'flex';
+            
+            // Shuffle options
+            const options = shuffleArray([...currentQuestion.options]);
+            
+            // Clear previous options
+            optionsEl.innerHTML = '';
+            
+            // Add cat cover back
+            optionsEl.appendChild(catCoverEl);
+            
+            // Create new option buttons
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = option;
+                button.addEventListener('click', () => selectAnswer(option, currentQuestion));
+                optionsEl.appendChild(button);
+            });
+            
+            // Reset UI for new question
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        // Handle answer selection
+        function selectAnswer(selectedOption, currentQuestion) {
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // Disable all buttons
+            optionButtons.forEach(button => {
+                button.disabled = true;
+                
+                // Mark correct answer
+                if (button.textContent === currentQuestion.meaning) {
+                    button.classList.add('correct');
+                }
+                
+                // Mark incorrect selected answer
+                if (button.textContent === selectedOption && button.textContent !== currentQuestion.meaning) {
+                    button.classList.add('incorrect');
+                }
+            });
+            
+            // Check if answer is correct
+            const isCorrect = selectedOption === currentQuestion.meaning;
+            
+            // Update score if correct
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+                
+                // Add to mastered words if not already there
+                if (!masteredWords.some(w => w.word === currentQuestion.word)) {
+                    masteredWords.push(currentQuestion);
+                }
+            }
+            
+            // Show feedback
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            
+            if (isCorrect) {
+                feedbackTextEl.innerHTML = `✅ Doğru! <br><br><strong>Açıklama:</strong> ${currentQuestion.explanation}`;
+            } else {
+                feedbackTextEl.innerHTML = `❌ Yanlış! <br><br><strong>Doğru Cevap:</strong> ${currentQuestion.meaning} <br><br><strong>Açıklama:</strong> ${currentQuestion.explanation}`;
+            }
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        // End quiz and show results
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            finalScoreEl.textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            // Result message based on performance
+            if (percentage >= 90) {
+                resultMessageEl.textContent = "Mükemmel! Milli Mücadele Hazırlık Dönemi'ni çok iyi biliyorsunuz! 🏆";
+            } else if (percentage >= 70) {
+                resultMessageEl.textContent = "Çok iyi! Tarih bilginiz güçlü. 👍";
+            } else if (percentage >= 50) {
+                resultMessageEl.textContent = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+            } else {
+                resultMessageEl.textContent = "Öğrenmeye devam! Havza, Amasya, Erzurum ve Sivas sürecini tekrar edin. 📚";
+            }
+            
+            // Display all words learned
+            wordListEl.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Kavramlar</h3>';
+            quizData.forEach(word => {
+                const wordCard = document.createElement('div');
+                wordCard.classList.add('word-card', 'fade-in');
+                wordCard.innerHTML = `
+                    <div class="word">${word.question}</div>
+                    <div class="meaning"><strong>Cevap:</strong> ${word.meaning}</div>
+                    <div class="category category-${getCategoryClass(word.category)}">${word.category}</div>
+                `;
+                wordListEl.appendChild(wordCard);
+            });
+        }
+
+        // Helper function to get CSS class for category
+        function getCategoryClass(category) {
+            const classes = {
+                'Mustafa Kemal': 'mustafakemal',
+                'Havza': 'havza',
+                'Amasya Genelgesi': 'amastgenelgesi',
+                'İstifa': 'istifa',
+                'Bölgesel Kongreler': 'bolgeselkongreler',
+                'Erzurum Kongresi': 'erzurumkongresi'
+            };
+            return classes[category] || 'tanimkronoloji';
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', nextQuestion);
+        
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ Atatürk Dönemi Dış Politika</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "🏛️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            text-align: left;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ Atatürk Dönemi Dış Politika</h1>
+            <div class="subtitle">İç Politika, Dış Politika ve Çağdaş Türk Tarihi</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevaplar için 1-4 arası tuşlayın veya tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru (Enter)</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            { correctAnswer: "A", meaning: "II. TBMM, 11 Ağustos 1923'te çalışmalarına başlamıştır. Meclis içtüzüğü ve gelenekleri gereğince ilk oturum, meclisin en yaşlı üyesi sıfatıyla son Osmanlı vakanüvisi olan Abdurrahman Şeref Bey'in başkanlığında açılmıştır.", question: "II. TBMM, 11 Ağustos 1923'teki ilk toplantısını 'en yaşlı üye' sıfatıyla kimin başkanlığında gerçekleştirmiştir?", options: ["Abdurrahman Şeref Bey", "Kâzım Karabekir", "Rauf Orbay", "Ali Fethi Okyar"] },
+            { correctAnswer: "A", meaning: "II. TBMM (1923-1927); Cumhuriyet'in ilanı, Halifeliğin kaldırılması, Tevhid-i Tedrisat Kanunu'nun kabulü ve Medeni Kanun gibi köklü dönüşümlere imza attığı için tarih literatüründe 'İnkılap Meclisi' olarak anılmaktadır.", question: "Yaptığı köklü yenilikler ve çıkardığı yasalar nedeniyle II. TBMM tarih literatüründe hangi isimle anılmaktadır?", options: ["İnkılap Meclisi", "Kurucu Meclis", "Savaş Meclisi", "Gazi Meclis"] },
+            { correctAnswer: "A", meaning: "Lozan Barış Antlaşması görüşmeleri I. TBMM döneminde başlamış olsa da, antlaşmanın 23 Ağustos 1923 tarihinde resmen onaylanması ve yürürlüğe girmesi II. TBMM döneminde gerçekleşmiştir.", question: "Türk Devleti'nin bağımsızlık belgesi olan Lozan Barış Antlaşması'nı onaylayan meclis aşağıdakilerden hangisidir?", options: ["II. TBMM", "I. TBMM", "Mebusan Meclisi", "Temsil Heyeti"] },
+            { correctAnswer: "A", meaning: "Mustafa Kemal Atatürk, Milli Mücadele yıllarında Erzurum milletvekilliği yapmış olsa da, II. TBMM döneminden itibaren başkent olan Ankara'nın milletvekili olarak görev almıştır.", question: "Mustafa Kemal, II. TBMM döneminde hangi ilin milletvekili olarak görev yapmıştır?", options: ["Ankara", "İstanbul", "Erzurum", "İzmir"] },
+            { correctAnswer: "A", meaning: "13 Ekim 1923'te Ankara'nın resmen başkent ilan edilmesinden sadece 16 gün sonra, mecliste yaşanan hükümet krizini (Ekim Bunalımı) çözmek ve devletin rejimini belirlemek amacıyla 29 Ekim 1923'te Cumhuriyet ilan edilmiştir.", question: "II. TBMM döneminde, 13 Ekim 1923'te Anayasa'ya konulan bir ek madde ile Ankara'nın başkent ilan edilmesinin ardından 29 Ekim 1923'te yaşanan en önemli gelişme nedir?", options: ["Cumhuriyetin ilan edilmesi", "Saltanatın kaldırılması", "Halifeliğin kaldırılması", "Tevhid-i Tedrisat Kanunu'nun kabulü"] },
+            { correctAnswer: "A", meaning: "Cumhuriyet Halk Partisi (CHP), köklerini Milli Mücadele'yi yürüten Anadolu ve Rumeli Müdafaa-i Hukuk Cemiyeti'ne dayandırır. Bu cemiyetin kurulduğu Sivas Kongresi (4-11 Eylül 1919), CHP'nin 1. Olağan Kurultayı olarak kabul edilir.", question: "Anadolu ve Rumeli Müdafaa-i Hukuk Cemiyeti'nin kurulduğu ve bu sebeple Cumhuriyet Halk Partisi'nin (CHP) ilk kurultayı olarak kabul edilen gelişme aşağıdakilerden hangisidir?", options: ["Sivas Kongresi", "Erzurum Kongresi", "Amasya Genelgesi", "Havza Genelgesi"] },
+            { correctAnswer: "A", meaning: "Milli Mücadele'nin teşkilatlanma aşamasında kurulan ve tüm yerel direniş cemiyetlerini tek çatı altında toplayan Anadolu ve Rumeli Müdafaa-i Hukuk Cemiyeti, 9 Eylül 1923'te Halk Fırkası (sonradan Cumhuriyet Halk Partisi) adını almıştır.", question: "Milli Mücadele döneminde faaliyet gösteren Anadolu ve Rumeli Müdafaa-i Hukuk Cemiyeti, daha sonra hangi siyasi yapıya dönüştürülmüştür?", options: ["Halk Fırkası", "Terakkiperver Cumhuriyet Fırkası", "İttihat ve Terakki Cemiyeti", "Serbest Cumhuriyet Fırkası"] },
+            { correctAnswer: "A", meaning: "Cumhuriyet Halk Partisi (CHP), kurulduğu 1923 yılından Demokrat Parti'nin iktidara geldiği 1950 yılına kadar tam 27 yıl boyunca Türkiye'yi kesintisiz yöneterek Türk siyasi tarihinde en uzun süre iktidarda kalan parti olmuştur.", question: "Türk siyasi tarihinde 1923'ten 1950'ye kadar kesintisiz 27 yıl boyunca iktidarda kalarak 'en uzun süre iktidarda kalan parti' unvanına sahip olan siyasi oluşum hangisidir?", options: ["Cumhuriyet Halk Partisi", "Demokrat Parti", "Serbest Cumhuriyet Fırkası", "Terakkiperver Cumhuriyet Fırkası"] },
+            { correctAnswer: "A", meaning: "Halk Fırkası kurulmadan önce Mustafa Kemal tarafından 8 Nisan 1923'te yayımlanan '9 Umde (İlke)' kararları, partinin kuruluş beyannamesi ve siyasi programının temelini oluşturmuştur.", question: "Cumhuriyet Halk Partisi (Halk Fırkası), kuruluş aşamasında aşağıdakilerden hangisini temel alarak kurulmuştur?", options: ["9 Umde Kararları", "Misak-ı Milli Kararları", "Amasya Protokolleri", "Teşkilat-ı Esasiye Kanunu"] },
+            { correctAnswer: "A", meaning: "Cumhuriyet Halk Partisi (CHP), 1927, 1931 ve 1935 kurultaylarında parti tüzüğüne Cumhuriyetçilik, Milliyetçilik, Halkçılık, Devletçilik, Laiklik ve İnkılapçılık olan 'Altı Ok'u (Atatürk İlkeleri) dahil ederek tüm ilkeleri savunan ilk parti olmuştur.", question: "Tüzüğünde Cumhuriyetçilik, Milliyetçilik, Halkçılık, Devletçilik, Laiklik ve İnkılapçılık olmak üzere Atatürk ilkelerinin tümünü savunan ilk parti hangisidir?", options: ["Cumhuriyet Halk Partisi", "Ahali Cumhuriyet Fırkası", "Serbest Cumhuriyet Fırkası", "Terakkiperver Cumhuriyet Fırkası"] },
+            { correctAnswer: "A", meaning: "Türkiye'nin ilk siyasi partisi olan Halk Fırkası (CHP), 9 Eylül 1923'te bizzat Mustafa Kemal Atatürk tarafından kurulmuş ve partinin ilk genel başkanı olarak görev yapmıştır.", question: "9 Eylül 1923'te kurulan Cumhuriyet Halk Partisi'nin (Halk Fırkası) ilk genel başkanı kimdir?", options: ["Mustafa Kemal Atatürk", "İsmet İnönü", "Celal Bayar", "Ali Fethi Okyar"] },
+            { correctAnswer: "A", meaning: "10 Kasım 1938'de Atatürk'ün vefatının ardından toplanan Olağanüstü Kurultay'da İsmet İnönü, CHP'nin ikinci genel başkanı ve 'Milli Şef' unvanıyla partinin başına geçmiştir.", question: "Mustafa Kemal Atatürk'ten sonra Cumhuriyet Halk Partisi'nin genel başkanlık görevini devralan devlet adamı kimdir?", options: ["İsmet İnönü", "Kâzım Karabekir", "Refet Bele", "Rauf Orbay"] },
+            { correctAnswer: "A", meaning: "CHP, özellikle 1929 Dünya Ekonomik Krizi'nin olumsuz etkileri ve özel sektörün yetersizliği nedeniyle 1930'lu yılların başından itibaren ekonomide doğrudan devlet müdahalesini öngören 'Devletçilik' politikasını benimsemiştir.", question: "Cumhuriyet Halk Partisi'nin (CHP) ekonomi alanında benimsediği ve savunduğu temel model aşağıdakilerden hangisidir?", options: ["Devletçilik", "Liberalizm", "Kapitalizm", "Sosyalizm"] },
+            { correctAnswer: "A", meaning: "Osmanlı'dan miras kalan 'çift dereceli seçim sistemi' (halkın önce ikinci seçmenleri, ikinci seçmenlerin de milletvekillerini seçmesi), CHP'nin tek parti dönemi boyunca (1946'ya kadar) savunduğu ve uyguladığı seçim sistemidir.", question: "Cumhuriyet Halk Partisi'nin, iktidarının büyük bir bölümünde savunduğu ve 1946'ya kadar uygulanan seçim sistemi aşağıdakilerden hangisidir?", options: ["Çift dereceli seçim sistemi", "Tek dereceli seçim sistemi", "Nispi temsil sistemi", "Dar bölge seçim sistemi"] },
+            { correctAnswer: "A", meaning: "Türkiye'de halkın milletvekillerini aracı (ikinci seçmen) olmadan doğrudan seçebildiği 'tek dereceli seçim sistemi' ilk kez çok partili hayata geçiş aşaması olan 1946 seçimlerinde uygulanmıştır.", question: "Türkiye Cumhuriyeti'nde Türk siyasi tarihinde ilk defa 'tek dereceli seçim sistemi' hangi yıl yapılan seçimlerde uygulanmıştır?", options: ["1946", "1923", "1930", "1950"] },
+            { correctAnswer: "A", meaning: "Nasturiler, Musul meselesinin Türkiye aleyhine çözülmesini isteyen İngiltere'nin kışkırtması ve silah yardımıyla 1924'te Hakkari'de isyan etmiş, bu isyan Türk ordusu tarafından Eylül ayında bastırılmıştır.", question: "7 Ağustos 1924'te İngilizlerin kışkırtmasıyla Hakkâri bölgesinde çıkan ve Musul Sorunu'nu fırsat bilerek Türkiye idaresinden çıkmayı hedefleyen, 26 Eylül'de bastırılan isyan hangisidir?", options: ["Nasturi Ayaklanması", "Şeyh Said İsyanı", "Koçgiri İsyanı", "Ağrı İsyanı"] },
+            { correctAnswer: "A", meaning: "Türkiye Cumhuriyeti'nin çok partili demokrasiye geçiş için attığı ilk adım olan Terakkiperver Cumhuriyet Fırkası, 17 Kasım 1924'te kurularak ülkenin ilk muhalefet partisi olmuştur.", question: "Türkiye Cumhuriyeti'nin çok partili siyasi hayata geçiş denemelerindeki 'ilk muhalefet partisi' aşağıdakilerden hangisidir?", options: ["Terakkiperver Cumhuriyet Fırkası", "İttihat ve Terakki", "Serbest Cumhuriyet Fırkası", "Demokrat Parti"] },
+            { correctAnswer: "A", meaning: "Milli Mücadele'nin önde gelen komutanlarından Kâzım Karabekir Paşa, Halk Fırkası'ndan ayrılarak Rauf Orbay, Ali Fuat Cebesoy, Refet Bele ve Adnan Adıvar ile birlikte Terakkiperver Cumhuriyet Fırkası'nı kurmuş ve ilk genel başkanı olmuştur.", question: "Terakkiperver Cumhuriyet Fırkası'nın kurucusu ve ilk genel başkanı olan, Milli Mücadele'nin de önemli komutanlarından biri olan kişi kimdir?", options: ["Kâzım Karabekir", "Ali Fuat Cebesoy", "Rauf Orbay", "Adnan Adıvar"] },
+            { correctAnswer: "A", meaning: "CHP'nin 'Devletçilik' ve 'Çift Dereceli' sistemine karşı muhalefet yapan Terakkiperver Cumhuriyet Fırkası, ekonomide serbest piyasayı savunan 'Liberalizmi' ve siyasette halkın doğrudan seçime katıldığı 'Tek dereceli' seçim sistemini savunmuştur.", question: "Terakkiperver Cumhuriyet Fırkası'nın ekonomi politikası ve savunduğu seçim sistemi sırasıyla aşağıdakilerden hangisinde doğru verilmiştir?", options: ["Liberalizm / Tek dereceli seçim", "Devletçilik / Çift dereceli seçim", "Karma Ekonomi / Nispi temsil", "Devletçilik / Tek dereceli seçim"] },
+            { correctAnswer: "A", meaning: "Terakkiperver Cumhuriyet Fırkası tüzüğünün 6. maddesine 'Fırka, efkâr ve itikad-ı diniyeye hürmetkârdır' (Parti dini inançlara saygılıdır) ibaresini koymuş, bu durum laikliğe karşı olan çevrelerin partide toplanmasına neden olmuştur.", question: "Tüzüğünde yer alan 'Her türlü itikade (dini görüşe) saygı gösterilecektir.' maddesiyle dikkat çeken ve bu yüzden rejime karşı olanların sığınağı haline gelmekle eleştirilen parti hangisidir?", options: ["Terakkiperver Cumhuriyet Fırkası", "Serbest Cumhuriyet Fırkası", "Cumhuriyet Halk Partisi", "Ahali Cumhuriyet Fırkası"] },
+            { correctAnswer: "A", meaning: "Terakkiperver Cumhuriyet Fırkası, 1925'te Doğu Anadolu'da patlak veren Şeyh Said İsyanı ile bağlantısı olduğu ve laiklik ilkesini kötüye kullandığı gerekçesiyle Takrir-i Sükûn Kanunu'na dayanılarak İstiklal Mahkemeleri kararıyla kapatılmıştır.", question: "Terakkiperver Cumhuriyet Fırkası, 'laiklik ilkesinin kötüye kullanıldığı' gerekçesiyle hangi olaydan sonra kapatılmıştır?", options: ["Şeyh Said İsyanı", "Menemen Olayı", "İzmir Suikastı", "Bursa Olayı"] },
+            { correctAnswer: "A", meaning: "Şeyh Said İsyanı (1925), laik ve demokratik cumhuriyet rejimine karşı doğuda din ve hilafet kisvesi altında çıkarılan ilk büyük çaplı silahlı ayaklanmadır.", question: "Türkiye Cumhuriyeti'nde mevcut siyasi rejimi yıkmaya yönelik ortaya çıkan ilk büyük isyan aşağıdakilerden hangisidir?", options: ["Şeyh Said Ayaklanması", "Menemen Olayı", "Koçgiri İsyanı", "Çerkez Ethem İsyanı"] },
+            { correctAnswer: "A", meaning: "Şubat 1925'te Diyarbakır Piran'da patlak vererek Elazığ ve Muş'a kadar yayılan isyanın temel ideolojisi, kaldırılan hilafeti geri getirmek ve yeni kurulan Cumhuriyet rejimini yıkmaktı.", question: "Şeyh Said önderliğinde Piran'da başlayan ve daha sonra Elazığ, Bitlis ve Muş'a kadar yayılan isyanın temel amacı aşağıdakilerden hangisine yöneliktir?", options: ["Cumhuriyet rejimini yıkmak", "Saltanatın geri getirmek", "Yeni topraklar fethetmek", "Ekonomik krizlere tepki göstermek"] },
+            { correctAnswer: "A", meaning: "İngiltere, Musul sorununda avantaj elde etmek ve Türk ordusunun Musul'a operasyon düzenlemesini engellemek amacıyla, Türkiye'nin kendi içinde uğraşması için Şeyh Said isyanını kışkırtmış ve desteklemiştir.", question: "İngiltere, Türkiye ile Musul arasında tampon bir devlet kurdurarak Türkiye'nin Musul'a ulaşmasını engellemek amacıyla hangi iç meseleyi el altından desteklemiştir?", options: ["Şeyh Said Ayaklanması", "Menemen Olayı", "İzmir Suikastı", "Nasturi Ayaklanması"] },
+            { correctAnswer: "A", meaning: "Şeyh Said İsyanı karşısında daha ılımlı bir politika izleyen ve sıkıyönetim kararı almakta geciken Ali Fethi Okyar hükümeti istifa etmiş, isyanı sert tedbirlerle bastırmak üzere İsmet İnönü yeni hükümeti kurmuştur.", question: "Şeyh Said İsyanı'nı bastırmakta yetersiz kaldığı eleştirileri üzerine istifa eden başbakan (Ali Fethi Okyar) yerine hükümeti kurmakla görevlendirilen devlet adamı kimdir?", options: ["İsmet İnönü", "Celal Bayar", "Kâzım Karabekir", "Rauf Orbay"] },
+            { correctAnswer: "A", meaning: "Şeyh Said İsyanı üzerine İsmet İnönü hükümeti tarafından çıkarılan ve 1925-1929 yılları arasında uygulanan Takrir-i Sükûn (Huzuru Sağlama) Kanunu ile hükümete olağanüstü hal, sansür ve parti kapatma yetkileri verilmiştir.", question: "Şeyh Said İsyanı bastırıldıktan sonra bölgede asayişi sağlamak ve isyancıları cezalandırmak amacıyla hükümet tarafından çıkarılan yasanın adı nedir?", options: ["Takrir-i Sükûn Kanunu", "Hıyanet-i Vataniye Kanunu", "Teşkilat-ı Esasiye", "Tekalif-i Milliye Emirleri"] },
+            { correctAnswer: "A", meaning: "Takrir-i Sükûn Kanunu'nun yürürlüğe girmesinin ardından, isyancıları yargılamak ve bölge güvenliğini sağlamak için Ankara ve Diyarbakır (Şark İstiklal Mahkemesi) olmak üzere iki İstiklal Mahkemesi kurulmuştur.", question: "Şeyh Said Ayaklanması sanıklarını yargılamak amacıyla Ankara ve hangi şehirde İstiklal Mahkemeleri kurulmuştur?", options: ["Diyarbakır", "Erzurum", "Sivas", "İzmir"] },
+            { correctAnswer: "A", meaning: "Türkiye'nin ilk muhalefet partisi olan Terakkiperver Cumhuriyet Fırkası, yöneticilerinin bir kısmının Şeyh Said isyanı ile dolaylı bağı olduğu gerekçesiyle Takrir-i Sükûn yasasına dayanılarak kapatılmıştır.", question: "Terakkiperver Cumhuriyet Fırkası'nın kapatılmasına hukuki ve siyasi zemin hazırlayan olay aşağıdakilerden hangisidir?", options: ["Şeyh Said İsyanı", "Menemen Olayı", "İzmir Suikastı", "Nasturi İsyanı"] },
+            { correctAnswer: "A", meaning: "Türkiye, Şeyh Said isyanıyla içerde uğraşırken diplomatik ve askeri olarak zayıf düşmüş, bu durum 1926 Ankara Antlaşması'yla Misak-ı Milli sınırları içindeki Musul'un İngiliz mandasındaki Irak'a bırakılmasına neden olmuştur.", question: "Türkiye'nin Şeyh Said isyanı gibi büyük bir iç meseleyle uğraşması, dış politikada hangi sorunun aleyhimize sonuçlanmasına ve etkinlik kaybetmemize neden olmuştur?", options: ["Musul Sorunu", "Boğazlar Sorunu", "Hatay Sorunu", "Dış Borçlar Sorunu"] },
+            { correctAnswer: "A", meaning: "İzmir Suikastı, Cumhuriyet rejimini benimsemeyen, çıkarlarını kaybeden ve büyük bölümünü eski İttihat ve Terakki Cemiyeti mensuplarının oluşturduğu (Ziya Hurşit, Laz İsmail vb.) bir grup tarafından organize edilmiştir.", question: "16 Haziran 1926'da Mustafa Kemal Atatürk'e yönelik İzmir'de planlanan suikast girişimi ağırlıklı olarak hangi siyasi grubun eski üyeleri tarafından düzenlenmek istenmiştir?", options: ["İttihatçılar (Eski İttihatçılar)", "Hürriyet ve İtilafçılar", "Ahrar Fırkası üyeleri", "İtilaf Devletleri ajanları"] },
+            { correctAnswer: "A", meaning: "Mustafa Kemal'in İzmir'e gelişinin gecikmesi üzerine paniğe kapılan ve suikastçıları Sakız Adası'na kaçırmakla görevli motorcu Giritli Şevki, pişmanlık duyarak durumu İzmir Valisine ihbar etmiş ve suikastı önlemiştir.", question: "İzmir Suikastı girişimini son anda pişmanlık duyarak yetkililere haber veren ve suikastçıların yakalanmasını sağlayan kişi kimdir?", options: ["Giritli Şevki", "Ziya Hurşit", "Çerkez Ethem", "Laz İsmail"] },
+            { correctAnswer: "A", meaning: "Milli Mücadele ve inkılaplar döneminde (Hıyanet-i Vataniye, Tekalif-i Milliye, Şeyh Said) aktif rol oynayan İstiklal Mahkemeleri, İzmir Suikastı davasındaki yargılamaların ardından görevini tamamlamış ve bir daha kurulmamıştır.", question: "Türk hukuk tarihinde olağanüstü yetkilerle donatılmış olan İstiklal Mahkemelerinin *son kez* görev yaptığı olay aşağıdakilerden hangisidir?", options: ["İzmir Suikastı", "Menemen Olayı", "Şeyh Said İsyanı", "Bursa Olayı"] },
+            { correctAnswer: "A", meaning: "Suikast sonrası tutuklamalar muhalifleri de kapsayacak şekilde genişlemiş, Terakkiperver Cumhuriyet Fırkası'nın kurucuları olan Kâzım Karabekir, Ali Fuat Paşa ve Refet Paşa gibi Milli Mücadele komutanları da İstiklal Mahkemelerinde yargılanmış ancak beraat etmişlerdir.", question: "İzmir Suikastı davası kapsamında yargılananlar arasında yer alan ve aynı zamanda Terakkiperver Cumhuriyet Fırkası'nın kurucusu olan ünlü komutan kimdir?", options: ["Kâzım Karabekir", "İsmet İnönü", "Fevzi Çakmak", "Ali Fethi Okyar"] },
+            { correctAnswer: "A", meaning: "Mustafa Kemal Atatürk, şahsına yönelik yapılan bu hain suikast girişiminin aslında cumhuriyet rejimine ve Türk milletinin bağımsızlığına yapıldığını vurgulamak için bu tarihi sözü söylemiştir.", question: "Atatürk, 'Benim naçiz vücudum elbet toprak olacaktır. Fakat Türkiye Cumhuriyeti ilelebet payidar kalacaktır.' tarihi sözünü hangi olay üzerine söylemiştir?", options: ["İzmir Suikastı", "Şeyh Said İsyanı", "Menemen Olayı", "Hatay'ın Anavatan'a Katılması"] },
+            { correctAnswer: "A", meaning: "1924'teki Terakkiperver Cumhuriyet Fırkası'nın kapatılmasının ardından çok partili hayata geçişin ikinci adımı, 1930 yılında Serbest Cumhuriyet Fırkası'nın kurulmasıyla atılmıştır.", question: "Türkiye Cumhuriyeti'nin çok partili hayata geçiş konusundaki ikinci denemesi olan muhalefet partisi aşağıdakilerden hangisidir?", options: ["Serbest Cumhuriyet Fırkası", "Demokrat Parti", "Terakkiperver Cumhuriyet Fırkası", "Milli Kalkınma Partisi"] },
+            { correctAnswer: "A", meaning: "1929 Dünya Ekonomik Bunalımı (Kara Perşembe) tüm dünyayı olduğu gibi Türkiye'yi de derinden sarsmış, hükümetin bu krizle başa çıkabilmesi için yeni ekonomik görüşlere ve denetime (muhalefete) ihtiyaç duyulmuştur.", question: "Serbest Cumhuriyet Fırkası'nın kurulmasında; tek parti rejiminde siyasi rekabetin ve denetimin olmaması ile birlikte, Türkiye'yi derinden etkileyen ve yeni ekonomik çözümler arayışına iten hangi küresel olayın etkisi büyüktür?", options: ["1929 Dünya Ekonomik Krizi", "I. Dünya Savaşı", "II. Dünya Savaşı", "Soğuk Savaş'ın başlaması"] },
+            { correctAnswer: "A", meaning: "Atatürk, hem hükümeti denetleyecek bir mekanizma kurmak hem de demokratik yapıyı güçlendirmek amacıyla yakın arkadaşı ve eski başbakanlardan Paris Büyükelçisi Ali Fethi Okyar'dan yeni bir parti kurmasını istemiştir.", question: "1930 yılında Mustafa Kemal'in teşvikiyle Serbest Cumhuriyet Fırkası'nı kuran devlet adamı kimdir?", options: ["Ali Fethi Okyar", "Kâzım Karabekir", "Adnan Menderes", "Rauf Orbay"] },
+            { correctAnswer: "A", meaning: "Mustafa Kemal Atatürk, Serbest Cumhuriyet Fırkası'nın kuruluşu sırasında bu partiye ve demokrasiye olan inancını ve desteğini göstermek amacıyla kendi kız kardeşi Makbule Atadan'ın da partiye üye olmasını sağlamıştır.", question: "Serbest Cumhuriyet Fırkası'nın kurucuları arasında yer alarak partide görev yapan, Mustafa Kemal Atatürk'ün kız kardeşi kimdir?", options: ["Makbule Atadan", "Zübeyde Hanım", "Afet İnan", "Sabiha Gökçen"] },
+            { correctAnswer: "A", meaning: "Serbest Cumhuriyet Fırkası, CHP'nin 'Devletçilik' ve 'Çift dereceli' katı politikalarına karşı, ekonomide yabancı sermayeyi de savunan Liberalizmi ve demokratik katılımı artıran 'Tek dereceli seçim' sistemini tüzüğüne eklemiştir.", question: "Serbest Cumhuriyet Fırkası, ekonomi alanında ve seçim sisteminde sırasıyla hangi modelleri savunmuştur?", options: ["Liberalizm / Tek dereceli seçim", "Devletçilik / Çift dereceli seçim", "Karma ekonomi / Çift dereceli seçim", "Korumacılık / Tek dereceli seçim"] },
+            { correctAnswer: "A", meaning: "Türkiye'de kadınlara siyasi hakların verilmesi tartışmaları sürerken, Serbest Cumhuriyet Fırkası tüzüğünde açıkça Türk kadınına siyasal hakların (seçme ve seçilme) verilmesi gerektiğini savunan ilk partilerden biri olmuştur.", question: "Serbest Cumhuriyet Fırkası tüzüğünde Cumhuriyetçilik, Laiklik ve Milliyetçilik ilkelerine bağlılığın yanı sıra özellikle hangi toplumsal hakların tanınmasından yana olduğunu açıkça ifade etmiştir?", options: ["Türk kadınına siyasal haklar", "İşçilere sendika hakkı", "Azınlıklara özerklik", "Toprak reformu"] },
+            { correctAnswer: "A", meaning: "Parti mitinglerine rejim karşıtı gerici grupların yoğun katılım gösterdiğini ve partinin amacından saptığını gören kurucu başkan Ali Fethi Okyar, Mustafa Kemal ile karşı karşıya gelmemek için 17 Kasım 1930'da partiyi kendi iradesiyle feshetmiştir.", question: "Serbest Cumhuriyet Fırkası'nın siyasi hayatı nasıl sona ermiştir?", options: ["Partinin içine gericilerin girdiğini gören Ali Fethi Okyar tarafından bizzat feshedilmiştir.", "İstiklal Mahkemeleri kararıyla kapatılmıştır.", "Şeyh Said İsyanı'na karıştığı için feshedilmiştir.", "CHP ile birleşme kararı almıştır."] },
+            { correctAnswer: "A", meaning: "1924'teki Terakkiperver Fırka denemesinin ardından 1930'daki Serbest Fırka girişimi de başarısız olmuş, Menemen Olayı'nın da patlak vermesiyle Türk halkının çok partili hayata (demokrasiye) henüz hazır olmadığı anlaşılmış ve 1945'e kadar tek parti iktidarı sürmüştür.", question: "Serbest Cumhuriyet Fırkası'nın kapanmasıyla birlikte Cumhuriyet Dönemi'nde hangi siyasi hedefin ikinci denemesi de başarısızlıkla sonuçlanmıştır?", options: ["Çok partili hayata geçiş", "Laikliğe geçiş", "Ekonomik kalkınma planı", "Tek dereceli seçime geçiş"] },
+            { correctAnswer: "A", meaning: "Serbest Cumhuriyet Fırkası'nın kapanmasından hemen sonra Aralık 1930'da İzmir'in Menemen ilçesinde gerici Derviş Mehmet ve yandaşları şeriat isteğiyle ayaklanmış ve kendilerini engellemeye çalışan Asteğmen Kubilay'ı vahşice şehit etmişlerdir.", question: "Derviş Mehmet ve adamlarının 'Şeriat isteriz' sloganlarıyla çıkardığı isyanda önce iki bekçiyi, ardından olaya müdahale eden Mustafa Fehmi Kubilay'ı şehit ettikleri olay hangisidir?", options: ["Menemen Olayı", "31 Mart Vakası", "Bursa Olayı", "Şeyh Said İsyanı"] },
+            { correctAnswer: "A", meaning: "Menemen Olayı'na karışan asiler, İstiklal Mahkemeleri artık görevde olmadığı için (1927'de kapanmıştı) bölgede kurulan askeri mahkeme olan Divan-ı Harp'te (Sıkıyönetim Mahkemesi) yargılanarak idam dâhil çeşitli cezalara çarptırılmışlardır.", question: "Menemen Olayı bastırıldıktan sonra yakalanan isyancı sanıklar hangi mahkemede yargılanarak cezalandırılmıştır?", options: ["Divan-ı Harp (Sıkıyönetim Mahkemesi)", "İstiklal Mahkemeleri", "Yüce Divan", "Nizamiye Mahkemeleri"] },
+            { correctAnswer: "A", meaning: "Hem Serbest Cumhuriyet Fırkası'nın içine rejim karşıtlarının sızması hem de hemen ardından yaşanan Menemen katliamı, toplumun henüz demokrasiye hazır olmadığını kanıtlamış ve Atatürk Dönemi'nde bir daha çok partili hayata geçiş denemesi yapılmamıştır.", question: "Cumhuriyet rejimini değiştirmeye yönelik çıkan ikinci isyan olan Menemen Olayı'nın ardından Türk siyasi hayatında nasıl bir gelişme yaşanmıştır?", options: ["Atatürk Dönemi'nde çok partili hayata geçiş denemeleri tamamen durmuştur.", "Yeni bir muhalefet partisi kurulmuştur.", "İlk defa tek dereceli seçimler yapılmıştır.", "İstiklal Mahkemeleri kalıcı hale getirilmiştir."] },
+            { correctAnswer: "A", meaning: "Diyanet İşleri Başkanlığı'nın 1932 yılında yayımladığı genelgeyle ezanın Türkçe okunmasına karar verilmiş, 1933 yılında Bursa'da Ulu Cami cemaatinden bir grup bu karara tepki göstererek valilik önünde protesto düzenlemiştir.", question: "1933 yılında Bursa'da yaşanan toplumsal olayların (Bursa Olayı) temel nedeni aşağıdakilerden hangisidir?", options: ["Ezanın Türkçe okunmasına yönelik gösterilen tepki", "Yeni vergilerin yürürlüğe girmesi", "Serbest Cumhuriyet Fırkası'nın kapatılması", "Şapka Kanunu'na karşı çıkılması"] },
+            { correctAnswer: "A", meaning: "Dilde Türkçeleşme çalışmaları kapsamında 30 Ocak 1932 tarihinde İstanbul Fatih Camii'nde ilk Türkçe ezan, dönemin önemli hafızlarından Hafız Rıfat Bey tarafından okunmuştur.", question: "Türkiye'de Türkçe ezan ilk olarak hangi camide ve kim tarafından okunmuştur?", options: ["Fatih Camii / Hafız Rıfat Bey", "Sultanahmet Camii / Mehmet Akif Ersoy", "Ayasofya Camii / Elmalılı Hamdi Yazır", "Süleymaniye Camii / Rıfat Börekçi"] },
+            { correctAnswer: "A", meaning: "Mustafa Kemal, Bursa'daki Türkçe ezan protestoları haberini alır almaz şehre gitmiş ve 'Meselenin mahiyeti esasında din değil, dildir. Kesin olarak bilinmelidir ki, Türk milletinin milli dili ve milli benliği bütün hayatında hakim ve esas kalacaktır' diyerek olayı dilde millileşme adımı olarak nitelemiştir.", question: "Mustafa Kemal Atatürk'ün yaşanan olaylar üzerine bizzat şehre giderek 'Bu bir din meselesi değil dil meselesidir.' açıklamasını yaptığı olay hangisidir?", options: ["Bursa Olayı", "Menemen Olayı", "Vagon Li Olayı", "Razgrad Olayı"] },
+            { correctAnswer: "A", meaning: "1932'den 1950'ye kadar 18 yıl boyunca uygulanan Türkçe ezan uygulaması, 1950 seçimlerinde iktidara gelen Adnan Menderes liderliğindeki Demokrat Parti'nin TBMM'ye sunduğu ilk kanun tasarısıyla kaldırılarak aslına (Arapça) rücu ettirilmiştir.", question: "Türkiye'de Türkçe okunan ezanın tekrar aslına (Arapçaya) çevrilmesi uygulaması hangi siyasi dönemde gerçekleşmiştir?", options: ["Adnan Menderes Dönemi", "İsmet İnönü Dönemi", "Celal Bayar Dönemi", "Süleyman Demirel Dönemi"] },
+            { correctAnswer: "A", meaning: "1933 yılında, yataklı vagonlar işleten Fransız şirketi Wagon Lits'in İstanbul Karaköy acentesinde çalışan Naci Bey'in telefonda Türkçe konuştuğu için Fransız müdür tarafından para ve işten atılma cezasına çarptırılması, Türk milliyetçiliğini harekete geçiren büyük bir protesto eylemine dönüşmüştür.", question: "Bir Fransız demir yolu şirketinde çalışan Naci Bey'in, iş yerinde kendi anadilinde (Türkçe) konuştuğu gerekçesiyle işten çıkarılması üzerine İstanbul'da patlak veren tepki olayı hangisidir?", options: ["Wagon Lits (Vagon Li) Olayı", "Razgrad Olayı", "Bozkurt-Lotus Olayı", "Bursa Olayı"] },
+            { correctAnswer: "A", meaning: "Vagon Li Olayı üzerine İstanbul Üniversitesi öğrencileri şirket binasını basarak tabelayı indirmiş ve olayın ardından Türkiye genelinde Türkçenin kullanımını yaygınlaştırmak için Milli Türk Talebe Birliği öncülüğünde 'Vatandaş Türkçe Konuş' kampanyası başlatılmıştır.", question: "Vagon Li Olayı'nın ardından milliyetçilik duygularının kabarmasıyla üniversite öğrencileri ve halk tarafından ülke çapında başlatılan kampanyanın adı nedir?", options: ["Vatandaş Türkçe Konuş", "Yerli Malı Haftası", "Misak-ı Milli", "Dilde Birlik"] },
+            { correctAnswer: "A", meaning: "Türkiye'de yükseköğretimi modernize etmek için 1932'de İsviçreli Pedagoji Profesörü Albert Malche ülkeye davet edilmiş, onun hazırladığı rapor doğrultusunda 1933 Üniversite Reformu yapılarak Darülfünun kapatılmış ve yerine İstanbul Üniversitesi kurulmuştur.", question: "Atatürk Dönemi'nde üniversite reformu yapmak, incelemelerde bulunmak ve rapor hazırlamak üzere İsviçre'den Türkiye'ye davet edilen bilim insanı (Prof. Dr. Albert Malche) önderliğinde temelleri atılan ve 1933'te Darülfünun'un yerine kurulan eğitim kurumu aşağıdakilerden hangisidir?", options: ["İstanbul Üniversitesi", "Ankara Üniversitesi", "Gazi Eğitim Enstitüsü", "Orta Doğu Teknik Üniversitesi"] },
+            { correctAnswer: "A", meaning: "Mustafa Kemal'in emriyle 19 Şubat 1932'de kurulan Halkevleri, Cumhuriyetin getirdiği inkılapları halka anlatmak, okuma-yazma oranını artırmak, tiyatro, spor, dil ve folklor gibi alanlarda köylü ile şehirliyi kaynaştırmak amacıyla açılmış yaygın eğitim kurumlarıdır.", question: "Türk dilinin halk arasında yaşayan sözcüklerini araştırmak, folklor çalışmaları yapmak, sanat dallarında kurslar açmak ve köylülerin sosyal alanda gelişmesine yardımcı olmak amacıyla Atatürk Dönemi'nde (1932) faaliyete geçen kurum hangisidir?", options: ["Halkevleri", "Türk Tarih Kurumu", "Millet Mektepleri", "Köy Enstitüleri"] },
+            { correctAnswer: "A", meaning: "Türk kadınına siyasi haklar 'BMW' (Belediye-Muhtarlık-Vekillik) şifresiyle sırasıyla verilmiştir: 1930'da Belediye seçimlerine katılma, 1933'te Muhtar seçilme ve 1934'te Milletvekili (Vekil) seçme ve seçilme hakkı tanınmıştır.", question: "Türkiye'de kadınlara siyasi hakların verilmesi aşama aşama gerçekleşmiştir. Türk kadını, aşağıdaki haklardan hangisini diğerlerinden *daha önce* elde etmiştir?", options: ["Belediye seçimlerine katılma hakkı", "Milletvekili seçilme hakkı", "Muhtar seçilme hakkı", "Siyasi parti kurma hakkı"] },
+            { correctAnswer: "A", meaning: "Halkçılık ilkesi, kanun önünde eşitliği, sınıf, zümre veya din adamı (ruhban) ayrımcılığını reddeder. Atatürk bu sözüyle kimsenin inanç veya meslek üzerinden topluma üstünlük taslayamayacağını belirterek Halkçılık ilkesine vurgu yapmıştır.", question: "Atatürk'ün 'Bizde ruhbanlık yoktur, hepimiz eşitiz ve dinimizin hükümlerini eşit olarak öğrenmeye mecburuz.' sözü, toplumsal eşitliği ve sınıf ayrımının reddini vurguladığı için temelde hangi Atatürk ilkesiyle doğrudan ilişkilidir?", options: ["Halkçılık", "Laiklik", "Devletçilik", "İnkılapçılık"] },
+            { correctAnswer: "A", meaning: "1 Temmuz 1926'da yürürlüğe giren Kabotaj Kanunu ile Türkiye'nin kendi limanları arasında yük ve yolcu taşıma hakkı (deniz ticareti), yabancı gemilerin tekelinden alınarak tamamen Türk bayraklı gemilere ve Türk vatandaşlarına verilmiştir.", question: "Cumhuriyet Dönemi'nde 1926 yılında kabul edilen ve deniz ticareti ile limanlarımızın işletme hakkını tamamen Türk vatandaşlarına ve Türk gemilerine veren, ekonomik bağımsızlığın önemli bir adımı olan yasa hangisidir?", options: ["Kabotaj Kanunu", "Teşvik-i Sanayi Kanunu", "Türk Medeni Kanunu", "Aşar Vergisinin Kaldırılması"] },
+            { correctAnswer: "A", meaning: "I. Dünya Savaşı'nın galipleri tarafından kurulan Cemiyet-i Akvam'a (Milletler Cemiyeti) Türkiye uzun süre mesafeli yaklaşmış ancak barışçı politikaları (Yurtta Sulh Cihanda Sulh) neticesinde İspanya'nın teklifi ve Yunanistan'ın desteği ile 18 Temmuz 1932'de üye olmuştur.", question: "Türkiye Cumhuriyeti, uluslararası barışa katkıda bulunmak ve dış politikadaki etkinliğini artırmak amacıyla 1932 yılında İspanya'nın daveti ve Yunanistan'ın desteğiyle aşağıdaki uluslararası kuruluşlardan hangisine üye olmuştur?", options: ["Milletler Cemiyeti (Cemiyet-i Akvam)", "Birleşmiş Milletler", "Kuzey Atlantik Antlaşması Örgütü (NATO)", "Balkan Antantı"] },
+            { correctAnswer: "A", meaning: "Lozan'da kurulan ve başkanı Türk olan Uluslararası Boğazlar Komisyonu, İtalya ve Almanya'nın yayılmacı politikaları (II. Dünya Savaşı tehlikesi) nedeniyle Türkiye'nin girişimleriyle 20 Temmuz 1936'da imzalanan Montrö Boğazlar Sözleşmesi ile kaldırılarak Boğazlarda tam Türk egemenliği sağlanmıştır.", question: "Lozan Antlaşması'nda Boğazların yönetimi uluslararası bir komisyona bırakılmıştı. Türkiye'nin yoğun diplomatik çabaları sonucu bu komisyonun kaldırılıp Boğazlar üzerindeki tam egemenliğin Türkiye'ye geçmesini sağlayan 1936 tarihli antlaşma hangisidir?", options: ["Montrö Boğazlar Sözleşmesi", "Hünkâr İskelesi Antlaşması", "Paris Antlaşması", "Sadabat Paktı"] },
+            { correctAnswer: "A", meaning: "1921 Ankara Antlaşması ile Fransa'da (Suriye) kalan İskenderun Sancağı (Hatay), 1936'da Fransa'nın Suriye'den çekilmesiyle sorun olmuş; Atatürk'ün 'Şahsi meselem' dediği büyük diplomasi mücadelesi sonucu önce 1938'de Bağımsız Hatay Cumhuriyeti kurulmuş, 1939'da ise Anavatana katılmıştır.", question: "Atatürk'ün 'Kırk asırlık Türk yurdu düşman elinde esir kalamaz.' diyerek şahsi meselesi olarak gördüğü, diplomatik hamlelerle önce bağımsız bir devlete dönüşen, ardından 1939 yılında anavatana katılan bölgemiz neresidir?", options: ["Hatay", "Musul", "Kıbrıs", "Batı Trakya"] },
+            { correctAnswer: "A", meaning: "Çok partili döneme geçişin ilk adımı, sanayici Nuri Demirağ tarafından 18 Temmuz 1945'te kurulan Milli Kalkınma Partisi (MKP) ile atılmıştır. Demokrat Parti ise 1946 yılında kurulmuştur.", question: "II. Dünya Savaşı sonrasında, Türkiye'de tek parti yönetiminden çok partili siyasi hayata geçiş sürecinde (1945) kurulan *ilk* muhalefet partisi aşağıdakilerden hangisidir?", options: ["Milli Kalkınma Partisi", "Demokrat Parti", "Serbest Cumhuriyet Fırkası", "Millet Partisi"] },
+            { correctAnswer: "A", meaning: "26 Nisan 1986'da o dönem Sovyetler Birliği'ne bağlı olan Ukrayna'daki Çernobil Nükleer Santrali'nde 4 numaralı reaktörün patlaması, tarihinin en büyük nükleer felaketlerinden biri olmuş ve radyoaktif bulutlar Türkiye'nin Karadeniz sahillerini yoğun şekilde etkilemiştir.", question: "1986 yılında Ukrayna'da meydana gelen, yaydığı radyoaktif sızıntı ile Türkiye'nin özellikle Karadeniz Bölgesi dâhil olmak üzere Avrupa'yı derinden etkileyen ve çevre felaketine yol açan nükleer santral kazası hangisidir?", options: ["Çernobil", "Fukuşima", "Three Mile Island", "Kyshtym"] },
+            { correctAnswer: "A", meaning: "Aliya İzzetbegoviç, dağılan Yugoslavya'nın ardından Bosna Hersek'in ilk cumhurbaşkanı olmuş, 1992-1995 yılları arasındaki acımasız Bosna Savaşı'nda halkına liderlik etmiş ve derin felsefi-İslami duruşundan ötürü 'Bilge Kral' ünvanını almıştır.", question: "1992-1995 yılları arasında yaşanan Bosna Savaşı'nda, ülkesinin bağımsızlık mücadelesine liderlik eden ve vizyonu, felsefi duruşu nedeniyle dünyada 'Bilge Kral' lakabıyla tanınan Boşnak devlet adamı kimdir?", options: ["Aliya İzzetbegoviç", "Enver Hoca", "Sadık Ahmet", "Saparmurat Niyazov"] },
+            { correctAnswer: "A", meaning: "Soğuk Savaş'ın başlangıcında ABD Başkanı Harry Truman tarafından ilan edilen (1947) Truman Doktrini ile SSCB komünizm tehdidi altındaki Türkiye'ye 100 milyon, Yunanistan'a 300 milyon dolar dış yardım yapılarak bu ülkelerin Batı bloğunda (ABD ekseninde) kalması hedeflenmiştir.", question: "Soğuk Savaş Dönemi'nde SSCB'nin Doğu Avrupa'daki yayılmacı politikasına karşılık, ABD'nin 1947 yılında hem Türkiye'ye hem de Yunanistan'a ekonomik ve askerî yardım yapılmasını öngören doktrin aşağıdakilerden hangisidir?", options: ["Truman Doktrini", "Monroe Doktrini", "Marshall Planı", "Eisenhower Doktrini"] }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        function shuffleArray(array) {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        function initQuiz() {
+            questions = shuffleArray(quizData);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            catCoverEl.addEventListener('click', () => catCoverEl.style.display = 'none');
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            const correctText = currentQuestion.options[currentQuestion.correctAnswer.charCodeAt(0) - 65];
+            const shuffledOptions = shuffleArray(currentQuestion.options);
+            
+            optionsEl.innerHTML = '';
+            optionsEl.appendChild(catCoverEl);
+            catCoverEl.style.display = 'flex';
+
+            shuffledOptions.forEach((optionText, idx) => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.innerHTML = `<span style="color:var(--accent); font-weight:bold;">${idx + 1}.</span> ${optionText}`;
+                button.onclick = () => selectAnswer(optionText, correctText, currentQuestion.meaning);
+                optionsEl.appendChild(button);
+            });
+            
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        function selectAnswer(selectedOption, correctOptionText, meaning) {
+            if (nextBtn.style.display === 'block') return; // Zaten cevaplanmışsa dur
+
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.textContent.split('. ')[1];
+                if (btnText === correctOptionText) {
+                    btn.classList.add('correct');
+                } else if (btnText === selectedOption) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            const isCorrect = selectedOption === correctOptionText;
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+            }
+
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            feedbackTextEl.innerHTML = isCorrect ? 
+                `<strong>✅ Doğru!</strong><br><br>${meaning}` : 
+                `<strong>❌ Yanlış!</strong><br>Doğru Cevap: ${correctOptionText}<br><br>${meaning}`;
+            
+            nextBtn.style.display = 'block';
+        }
+
+        nextBtn.onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        };
+
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            finalScoreEl.textContent = `Puanınız: ${score} / ${questions.length}`;
+            
+            wordListEl.innerHTML = '<h3 style="margin-bottom:15px;">Genel Tekrar:</h3>';
+            quizData.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>${q.question}</strong><br><small style="color:var(--primary)">${q.meaning}</small>`;
+                wordListEl.appendChild(card);
+            });
+        }
+
+        // --- KLAVYE KISAYOLLARI ---
+        document.addEventListener('keydown', (e) => {
+            if (quizContainer.style.display === 'none') return;
+
+            // Enter veya Boşluk ile sonraki soruya geç
+            if ((e.key === 'Enter' || e.code === 'Space') && nextBtn.style.display === 'block') {
+                if (e.code === 'Space') e.preventDefault(); 
+                nextBtn.click();
+                return;
+            }
+
+            // Kapak varsa tuşla kaldır
+            if (catCoverEl.style.display !== 'none') {
+                if (['1', '2', '3', '4', 'Enter', ' '].includes(e.key)) {
+                    catCoverEl.style.display = 'none';
+                }
+                return; 
+            }
+
+            // Rakamlarla şık seçimi
+            const buttons = document.querySelectorAll('.option-btn');
+            if (buttons.length === 0 || buttons[0].disabled) return;
+
+            if (e.key === '1' && buttons[0]) buttons[0].click();
+            if (e.key === '2' && buttons[1]) buttons[1].click();
+            if (e.key === '3' && buttons[2]) buttons[2].click();
+            if (e.key === '4' && buttons[3]) buttons[3].click();
+        });
+
+        initQuiz();
+    </script>
+</body>
+</html>

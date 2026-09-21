@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Kariyer & Disiplin | 7528 Sayılı Kanun</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "⚖️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .notes-container {
+            padding: 25px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .notes-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notes-scroll-area {
+            max-height: 55vh;
+            overflow-y: auto;
+            background: var(--light);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .notes-scroll-area::-webkit-scrollbar {
+            width: 8px;
+        }
+        .notes-scroll-area::-webkit-scrollbar-track {
+            background: #e9ecef;
+            border-radius: 10px;
+        }
+        .notes-scroll-area::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+
+        .notes-scroll-area h3 {
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 5px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .notes-scroll-area h3:first-child {
+            margin-top: 0;
+        }
+
+        .notes-scroll-area ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .notes-scroll-area li {
+            margin-bottom: 8px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+        .notes-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+            background: white;
+            font-size: 0.95rem;
+        }
+
+        .notes-table th, .notes-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .notes-table th {
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+        }
+
+        .numbers-box {
+            background-color: #E3F2FD;
+            border-left: 5px solid #1976D2;
+            padding: 15px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        
+        .numbers-box h3 {
+            color: #1565C0 !important;
+            border-bottom: 2px solid #90CAF9 !important;
+            margin-top: 0 !important;
+        }
+        
+        .numbers-box ul {
+            list-style-type: none !important;
+            padding-left: 0 !important;
+        }
+        
+        .numbers-box li {
+            background: white;
+            margin-bottom: 8px !important;
+            padding: 10px 15px !important;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid #1976D2;
+            display: flex;
+            align-items: center;
+        }
+        
+        .num-badge {
+            background: #1976D2;
+            color: white;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-right: 12px;
+            font-size: 1.1rem;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .highlight-direct {
+            background-color: #C8E6C9;
+            color: #2E7D32;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            border: 1px solid #81C784;
+        }
+
+        .highlight-indirect {
+            background-color: #FFCDD2;
+            color: #C62828;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            border: 1px solid #E57373;
+        }
+
+        .important-note {
+            background-color: #FFF8E1;
+            border-left: 5px solid #FFC107;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+        }
+
+        .start-quiz-wrapper {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .scroll-msg {
+            color: var(--danger);
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        #startTestBtn:disabled {
+            background: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 125, 50, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(46, 125, 50, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(56, 142, 60, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(198, 40, 40, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 125, 50, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-kinama { background: #FF9800; }
+        .category-kesinti { background: #F44336; }
+        .category-cikarma { background: #B71C1C; }
+        .category-kurul { background: #1565C0; }
+        .category-sureler { background: #6A1B9A; }
+        .category-sorusturma { background: #00838F; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            h1 { font-size: 1.6rem; }
+            .notes-title { font-size: 1.3rem; }
+            .notes-scroll-area { max-height: 60vh; padding: 15px; }
+            .question { font-size: 1.1rem; }
+            .option-btn { padding: 14px 16px; font-size: 1rem; }
+            .cat-image { max-width: 150px; max-height: 120px; }
+            .cat-text { font-size: 1rem; }
+            .num-badge { min-width: 50px; font-size: 1rem; margin-right: 8px; padding: 3px 6px; }
+            .numbers-box li { padding: 8px 10px !important; font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ MEB-AGS Kariyer & Disiplin</h1>
+            <div class="subtitle">7528 Sayılı Öğretmenlik Mesleği Kanunu</div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <h2 class="notes-title">📖 Uzmanlık, Yöneticilik & Koruma</h2>
+            
+            <div class="notes-scroll-area" id="notesScrollArea">
+                <h3>🎓 Uzman Öğretmenlik & Başöğretmenlik</h3>
+                <ul>
+                    <li><strong>Unvan başlangıcı:</strong> Uzman/başöğretmen unvanı, <strong>sertifikanın düzenlendiği tarih</strong> itibarıyla başlar.</li>
+                    <li><strong>Görev başlangıcı:</strong> Öğretmenlik görevi, atamaya yetkili amirin <strong>onay tarihinde</strong> başlamış sayılır.</li>
+                    <li><strong>Uzman öğretmenlik şartları:</strong> 10 yıl hizmet (sözleşmeli + kadrolu), kademe ilerlemesi durdurma cezası olmamak, MEB eğitim programını başarmak.</li>
+                    <li><strong>Başöğretmenlik şartları:</strong> Uzman öğretmen unvanıyla en az 10 yıl çalışmak + aynı ceza şartı + başöğretmenlik eğitimini tamamlamak (yöneticilik şart değildir).</li>
+                </ul>
+
+                <h3>📋 Yönetici Yetiştirme ve Görevlendirme</h3>
+                <ul>
+                    <li><strong>Programa kabul puanı:</strong> Yönetici yetiştirme programına kabul için yazılı/sözlü sınavda en az <strong>60 puan</strong> gerekir.</li>
+                    <li><strong>Yazılı+sözlü ortalaması:</strong> Her iki sınav da yapılırsa <strong>aritmetik ortalama</strong> alınır (en az 60).</li>
+                    <li><strong>Program bitirme:</strong> Son sınavdan 60+ alanlar başarılı sayılır; atamalar <strong>puan üstünlüğü ve tercihe</strong> göre yapılır.</li>
+                    <li><strong>Atama onayı:</strong> Yönetici görevlendirmeleri <strong>Vali onayı</strong> ile gerçekleşir.</li>
+                    <li><strong>Görev süresi:</strong> Standart <strong>4 ders yılı</strong>, aynı unvanla aynı kurumda azami <strong>8 ders yılı</strong> (4+4).</li>
+                    <li><strong>Yeniden görevlendirme:</strong> Bakanlıkça belirlenen <strong>başarı ölçütlerine</strong> göre değerlendirilir; otomatik değildir.</li>
+                </ul>
+
+                <h3>🏛️ Proje / Özel Programlı Okullar</h3>
+                <ul>
+                    <li><strong>Onay makamı:</strong> Bu okullara öğretmen atama ve yönetici görevlendirmesi <strong>Bakan onayı</strong> ile yapılır.</li>
+                    <li><strong>Sınıflandırma:</strong> Yurt içi/dışı projeler, ulusal/uluslararası projeler, özel program/proje okulları, Bakanlık merkez teşkilatına bağlı kurumlar.</li>
+                    <li><strong>Kazanılmış hak (müktesep hak):</strong> Bu görevlendirmeler <strong>kalıcı hak sağlamaz</strong>; geçici ve görevlendirme esasına dayanır.</li>
+                </ul>
+
+                <h3>🏆 Başarı ve Üstün Başarı Belgesi / Ödül</h3>
+                <ul>
+                    <li><strong>Verme yetkisi:</strong> Merkezde <strong>Bakan</strong>, ilde <strong>Vali</strong>, ilçede <strong>Kaymakam</strong> (Millî Eğitim müdürleri teklif eder, veremez).</li>
+                    <li><strong>Üstün başarı belgesi:</strong> <strong>Üç defa başarı belgesi</strong> alanlara verilir.</li>
+                    <li><strong>Ödül miktarı:</strong> Bakan/Vali onayı ile en yüksek Devlet memuru aylığının <strong>%200'üne kadar</strong> ödül verilebilir.</li>
+                </ul>
+
+                <div class="numbers-box">
+                    <h3>⚠️ Disiplin Cezaları (Özet)</h3>
+                    <ul>
+                        <li><span class="num-badge">Kınama</span> İzinsiz ses/görüntü paylaşımı (öğrenci vb.).</li>
+                        <li><span class="num-badge">Aylıktan Kesme</span> Program dışı uygulama, menfaat karşılığı özel ders, taraflı not verme, olumsuz örnek davranış.</li>
+                        <li><span class="num-badge">Meslek Sona Erer</span> Uyuşturucu/cinsel suçlar/müstehcenlik/fuhuş (HAGB olsa bile).</li>
+                    </ul>
+                </div>
+                
+                <div class="numbers-box" style="background-color: #FFF3E0; border-left: 5px solid #FF9800;">
+                    <h3 style="color: #E65100 !important; border-bottom: 2px solid #FFCC80 !important;">🛡️ Eğitim Çalışanlarını Şiddetten Koruma</h3>
+                    <ul>
+                        <li><span class="num-badge" style="background:#F57C00">Kapsam</span> Resmi/özel okul öğretmenleri, ücretliler, usta öğreticiler, yöneticiler, proje görevlileri. <strong>YÖK personeli (üniversite) kapsam dışı.</strong></li>
+                        <li><span class="num-badge" style="background:#D84315">Ceza Artırımı</span> Kasten yaralama, tehdit, hakaret, görevi yaptırmamak için direnme suçlarında ceza <strong>yarı (1/2) oranında artırılır</strong>.</li>
+                        <li><span class="num-badge" style="background:#B71C1C">Erteleme Yok</span> Bu suçlarda verilen hapis cezası <strong>hiçbir şekilde ertelenemez</strong>.</li>
+                    </ul>
+                </div>
+
+                <h3>🏛️ Millî Eğitim Akademisi – Kurullar ve Görevler</h3>
+                <ul>
+                    <li><strong>Akademinin eğitim dışı görevi:</strong> Bütçe planlaması yapmaz; eğitim, gelişim, yetiştirme süreçlerini yönetir.</li>
+                    <li><strong>Diğer kurumlara eğitim:</strong> Özel kurum veya diğer kamu personeline eğitim verilebilir, ancak <strong>giderler ilgili kurum/kuruluşça karşılanır</strong>.</li>
+                    <li><strong>Akademi İzleme ve Yönlendirme Kurulu:</strong> 7 üye, başkan <strong>Bakan veya Bakan Yardımcısı</strong>; üyeler: Akademi Başkanı, Personel GM, Özel Öğretim GM, YÖK temsilcisi, üniversite temsilcisi, ilgili kamu kurumu temsilcisi.</li>
+                    <li><strong>Akademik Kurul:</strong> Akademi Başkanı + 10 üye (toplam 11), başkan <strong>Akademi Başkanı</strong>. <strong>Akademiden çıkarma itirazlarını</strong> kesin karara bağlar.</li>
+                </ul>
+
+                <div class="important-note">
+                    <strong>📌 Ders yükü (Akademi personeli):</strong> Profesör/Doçent/Dr.Öğr.Üyesi = <strong>en az 10 saat/hafta</strong>; unvansız eğitim personeli = <strong>en az 15 saat/hafta</strong>.
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <p id="scrollMsg" class="scroll-msg">Testi başlatmak için notların sonuna kadar okuyun/kaydırın 👇</p>
+                <button class="next-btn" id="startTestBtn" disabled>Notları Okudum, Testi Başlat</button>
+            </div>
+        </div>
+        
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer" style="display: none;">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+       const QUIZ_DATA = [
+            { question: "Mevzuata göre, kariyer basamaklarında ilerleyerek uzman öğretmen veya başöğretmen unvanını almaya hak kazanan personelin bu unvanları hukuki olarak hangi tarihten itibaren geçerlilik kazanır ve başlar?", options: ["MEB tarafından düzenlenen eğitim programının bittiği günden itibaren", "Takip eden ilk ayın başından (maaş döneminden) itibaren", "Sertifikanın düzenlendiği tarihten itibaren", "Bir sonraki eğitim-öğretim yılının başladığı tarihten itibaren"], correctAnswer: 2, meaning: "Uzman/başöğretmen unvanı, sertifikanın düzenlendiği tarih itibarıyla başlar.", category: "Kurullar ve Yetkiler" },
+            { question: "İlk atama yoluyla öğretmenlik mesleğine adım atan bir adayın 'öğretmenlik görevi', kanunlara göre hukuki olarak hangi tarihte başlamış kabul edilir?", options: ["Öğretmenin okula gidip fiilen ilk dersine girdiği tarihte", "Atamaya yetkili amirin onayladığı tarihte", "Öğretmene görev yerine gitmesi için tebligatın yapıldığı tarihte", "AGS ve ÖABT sonuçlarının resmi olarak açıklandığı tarihte"], correctAnswer: 1, meaning: "Öğretmenlik görevi, atamaya yetkili amirin onay tarihinde başlamış sayılır.", category: "Kurullar ve Yetkiler" },
+            { question: "Mevzuata göre, ilk defa yönetici olarak görevlendirilecek adayların Akademi tarafından düzenlenen yönetici yetiştirme programına kabul edilebilmeleri için yapılacak yazılı ve/veya sözlü sınavlardan en az kaç puan almaları gerekir?", options: ["50", "60", "70", "80"], correctAnswer: 1, meaning: "Yönetici yetiştirme programına kabul için baraj puanı 60'tır.", category: "Kurullar ve Yetkiler" },
+            { question: "Yönetici yetiştirme programına kabul sürecinde adaylara hem yazılı hem de sözlü sınavın birlikte uygulanması durumunda, adayın programa kabul puanı nasıl hesaplanır?", options: ["Sadece yazılı sınav puanı dikkate alınır.", "Yazılı sınavın %60'ı, sözlü sınavın %40'ı alınır.", "Sözlü sınav sadece 'geçti/kaldı' olarak değerlendirilir, yazılı puanı esas alınır.", "Yazılı ve sözlü sınav puanının aritmetik ortalaması alınır."], correctAnswer: 3, meaning: "Hem yazılı hem sözlü yapılırsa aritmetik ortalama alınır.", category: "Kurullar ve Yetkiler" },
+            { question: "Akademi tarafından düzenlenen yönetici yetiştirme programını tamamlayan adayların başarılı sayılabilmesi ve atamalarının yapılabilmesi için gereken şartlar aşağıdakilerin hangisinde doğru verilmiştir?", options: ["Program sonundaki sözlü sınavdan 70 almak – Sadece mülakat puanı üstünlüğüne göre atanmak", "Program sonundaki yazılı sınavdan 60 ve üzeri almak – Sınav puanı üstünlüğü ve tercihlere göre atanmak", "Program sonundaki yazılı sınavdan 70 almak – Sadece kura yöntemiyle atanmak", "Programı devamsızlık yapmadan bitirmek – Hizmet puanı üstünlüğüne göre atanmak"], correctAnswer: 1, meaning: "Program sonu sınavından 60+ alanlar başarılı sayılır, atamalar puan ve tercihe göre yapılır.", category: "Kurullar ve Yetkiler" },
+            { question: "İlk defa yönetici olarak görevlendirilecek adayların atama/görevlendirme işlemleri hangi makamın onayı ile gerçekleştirilir?", options: ["Millî Eğitim Bakanı onayı", "İl Millî Eğitim Müdürü onayı", "Vali onayı", "Kaymakam onayı"], correctAnswer: 2, meaning: "Yönetici görevlendirmeleri Vali onayı ile yapılır.", category: "Kurullar ve Yetkiler" },
+            { question: "Bir eğitim kurumunda yönetici olarak görevlendirilen personelin standart görev süresi ve aynı unvanla aynı eğitim kurumunda yapabileceği azami (maksimum) görev süresi aşağıdakilerin hangisinde doğru verilmiştir?", options: ["3 ders yılı / En fazla 6 ders yılı", "4 ders yılı / En fazla 8 ders yılı", "5 ders yılı / En fazla 10 ders yılı", "4 ders yılı / En fazla 12 ders yılı"], correctAnswer: 1, meaning: "Standart 4 ders yılı, aynı unvanla aynı kurumda azami 8 ders yılı (4+4).", category: "Süreler ve Zamanaşımı" },
+            { question: "Görev süresi dolan ve eğitim kurumu yöneticisi olarak yeniden görevlendirilmek isteyen yöneticilerin durumuyla ilgili aşağıdakilerden hangisi doğrudur?", options: ["Herhangi bir değerlendirmeye tabi tutulmadan, sadece kendi talepleri doğrultusunda doğrudan aynı kuruma yeniden atanırlar.", "Yönetici yetiştirme programına en baştan tekrar alınır ve yazılı sınava girmeleri zorunlu tutulur.", "Bakanlıkça belirlenen başarı ölçütlerine göre değerlendirilirler ve bu değerlendirme sonucuna göre aynı ya da başka bir kurumda yeniden görevlendirilirler.", "Sadece okul öğretmenler kurulunun oylaması sonucuna göre yeniden görevlendirme işlemleri yapılır."], correctAnswer: 2, meaning: "Yeniden görevlendirme otomatik değildir; Bakanlıkça belirlenen başarı ölçütlerine göre değerlendirme yapılır.", category: "Kurullar ve Yetkiler" },
+            { question: "Yurt içi veya yurt dışında, yerli ya da yabancı kurum ve kuruluşlarla ortaklaşa yürütülen projeler kapsamında açılan veya 'özel program uygulayan' eğitim kurumlarına yapılacak öğretmen atamaları ile yönetici (proje sorumlusu) görevlendirmeleri hangi makamın onayı ile gerçekleştirilir?", options: ["İl Millî Eğitim Müdürü onayı", "Vali onayı", "Personel Genel Müdürü onayı", "Millî Eğitim Bakanı onayı"], correctAnswer: 3, meaning: "Özel program/proje okullarına atama ve görevlendirme Bakan onayı ile yapılır.", category: "Kurullar ve Yetkiler" },
+            { question: "Mevzuata göre; özel program ve proje uygulanan eğitim kurumları dört ana grup altında sınıflandırılır. Aşağıdakilerden hangisi bu dört kategoriden biri değildir?", options: ["Yurt içi ve yurt dışı projeler kapsamında açılan kurumlar", "Ulusal ve uluslararası projeler kapsamında açılan kurumlar", "Bakanlık Merkez Teşkilatına bağlı kurumlar", "Sadece il millî eğitim müdürlüklerinin yerel inisiyatifiyle açılan mahalli okullar"], correctAnswer: 3, meaning: "Mahalli okullar bu özel statüde değildir; dört kategori kanunda özel olarak sayılmıştır.", category: "Kurullar ve Yetkiler" },
+            { question: "Özel program ve proje uygulanan eğitim kurumlarına (proje okullarına) atanan öğretmenler ve görevlendirilen yöneticilerin elde ettikleri haklarla ilgili olarak aşağıdaki ifadelerden hangisi doğrudur?", options: ["Bu kurumlara atanan öğretmenler, görev süreleri bitiminde doğrudan il veya ilçe milli eğitim müdürü olma hakkı kazanırlar.", "Yapılan atama ve görevlendirmeler; ilgililere özlük hakları, atama ve terfi yönünden hiçbir şekilde kalıcı haklar (müktesep hak) sağlamaz.", "Bu kurumlarda görev alan personel, standart okullara kıyasla farklı ve kalıcı bir emeklilik statüsüne tabi tutulur.", "Yapılan atamalar, öğretmene istediği her an kendi branşında sınavsız başöğretmenliğe geçiş gibi kalıcı haklar sağlar."], correctAnswer: 1, meaning: "Proje okullarındaki görevlendirmeler kalıcı hak (müktesep hak) sağlamaz.", category: "Kurullar ve Yetkiler" },
+            { question: "Mevzuata göre eğitim personeline verilecek olan 'başarı belgesi, üstün başarı belgesi ve ödüller' merkez, il ve ilçe teşkilatlarında sırasıyla hangi makamlar tarafından verilir?", options: ["Personel Genel Müdürü – İl Millî Eğitim Müdürü – İlçe Millî Eğitim Müdürü", "Bakan – Vali – Kaymakam", "Cumhurbaşkanı – Vali Yardımcısı – İlçe Millî Eğitim Müdürü", "Bakan – İl Millî Eğitim Müdürü – Kaymakam"], correctAnswer: 1, meaning: "Merkezde Bakan, ilde Vali, ilçede Kaymakam (Millî Eğitim müdürleri teklif eder, veremez).", category: "Kurullar ve Yetkiler" },
+            { question: "Mevzuata göre eğitim personeline verilecek belgeler ve ödül sistemiyle ilgili olarak aşağıdaki ifadelerden hangisi doğrudur?", options: ["İki defa başarı belgesi alan personele doğrudan nakdi ödül verilir ve bu ödül kendi maaşının %100'ünü geçemez.", "Üç defa başarı belgesi alanlara üstün başarı belgesi verilir ve Bakan veya Vali onayı ile en yüksek Devlet memuru aylığının %200'üne kadar ödül verilebilir.", "Üstün başarı belgesi alan her personele Kaymakam onayı ile en yüksek Devlet memuru aylığının %200'üne kadar zorunlu nakdi ödül ödenir.", "Üç defa başarı belgesi alanlara, il millî eğitim müdürünün teklifiyle en yüksek Devlet memuru aylığının %150'si kadar ödül verilir."], correctAnswer: 1, meaning: "3 başarı belgesi = üstün başarı belgesi, ödül üst sınırı en yüksek devlet memuru aylığının %200'üdür (Bakan/Vali onayı).", category: "Kurullar ve Yetkiler" },
+            { question: "Mevzuata göre, aşağıdaki eylemlerden hangisi öğretmene 'Aylıktan Kesme' cezası değil, 'Kınama' cezası verilmesini gerektirir?", options: ["Öğrencilere menfaat karşılığı özel ders vermek", "Eğitim-öğretim süreci içinde öğrencilerin ses veya görüntülerini (izinsiz/kurallara aykırı) paylaşmak", "Öğrencilerin ders başarılarını değerlendirirken taraflı davranmak", "Öğrencilere olumsuz örnek teşkil edecek tutum ve davranışlarda bulunmak"], correctAnswer: 1, meaning: "İzinsiz ses/görüntü paylaşımı kınama; diğerleri aylıktan kesme cezasıdır.", category: "Kınama" },
+            { question: "Bir öğretmenin; I. Öğretim programlarının amaç ve hedeflerine aykırı uygulamalarda bulunması, II. Öğrencilere menfaat (maddi çıkar vb.) karşılığında özel ders vermesi, durumlarında bu öğretmene uygulanması gereken disiplin cezası aşağıdakilerden hangisidir?", options: ["Uyarma", "Kınama", "Aylıktan Kesme", "Kademe İlerlemesinin Durdurulması"], correctAnswer: 2, meaning: "Program dışına çıkmak ve menfaat karşılığı özel ders vermek aylıktan kesme cezasını gerektirir.", category: "Ödeme Kesintisi" },
+            { question: "Aşağıdaki fiiller ve karşılığında verilecek disiplin cezası eşleştirmelerinden hangisi yanlıştır?", options: ["Öğrencilerin ders başarılarını taraflı olarak değerlendirmek -> Aylıktan kesme cezası", "Öğrencilere olumsuz örnek teşkil edecek davranışlarda bulunmak -> Aylıktan kesme cezası", "Eğitim süresince ses ve görüntü paylaşımında bulunmak -> Kınama cezası", "Öğretim programlarının hedeflerine aykırı uygulamalar yapmak -> Kınama cezası"], correctAnswer: 3, meaning: "Öğretim programına aykırı hareket etmenin cezası aylıktan kesmedir, kınama değil.", category: "Ödeme Kesintisi" },
+            { question: "Mevzuata göre, aşağıda verilen suçlardan hangisinden mahkûm olmak, cezanın süresine veya Hükmün Açıklanmasının Geri Bırakılması (HAGB) kararı verilip verilmediğine bakılmaksızın 'öğretmenlik mesleğinin sona ermesi' sonucunu doğrudan doğurur?", options: ["Taksirli suçlar neticesinde 6 aydan fazla hapis cezası almak", "Görev sırasında amirine sözlü olarak itiraz etmek", "Uyuşturucu ve uyarıcı madde suçları, cinsel dokunulmazlığa karşı suçlar ile müstehcenlik ve fuhuş suçları", "İzin almadan veya mazeretsiz olarak kesintisiz 3 gün göreve gelmemek"], correctAnswer: 2, meaning: "Uyuşturucu, cinsel suçlar, müstehcenlik/fuhuştan mahkûmiyet doğrudan mesleğin sona ermesine neden olur (HAGB fark etmez).", category: "Akademiden Çıkarma" },
+            { question: "Mevzuata göre, aşağıdakilerden hangisi Millî Eğitim Akademisinin temel eğitim ve yetiştirme görevleri arasında yer almaz?", options: ["Öğretmenlik mesleğine hazırlık eğitim programları hazırlamak ve uygulamak", "Öğretmenlerin mesleki gelişim programlarını düzenlemek", "Yönetici yetiştirme programları hazırlamak ve uygulamak", "Millî Eğitim Bakanlığına bağlı tüm okulların yıllık bütçelerini planlamak"], correctAnswer: 3, meaning: "Akademi eğitim ve yetiştirme ile ilgilenir; bütçe planlaması yapmaz.", category: "Kurullar ve Yetkiler" },
+            { question: "Millî Eğitim Akademisi; taleplerinin uygun görülmesi şartıyla özel eğitim kurumlarına veya diğer kamu kurum ve kuruluşlarının personeline de eğitim verebilir. Bu eğitimlerin verilmesindeki temel mali şart aşağıdakilerden hangisidir?", options: ["Eğitim giderlerinin tamamı Bakanlık bütçesinden karşılanır.", "Eğitim giderleri, ilgili kurumlarca veya personelin kendilerince karşılanır.", "Devlet destekli olduğu için tamamen ücretsizdir.", "Giderlerin yarısı Akademi, yarısı kurum tarafından ortaklaşa karşılanır."], correctAnswer: 1, meaning: "Akademi dış kurumlara eğitim verebilir ancak giderler ilgili kurum veya kişi tarafından karşılanır.", category: "Kurullar ve Yetkiler" },
+            { question: "Millî Eğitim Akademisinin görev alanı sadece ders anlatmakla sınırlı değildir. Aşağıdakilerden hangisi Akademinin vizyonunu geliştiren bilimsel ve küresel görevlerinden biri değildir?", options: ["Eğitim öğretim alanında bilimsel ve teknolojik faaliyetleri takip etmek", "Eğitimde inovasyonu (yenilikçiliği) desteklemek", "Yurt dışındaki tüm özel okulları denetlemek ve kapatma kararı vermek", "Uluslararası iş birlikleri kurmak ve bilimsel çalışmaları yürütmek"], correctAnswer: 2, meaning: "Yurt dışı okulları denetleme/kapatma yetkisi Akademinin görevi değildir.", category: "Kurullar ve Yetkiler" },
+            { question: "Millî Eğitim Akademisinin görevleriyle ilgili olarak verilen; I. Görev alanına giren konularda yayın yapmak. II. Özel öğretim kurumları personeline, giderlerini karşılamaları şartıyla eğitim vermek. III. Yönetici yetiştirme programlarını hazırlamak ve uygulamak. IV. Eğitimde inovasyonu desteklemek. ifadelerinden hangisi veya hangileri doğrudur?", options: ["I ve II", "I, III ve IV", "II, III ve IV", "I, II, III ve IV"], correctAnswer: 3, meaning: "Verilen tüm ifadeler Akademinin yasal görevleri arasındadır.", category: "Kurullar ve Yetkiler" },
+            { question: "Millî Eğitim Akademisinin faaliyetlerini değerlendirmek, planlamak ve yönlendirmek amacıyla oluşturulan Akademi İzleme ve Yönlendirme Kurulu toplam kaç üyeden oluşur?", options: ["5", "7", "9", "11"], correctAnswer: 1, meaning: "Akademi İzleme ve Yönlendirme Kurulu toplam 7 üyeden oluşur.", category: "Kurullar ve Yetkiler" },
+            { question: "Millî Eğitim Akademisinin faaliyetlerini değerlendiren 7 üyeli 'Akademi İzleme ve Yönlendirme Kuruluna' başkanlık etme görevi aşağıdakilerden hangisine aittir?", options: ["Akademi Başkanı veya Başkan Yardımcısı", "Personel Genel Müdürü", "Millî Eğitim Bakanı veya Bakan Yardımcısı", "Talim ve Terbiye Kurulu Başkanı"], correctAnswer: 2, meaning: "Kurula Bakan veya Bakan Yardımcısı başkanlık eder.", category: "Kurullar ve Yetkiler" },
+            { question: "Aşağıdakilerden hangisi 7 üyeden oluşan Akademi İzleme ve Yönlendirme Kurulu üyelerinden biri değildir?", options: ["Akademi Başkanı", "Personel Genel Müdürü", "Özel Öğretim Kurumları Genel Müdürü", "Talim ve Terbiye Kurulu Başkanı"], correctAnswer: 3, meaning: "Talim ve Terbiye Kurulu Başkanı bu kurulda yer almaz.", category: "Kurullar ve Yetkiler" },
+            { question: "Akademi İzleme ve Yönlendirme Kurulunda sadece Millî Eğitim Bakanlığı yöneticileri değil, dış paydaşlardan da temsilciler bulunur. Buna göre aşağıdakilerden hangisi kuruldaki bu dış paydaş (MEB dışı) temsilcilerden biridir?", options: ["Eğitim alanında en çok üyeye sahip yetkili sendika temsilcisi", "Yükseköğretim Kurulu (YÖK) tarafından belirlenen bir üye", "Türkiye Büyük Millet Meclisi (TBMM) Eğitim Komisyonu temsilcisi", "Velileri temsilen seçilen Okul Aile Birliği başkanı"], correctAnswer: 1, meaning: "YÖK temsilcisi, üniversite temsilcisi ve ilgili kamu kurumu temsilcisi dış paydaşlardır.", category: "Kurullar ve Yetkiler" },
+            { question: "Millî Eğitim Akademisi bünyesinde görev yapan Akademik Kurulun üye yapısı ve kurula başkanlık eden makam aşağıdakilerin hangisinde doğru verilmiştir?", options: ["Toplam 7 üyeden oluşur / Kurula Millî Eğitim Bakanı başkanlık eder.", "Akademi Başkanı ile birlikte 5 üyeden oluşur / Kurula Personel Genel Müdürü başkanlık eder.", "Akademi Başkanı ile birlikte 10 üyeden oluşur / Kurula Akademi Başkanı başkanlık eder.", "Başkan dâhil toplam 10 üyeden oluşur / Kurula YÖK temsilcisi başkanlık eder."], correctAnswer: 2, meaning: "Akademik Kurul: Akademi Başkanı + 10 üye (toplam 11), başkan Akademi Başkanı'dır.", category: "Kurullar ve Yetkiler" },
+            { question: "Mevzuata göre, Akademi eğitim süreçlerinde verilen 'Akademiden çıkarma cezalarına' karşı yapılan itirazları inceleyerek kesin olarak karara bağlayan yetkili organ aşağıdakilerden hangisidir?", options: ["Akademi İzleme ve Yönlendirme Kurulu", "Personel Genel Müdürlüğü Disiplin Kurulu", "Akademik Kurul", "Millî Eğitim Bakanlığı Yüksek Disiplin Kurulu"], correctAnswer: 2, meaning: "Akademiden çıkarma itirazlarını kesin karara bağlayan yetkili organ Akademik Kurul'dur.", category: "Kurullar ve Yetkiler" },
+            { question: "Aşağıdakilerden hangisi Akademik Kurul ve Akademi Başkanlığının yürüttüğü görevler arasında yer almaz?", options: ["Akademinin yıllık çalışma planını hazırlayarak Millî Eğitim Bakanının onayına sunmak", "Akademi İzleme ve Yönlendirme Kurulu tarafından belirlenen politikaların uygulanması için gerekli standartları oluşturmak", "Akademiden çıkarma cezalarına yapılan itirazları incelemek ve karara bağlamak", "Akademi İzleme ve Yönlendirme Kuruluna başkanlık etmek"], correctAnswer: 3, meaning: "Akademi İzleme ve Yönlendirme Kuruluna Bakan/Bakan Yardımcısı başkanlık eder, Akademi Başkanı değil.", category: "Kurullar ve Yetkiler" },
+            { question: "Millî Eğitim Akademisinde görevlendirilen personelin haftalık ders verme yükümlülükleri ile ilgili aşağıda verilen bilgilerden hangisi doğrudur?", options: ["Akademide görev yapan tüm eğitim personeli, unvanına bakılmaksızın haftada en az 15 saat ders vermekle yükümlüdür.", "Profesör, doçent veya doktor öğretim üyesi unvanına sahip olanlar haftada en az 15 saat; unvanı olmayan personel ise en az 10 saat ders verir.", "Profesör, doçent veya doktor öğretim üyesi unvanına sahip olanlar haftada en az 10 saat; bu unvanlara sahip olmayan eğitim personeli ise haftada en az 15 saat ders vermekle yükümlüdür.", "Sadece profesör unvanına sahip olanlar haftada en az 10 saat ders verirken, diğer tüm personel en az 20 saat ders vermekle yükümlüdür."], correctAnswer: 2, meaning: "Unvanlılar (Prof, Doç, Dr.Öğr.Üyesi): en az 10 saat; unvansız personel: en az 15 saat.", category: "Kurullar ve Yetkiler" },
+            { question: "Yeni yasal düzenlemeyle eğitim çalışanlarına karşı işlenen suçlarda cezalar artırılmış ve tutuklu yargılanma gibi koruyucu tedbirler getirilmiştir. Buna göre aşağıdakilerden hangisi bu 'şiddetten korunma' hükümlerinin kapsamı içinde yer almaz?", options: ["Özel öğretim kurumlarında (özel okullarda) görev yapan öğretmen ve uzman öğreticiler", "Diğer kamu kurum ve kuruluşlarında (Örn: Aile Bakanlığı, Adalet Bakanlığı vb.) görev yapan öğretmenler", "Üniversitelerde (Yükseköğretim Kurulu bünyesinde) görev yapan öğretim üyeleri ve araştırma görevlileri", "Yabancı uyruklu öğrenciler için yürütülen projelerde çalışan öğretici ve rehber danışmanlar"], correctAnswer: 2, meaning: "YÖK personeli (üniversite akademisyenleri) bu koruma kapsamında değildir.", category: "Kurullar ve Yetkiler" },
+            { question: "Eğitim çalışanlarının şiddetten korunmasına yönelik hükümlerin uygulanmasında, mağdurun çalışma statüsü dikkate alınmıştır. Aşağıdaki personelden hangisine karşı görevinden dolayı şiddet suçu işlenmesi durumunda, bu eylem doğrudan Öğretmenlik Mesleği Kanunu'nun ilgili şiddeti önleme maddesi kapsamında değerlendirilmez?", options: ["Yükseköğretim Kurumlarına (YÖK) bağlı fakültelerde ders veren doçentler", "Millî Eğitim Bakanlığına bağlı resmi okullarda 'ders ücreti karşılığında' (ücretli) derse girenler", "Halk Eğitim Merkezlerinde görev yapan 'usta öğreticiler'", "Millî Eğitim Bakanlığına bağlı eğitim kurumlarında çalışan 'yöneticiler' (Müdür/Müdür Yrd.)"], correctAnswer: 0, meaning: "YÖK personeli (doçentler) kapsam dışıdır; ücretli öğretmen, usta öğretici ve yöneticiler kapsamdadır.", category: "Kurullar ve Yetkiler" },
+            { question: "Eğitim çalışanlarına yönelik şiddetin önlenmesi ve faillere yönelik cezai yaptırımların artırılmasını öngören yasal düzenleme; I. Bakanlığa bağlı kurumlarda çalışan sözleşmeli ve kadrolu öğretmenleri, II. Özel öğretim kurumlarında çalışan yöneticileri, III. Üniversitelerin Eğitim Fakültelerinde görev yapan öğretim görevlilerini, IV. Yabancı uyruklu öğrencilerin eğitimine yönelik projelerdeki rehber danışmanları gruplarından hangisini veya hangilerini kapsamaz?", options: ["Yalnız III", "I ve II", "III ve IV", "II, III ve IV"], correctAnswer: 0, meaning: "Üniversite öğretim görevlileri (YÖK) kapsam dışıdır; diğer herkes kapsam içindedir.", category: "Kurullar ve Yetkiler" },
+            { question: "Mevzuata göre, eğitim çalışanlarına karşı görevlerinden dolayı işlenen; kasten yaralama, tehdit, hakaret ve görevi yaptırmamak için direnme suçlarında verilecek cezaların artırım oranı aşağıdakilerden hangisidir?", options: ["Üçte biri oranında artırılır.", "Yarı oranında (1/2) artırılır.", "Bir katı oranında artırılır.", "İki katı oranında artırılır."], correctAnswer: 1, meaning: "Ceza artırım oranı yarı (1/2) oranındadır.", category: "Kurullar ve Yetkiler" },
+            { question: "Eğitim çalışanlarına karşı görevleri sebebiyle kasten yaralama, tehdit, hakaret veya görevi yaptırmamak için direnme suçlarını işleyen faillerle ilgili olarak, caydırıcılığı sağlamak amacıyla getirilen kesin yasal hüküm aşağıdakilerden hangisidir?", options: ["Verilen hapis cezası hiçbir şekilde ertelenemez.", "Hapis cezası zorunlu olarak adli para cezasına çevrilir.", "İlk suç ise hükmün açıklanmasının geri bırakılması (HAGB) kararı verilebilir.", "Şikâyetten vazgeçilirse kamu davası doğrudan düşer."], correctAnswer: 0, meaning: "Bu suçlarda verilen hapis cezası ertelenemez.", category: "Kurullar ve Yetkiler" },
+            { question: "Eğitim çalışanlarının şiddetten korunmasına yönelik yasal düzenlemeler dikkate alındığında, aşağıdaki ifadelerden hangisi yanlıştır?", options: ["Eğitim çalışanına yönelik hakaret suçlarında verilecek ceza yarı oranında artırılır.", "Kasten yaralama suçu işleyen faile verilen hapis cezası mahkeme tarafından ertelenebilir.", "Görevi yaptırmamak için direnme suçu, cezası yarı oranında artırılan katalog fiillerden biridir.", "Eğitim çalışanını tehdit eden kişiye verilen hapis cezası ertelenemez."], correctAnswer: 1, meaning: "Kasten yaralama da diğer suçlar gibi ertelenemez; bu ifade yanlıştır.", category: "Kurullar ve Yetkiler" }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.questions = [];
+                this.masteredWords = [];
+                
+                this.elements = {
+                    question: document.getElementById('question'),
+                    options: document.getElementById('options'),
+                    feedback: document.getElementById('feedback'),
+                    feedbackText: document.getElementById('feedbackText'),
+                    nextBtn: document.getElementById('nextBtn'),
+                    score: document.getElementById('score'),
+                    progress: document.getElementById('progress'),
+                    total: document.getElementById('total'),
+                    progressBar: document.getElementById('progressBar'),
+                    quizContainer: document.getElementById('quizContainer'),
+                    resultsContainer: document.getElementById('resultsContainer'),
+                    finalScore: document.getElementById('finalScore'),
+                    resultMessage: document.getElementById('resultMessage'),
+                    wordList: document.getElementById('wordList'),
+                    catCover: document.getElementById('catCover')
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.shuffleQuestions();
+                this.elements.total.textContent = this.questions.length;
+                this.setupEventListeners();
+                this.showCurrentQuestion();
+            }
+            
+            shuffleQuestions() {
+                this.questions = [...QUIZ_DATA];
+                for (let i = this.questions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [this.questions[i], this.questions[j]] = [this.questions[j], this.questions[i]];
+                }
+            }
+            
+            setupEventListeners() {
+                this.elements.catCover.addEventListener('click', () => this.removeCatCover());
+                this.elements.nextBtn.addEventListener('click', () => this.nextQuestion());
+            }
+            
+            removeCatCover() {
+                this.elements.catCover.style.display = 'none';
+            }
+            
+            showCurrentQuestion() {
+                const question = this.questions[this.currentQuestionIndex];
+                this.elements.question.textContent = question.question;
+                this.elements.catCover.style.display = 'flex';
+                this.displayOptions(question);
+                this.resetQuestionUI();
+                this.updateProgress();
+            }
+            
+            displayOptions(question) {
+                this.elements.options.innerHTML = '';
+                this.elements.options.appendChild(this.elements.catCover);
+                const shuffledOptions = this.shuffleArray([...question.options]);
+                shuffledOptions.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'option-btn fade-in';
+                    button.textContent = option;
+                    button.addEventListener('click', () => this.handleAnswer(option, question));
+                    this.elements.options.appendChild(button);
+                });
+            }
+            
+            resetQuestionUI() {
+                this.elements.feedback.style.display = 'none';
+                this.elements.nextBtn.style.display = 'none';
+                this.elements.progress.textContent = this.currentQuestionIndex + 1;
+            }
+            
+            updateProgress() {
+                const progressPercent = ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
+                this.elements.progressBar.style.width = `${progressPercent}%`;
+            }
+            
+            handleAnswer(selectedOption, question) {
+                const buttons = document.querySelectorAll('.option-btn');
+                const correctOption = question.options[question.correctAnswer];
+                
+                buttons.forEach(button => {
+                    button.disabled = true;
+                    if (button.textContent === correctOption) {
+                        button.classList.add('correct');
+                    }
+                    if (button.textContent === selectedOption && button.textContent !== correctOption) {
+                        button.classList.add('incorrect');
+                    }
+                });
+                
+                const isCorrect = selectedOption === correctOption;
+                if (isCorrect) {
+                    this.score++;
+                    this.elements.score.textContent = this.score;
+                    this.addToMasteredWords(question);
+                }
+                
+                this.showFeedback(isCorrect, question, correctOption);
+                this.elements.nextBtn.style.display = 'block';
+            }
+            
+            addToMasteredWords(question) {
+                const alreadyExists = this.masteredWords.some(w => w.question === question.question);
+                if (!alreadyExists) {
+                    this.masteredWords.push(question);
+                }
+            }
+            
+            showFeedback(isCorrect, question, correctOption) {
+                this.elements.feedback.style.display = 'block';
+                this.elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+                
+                let feedbackHTML = '';
+                if (isCorrect) {
+                    feedbackHTML = `✅ Doğru!<br><br>${question.meaning}`;
+                } else {
+                    feedbackHTML = `❌ Yanlış!<br>Doğru cevap: <strong>${correctOption}</strong><br><br>${question.meaning}`;
+                }
+                
+                this.elements.feedbackText.innerHTML = feedbackHTML;
+            }
+            
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) {
+                    this.showCurrentQuestion();
+                } else {
+                    this.endQuiz();
+                }
+            }
+            
+            endQuiz() {
+                this.elements.quizContainer.style.display = 'none';
+                this.elements.resultsContainer.style.display = 'block';
+                
+                const percentage = Math.round((this.score / this.questions.length) * 100);
+                this.elements.finalScore.textContent = `${this.score}/${this.questions.length} (${percentage}%)`;
+                
+                this.showResultMessage(percentage);
+                this.displayAllWords();
+            }
+            
+            showResultMessage(percentage) {
+                let message = "";
+                if (percentage >= 90) {
+                    message = "Mükemmel! Kariyer, disiplin ve koruma mevzuatına çok iyi hakimsiniz! 🏆";
+                } else if (percentage >= 70) {
+                    message = "Çok iyi! Yöneticilik, uzmanlık ve şiddetten korunma konularını biliyorsunuz. 👍";
+                } else if (percentage >= 50) {
+                    message = "Güzel! Kanunu biraz daha tekrar etmeniz faydalı olacaktır. 💪";
+                } else {
+                    message = "Öğrenmeye devam! Unvan, yöneticilik ve koruma başlıklarını gözden geçirin. 📚";
+                }
+                
+                this.elements.resultMessage.textContent = message;
+            }
+            
+            displayAllWords() {
+                this.elements.wordList.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Bilgiler</h3>';
+                
+                QUIZ_DATA.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'word-card fade-in';
+                    card.innerHTML = `
+                        <div class=\"word\">${item.question}</div>
+                        <div class=\"meaning\">${item.meaning}</div>
+                        <div class=\"category ${this.getCategoryClass(item.category)}\">${item.category}</div>
+                    `;
+                    this.elements.wordList.appendChild(card);
+                });
+            }
+            
+            getCategoryClass(category) {
+                const classMap = {
+                    'Kınama': 'category-kinama',
+                    'Ödeme Kesintisi': 'category-kesinti',
+                    'Akademiden Çıkarma': 'category-cikarma',
+                    'Kurullar ve Yetkiler': 'category-kurul',
+                    'Süreler ve Zamanaşımı': 'category-sureler',
+                    'İtiraz Süreçleri': 'category-sureler',
+                    'Soruşturma Süreci': 'category-sorusturma'
+                };
+                return classMap[category] || 'category-kurul';
+            }
+            
+            shuffleArray(array) {
+                const newArray = [...array];
+                for (let i = newArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                }
+                return newArray;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const notesScrollArea = document.getElementById('notesScrollArea');
+            const startTestBtn = document.getElementById('startTestBtn');
+            const scrollMsg = document.getElementById('scrollMsg');
+            const notesContainer = document.getElementById('notesContainer');
+            const quizContainer = document.getElementById('quizContainer');
+            const progressContainer = document.getElementById('progressContainer');
+
+            notesScrollArea.addEventListener('scroll', () => {
+                if (notesScrollArea.scrollTop + notesScrollArea.clientHeight >= notesScrollArea.scrollHeight - 10) {
+                    startTestBtn.disabled = false;
+                    scrollMsg.style.display = 'none';
+                }
+            });
+
+            if (notesScrollArea.scrollHeight <= notesScrollArea.clientHeight) {
+                startTestBtn.disabled = false;
+                scrollMsg.style.display = 'none';
+            }
+
+            startTestBtn.addEventListener('click', () => {
+                notesContainer.style.display = 'none';
+                progressContainer.style.display = 'block';
+                quizContainer.style.display = 'block';
+                
+                new QuizManager();
+            });
+        });
+    </script>
+</body>
+</html>

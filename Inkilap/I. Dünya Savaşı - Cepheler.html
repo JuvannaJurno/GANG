@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türk İnkılap Tarihi Testi</title>
+    <style>
+        :root {
+            --primary: #2E8B57;
+            --success: #228B22;
+            --danger: #B22222;
+            --light: #F5FFFA;
+            --dark: #2F4F4F;
+            --accent: #32CD32;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E8B57 0%, #32CD32 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "📜";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .context {
+            font-size: 1.1rem;
+            color: var(--primary);
+            font-style: italic;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(46, 139, 87, 0.1);
+            border-radius: 8px;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 139, 87, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(46, 139, 87, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(34, 139, 34, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 139, 87, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-genel { background: #2E8B57; }
+        .category-cephesi { background: #228B22; }
+        .category-uluslararasi { background: #32CD32; }
+        .category-askeri { background: #006400; }
+        .category-siyasi { background: #556B2F; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option-btn {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .cat-image {
+                max-width: 150px;
+                max-height: 120px;
+            }
+            
+            .cat-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📜 Türk İnkılap Tarihi</h1>
+            <div class="subtitle">I. Dünya Savaşı - Cepheler</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+                <div class="context" id="context"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                word: "I. Dünya Savaşı'nın genel nedenleri arasında gösterilemez?",
+                meaning: "ABD'nin Monroe Doktrini'ni terk etmesi",
+                category: "Genel Nedenler",
+                question: "Aşağıdakilerden hangisi I. Dünya Savaşı'nın genel nedenleri arasında gösterilemez?",
+                options: [
+                    "İtalya ve Almanya'nın sömürgecilik yarışına geç katılması",
+                    "ABD'nin Monroe Doktrini'ni terk etmesi",
+                    "Avusturya-Macaristan ile Rusya'nın Balkanlar'da nüfuz mücadelesi",
+                    "Fransız İhtilali ile yayılan ulusçuluk akımı"
+                ],
+                context: "Savaşın temel sebepleri ve uluslararası ilişkiler",
+                explanation: "Metinde ABD'nin Monroe Doktrini'nden bahsedilmemektedir. Savaşın nedenleri arasında 'İtalya ve Almanya'nın siyasi birliklerini geç tamamlayıp sömürgecilik yarışına girmesi', 'Avusturya-Macaristan İmparatorluğu ile Rusya'nın Balkanlar'da nüfuz elde etme çabası' ve 'Fransız İhtilali'nden yayılan ulusculuk akımı' sayılmıştır."
+            },
+            {
+                word: "I. Dünya Savaşı'nın başlamasına doğrudan neden olan olay",
+                meaning: "Gavrilo Princip adlı bir Sırp'ın Avusturya-Macaristan veliahtını öldürmesi",
+                category: "Başlangıç",
+                question: "I. Dünya Savaşı'nın başlamasına doğrudan neden olan olay aşağıdakilerden hangisidir?",
+                options: [
+                    "Alsas-Loren bölgesinin Almanya tarafından ilhakı",
+                    "Gavrilo Princip adlı bir Sırp'ın Avusturya-Macaristan veliahtını öldürmesi",
+                    "Rusya'nın Boğazları ele geçirmek istemesi",
+                    "Osmanlı Devleti'nin savaşa girmesi"
+                ],
+                context: "Savaşın tetikleyici unsurları",
+                explanation: "Metinde, 'Gabriel Princip adlı bir Sırp'ın, Avusturya-Macaristan veliahtı Ferdinand'ı Saraybosna gezisi sırasında öldürmesi (savaşın fitilini ateşleyen olay)' ifadesi yer almaktadır."
+            },
+            {
+                word: "Aşağıdakilerden hangisi I. Dünya Savaşı öncesi oluşturulan İttifak Bloku içinde yer almamıştır?",
+                meaning: "Fransa",
+                category: "Taraflar",
+                question: "Aşağıdakilerden hangisi I. Dünya Savaşı öncesi oluşturulan İttifak Bloku içinde yer almamıştır?",
+                options: [
+                    "Almanya",
+                    "Fransa",
+                    "Bulgaristan",
+                    "Osmanlı Devleti"
+                ],
+                context: "Savaş öncesi bloklaşma ve ittifaklar",
+                explanation: "İttifak Devletleri (Bağlaşma) bloğunda Almanya, Avusturya-Macaristan, Osmanlı Devleti ve Bulgaristan yer alırken, Fransa İtilaf Devletleri (Anlaşma) bloğunda yer almıştır."
+            },
+            {
+                word: "Aşağıdakilerden hangisi Osmanlı Devleti'nin I. Dünya Savaşı'nda Almanya'nın yanında yer alma amaçlarından biri değildir?",
+                meaning: "Avrupa'da hâkimiyet kurmak",
+                category: "Osmanlı'nın Savaşa Girişi",
+                question: "Aşağıdakilerden hangisi Osmanlı Devleti'nin I. Dünya Savaşı'nda Almanya'nın yanında yer alma amaçlarından biri değildir?",
+                options: [
+                    "Kaybettiği toprakları geri almak",
+                    "Siyasi yalnızlıktan kurtulmak",
+                    "Turancılık fikrini hayata geçirmek",
+                    "Avrupa'da hâkimiyet kurmak"
+                ],
+                context: "Osmanlı Devleti'nin savaş hedefleri",
+                explanation: "Osmanlı Devleti'nin savaşa girme amaçları arasında kaybettiği toprakları geri almak, siyasi yalnızlıktan kurtulmak ve Turancılık fikrini hayata geçirmek vardı, ancak Avrupa'da hakimiyet kurmak gibi bir amacı yoktu."
+            },
+            {
+                word: "Osmanlı Devleti, I. Dünya Savaşı'nda müttefiki Avusturya–Macaristan'a yardım etmek için aşağıdaki cephelerden hangisine asker göndermiştir?",
+                meaning: "Galiçya",
+                category: "Yardım Cepheleri",
+                question: "Osmanlı Devleti, I. Dünya Savaşı'nda müttefiki Avusturya–Macaristan'a yardım etmek için aşağıdaki cephelerden hangisine asker göndermiştir?",
+                options: [
+                    "Romanya",
+                    "Galiçya",
+                    "Makedonya",
+                    "Suriye"
+                ],
+                context: "Osmanlı'nın müttefiklerine askeri destekleri",
+                explanation: "Osmanlı Devleti, müttefiki Avusturya-Macaristan İmparatorluğu'na yardım için Galiçya Cephesi'ne asker göndermiştir. Bu cephe Doğu Avrupa'da Rusya'ya karşı savaşılan bir cepheydi."
+            },
+            {
+                word: "Fahrettin Paşa'ya 'Türk Kaplanı' unvanı aşağıdaki hangi cephedeki başarıları nedeniyle verilmiştir?",
+                meaning: "Hicaz",
+                category: "Hicaz-Yemen Cephesi",
+                question: "Fahrettin Paşa'ya 'Türk Kaplanı' unvanı aşağıdaki hangi cephedeki başarıları nedeniyle verilmiştir?",
+                options: [
+                    "Çanakkale",
+                    "Hicaz",
+                    "Galiçya",
+                    "Kanal"
+                ],
+                context: "Komutanların unvanları ve başarıları",
+                explanation: "Fahrettin Paşa, Medine'yi 2 yıl 7 ay boyunca kuşatma altında savunması ve gösterdiği kahramanlık nedeniyle 'Türk Kaplanı', 'Çöl Kaplanı' ve 'Medine Müdafii' unvanlarını almıştır."
+            },
+            {
+                word: "Aşağıdakilerden hangisi Osmanlı Devleti'nin I. Dünya Savaşı'nda İtilaf Devletleri'ne karşı savunma yaptığı cephelerden biri değildir?",
+                meaning: "Kanal",
+                category: "Cepheler",
+                question: "Aşağıdakilerden hangisi Osmanlı Devleti'nin I. Dünya Savaşı'nda İtilaf Devletleri'ne karşı savunma yaptığı cephelerden biri değildir?",
+                options: [
+                    "Çanakkale",
+                    "Kanal",
+                    "Hicaz",
+                    "Suriye"
+                ],
+                context: "Osmanlı'nın savunma ve taarruz cepheleri",
+                explanation: "Kanal Cephesi Osmanlı'nın taarruz cephelerinden biridir. Çanakkale, Hicaz ve Suriye cepheleri ise savunma cepheleridir."
+            },
+            {
+                word: "Savaş sırasında taraf değiştirmiştir?",
+                meaning: "İtalya",
+                category: "Taraflar",
+                question: "Aşağıdaki devletlerden hangisi savaş sırasında taraf değiştirmiştir?",
+                options: [
+                    "Yunanistan",
+                    "İtalya",
+                    "Japonya",
+                    "Bulgaristan"
+                ],
+                context: "Savaşta değişen ittifaklar",
+                explanation: "Metinde, İtalya için '(taraf değiştirdikten sonra İtilaf'a geçti)' notu düşülmüştür."
+            },
+            {
+                word: "I. Dünya Savaşı'nın önemli genel sonuçlarıyla ilgili olarak yanlıştır?",
+                meaning: "Japonya → Savaştan çekilen son devlettir.",
+                category: "Sonuçlar",
+                question: "Aşağıdaki eşleştirmelerden hangisi I. Dünya Savaşı'nın önemli genel sonuçlarıyla ilgili olarak yanlıştır?",
+                options: [
+                    "ABD → Savaşın süresini kısalttı.",
+                    "Osmanlı Devleti → Savaşın süresini uzattı.",
+                    "Japonya → Savaştan çekilen son devlettir.",
+                    "İtalya → Taraf değiştirdi."
+                ],
+                context: "Savaşın küresel etkileri",
+                explanation: "Metindeki 'Önemli Bilgiler' kısmında 'Japonya → Savaştan çekilen ilk devlettir.' ifadesi bulunur, 'son devlet' değil."
+            },
+            {
+                word: "Almanya'nın Osmanlı Devleti'ni kendi yanında savaşa sokmak istemesinin nedeni değildir?",
+                meaning: "Osmanlı ekonomisini canlandırmak",
+                category: "Osmanlı'nın Savaşa Girişi",
+                question: "Almanya'nın Osmanlı Devleti'ni kendi yanında savaşa sokmak istemesinin nedeni aşağıdakilerden hangisi değildir?",
+                options: [
+                    "Osmanlı halifesinin dini gücünden yararlanmak",
+                    "Osmanlı'nın jeopolitik konumundan faydalanmak",
+                    "Osmanlı ekonomisini canlandırmak",
+                    "Yeni cepheler açarak kendi yükünü hafifletmek"
+                ],
+                context: "Almanya'nın stratejik hesapları",
+                explanation: "Metinde Almanya'nın nedenleri arasında 'Osmanlı Devleti'nin dini gücünden yararlanmak', 'Osmanlı Devleti'nin jeopolitik gücünden faydalanmak' ve 'Yeni cephelerin açılmasını sağlayarak kendi savaş yükünü hafifletmek' sayılmış, ekonomiyi canlandırmak yer almamıştır."
+            },
+            {
+                word: "Osmanlı Devleti'nin Almanya'nın yanında savaşa girmesinin nedenleri arasında yoktur?",
+                meaning: "İttihat ve Terakki'nin güçlü Fransız hayranlığı",
+                category: "Osmanlı'nın Savaşa Girişi",
+                question: "Osmanlı Devleti'nin Almanya'nın yanında savaşa girmesinin nedenleri arasında aşağıdakilerden hangisi yoktur?",
+                options: [
+                    "Kaybettiği toprakları geri almak istemesi",
+                    "Siyasi yalnızlıktan kurtulmak istemesi",
+                    "İngiltere ile ittifak kuramaması",
+                    "İttihat ve Terakki'nin güçlü Fransız hayranlığı"
+                ],
+                context: "Osmanlı'nın savaş kararı",
+                explanation: "Metinde Osmanlı'nın savaşa girme nedenleri arasında 'İttibat ve Terakki'nin Alman hayranlığı' belirtilmiştir, Fransız hayranlığı değil."
+            },
+            {
+                word: "Osmanlı Devleti'nin savaşa girişini hızlandıran olay",
+                meaning: "Goeben (Yavuz) ve Breslau (Midilli) gemilerinin Rus limanlarını bombalaması",
+                category: "Osmanlı'nın Savaşa Girişi",
+                question: "Osmanlı Devleti'nin savaşa girişini hızlandıran olay aşağıdakilerden hangisidir?",
+                options: [
+                    "Goeben (Yavuz) ve Breslau (Midilli) gemilerinin Rus limanlarını bombalaması",
+                    "Çanakkale Boğazı'nın İtilaf Devletleri tarafından geçilmesi",
+                    "Kafkasya Cephesi'nin açılması",
+                    "Almanya ile gizli bir antlaşma imzalanması"
+                ],
+                context: "Osmanlı'nın savaşa giriş süreci",
+                explanation: "Metinde, 'Amiral Souchon komutasındaki bu gemiler, Rusya'ya ait Sivastopol ve Odessa limanlarını bombalayınca Osmanlı Devleti de resmen I. Dünya Savaşı'na girmiştir.' ifadesi yer alır."
+            },
+            {
+                word: "Osmanlı Devleti'nin I. Dünya Savaşı'na girmesiyle gerçekleşmemiştir?",
+                meaning: "Savaşın daha erken bitmesi",
+                category: "Osmanlı'nın Savaşa Girişi",
+                question: "Osmanlı Devleti'nin I. Dünya Savaşı'na girmesiyle aşağıdaki sonuçlardan hangisi gerçekleşmemiştir?",
+                options: [
+                    "Savaşın daha erken bitmesi",
+                    "Yeni cephelerin açılması",
+                    "Kapitülasyonların tek taraflı olarak kaldırılması",
+                    "Cihat ilan edilmesi"
+                ],
+                context: "Osmanlı'nın savaşa katılımının sonuçları",
+                explanation: "Metne göre Osmanlı'nın savaşa girmesiyle 'Savaşın süresi uzamıştır', yani daha erken bitmemiştir."
+            },
+            {
+                word: "Osmanlı Devleti'nin taarruz cephelerinden biridir?",
+                meaning: "Kanal",
+                category: "Cepheler",
+                question: "Aşağıdaki cephelerden hangisi Osmanlı Devleti'nin taarruz cephelerinden biridir?",
+                options: [
+                    "Çanakkale",
+                    "Kanal",
+                    "Irak",
+                    "Suriye-Filistin"
+                ],
+                context: "Osmanlı'nın saldırı stratejileri",
+                explanation: "Metindeki 'Taarruz Cepheleri' listesinde 'Kanal (İngiltere)' bulunmaktadır."
+            },
+            {
+                word: "Kafkasya Cephesi'nin açılma nedenleri arasında yoktur?",
+                meaning: "İngiltere'yi Mısır'dan çıkarmak",
+                category: "Kafkasya Cephesi",
+                question: "Kafkasya Cephesi'nin açılma nedenleri arasında aşağıdakilerden hangisi yoktur?",
+                options: [
+                    "Kars, Ardahan ve Batum'u geri almak",
+                    "Turan idealini gerçekleştirmek",
+                    "İngiltere'yi Mısır'dan çıkarmak",
+                    "Bakü petrollerine ulaşmak"
+                ],
+                context: "Kafkasya Cephesi'nin stratejik hedefleri",
+                explanation: "Metinde Kafkasya Cephesi'nin açılma nedenleri 'Kars, Ardahan ve Batum'u (Elviye-i Selase) geri almak', 'Turancılığı gerçekleştirmek ve Bakü petrollerine ulaşmak' olarak sayılmış, Mısır'la ilgili bir amaç belirtilmemiştir."
+            },
+            {
+                word: "Ermenilerin zorunlu göçünü öngören kanun",
+                meaning: "Tehcir (Sevk ve İskân) Kanunu",
+                category: "Kafkasya Cephesi",
+                question: "Osmanlı Devleti'nin 1915 yılında çıkardığı ve Ermenilerin zorunlu göçünü öngören kanun aşağıdakilerden hangisidir?",
+                options: [
+                    "Teşkilat-ı Esasiye Kanunu",
+                    "Tehcir (Sevk ve İskân) Kanunu",
+                    "Hıyanet-i Vataniye Kanunu",
+                    "Takrir-i Sükun Kanunu"
+                ],
+                context: "Savaş dönemi hukuki düzenlemeler",
+                explanation: "Metinde '1915 – Tehcir Kanunu (Sevk ve İskân Kanunu)' başlığı altında bu kanunun çıkarıldığı belirtilmiştir."
+            },
+            {
+                word: "Mustafa Kemal'in 1916 yılında Muş ve Bitlis'i Rus işgalinden kurtardığı cephe",
+                meaning: "Kafkasya Cephesi",
+                category: "Kafkasya Cephesi",
+                question: "Mustafa Kemal'in 1916 yılında Muş ve Bitlis'i Rus işgalinden kurtardığı cephe aşağıdakilerden hangisidir?",
+                options: [
+                    "Suriye Cephesi",
+                    "Çanakkale Cephesi",
+                    "Kafkasya Cephesi",
+                    "Irak Cephesi"
+                ],
+                context: "Mustafa Kemal'in askeri başarıları",
+                explanation: "Metindeki '1916' alt başlığında, 'Bölgeye Mustafa Kemal atanmıştır. Mustafa Kemal, Ruslardan Muş ve Bitlis'i geri almıştır.' ifadeleri Kafkasya Cephesi bağlamında yer alır."
+            },
+            {
+                word: "Rusya'nın I. Dünya Savaşı'ndan çekilmesini sağlayan antlaşma",
+                meaning: "Brest-Litovsk Antlaşması",
+                category: "Kafkasya Cephesi",
+                question: "Rusya'nın I. Dünya Savaşı'ndan çekilmesini sağlayan antlaşma aşağıdakilerden hangisidir?",
+                options: [
+                    "Versay Antlaşması",
+                    "Brest-Litovsk Antlaşması",
+                    "Mondros Ateşkes Antlaşması",
+                    "Sevr Antlaşması"
+                ],
+                context: "Savaştan çekilme süreçleri",
+                explanation: "Metinde '1918 – Brest-Litovsk Antlaşması' başlığı altında, 'Rusya savaştan Brest–Litovsk Antlaşması ile çekilmiştir.' denilmektedir."
+            },
+            {
+                word: "31 Mart 1918'de bir günde 12 bin Azerbaycan Türkü, Ermeniler tarafından şehit edilmiştir.",
+                meaning: "Kafkasya Cephesi",
+                category: "Kafkasya Cephesi",
+                question: "'31 Mart 1918'de bir günde 12 bin Azerbaycan Türkü, Ermeniler tarafından şehit edilmiştir.' ifadesi hangi cephe ile ilgili bir gelişmedir?",
+                options: [
+                    "Kanal Cephesi",
+                    "Kafkasya Cephesi",
+                    "Irak Cephesi",
+                    "Hicaz-Yemen Cephesi"
+                ],
+                context: "Savaşın trajik olayları",
+                explanation: "Bu ifade, metinde Kafkasya Cephesi ile ilgili 'DİKKAT' notu içinde verilmiştir."
+            },
+            {
+                word: "Kanal Cephesi ile ilgili yanlıştır?",
+                meaning: "Osmanlı Devleti bu cephede kesin bir zafer kazanmıştır.",
+                category: "Kanal Cephesi",
+                question: "Kanal Cephesi ile ilgili aşağıdaki ifadelerden hangisi yanlıştır?",
+                options: [
+                    "Almanların isteği üzerine açılmıştır.",
+                    "Komutanı Bahriye Nazırı Cemal Paşa'dır.",
+                    "Osmanlı Devleti bu cephede kesin bir zafer kazanmıştır.",
+                    "Temmuz 1916'da Romani Muharebesi yaşanmıştır."
+                ],
+                context: "Kanal Cephesi'nin askeri sonuçları",
+                explanation: "Metinde, 'iki büyük askerî harekât düzenlemiş fakat İngilizler karşısında başarılı olamamıştır.' denilerek Osmanlı'nın bu cephede başarısız olduğu vurgulanmıştır."
+            },
+            {
+                word: "Mustafa Kemal'in 'Ben size taarruzu değil, ölmeyi emrediyorum.' diye başlayan meşhur emrini hangi cephede ve hangi mevzide vermiştir?",
+                meaning: "Çanakkale - Conkbayırı / 261 Rakımlı Tepe",
+                category: "Çanakkale Cephesi",
+                question: "Mustafa Kemal'in 'Ben size taarruzu değil, ölmeyi emrediyorum.' diye başlayan meşhur emrini hangi cephede ve hangi mevzide vermiştir?",
+                options: [
+                    "Çanakkale - Anafartalar",
+                    "Kafkasya - Sarıkamış",
+                    "Çanakkale - Conkbayırı / 261 Rakımlı Tepe",
+                    "Suriye - Halep"
+                ],
+                context: "Tarihi emirler ve komutanlar",
+                explanation: "Metinde, 'Mustafa Kemal, 261 Rakımlı Tepe'de savaş sırasında geri çekilen askerlere şöyle demiştir: 'Ben size taarruzu değil, ölmeyi emrediyorum.' ifadesi Çanakkale Cephesi'ne aittir."
+            },
+            {
+                word: "'Karşılıklı siperler arasındaki mesafe sekiz metre...' şeklinde tanımlanan ve Mustafa Kemal'in anlattığı olağanüstü durum",
+                meaning: "Bombasırtı Vakası",
+                category: "Çanakkale Cephesi",
+                question: "'Karşılıklı siperler arasındaki mesafe sekiz metre...' şeklinde tanımlanan ve Mustafa Kemal'in anlattığı olağanüstü durum aşağıdakilerden hangisidir?",
+                options: [
+                    "Kut'ül Amare Savunması",
+                    "Bombasırtı Vakası",
+                    "Medine Müdafaası",
+                    "Sarıkamış Faciası"
+                ],
+                context: "Cephedeki olağanüstü olaylar",
+                explanation: "Metinde, Mustafa Kemal'in bu sözlerinin yer aldığı kısım 'Bombasırtı Vakası' başlığı altında verilmiştir."
+            },
+            {
+                word: "Çanakkale Cephesi'nin sonuçları arasında gösterilemez?",
+                meaning: "Savaşın süresi kısaldı.",
+                category: "Çanakkale Cephesi",
+                question: "Çanakkale Cephesi'nin sonuçları arasında aşağıdakilerden hangisi gösterilemez?",
+                options: [
+                    "Savaşın süresi kısaldı.",
+                    "Bulgaristan, İttifak Devletleri yanında savaşa girdi.",
+                    "Mustafa Kemal 'Anafartalar Kahramanı' unvanını aldı.",
+                    "Mustafa Kemal Anadolu'da tanınan bir lider haline geldi."
+                ],
+                context: "Çanakkale'nin tarihsel etkileri",
+                explanation: "Metindeki 'Çanakkale Cephesi – Sonuçları' arasında 'Savaşın süresi en az iki yıl uzamıştır.' ifadesi bulunur, kısaldığı değil."
+            },
+            {
+                word: "Çanakkale Deniz Savaşı'nda boğaza mayın döşeyen gemimiz ve komutanı",
+                meaning: "Nusret - Tophaneli Yüzbaşı İsmail Hakkı",
+                category: "Çanakkale Cephesi",
+                question: "Çanakkale Deniz Savaşı'nda boğaza mayın döşeyen gemimiz ve komutanı aşağıdakilerden hangisidir?",
+                options: [
+                    "Yavuz - Amiral Souchon",
+                    "Nusret - Tophaneli Yüzbaşı İsmail Hakkı",
+                    "Midilli - Binbaşı Fritz",
+                    "Sultan Osman - Rauf Bey"
+                ],
+                context: "Deniz savaşları ve kahramanlar",
+                explanation: "Metinde, 'Mayın döşeyen gemi: Nusret Mayın Gemisi' ve 'Nusret'in komutanı: Tophaneli Yüzbaşı İsmail Hakkı' bilgileri yer alır."
+            },
+            {
+                word: "Irak Cephesi'nin açılma nedenleri arasında yoktur?",
+                meaning: "Hindistan'daki Müslümanları Osmanlı'ya karşı kışkırtmak",
+                category: "Irak Cephesi",
+                question: "Irak Cephesi'nin açılma nedenleri arasında aşağıdakilerden hangisi yoktur?",
+                options: [
+                    "Rusya'ya karadan yardım göndermeyi önlemek",
+                    "Musul ve Abadan petrollerini ele geçirmek",
+                    "Hindistan'daki Müslümanları Osmanlı'ya karşı kışkırtmak",
+                    "Türk ordusunun İran üzerinden Hindistan'a ulaşmasını engellemek"
+                ],
+                context: "Irak Cephesi'nin stratejik amaçları",
+                explanation: "Metindeki 'Irak Cephesi' açılma nedenleri arasında 'Rusya'ya karadan yardım göndermeyi önlemek', 'Türklerin İran üzerinden Hindistan'a ulaşmasını engellemek' ve 'Musul ve Abadan petrollerini ele geçirmek' sayılmış, Hindistan'daki Müslümanları kışkırtmak yer almamıştır."
+            },
+            {
+                word: "Osmanlı Devleti'nin 29 Nisan 1916'da General Townshend de dahil yaklaşık 14.000 İngiliz askerini esir aldığı zafer",
+                meaning: "Kut'ül Amare Zaferi",
+                category: "Irak Cephesi",
+                question: "Osmanlı Devleti'nin 29 Nisan 1916'da General Townshend de dahil yaklaşık 14.000 İngiliz askerini esir aldığı zafer aşağıdakilerden hangisidir?",
+                options: [
+                    "Selman-ı Pak Muharebesi",
+                    "Kut'ül Amare Zaferi",
+                    "I. Gazze Muharebesi",
+                    "Romani Muharebesi"
+                ],
+                context: "Irak Cephesi'nde önemli muharebeler",
+                explanation: "Metinde, '29 Nisan 1916 tarihinde Halil Paşa, Kut'ül Amare Savaşı'nda yaklaşık 14.000 İngiliz askeri ve General Townshend'i esir almıştır.' ifadesi bulunur."
+            },
+            {
+                word: "Hicaz-Yemen Cephesi'nde 'Medine Müdafii', 'Çöl Kaplanı' gibi unvanlarla anılan Osmanlı komutanı",
+                meaning: "Fahrettin Paşa (Türkkan)",
+                category: "Hicaz-Yemen Cephesi",
+                question: "Hicaz-Yemen Cephesi'nde 'Medine Müdafii', 'Çöl Kaplanı' gibi unvanlarla anılan Osmanlı komutanı aşağıdakilerden hangisidir?",
+                options: [
+                    "Fahrettin Paşa (Türkkan)",
+                    "Halil Paşa (Kut)",
+                    "Cevat Paşa (18 Mart Kahramanı)",
+                    "Nuri Paşa (Bakü Fatihi)"
+                ],
+                context: "Hicaz Cephesi'nde görev yapan komutanlar",
+                explanation: "Metindeki 'Hicaz Cephesi' notlarında 'Fahrettin Paşa, bu cephede yaptığı savunma nedeniyle kendisine şu unvanlar verilmiştir: Çöl Ortasında Plevne Kahramanı, Çöl Kaplanı, Türk Kaplanı, Medine Müdafi' yazmaktadır."
+            },
+            {
+                word: "İngiliz ajanı Arabistanlı Lawrence ile iş birliği yaparak Osmanlı'ya karşı isyan eden Mekke Emiri",
+                meaning: "Şerif Hüseyin",
+                category: "Hicaz-Yemen Cephesi",
+                question: "İngiliz ajanı Arabistanlı Lawrence ile iş birliği yaparak Osmanlı'ya karşı isyan eden Mekke Emiri kimdir?",
+                options: [
+                    "Şerif Hüseyin",
+                    "İbn-i Suud",
+                    "Mac Mahon",
+                    "Fahrettin Paşa"
+                ],
+                context: "Arap coğrafyasında işbirlikçiler",
+                explanation: "Metindeki 'Hicaz Cephesi' bölümünde, 'Bu cephede görevli kişiler: İngiliz ajan: Arabistanlı Lawrence - Mekke Emiri: Şerif Hüseyin' şeklinde belirtilmiştir."
+            },
+            {
+                word: "İngiltere ve Fransa'nın Osmanlı topraklarını paylaştığı antlaşma",
+                meaning: "Sykes-Picot Antlaşması",
+                category: "Gizli Antlaşmalar",
+                question: "Aşağıdaki gizli antlaşmalardan hangisi İngiltere ve Fransa'nın Osmanlı topraklarını paylaştığı antlaşmadır?",
+                options: [
+                    "Londra Antlaşması",
+                    "Petrograd Protokolü",
+                    "Sykes-Picot Antlaşması",
+                    "Mac Mahon Antlaşması"
+                ],
+                context: "Savaş dönemi gizli paylaşım planları",
+                explanation: "Metinde, 'Sykes-Picot Antlaşması' için 'İngiltere ve Fransa arasında imzalanmış, daha sonra Rusya da dahil olmuştur.' denilmiş ve toprak paylaşım detayları verilmiştir."
+            },
+            {
+                word: "İtalya'ya Antalya ve çevresinin vaat edildiği, taraf değiştirmesine neden olan gizli antlaşma",
+                meaning: "Londra Antlaşması",
+                category: "Gizli Antlaşmalar",
+                question: "İtalya'ya Antalya ve çevresinin vaat edildiği, taraf değiştirmesine neden olan gizli antlaşma aşağıdakilerden hangisidir?",
+                options: [
+                    "Londra Antlaşması",
+                    "Saint Jean de Maurienne Antlaşması",
+                    "Sykes-Picot Antlaşması",
+                    "İstanbul Antlaşması"
+                ],
+                context: "İtalya'nın taraf değiştirme süreci",
+                explanation: "Metindeki 'Londra Antlaşması' notunda, 'İtalya'ya Antalya, Rodos ve 12 Ada verilince taraf değiştirmiştir.' ifadesi yer alır."
+            },
+            {
+                word: "İngiltere'nin, Şerif Hüseyin'e savaş sonunda bağımsız bir Arap devleti vaat ettiği gizli antlaşma",
+                meaning: "Mac Mahon Antlaşması",
+                category: "Gizli Antlaşmalar",
+                question: "İngiltere'nin, Şerif Hüseyin'e savaş sonunda bağımsız bir Arap devleti vaat ettiği gizli antlaşma aşağıdakilerden hangisidir?",
+                options: [
+                    "Sykes-Picot Antlaşması",
+                    "Mac Mahon Antlaşması",
+                    "Petrograd Protokolü",
+                    "Brest-Litovsk Antlaşması"
+                ],
+                context: "Arap isyanının arka planı",
+                explanation: "Metindeki 'Mac Mahon Antlaşması' notunda, 'İngiltere, savaş sonunda Hicaz merkezli bir Arabistan devleti kurulmasına izin verecek' ifadesi bulunur."
+            },
+            {
+                word: "Gizli antlaşmaları, savaş sırasında dünya kamuoyuna 'Sarı Kitap' adıyla duyuran devlet",
+                meaning: "Sovyet Rusya",
+                category: "Gizli Antlaşmalar",
+                question: "Bu gizli antlaşmaları, savaş sırasında dünya kamuoyuna 'Sarı Kitap' adıyla duyuran devlet aşağıdakilerden hangisidir?",
+                options: [
+                    "İngiltere",
+                    "Fransa",
+                    "Sovyet Rusya",
+                    "Osmanlı Devleti"
+                ],
+                context: "Gizli diplomasinin ifşası",
+                explanation: "Metindeki gizli antlaşmaların sonundaki 'NOT' kısmında, 'Bu gizli antlaşmalar, Sovyet Rusya tarafından 'Sarı Kitap' adıyla dünya kamuoyuna açıklanmıştır.' yazmaktadır."
+            },
+            {
+                word: "Osmanlı Devleti'nin yardım amacıyla asker gönderdiği cephelerden biri değildir?",
+                meaning: "Kanal",
+                category: "Yardım Cepheleri",
+                question: "Aşağıdaki cephelerden hangisi Osmanlı Devleti'nin yardım amacıyla asker gönderdiği cephelerden biri değildir?",
+                options: [
+                    "Galiçya",
+                    "Makedonya",
+                    "Romanya",
+                    "Kanal"
+                ],
+                context: "Osmanlı'nın müttefiklerine yardımları",
+                explanation: "Metindeki 'Yardım Cepheleri' listesinde Galiçya, Makedonya ve Romanya vardır. Kanal Cephesi ise bir taarruz cephesidir."
+            },
+            {
+                word: "Mustafa Kemal'in I. Dünya Savaşı'nda savaştığı cephelerin kronolojik sıralaması",
+                meaning: "Çanakkale - Kafkasya - Suriye",
+                category: "Mustafa Kemal",
+                question: "Mustafa Kemal'in I. Dünya Savaşı'nda savaştığı cephelerin kronolojik sıralaması aşağıdakilerden hangisinde doğru verilmiştir?",
+                options: [
+                    "Kafkasya - Çanakkale - Suriye",
+                    "Suriye - Kafkasya - Çanakkale",
+                    "Çanakkale - Kafkasya - Suriye",
+                    "Çanakkale - Suriye - Kafkasya"
+                ],
+                context: "Mustafa Kemal'in askeri kariyeri",
+                explanation: "Metindeki 'Mustafa Kemal'in I. Dünya Savaşı'ndaki sırası' notunda '1915–1916: Çanakkale - 1916–1917: Kafkasya - 1918: Suriye Cephesi' şeklinde verilmiştir."
+            },
+            {
+                word: "I. Dünya Savaşı sona erdikten sonra, Tehcir Kanunu'na tabi tutulan Ermenilerle ilgili hukuki düzenleme",
+                meaning: "Geri Dönüş Kararnamesi",
+                category: "Tehcir Kanunu",
+                question: "Osmanlı Devleti, I. Dünya Savaşı sona erdikten sonra, Tehcir Kanunu'na tabi tutulan Ermenilerle ilgili hangi hukuki düzenlemeyi yapmıştır?",
+                options: [
+                    "Ermenilerden tazminat talep etme kararı almıştır.",
+                    "İsteyenlerin geri dönebilmesi için 'Geri Dönüş Kararnamesi' çıkarmıştır.",
+                    "Ermenilere yönelik affı kaldırmıştır.",
+                    "Yeni bir göç kanunu çıkararak kalıcı iskânı öngörmüştür."
+                ],
+                context: "Savaş sonrası hukuki düzenlemeler",
+                explanation: "Metindeki 'NOT' bölümünde, 'Osmanlı Devleti, I. Dünya Savaşı sona erince, savaş sırasında göçe tabi tutulan Ermenilerden isteyenlerin geri dönebilmeleri amacıyla 31 Aralık 1918'de 'Geri Dönüş Kararnamesi' çıkarmıştır.' ifadesi yer alır."
+            },
+            {
+                word: "Mustafa Kemal'in Arıburnu Cephesi'ndeki gözetleme yerine, Fahrettin Altay tarafından verilen isim",
+                meaning: "Kemalyeri",
+                category: "Çanakkale Cephesi",
+                question: "Mustafa Kemal'in Arıburnu Cephesi'ndeki gözetleme yerine, Fahrettin Altay tarafından verilen isim aşağıdakilerden hangisidir?",
+                options: [
+                    "Anafartalar",
+                    "Kemalyeri",
+                    "Conkbayırı",
+                    "Bombasırtı"
+                ],
+                context: "Çanakkale'deki tarihi mevkiler",
+                explanation: "Metindeki 'Kemalyeri' başlığı altında, 'Mustafa Kemal'in Arıburnu Cephesi'nde ilk savaşlarını yönettiği gözetleme yerine, Fahrettin Altay tarafından 'Kemalyeri' adı verilmiştir.' denilmektedir."
+            },
+            {
+                word: "İzmir ve çevresinin İtalya'ya verilmesi kararlaştırılan gizli antlaşma",
+                meaning: "Saint Jean de Maurienne Antlaşması",
+                category: "Gizli Antlaşmalar",
+                question: "Aşağıdaki gizli antlaşmalardan hangisi ile İzmir ve çevresinin İtalya'ya verilmesi kararlaştırılmıştır?",
+                options: [
+                    "Londra Antlaşması",
+                    "Sykes-Picot Antlaşması",
+                    "Saint Jean de Maurienne Antlaşması",
+                    "Petrograd Protokolü"
+                ],
+                context: "Anadolu'nun paylaşım planları",
+                explanation: "Metindeki 'Saint Jean de Maurienne Antlaşması' notunda, 'Buna göre Güneybatı Anadolu (İzmir ve çevresi) İtalya'ya verilmiştir.' ifadesi bulunur."
+            },
+            {
+                word: "Hicaz-Yemen Cephesi'nde esir alınan Osmanlı askerlerinin sistematik işkence gördüğü kamp",
+                meaning: "Seydibeşir Kampı",
+                category: "Hicaz-Yemen Cephesi",
+                question: "Hicaz-Yemen Cephesi'nde esir alınan Osmanlı askerlerinin sistematik işkence gördüğü kamp aşağıdakilerden hangisidir?",
+                options: [
+                    "Sidi Beşir Kampı",
+                    "Seydibeşir Kampı",
+                    "Kut'ül Amare Kampı",
+                    "Selman-ı Pak Kampı"
+                ],
+                context: "Esirlerin maruz kaldığı muamele",
+                explanation: "Metindeki 'Hicaz Cephesi' ile ilgili son 'NOT' ta, 'Bu cephede esir alınan Osmanlı askerleri Mısır'daki Seydibeşir Kampı'na götürülmüş ve sistematik işkenceye tabi tutulmuştur.' bilgisi verilmiştir."
+            },
+            {
+                word: "Çanakkale Cephesi için eşleştirmelerden hangisi yanlıştır?",
+                meaning: "Son Taarruz Savaşı - Çanakkale",
+                category: "Çanakkale Cephesi",
+                question: "Çanakkale Cephesi için aşağıdaki eşleştirmelerden hangisi yanlıştır?",
+                options: [
+                    "Centilmenler Savaşı - Çanakkale",
+                    "Dardanelya Savaşı - Çanakkale",
+                    "Aydınlar Savaşı - Çanakkale",
+                    "Son Taarruz Savaşı - Çanakkale"
+                ],
+                context: "Çanakkale Savaşı'nın farklı isimleri",
+                explanation: "Metinde Çanakkale Cephesi'nin diğer adları 'Centilmenler Savaşı – Aydınlar Savaşı – Dardanelya Savaşı' olarak verilmiştir. 'Son Taarruz Savaşı' ifadesi geçmemektedir."
+            },
+            {
+                word: "I. Dünya Savaşı'nda Osmanlı Devleti'nin zaferle kapattığı tek cephe",
+                meaning: "Çanakkale Cephesi",
+                category: "Cepheler",
+                question: "I. Dünya Savaşı'nda Osmanlı Devleti'nin zaferle kapattığı tek cephe aşağıdakilerden hangisidir?",
+                options: [
+                    "Kafkasya Cephesi",
+                    "Irak Cephesi",
+                    "Çanakkale Cephesi",
+                    "Suriye-Filistin Cephesi"
+                ],
+                context: "Osmanlı'nın savaş performansı",
+                explanation: "Metinde Çanakkale Cephesi için 'Kapanan İlk Cephedir.' ve 'Zafer' ifadeleri kullanılmış, diğer cepheler için böyle bir vurgu yapılmamıştır. Bu çıkarımla, zaferle kapanan tek cephe Çanakkale'dir."
+            },
+            {
+                word: "Eşleştirmelerden hangisi yanlıştır?",
+                meaning: "Nuri Paşa - Kanal Fatihi",
+                category: "Komutanlar",
+                question: "Aşağıdaki eşleştirmelerden hangisi yanlıştır?",
+                options: [
+                    "Fahrettin Paşa - Medine Müdafii",
+                    "Halil Paşa - Kut'ül Amare Kahramanı",
+                    "Cevat Paşa - 18 Mart Kahramanı",
+                    "Nuri Paşa - Kanal Fatihi"
+                ],
+                context: "Komutanların unvan ve başarıları",
+                explanation: "Metinde, Nuri Paşa için 'Bakü Fatihi' unvanı verildiği belirtilmiştir. 'Kanal Fatihi' yanlış bir eşleştirmedir."
+            },
+            {
+                word: "Kanal Cephesi'nde yaşanan ve 'II. Sarıkamış Faciası' olarak da adlandırılan muharebe",
+                meaning: "Romani Muharebesi",
+                category: "Kanal Cephesi",
+                question: "Kanal Cephesi'nde yaşanan ve 'II. Sarıkamış Faciası' olarak da adlandırılan muharebe aşağıdakilerden hangisidir?",
+                options: [
+                    "Katya Muharebesi",
+                    "Romani Muharebesi",
+                    "I. Gazze Muharebesi",
+                    "Selman-ı Pak Muharebesi"
+                ],
+                context: "Kanal Cephesi'ndeki kayıplar",
+                explanation: "Metindeki Kanal Cephesi gelişmeleri arasında '3–5 Ağustos 1916 – Romani Muharebesi (II. Sarıkamış Faciası) yaşanmıştır.' ifadesi yer alır."
+            },
+            {
+                word: "Falih Rıfkı Atay'ın, Suriye-Filistin Cephesi'ndeki anılarını ve gözlemlerini anlattığı eser",
+                meaning: "Zeytindağı",
+                category: "Suriye-Filistin Cephesi",
+                question: "Falih Rıfkı Atay'ın, Suriye-Filistin Cephesi'ndeki anılarını ve gözlemlerini anlattığı eseri aşağıdakilerden hangisidir?",
+                options: [
+                    "Ateş ve Güneş",
+                    "Zeytindağı",
+                    "Çankaya",
+                    "Bizim Akdeniz"
+                ],
+                context: "Savaş edebiyatı ve anılar",
+                explanation: "Metindeki Suriye-Filistin Cephesi notlarında, 'Falih Rıfki Atay, burada yaptığı gözlemleri Zeytindağı adlı romanında toplamıştır.' bilgisi verilmiştir."
+            },
+            {
+                word: "Osmanlı kuvvetleri 22–25 Kasım 1915 tarihlerinde İngilizlere karşı Selman-ı Pak Muharebesi'ni kazandığı cephe",
+                meaning: "Irak Cephesi",
+                category: "Irak Cephesi",
+                question: "Aşağıdaki cephelerden hangisinde, Osmanlı kuvvetleri 22–25 Kasım 1915 tarihlerinde İngilizlere karşı Selman-ı Pak Muharebesi'ni kazanmıştır?",
+                options: [
+                    "Kafkasya Cephesi",
+                    "Irak Cephesi",
+                    "Suriye-Filistin Cephesi",
+                    "Çanakkale Cephesi"
+                ],
+                context: "Irak Cephesi'ndeki muharebeler",
+                explanation: "Metindeki 'Irak Cephesi' bölümünde, 'Osmanlı kuvvetleri, 22–25 Kasım 1915 tarihlerinde İngilizlere karşı Selman-ı Pak Muharebesi'ni kazanmıştır.' ifadesi yer almaktadır."
+            },
+            {
+                word: "Kafkas İslam Ordusu'nun komutanı ve 'Bakü Fatihi' unvanını alan Osmanlı komutanı kimdir?",
+                meaning: "Nuri Paşa",
+                category: "Kafkasya Cephesi",
+                question: "Kafkas İslam Ordusu'nun komutanı ve 'Bakü Fatihi' unvanını alan Osmanlı komutanı kimdir?",
+                options: [
+                    "Enver Paşa",
+                    "Nuri Paşa",
+                    "Fahrettin Paşa",
+                    "Cemal Paşa"
+                ],
+                context: "Kafkasya Cephesi'ndeki Osmanlı komutanları",
+                explanation: "Nuri Paşa, Kafkas İslam Ordusu komutanı olarak Bakü'yü Rus ve Ermeni işgalinden kurtarmış ve 'Bakü Fatihi' unvanını almıştır."
+            },
+            {
+                word: "Kanal Cephesi'nin komutanı olan Bahriye Nazırı Osmanlı komutanı kimdir?",
+                meaning: "Cemal Paşa",
+                category: "Kanal Cephesi",
+                question: "Kanal Cephesi'nin komutanı olan Bahriye Nazırı Osmanlı komutanı kimdir?",
+                options: [
+                    "Enver Paşa",
+                    "Cemal Paşa",
+                    "Mustafa Kemal Paşa",
+                    "Fahrettin Paşa"
+                ],
+                context: "Kanal Cephesi komutanlığı",
+                explanation: "Kanal Cephesi, Bahriye Nazırı Cemal Paşa komutasında açılmış ve yönetilmiştir."
+            },
+            {
+                word: "Suriye-Filistin Cephesi'nde İtilaf Devletleri'nin temel amacı neydi?",
+                meaning: "Suriye petrollerini ele geçirmek",
+                category: "Suriye-Filistin Cephesi",
+                question: "Suriye-Filistin Cephesi'nde İtilaf Devletleri'nin temel amacı neydi?",
+                options: [
+                    "Kudüs'ü ele geçirmek",
+                    "Suriye petrollerini ele geçirmek",
+                    "Osmanlı ordusunu tamamen yok etmek",
+                    "Halifeliği ortadan kaldırmak"
+                ],
+                context: "Suriye-Filistin Cephesi'nin stratejik önemi",
+                explanation: "Suriye-Filistin Cephesi'nde İtilaf Devletleri'nin temel amacı bölgedeki zengin petrol yataklarını kontrol altına almaktı."
+            },
+            {
+                word: "Suriye-Filistin Cephesi'nde Osmanlı Devleti hangi Gazze Muharebelerini kazanmıştır?",
+                meaning: "I. ve II. Gazze Muharebeleri",
+                category: "Suriye-Filistin Cephesi",
+                question: "Suriye-Filistin Cephesi'nde Osmanlı Devleti hangi Gazze Muharebelerini kazanmıştır?",
+                options: [
+                    "Yalnızca I. Gazze Muharebesi",
+                    "I. ve II. Gazze Muharebeleri",
+                    "II. ve III. Gazze Muharebeleri",
+                    "Üç Gazze Muharebesi de kaybedilmiştir"
+                ],
+                context: "Gazze Muharebeleri'nin sonuçları",
+                explanation: "Osmanlı Devleti I. ve II. Gazze Muharebeleri'ni kazanmış, ancak III. Gazze Muharebesi'ni kaybetmiştir."
+            },
+            {
+                word: "Mustafa Kemal'in I. Dünya Savaşı'nda savaştığı son cephe hangisidir?",
+                meaning: "Suriye-Filistin Cephesi",
+                category: "Mustafa Kemal",
+                question: "Mustafa Kemal'in I. Dünya Savaşı'nda savaştığı son cephe hangisidir?",
+                options: [
+                    "Çanakkale Cephesi",
+                    "Kafkasya Cephesi",
+                    "Suriye-Filistin Cephesi",
+                    "Irak Cephesi"
+                ],
+                context: "Mustafa Kemal'in askeri kariyeri",
+                explanation: "Mustafa Kemal, I. Dünya Savaşı'nda son olarak 1918 yılında Suriye-Filistin Cephesi'nde savaşmıştır."
+            },
+            {
+                word: "Çanakkale Cephesi'nin açılma nedenleri arasında aşağıdakilerden hangisi yer almaz?",
+                meaning: "Osmanlı başkenti İstanbul'u ele geçirerek savaşı bitirmek",
+                category: "Çanakkale Cephesi",
+                question: "Çanakkale Cephesi'nin açılma nedenleri arasında aşağıdakilerden hangisi yer almaz?",
+                options: [
+                    "Rusya'ya boğazlar üzerinden yardım göndermek",
+                    "Rusya'nın buğdaylarından faydalanmak",
+                    "Osmanlı başkenti İstanbul'u ele geçirerek savaşı bitirmek",
+                    "Balkan devletlerini İtilaf Devletleri yanında savaşa çekmek"
+                ],
+                context: "Çanakkale Cephesi'nin stratejik hedefleri",
+                explanation: "Çanakkale Cephesi'nin açılma nedenleri arasında Rusya'ya yardım göndermek, Rus buğdayına ulaşmak ve Balkan devletlerini kendi yanlarına çekmek vardı, ancak savaşı bitirmek temel amaç değildi."
+            },
+            {
+                word: "Çanakkale Cephesi'nde İtilaf Devletleri'nin yanında savaşan sömürge birlikleri arasında aşağıdakilerden hangisi yer almaz?",
+                meaning: "Japon birlikleri",
+                category: "Çanakkale Cephesi",
+                question: "Çanakkale Cephesi'nde İtilaf Devletleri'nin yanında savaşan sömürge birlikleri arasında aşağıdakilerden hangisi yer almaz?",
+                options: [
+                    "Anzaklar",
+                    "Hintliler",
+                    "Japon birlikleri",
+                    "Fransız sömürge birlikleri"
+                ],
+                context: "Çanakkale'deki sömürge birlikleri",
+                explanation: "Çanakkale Cephesi'nde İngiliz ve Fransız sömürgelerinden gelen Anzak, Hintli ve diğer sömürge birlikleri savaşmış, Japon birlikleri yer almamıştır."
+            },
+            {
+                word: "İstanbul (Boğazlar) Gizli Antlaşması hangi devletler arasında imzalanmıştır?",
+                meaning: "İngiltere, Fransa ve Çarlık Rusyası",
+                category: "Gizli Antlaşmalar",
+                question: "İstanbul (Boğazlar) Gizli Antlaşması hangi devletler arasında imzalanmıştır?",
+                options: [
+                    "İngiltere, Fransa ve Çarlık Rusyası",
+                    "Almanya, Avusturya-Macaristan ve Osmanlı",
+                    "İtalya, İngiltere ve Fransa",
+                    "Rusya, Sırbistan ve Yunanistan"
+                ],
+                context: "Boğazların paylaşım planı",
+                explanation: "İstanbul (Boğazlar) Gizli Antlaşması, İngiltere, Fransa ve Çarlık Rusyası arasında imzalanmış ve boğazların Rusya'ya bırakılması kararlaştırılmıştır."
+            },
+            {
+                word: "Çanakkale Savaşı'nda 57. Piyade Alayı komutanı olan ve büyük kahramanlık gösteren Türk subayı kimdir?",
+                meaning: "Hüseyin Avni Bey",
+                category: "Çanakkale Cephesi",
+                question: "Çanakkale Savaşı'nda 57. Piyade Alayı komutanı olan ve büyük kahramanlık gösteren Türk subayı kimdir?",
+                options: [
+                    "Hüseyin Avni Bey",
+                    "Mustafa Kemal Paşa",
+                    "Esat Paşa",
+                    "Cevat Paşa"
+                ],
+                context: "Çanakkale kahramanları",
+                explanation: "Hüseyin Avni Bey, Çanakkale Savaşı'nda 57. Piyade Alayı'nın komutanı olarak büyük kahramanlık göstermiş bir Türk subayıdır."
+            },
+            {
+                word: "Selman-ı Pak Muharebesi hangi cephede gerçekleşmiştir?",
+                meaning: "Irak Cephesi",
+                category: "Irak Cephesi",
+                question: "Selman-ı Pak Muharebesi hangi cephede gerçekleşmiştir?",
+                options: [
+                    "Kafkasya Cephesi",
+                    "Irak Cephesi",
+                    "Suriye-Filistin Cephesi",
+                    "Çanakkale Cephesi"
+                ],
+                context: "Irak Cephesi muharebeleri",
+                explanation: "Selman-ı Pak Muharebesi, Irak Cephesi'nde Osmanlı kuvvetleri ile İngiliz kuvvetleri arasında gerçekleşmiştir."
+            },
+            {
+                word: "Sykes-Picot Antlaşması ile hangi bölge paylaşılmıştır?",
+                meaning: "Orta Doğu",
+                category: "Gizli Antlaşmalar",
+                question: "Sykes-Picot Antlaşması ile hangi bölge paylaşılmıştır?",
+                options: [
+                    "Balkanlar",
+                    "Orta Doğu",
+                    "Kafkasya",
+                    "Kuzey Afrika"
+                ],
+                context: "Sykes-Picot Antlaşması'nın kapsamı",
+                explanation: "Sykes-Picot Antlaşması, İngiltere ve Fransa arasında imzalanmış ve Orta Doğu bölgesinin paylaşımını öngörmüştür."
+            }
+        ];
+
+        // DOM elements
+        const questionEl = document.getElementById('question');
+        const contextEl = document.getElementById('context');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const resultMessageEl = document.getElementById('resultMessage');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+        let masteredWords = [];
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Initialize quiz
+        function initQuiz() {
+            questions = shuffleArray([...quizData]);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            
+            // Add click event to cat cover
+            catCoverEl.addEventListener('click', removeCatCover);
+        }
+
+        // Remove cat cover to reveal answers
+        function removeCatCover() {
+            catCoverEl.style.display = 'none';
+        }
+
+        // Show current question
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            contextEl.textContent = currentQuestion.context;
+            
+            // Reset cat cover
+            catCoverEl.style.display = 'flex';
+            
+            // Shuffle options
+            const options = shuffleArray([...currentQuestion.options]);
+            
+            // Clear previous options
+            optionsEl.innerHTML = '';
+            
+            // Add cat cover back
+            optionsEl.appendChild(catCoverEl);
+            
+            // Create new option buttons
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = option;
+                button.addEventListener('click', () => selectAnswer(option, currentQuestion));
+                optionsEl.appendChild(button);
+            });
+            
+            // Reset UI for new question
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex;
+            progressBarEl.style.width = `${(currentQuestionIndex / questions.length) * 100}%`;
+        }
+
+        // Handle answer selection
+        function selectAnswer(selectedOption, currentQuestion) {
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // Disable all buttons
+            optionButtons.forEach(button => {
+                button.disabled = true;
+                
+                // Mark correct answer
+                if (button.textContent === currentQuestion.meaning) {
+                    button.classList.add('correct');
+                }
+                
+                // Mark incorrect selected answer
+                if (button.textContent === selectedOption && button.textContent !== currentQuestion.meaning) {
+                    button.classList.add('incorrect');
+                }
+            });
+            
+            // Check if answer is correct
+            const isCorrect = selectedOption === currentQuestion.meaning;
+            
+            // Update score if correct
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+                
+                // Add to mastered words if not already there
+                if (!masteredWords.some(w => w.word === currentQuestion.word)) {
+                    masteredWords.push(currentQuestion);
+                }
+            }
+            
+            // Show feedback
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            
+            if (isCorrect) {
+                feedbackTextEl.innerHTML = `✅ Doğru! <strong>${currentQuestion.explanation}</strong>`;
+            } else {
+                feedbackTextEl.innerHTML = `❌ Yanlış! Doğru cevap: <strong>${currentQuestion.meaning}</strong><br><br>${currentQuestion.explanation}`;
+            }
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        // End quiz and show results
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            finalScoreEl.textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            // Result message based on performance
+            if (percentage >= 90) {
+                resultMessageEl.textContent = "Mükemmel! I. Dünya Savaşı cephelerini çok iyi biliyorsunuz! 🏆";
+            } else if (percentage >= 70) {
+                resultMessageEl.textContent = "Çok iyi! Tarihî olaylara hakimsiniz. 👍";
+            } else if (percentage >= 50) {
+                resultMessageEl.textContent = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+            } else {
+                resultMessageEl.textContent = "Öğrenmeye devam! Tarihî olayları tekrar edin. 📚";
+            }
+            
+            // Display all words learned
+            wordListEl.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Kavramlar</h3>';
+            quizData.forEach(word => {
+                const wordCard = document.createElement('div');
+                wordCard.classList.add('word-card', 'fade-in');
+                wordCard.innerHTML = `
+                    <div class="word">${word.question}</div>
+                    <div class="meaning">${word.meaning}</div>
+                    <div class="category category-${getCategoryClass(word.category)}">${word.category}</div>
+                `;
+                wordListEl.appendChild(wordCard);
+            });
+        }
+
+        // Helper function to get CSS class for category
+        function getCategoryClass(category) {
+            const classes = {
+                'Genel Nedenler': 'genel',
+                'Başlangıç': 'genel',
+                'Taraflar': 'uluslararasi',
+                'Sonuçlar': 'genel',
+                'Osmanlı\'nın Savaşa Girişi': 'siyasi',
+                'Cepheler': 'askeri',
+                'Kafkasya Cephesi': 'askeri',
+                'Çanakkale Cephesi': 'askeri',
+                'Irak Cephesi': 'askeri',
+                'Hicaz-Yemen Cephesi': 'askeri',
+                'Gizli Antlaşmalar': 'uluslararasi',
+                'Yardım Cepheleri': 'askeri',
+                'Mustafa Kemal': 'askeri',
+                'Tehcir Kanunu': 'siyasi',
+                'Komutanlar': 'askeri',
+                'Suriye-Filistin Cephesi': 'askeri',
+                'Askeri Rütbeler': 'askeri'
+            };
+            return classes[category] || 'genel';
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', nextQuestion);
+        
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>

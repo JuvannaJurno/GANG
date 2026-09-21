@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Türkiye Tarihi Testi</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "🏛️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(139, 69, 19, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(139, 69, 19, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-hukumdarlik { background: #8B4513; }
+        .category-saray { background: #B22222; }
+        .category-yonetim { background: #2E8B57; }
+        .category-hukuk { background: #D2691E; }
+        .category-genel { background: #2F4F4F; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option-btn {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .cat-image {
+                max-width: 150px;
+                max-height: 120px;
+            }
+            
+            .cat-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ MEB-AGS Türkiye Tarihi</h1>
+            <div class="subtitle">Anadolu (Türkiye) Selçuklu Dönemi</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                correctAnswer: "C",
+                meaning: "Kutalmışoğlu Süleyman Şah, Bizans İmparatorluğu'nda yaşanan taht kavgalarını fırsat bilerek başkenti İznik olan Türkiye Selçuklu Devleti'ni kurmuştur.",
+                category: "Kuruluş Dönemi",
+                question: "Türkiye Selçuklu Devleti'nin kurucusu Kutalmışoğlu Süleyman Şah ile ilgili aşağıdakilerden hangisi doğrudur?",
+                options: ["Haçlılarla yaptığı savaş sonucu devleti yıkılmıştır.", "Devleti başkent Konya olarak kurmuştur.", "Bizans'taki taht kavgalarından yararlanarak devletini kurmuştur.", "Danişmentlileri ortadan kaldırarak Anadolu'da tek güç haline gelmiştir."]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "I. Kılıçarslan, İznik'i kaybettikten sonra başkenti Konya'ya taşımıştır, Ankara'ya değil.",
+                category: "I. Kılıçarslan Dönemi",
+                question: "I. Kılıçarslan Dönemi ile ilgili verilenlerden hangisi yanlıştır?",
+                options: ["I. Haçlı Seferi sonucunda başkent İznik'i kaybetmiştir.", "İznik'in kaybedilmesinin nedeni, I. Kılıçarslan'ın Malatya kuşatmasında olmasıdır.", "I. Dorylaion (Eskişehir) Savaşı'nı kaybetmiştir.", "Başkenti, İznik'ten önce Ankara'ya taşımıştır."]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1086-1092 dönemi, Büyük Selçuklu Sultanı Melikşah'ın, Süleyman Şah'ın ölümünden sonra Selçuklu şehzadelerini tutsak alması ve Anadolu'ya hâkim olmak istemesi nedeniyle yaşanmıştır.",
+                category: "Tahtsız Dönem",
+                question: "Türkiye Selçuklu Devleti'nde 1086-1092 yılları arasında yaşanan tahtsız dönemin temel sebebi nedir?",
+                options: ["Moğol istilasının başlaması", "Şehzadelerin Sultan Melikşah tarafından tutsak edilmesi", "Haçlı Seferleri'nin şiddetlenmesi", "İç isyanların devleti yıpratması"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "I. Mesut zamanında, Bizans kaynakları başta olmak üzere bazı kaynaklarda Anadolu coğrafyası için 'Türkiye' (Turcia) ifadesi ilk kez kullanılmaya başlanmıştır.",
+                category: "I. Mesut Dönemi",
+                question: "I. Mesut Dönemi'nde gerçekleşen aşağıdaki olaylardan hangisi, 'Türkiye' adının tarihî olarak ilk kez kullanılması açısından önemlidir?",
+                options: ["II. Dorylaion Savaşı'nda Haçlı birliğini yok etmesi", "Danişmentlileri hakimiyeti altına almasi", "Anadolu'dan ilk defa 'Türkiye' diye bahsedilmesi", "Konya'yı imar faaliyetleriyle geliştirmesi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Miryokefalon Zaferi, Bizans'ın Anadolu'yu Türklerden geri alma ümidini tamamen yok etmiş ve Anadolu'nun ebedi bir Türk yurdu olduğunu tüm dünyaya kabul ettirmiştir.",
+                category: "II. Kılıçarslan Dönemi",
+                question: "II. Kılıçarslan'ın 1176'da Bizans'a karşı kazandığı Miryokefalon Savaşı'nın Anadolu tarihi açısından en önemli sonucu nedir?",
+                options: ["Haçlı Seferleri sona ermiştir.", "Anadolu, kesin olarak bir Türk yurdu haline gelmiştir.", "Moğol istilası engellenmiştir.", "Türkiye Selçuklu Devleti'nin yıkılış süreci başlamıştır."]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "II. Kılıçarslan'ın ölmeden önce ülkesini on bir oğlu arasında paylaştırması, şehzadeler arasında taht kavgalarını şiddetlendirmiş ve devletin merkezi otoritesini zayıflatmıştır.",
+                category: "II. Kılıçarslan Dönemi",
+                question: "II. Kılıçarslan'ın ölmeden önce ülkesini on bir oğlu arasında paylaştırmasının muhtemel sonucu ne olmuştur?",
+                options: ["Devletin ekonomik gücü artmıştır.", "Taht kavgaları ve iç karışıklıklar yaşanmıştır.", "Moğollarla ittifak kurulmuştur.", "Denizcilik faaliyetleri hız kazanmıştır."]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "I. Gıyaseddin Keyhüsrev Trabzon Rum İmparatorluğu'na son vermemiştir. Trabzon, 1461'de Fatih Sultan Mehmet tarafından alınmıştır. Diğer seçeneklerdeki bilgiler doğrudur.",
+                category: "I. Gıyaseddin Keyhüsrev Dönemi",
+                question: "I. Gıyaseddin Keyhüsrev ile ilgili aşağıdakilerden hangisi söylenemez?",
+                options: ["İki farklı dönemde tahta çıkmıştır.", "Antalya'yı fethederek önemli bir ticaret limanı elde etmiştir.", "Trabzon Rum İmparatorluğu'na son vermiştir.", "Kırım'a giden ticaret yolunun güvenliğini sağlamıştır."]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "I. İzzeddin Keykavus'un kardeşini hapsetmesi bir iç siyaset hamlesidir, ticaretle doğrudan ilgili değildir. Diğer seçeneklerdeki liman kentlerinin fethi ve ticari antlaşmalar doğrudan ticaret politikasıdır.",
+                category: "I. İzzeddin Keykavus Dönemi",
+                question: "I. İzzeddin Keykavus'un aşağıdaki faaliyetlerinden hangisi, onun ticareti geliştirmeye yönelik politikalarından biri değildir?",
+                options: ["Kardeşi Alaeddin Keykubat'ı Malatya Kalesi'ne hapsetmesi", "Kıbrıs Krallığı ve Venedik ile ticaret antlaşmaları yapması", "Sinop ve Samsun'u fethetmesi", "Antalya'yı tekrar fethetmesi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Yassıçimen Savaşı (1230) Harzemşahlara karşı kazanılmıştır, Moğollara karşı değil. Moğol tehlikesine karşı ise surları güçlendirmiştir.",
+                category: "I. Alaeddin Keykubat Dönemi",
+                question: "I. Alaeddin Keykubat dönemi için aşağıdakilerden hangisi söylenemez?",
+                options: ["Türkiye Selçuklu Devleti'nin en parlak dönemidir.", "Yassıçimen Savaşı'nda Moğolları yenmiştir.", "Suğdak Limanı'nı fethederek Karadeniz ticaretini kontrol altına almıştır.", "Kalonoros'u (Alanya) alarak imar etmiştir."]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Kapitülasyonlar, Osmanlı Devleti döneminde yabancı tüccarlara verilen ayrıcalıklardır. Alaeddin Keykubat döneminde böyle bir uygulama yoktur. Sigortacılık benzeri uygulamalar (akdiye) ve kervansaray inşası ticareti teşvik etmiştir.",
+                category: "I. Alaeddin Keykubat Dönemi",
+                question: "I. Alaeddin Keykubat'ın ticareti geliştirmek için aldığı önlemler arasında aşağıdakilerden hangisi yoktur?",
+                options: ["Sigortacılık sistemini başlatması", "Kervansaraylar yaptırması", "Kapitülasyonları kaldırması", "Kıbrıs ve Venedik'le ticari antlaşmalar yapması"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Ribâtlar ilk dönemlerde sınır karakolu ve dini yapı işlevi görürken, zamanla gelişerek kervansaray adıyla ticaret yolları üzerinde konaklama ve güvenlik merkezleri haline gelmişlerdir. Hanlar ise genelde ücretli işletmelerdir.",
+                category: "Kervansaraylar ve Hanlar",
+                question: "Türk-İslam devletlerindeki ribât ve kervansaraylar ile ilgili aşağıdakilerden hangisi doğrudur?",
+                options: ["Başlangıçta tamamen dini eğitim merkezleri olarak inşa edilmişlerdir.", "Hanlardan tek farkı, ücretsiz hizmet vermeleridir.", "İlk zamanlar sınır güvenliği için kullanılırken, zamanla ticari ve konaklama merkezlerine dönüşmüşlerdir.", "Yalnızca Türkiye Selçuklularına özgü yapılardır."]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Sadettin Köpek, Kösedağ Savaşı'ndan (1243) çok önce 1239 yılında öldürülmüştür. Bu nedenle Kösedağ yenilgisinden sorumlu tutulamaz.",
+                category: "II. Gıyaseddin Keyhüsrev Dönemi",
+                question: "Vezir ve başmimar Sadettin Köpek ile ilgili aşağıdakilerden hangisi yanlıştır?",
+                options: ["Zazadin Han ve Kubadabad Sarayı'nın mimarıdır.", "Gücünün artmasından rahatsız olan II. Gıyaseddin Keyhüsrev tarafından öldürülmüştür.", "Kösedağ Savaşı'ndaki yenilgiden sorumlu tutulmuştur.", "Türkiye Selçuklu Devleti'nin güçlü devlet adamlarındandır."]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Babailer İsyanı, Moğol işgalinden (Kösedağ 1243) önce patlak vermiştir. İsyanın temelinde Türkmenlerin sosyo-ekonomik sıkıntıları, dini hoşnutsuzlukları ve devletle olan çatışmaları yatar.",
+                category: "Babailer İsyanı",
+                question: "1240-1242 yılları arasında yaşanan Babailer İsyanı'nın çıkmasında aşağıdaki sebeplerden hangisi etkili olmamıştır?",
+                options: ["Türkmenlerin inanç zayıflığı", "Otlak kavgaları", "Ağır vergi yükü", "Moğolların Anadolu'yu işgali"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Kösedağ yenilgisi sonrası Anadolu'ya doğudan gelen Türkmen göçleri devam etmiş, bu nedenle Türk nüfusu artmıştır. Diğer seçenekler savaşın doğrudan sonuçlarındandır.",
+                category: "Kösedağ Savaşı",
+                question: "1243 Kösedağ Savaşı'nın sonuçları arasında aşağıdakilerden hangisi yer almaz?",
+                options: ["Anadolu Türk siyasi birliği bozuldu.", "İkinci Türk Beylikleri Dönemi başladı.", "Türkiye Selçuklu Devleti bağımsızlığını kaybedip İlhanlılara tabi oldu.", "Anadolu'da Türk nüfusu azaldı."]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Celaleddin Karatay, Moğol hakimiyeti döneminde devletin ayakta kalması için çalışan bir devlet adamıdır, Moğollara karşı açık bir direniş lideri değildir. Diğer bilgiler doğrudur.",
+                category: "Tarihi Kişiler",
+                question: "Celaleddin Karatay ile ilgili aşağıdakilerden hangisi söylenemez?",
+                options: ["Üç şehzadeyi aynı anda sultan ilan etmiştir.", "Moğollara karşı direnişin liderliğini yapmıştır.", "Konya'da Karatay Medresesi'ni yaptırmıştır.", "Kayseri'de Karatay Kervansarayı'nı inşa ettirmiştir."]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Muinüddin Pervane, ikili oynadığı için Memlük Sultanı Baybars tarafından değil, İlhanlı hükümdarı Abaka Han tarafından öldürülmüştür.",
+                category: "Tarihi Kişiler",
+                question: "Muinüddin Pervane ile ilgili verilen bilgilerden hangisi yanlıştır?",
+                options: ["Vezirlik yapmıştır.", "Sinop'ta Pervaneoğulları Beyliği'ni kurmuştur.", "Moğollar için Memlüklerden yardım istemiş, fakat sonra Moğollardan yana tavır almıştır.", "Bu ikili tavrı nedeniyle Memlük Sultanı Baybars tarafından öldürülmüştür."]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Alaaddin Siyavuş (Cimri), gerçek şehzade olduğu iddiasıyla ortaya çıkmış ancak başarısız olmuş ve halk tarafından 'eşkıya, sefil' anlamına gelen 'Cimri' lakabını almıştır.",
+                category: "Cimri Olayı",
+                question: "1277 yılında gerçekleşen 'Cimri Olayı' ile ilgili aşağıdakilerden hangisi doğrudur?",
+                options: ["Alaaddin Siyavuş (Cimri), II. Gıyaseddin Keyhüsrev'in gerçek oğludur.", "Karamanoğlu Mehmet Bey, bu olay sırasında Anadolu'da Arapçayı resmi dil ilan etmiştir.", "Alaaddin Siyavuş, başarılı olup uzun süre tahtta kalmıştır.", "Halk, sahte şehzade olduğu düşünülen Alaaddin Siyavuş'a 'eşkıya, sefil' anlamına gelen 'Cimri' lakabını takmıştır."]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Söğüt ve Domaniç çevresinde kurulan ve merkezi otoritesi en güçlü Türk-İslam devleti olarak gelişen beylik Osmanoğulları'dır.",
+                category: "II. Türk Beylikleri",
+                question: "Türkiye Selçuklu Devleti'nin yıkılışından sonra kurulan, merkezi otoritesi en güçlü Türk-İslam devleti haline gelecek olan ve Söğüt-Domaniç çevresinde kurulan beylik hangisidir?",
+                options: ["Germiyanoğulları", "Karamanoğulları", "Karesioğulları", "Osmanoğulları"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Karamanoğulları Beyliği, Karaman-Konya bölgesinde kurulmuş, 1277'de Türkçeyi resmi dil ilan etmiş, kendini Anadolu Selçuklu Devleti'nin devamı saymış ve Osmanlı ile en çok mücadele eden beylik olmuştur.",
+                category: "II. Türk Beylikleri",
+                question: "Kurulduğu yer Karaman-Konya olan, 1277'de Türkçeyi resmi dil ilan eden, kendini Anadolu Selçuklu Devleti'nin devamı sayan ve Osmanlı ile en çok mücadele eden beylik hangisidir?",
+                options: ["Karamanoğulları", "Dulkadiroğulları", "Candaroğulları", "Germiyanoğulları"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Karesioğulları Beyliği, Balıkesir-Çanakkale çevresinde kurulmuş, Osmanlı Devleti'ne katılan ilk beyliktir. Osmanlı'nın ilk donanma gücünü elde etmesini sağlamış ve Hacı İlbey, Evrenos Gazi gibi komutanları Osmanlı hizmetine kazandırmıştır.",
+                category: "II. Türk Beylikleri",
+                question: "Balıkesir-Çanakkale çevresinde kurulan, Osmanlı Devleti'ne katılan ilk beylik olan ve Osmanlı'nın ilk donanma gücünü elde etmesini sağlayan beylik hangisidir?",
+                options: ["Karesioğulları", "Aydınoğulları", "Menteşeoğulları", "Saruhanoğulları"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Dulkadiroğulları Beyliği, Maraş merkezli olup Memlükler ve Osmanlılar arasında denge politikası izlemiştir. Yavuz Sultan Selim'in 1515 Turnadağ Savaşı ile Osmanlı'ya katılmış ve bu olay Anadolu Türk siyasi birliğini tamamlamıştır.",
+                category: "II. Türk Beylikleri",
+                question: "Kurulduğu yer Maraş olan, Memlükler ve Osmanlılar arasında denge politikası izleyen ve Yavuz Sultan Selim'in Turnadağ Savaşı ile son verdiği beylik hangisidir?",
+                options: ["Dulkadiroğulları", "Ramazanoğulları", "Kadı Burhaneddin Ahmed Devleti", "Eretnalılar"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Hamitoğulları Beyliği, Isparta-Antalya-Eğirdir çevresinde Dündar Bey tarafından kurulmuştur. Osmanlı Devleti, I. Murat döneminde bu beylikten 80 bin altın karşılığında Isparta, Yalvaç, Beyşehir, Akşehir ve Seydişehir'i satın almıştır.",
+                category: "II. Türk Beylikleri",
+                question: "Isparta-Antalya-Eğirdir çevresinde Dündar Bey tarafından kurulan ve Osmanlı Devleti'nin para ile (80 bin altın karşılığında Isparta, Yalvaç, Beyşehir, Akşehir ve Seydişehir'i) toprak aldığı beylik hangisidir?",
+                options: ["Hamitoğulları", "Eşrefoğulları", "Sahipataoğulları", "Taceddinoğulları"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Germiyanoğulları Beyliği, Kütahya merkezli olup I. Yakup Bey tarafından kurulmuştur. Topraklarının büyük kısmı, Yıldırım Bayezid'in Germiyan Beyi'nin kızıyla evlenmesi sonucu çeyiz yoluyla Osmanlı'ya geçmiştir.",
+                category: "II. Türk Beylikleri",
+                question: "Kütahya merkezli olup I. Yakup Bey tarafından kurulan ve topraklarının büyük kısmının Yıldırım Bayezid'in Germiyan Beyi'nin kızıyla evlenmesi sonucu çeyiz yoluyla Osmanlı'ya geçtiği beylik hangisidir?",
+                options: ["Germiyanoğulları", "Aydınoğulları", "Candaroğulları", "Menteşeoğulları"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Aydınoğulları Beyliği, 1308'de Aydın'da Aydınoğlu Mehmet Bey tarafından kurulmuş, ilk donanmasını oluşturmuş, Umur Bey döneminde Ege adalarına seferler düzenlemiş ve 1426'da Osmanlı tarafından yıkılmıştır.",
+                category: "II. Türk Beylikleri",
+                question: "1308'de Aydın'da Aydınoğlu Mehmet Bey tarafından kurulan, ilk donanmasını oluşturan, Umur Bey döneminde Ege adalarına seferler düzenleyen ve 1426'da Osmanlı tarafından yıkılan beylik hangisidir?",
+                options: ["Aydınoğulları", "Saruhanoğulları", "Menteşeoğulları", "Karesioğulları"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Menteşeoğulları Beyliği, Muğla'da Menteş Bey tarafından kurulmuş, Rodos Şövalyeleri ve Kıbrıs Krallığı ile mücadele etmiş ve II. Murat döneminde Osmanlı'ya katılmıştır.",
+                category: "II. Türk Beylikleri",
+                question: "Muğla'da Menteş Bey tarafından kurulan, Rodos Şövalyeleri ve Kıbrıs Krallığı ile mücadele eden ve II. Murat döneminde Osmanlı'ya katılan beylik hangisidir?",
+                options: ["Menteşeoğulları", "Aydınoğulları", "Saruhanoğulları", "Hamitoğulları"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Candaroğulları (İsfendiyaroğulları) Beyliği, Sinop-Kastamonu bölgesinde kurulmuş, Sinop'ta denizciliği geliştirmiş, Ankara Savaşı'ndan sonra tekrar kurulup 1461'de Fatih Sultan Mehmet tarafından kesin olarak yıkılmıştır.",
+                category: "II. Türk Beylikleri",
+                question: "Sinop-Kastamonu bölgesinde kurulan, Sinop'ta denizciliği geliştiren, Ankara Savaşı'ndan sonra tekrar kurulup 1461'de Fatih Sultan Mehmet tarafından kesin olarak yıkılan beylik hangisidir?",
+                options: ["Candaroğulları (İsfendiyaroğulları)", "Pervaneoğulları", "Taceddinoğulları", "Karesioğulları"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Kadı Burhaneddin, Eratna Devleti'nin veziri iken devlete son verip kendi adıyla anılan devleti kurmuştur. Bu nedenle bölge tarihinde 'Eratnalılar ve Kadı Burhaneddin' şeklinde anılır.",
+                category: "II. Türk Beylikleri",
+                question: "Sivas-Tokat-Kayseri bölgesinde kurulan Eratna Devleti'ne, kendi veziri olan Kadı Burhaneddin'in son verdiği siyasi oluşum hangisidir?",
+                options: ["Eratnalılar ve Kadı Burhaneddin Devleti", "Dulkadiroğulları", "Karamanoğulları", "Eşrefoğulları"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Saruhanoğulları Beyliği, Manisa'da kurulmuş, donanmasıyla Ege adalarına ve Balkanlara seferler yapmış ve 1410'da I. Mehmet (Çelebi Mehmet) tarafından Osmanlı'ya katılmıştır.",
+                category: "II. Türk Beylikleri",
+                question: "Manisa'da kurulan, donanmasıyla Ege adalarına ve Balkanlara seferler yapan ve 1410'da I. Mehmet (Çelebi Mehmet) tarafından Osmanlı'ya katılan beylik hangisidir?",
+                options: ["Saruhanoğulları", "Aydınoğulları", "Karesioğulları", "Menteşeoğulları"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Sahipataoğulları Beyliği, Türkiye Selçuklu Devleti'nin ünlü veziri Sahip Ata Fahrettin Ali'nin oğulları tarafından kurulmuştur. Bu nedenle bu isimle anılır.",
+                category: "II. Türk Beylikleri",
+                question: "Türkiye Selçuklu Devleti'nin ünlü veziri Sahip Ata Fahrettin Ali'nin oğulları tarafından kurulan beylik hangisidir?",
+                options: ["Sahipataoğulları", "Pervaneoğulları", "Eşrefoğulları", "Taceddinoğulları"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Eşrefoğulları Beyliği, Beyşehir merkezli olup, Beylikler Dönemi'ne ait Anadolu'nun ahşap direkli en büyük camisi olan ve günümüzde de ibadete açık olan Eşrefoğlu Camii'ni yaptırmıştır.",
+                category: "II. Türk Beylikleri",
+                question: "Beyşehir merkezli olup, Beylikler Dönemi'ne ait Anadolu'nun ahşap direkli en büyük camisi olan ve günümüzde de ibadete açık olan Eşrefoğlu Camii'ni yaptıran beylik hangisidir?",
+                options: ["Eşrefoğulları", "Hamitoğulları", "Karamanoğulları", "Germiyanoğulları"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Taceddinoğulları Beyliği, Karadeniz'in iç kesimlerinde Niksar ve Canik (Samsun) çevresinde hakimiyet kurmuştur.",
+                category: "II. Türk Beylikleri",
+                question: "Niksar ve Canik (Samsun) bölgesinde kurulan beylik hangisidir?",
+                options: ["Taceddinoğulları", "Pervaneoğulları", "Candaroğulları", "Karesioğulları"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Pervaneoğulları Beyliği, Sinop merkezli denizci beyliklerden biri olup, Muinüddin Pervane'nin oğulları tarafından kurulmuştur. Sinop, Bafra, Samsun çevresinde hakimiyet kurmuş ve Kırım'a seferler düzenlemiştir.",
+                category: "II. Türk Beylikleri",
+                question: "Sinop, Bafra, Samsun çevresinde kurulan, denizcilikle uğraşan ve Kırım'a seferler düzenleyen beylik hangisidir?",
+                options: ["Pervaneoğulları", "Candaroğulları", "Karesioğulları", "Aydınoğulları"]
+            }
+        ];
+
+        // DOM elements
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const resultMessageEl = document.getElementById('resultMessage');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+        let masteredWords = [];
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Initialize quiz
+        function initQuiz() {
+            questions = shuffleArray([...quizData]);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            
+            // Add click event to cat cover
+            catCoverEl.addEventListener('click', removeCatCover);
+        }
+
+        // Remove cat cover to reveal answers
+        function removeCatCover() {
+            catCoverEl.style.display = 'none';
+        }
+
+        // Show current question
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            // Reset cat cover
+            catCoverEl.style.display = 'flex';
+            
+            // Shuffle options
+            const options = shuffleArray([...currentQuestion.options]);
+            
+            // Clear previous options
+            optionsEl.innerHTML = '';
+            
+            // Add cat cover back
+            optionsEl.appendChild(catCoverEl);
+            
+            // Create new option buttons
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = option;
+                button.addEventListener('click', () => selectAnswer(option, currentQuestion));
+                optionsEl.appendChild(button);
+            });
+            
+            // Reset UI for new question
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        // Handle answer selection
+        function selectAnswer(selectedOption, currentQuestion) {
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // Disable all buttons
+            optionButtons.forEach(button => {
+                button.disabled = true;
+                
+                // Find the correct answer by index
+                const correctOptionIndex = currentQuestion.options.findIndex(opt => 
+                    opt === currentQuestion.options[parseInt(currentQuestion.correctAnswer.charCodeAt(0) - 65)]
+                );
+                const correctOptionText = currentQuestion.options[correctOptionIndex];
+                
+                // Mark correct answer
+                if (button.textContent === correctOptionText) {
+                    button.classList.add('correct');
+                }
+                
+                // Mark incorrect selected answer
+                if (button.textContent === selectedOption && button.textContent !== correctOptionText) {
+                    button.classList.add('incorrect');
+                }
+            });
+            
+            // Check if answer is correct
+            const correctOptionIndex = parseInt(currentQuestion.correctAnswer.charCodeAt(0) - 65);
+            const isCorrect = selectedOption === currentQuestion.options[correctOptionIndex];
+            
+            // Update score if correct
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+                
+                // Add to mastered words if not already there
+                if (!masteredWords.some(w => w.question === currentQuestion.question)) {
+                    masteredWords.push(currentQuestion);
+                }
+            }
+            
+            // Show feedback
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            
+            if (isCorrect) {
+                feedbackTextEl.innerHTML = `✅ Doğru!<br><br>${currentQuestion.meaning}`;
+            } else {
+                const correctOptionIndex = parseInt(currentQuestion.correctAnswer.charCodeAt(0) - 65);
+                const correctOption = currentQuestion.options[correctOptionIndex];
+                feedbackTextEl.innerHTML = `❌ Yanlış!<br>Doğru cevap: <strong>${correctOption}</strong><br><br>${currentQuestion.meaning}`;
+            }
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        // End quiz and show results
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            finalScoreEl.textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            // Result message based on performance
+            if (percentage >= 90) {
+                resultMessageEl.textContent = "Mükemmel! Anadolu (Türkiye) Selçuklu Dönemi konusunu çok iyi biliyorsunuz! 🏆";
+            } else if (percentage >= 70) {
+                resultMessageEl.textContent = "Çok iyi! Temel bilgilere hakimsiniz. 👍";
+            } else if (percentage >= 50) {
+                resultMessageEl.textContent = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+            } else {
+                resultMessageEl.textContent = "Öğrenmeye devam! Konuyu tekrar etmeniz faydalı olacaktır. 📚";
+            }
+            
+            // Display all words learned
+            wordListEl.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Bilgiler</h3>';
+            quizData.forEach(item => {
+                const wordCard = document.createElement('div');
+                wordCard.classList.add('word-card', 'fade-in');
+                wordCard.innerHTML = `
+                    <div class="word">${item.question}</div>
+                    <div class="meaning">${item.meaning}</div>
+                    <div class="category category-${getCategoryClass(item.category)}">${item.category}</div>
+                `;
+                wordListEl.appendChild(wordCard);
+            });
+        }
+
+        // Helper function to get CSS class for category
+        function getCategoryClass(category) {
+            const classes = {
+                'Kuruluş Dönemi': 'hukumdarlik',
+                'I. Kılıçarslan Dönemi': 'yonetim',
+                'Tahtsız Dönem': 'genel',
+                'I. Mesut Dönemi': 'yonetim',
+                'II. Kılıçarslan Dönemi': 'yonetim',
+                'I. Gıyaseddin Keyhüsrev Dönemi': 'yonetim',
+                'I. İzzeddin Keykavus Dönemi': 'yonetim',
+                'I. Alaeddin Keykubat Dönemi': 'yonetim',
+                'Kervansaraylar ve Hanlar': 'genel',
+                'II. Gıyaseddin Keyhüsrev Dönemi': 'yonetim',
+                'Babailer İsyanı': 'hukuk',
+                'Kösedağ Savaşı': 'hukuk',
+                'Tarihi Kişiler': 'saray',
+                'Cimri Olayı': 'hukuk',
+                'II. Türk Beylikleri': 'genel'
+            };
+            return classes[category] || 'genel';
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', nextQuestion);
+        
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>

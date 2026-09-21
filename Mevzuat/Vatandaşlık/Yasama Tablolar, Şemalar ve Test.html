@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Vatandaşlık - Yasama Sayıları & Şema Etkinliği</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gold: #FFD700;
+            --flow-bg: #E8F5E9;
+            --flow-border: #81C784;
+            --blue-bg: #E3F2FD;
+            --blue-border: #1976D2;
+            --orange-bg: #FFF3E0;
+            --orange-border: #F57C00;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%); color: var(--dark); line-height: 1.6; padding: 15px; min-height: 100vh; }
+        .container { max-width: 950px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow: hidden; }
+        header { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; text-align: center; padding: 25px 20px; position: relative; }
+        header::before { content: "🧩"; font-size: 3rem; position: absolute; top: 10px; left: 20px; opacity: 0.3; }
+        h1 { margin-bottom: 8px; font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.1rem; opacity: 0.9; }
+
+        /* NOTLAR KISMI */
+        .notes-container { padding: 25px; animation: fadeIn 0.5s ease; }
+        .notes-title { color: var(--primary); margin-bottom: 15px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .notes-scroll-area { max-height: 55vh; overflow-y: auto; background: var(--light); border: 2px solid var(--accent); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        .notes-scroll-area::-webkit-scrollbar { width: 8px; }
+        .notes-scroll-area::-webkit-scrollbar-track { background: #e9ecef; border-radius: 10px; }
+        .notes-scroll-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        .notes-scroll-area h3 { color: var(--dark); border-bottom: 2px solid var(--primary); padding-bottom: 5px; margin-top: 20px; margin-bottom: 10px; }
+        .notes-scroll-area h3:first-child { margin-top: 0; }
+        .table-responsive { overflow-x: auto; margin-bottom: 25px; border-radius: 8px; }
+        .notes-table { width: 100%; border-collapse: collapse; min-width: 600px; background: white; }
+        .notes-table th, .notes-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        .notes-table th { background-color: var(--primary); color: white; font-size: 1.05rem; }
+        .notes-table tr:nth-child(even) { background-color: #f8fcf8; }
+        .notes-table tr:hover { background-color: #e8f5e9; }
+
+        .start-quiz-wrapper { text-align: center; padding: 10px 0; }
+        .scroll-msg { color: var(--danger); font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; }
+        .next-btn { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none; padding: 16px 32px; border-radius: 10px; font-size: 1.2rem; cursor: pointer; display: block; margin: 25px auto 0; transition: all 0.3s ease; font-weight: 600; width: 100%; max-width: 350px; }
+        .next-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(46, 125, 50, 0.3); }
+        .next-btn:disabled { background: #cccccc; color: #666666; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* ETKİNLİK KISMI (ŞEMALAR) */
+        .activity-container { padding: 25px; display: none; animation: fadeIn 0.5s ease; }
+        .activity-header { text-align: center; margin-bottom: 20px; }
+        .activity-header h2 { color: var(--primary); font-size: 1.6rem; margin-bottom: 5px; }
+        .activity-header p { color: #555; font-size: 1rem; }
+        
+        .word-bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 25px; padding: 15px; background: #E3F2FD; border-radius: 10px; border: 2px dashed #90CAF9; }
+        .word-bank.orange { background: #FFF3E0; border-color: #FFCC80; }
+        .word-item { background: white; border: 2px solid #1976D2; color: #1565C0; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); user-select: none; }
+        .word-item.orange-item { border-color: #F57C00; color: #E65100; }
+        .word-item:hover { background: #1976D2; color: white; transform: scale(1.05); }
+        .word-item.orange-item:hover { background: #F57C00; color: white; }
+        .word-item.selected { background: var(--gold); border-color: #F57F17; color: #333; transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .word-item.used { opacity: 0; pointer-events: none; transform: scale(0); }
+
+        .flowcharts-wrapper { display: flex; flex-direction: column; gap: 30px; }
+        .flowchart { background: var(--flow-bg); border: 2px solid var(--flow-border); border-radius: 15px; padding: 20px; position: relative; }
+        .flowchart.blue-chart { background: #E3F2FD; border-color: #90CAF9; }
+        .flowchart.orange-chart { background: #FFF3E0; border-color: #FFCC80; }
+        .flowchart h3 { text-align: center; color: var(--dark); border-bottom: 2px dashed var(--flow-border); padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase; font-size: 1.2rem; }
+        .flowchart.blue-chart h3 { border-bottom-color: #90CAF9; }
+        .flowchart.orange-chart h3 { border-bottom-color: #FFCC80; }
+        
+        .flow-step { text-align: center; margin-bottom: 15px; position: relative; }
+        .flow-step::after { content: "↓"; display: block; font-size: 1.5rem; color: var(--primary); margin-top: 5px; font-weight: bold; }
+        .flow-step:last-child::after { display: none; }
+        .flow-box { display: inline-block; background: white; border: 2px solid var(--primary); padding: 10px 20px; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 2; position: relative; }
+        
+        .dropzone { display: inline-block; min-width: 150px; min-height: 40px; background: #FFF9C4; border: 2px dashed #FBC02D; border-radius: 6px; padding: 8px 15px; margin: 5px; color: #757575; font-style: italic; cursor: pointer; transition: all 0.3s; vertical-align: middle; }
+        .dropzone:hover { background: #FFF59D; }
+        .dropzone.active { background: #FFF176; border-color: #F57F17; transform: scale(1.05); box-shadow: 0 0 10px rgba(245, 127, 23, 0.5); }
+        .dropzone.filled { background: var(--success); border: 2px solid #2E7D32; color: white; font-weight: bold; font-style: normal; cursor: default; transform: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .dropzone.error { background: var(--danger); border-color: #B71C1C; color: white; animation: shake 0.5s; }
+
+        .split-flow { display: flex; justify-content: center; gap: 20px; margin-top: -10px; }
+        .split-branch { display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; }
+        .split-branch::before { content: ""; display: block; width: 2px; height: 20px; background: var(--primary); margin-bottom: 5px; }
+        
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } }
+
+        /* TEST KISMI */
+        .progress-container { width: 100%; background-color: #e9ecef; border-radius: 10px; margin: 15px 0; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); width: 0%; transition: width 0.5s ease; border-radius: 10px; }
+        .quiz-container { padding: 25px; display: none; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 1.1rem; background-color: var(--light); padding: 15px; border-radius: 10px; border: 2px solid var(--accent); }
+        .score { color: var(--primary); font-weight: bold; font-size: 1.2rem; }
+        .question-container { background: var(--light); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .question { font-size: 1.3rem; margin-bottom: 10px; color: var(--dark); line-height: 1.5; font-weight: 600; }
+        .options { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; position: relative; }
+        .option-btn { padding: 16px 20px; border: 2px solid #ddd; border-radius: 10px; background-color: white; color: var(--dark); font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; text-align: left; font-weight: 500;}
+        .option-btn:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .option-btn.correct { background-color: var(--success); color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .feedback { padding: 20px; border-radius: 10px; margin-top: 20px; display: none; font-size: 1.1rem; line-height: 1.6; animation: fadeIn 0.5s ease; }
+        .correct-feedback { background-color: rgba(56, 142, 60, 0.1); border-left: 5px solid var(--success); }
+        .incorrect-feedback { background-color: rgba(198, 40, 40, 0.1); border-left: 5px solid var(--danger); }
+        .results-container { padding: 30px; text-align: center; display: none; }
+        .results-title { color: var(--primary); margin-bottom: 20px; font-size: 2rem; }
+        .final-score { font-size: 3rem; color: var(--accent); margin: 20px 0; font-weight: bold; }
+        .word-list { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 30px; text-align: left; }
+        .word-card { border: 2px solid var(--accent); border-radius: 12px; padding: 20px; background: var(--light); }
+        .word { font-weight: bold; font-size: 1.2rem; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .split-flow { flex-direction: column; gap: 10px; }
+            .split-branch::before { display: none; }
+            .dropzone { min-width: 120px; font-size: 0.9rem; padding: 6px 10px; }
+            .word-item { padding: 6px 10px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔢 MEB-AGS Vatandaşlık</h1>
+            <div class="subtitle">Yasama: Tablolar, Şemalar ve Test</div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <h2 class="notes-title">📖 Yasama Sayısal Tabloları</h2>
+            
+            <div class="notes-scroll-area" id="notesScrollArea">
+                <h3 style="color: #1976D2; border-bottom-color: #1976D2;">1. Meclis Kararları ve Çoğunluk Oranları</h3>
+                <div class="table-responsive">
+                    <table class="notes-table">
+                        <thead style="background-color: #1976D2;">
+                            <tr><th>Meclis İşlemi</th><th>Oran</th><th>Sayısal Karşılık</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Toplantı Yeter Sayısı (En Az)</td><td><strong>1/3</strong></td><td><strong>200</strong> Milletvekili</td></tr>
+                            <tr><td>Karar Yeter Sayısı (En Az)</td><td><strong>1/4'ünün 1 fazlası</strong></td><td><strong>151</strong> Milletvekili</td></tr>
+                            <tr><td>Olağanüstü Toplantıya Dolaylı Çağrı</td><td><strong>1/5</strong></td><td><strong>120</strong> Milletvekili</td></tr>
+                            <tr><td>Anayasa Değişikliği Teklifi Verme</td><td><strong>1/3</strong></td><td><strong>200</strong> Milletvekili</td></tr>
+                            <tr><td>Veto Edilen Kanunu Aynen Kabul Etme</td><td><strong>Salt Çoğunluk</strong></td><td><strong>301</strong> Milletvekili</td></tr>
+                            <tr><td>Devamsızlıktan Vekillik Düşürme Kararı</td><td><strong>Salt Çoğunluk</strong></td><td><strong>301</strong> Milletvekili</td></tr>
+                            <tr><td>Meclis Soruşturması Açılması <b>İstemi</b></td><td><strong>Salt Çoğunluk</strong></td><td><strong>301</strong> Milletvekili</td></tr>
+                            <tr><td>Meclis Soruşturması Açılması <b>Kararı</b></td><td><strong>3/5</strong></td><td><strong>360</strong> Milletvekili</td></tr>
+                            <tr><td>Genel ve Özel Af İlanı / Erken Seçim</td><td><strong>3/5</strong></td><td><strong>360</strong> Milletvekili</td></tr>
+                            <tr><td>Anayasa Değişikliği <b>Zorunlu Referandum</b></td><td><strong>3/5 ile 2/3 arası</strong></td><td><strong>360 - 399 arası</strong></td></tr>
+                            <tr><td>Yüce Divan'a Sevk Kararı</td><td><strong>2/3</strong></td><td><strong>400</strong> Milletvekili</td></tr>
+                            <tr><td>Anayasa Değişikliği İhtiyari Referandum/Onay</td><td><strong>2/3 ve üzeri</strong></td><td><strong>400 ve üzeri</strong></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="color: #2E7D32; border-bottom-color: #2E7D32;">2. Süreler ve Diğer Önemli Sayılar</h3>
+                <div class="table-responsive">
+                    <table class="notes-table">
+                        <thead style="background-color: #2E7D32;">
+                            <tr><th>Kavram / Kural</th><th>Sayı / Süre</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Milletvekili Seçilebilme Yaşı</td><td><strong>18</strong> Yaş</td></tr>
+                            <tr><td>Yasama Dönemi / Siyasi Parti Kurma</td><td><strong>5</strong> Yıl / <strong>30</strong> T.C. Vatandaşı</td></tr>
+                            <tr><td>Mecliste Parti Grubu Kurmak</td><td><strong>20</strong> Milletvekili</td></tr>
+                            <tr><td>Kanunların Yayımlanma Süresi (CB)</td><td><strong>15</strong> Gün</td></tr>
+                            <tr><td>Dokunulmazlık İtiraz (AYM) / AYM Karar Süresi</td><td><strong>7</strong> Gün / <strong>15</strong> Gün</td></tr>
+                            <tr><td>Bütçe Kanunu TBMM'ye Sunulması</td><td>Mali Yıl Başından <strong>75</strong> Gün Önce</td></tr>
+                            <tr><td>Kamu Başdenetçisi Görev Süresi</td><td><strong>4</strong> Yıl</td></tr>
+                            <tr><td>YSK Üye Sayısı ve Görev Süresi</td><td><strong>11</strong> Üye (7A, 4Y) / <strong>6</strong> Yıl</td></tr>
+                            <tr><td>Ara Seçim Yasağı (Başlangıç / Bitiş)</td><td>İlk <strong>30</strong> Ay / Son <strong>1</strong> Yıl</td></tr>
+                            <tr><td>%5 Boşalma Olursa Ara Seçim</td><td><strong>3</strong> Ay İçinde Yapılır</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="color: #F57C00; border-bottom-color: #F57C00;">3. Meclis Soruşturması Adımları</h3>
+                <div class="table-responsive">
+                    <table class="notes-table">
+                        <thead style="background-color: #F57C00;">
+                            <tr><th>Adım</th><th>İşlem</th><th>Çoğunluk / Sayı</th><th>Oylama</th><th>Süre</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>1. Adım</strong></td><td>Soruşturma Önergesi</td><td><strong>301</strong> (Salt Çoğunluk)</td><td>-</td><td>-</td></tr>
+                            <tr><td><strong>2. Adım</strong></td><td>Soruşturma Açılması Kararı</td><td><strong>360</strong> (3/5)</td><td><strong>Gizli Oy</strong></td><td>-</td></tr>
+                            <tr><td><strong>3. Adım</strong></td><td>Komisyon Çalışması</td><td><strong>15 kişilik</strong> özel komisyon</td><td>Parti oranına göre</td><td><strong>3 ay</strong> (+3 ay ek)</td></tr>
+                            <tr><td><strong>4. Adım</strong></td><td>Yüce Divan'a Sevk Kararı</td><td><strong>400</strong> (2/3)</td><td><strong>Gizli Oy</strong></td><td>-</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="color: #6A1B9A; border-bottom-color: #6A1B9A;">4. Bütçe Kanunu Yapım Süreci</h3>
+                <div class="table-responsive">
+                    <table class="notes-table">
+                        <thead style="background-color: #6A1B9A;">
+                            <tr><th>Adım</th><th>İşlem</th><th>Detay</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>1.</strong></td><td>Teklifi Veren</td><td><strong>Cumhurbaşkanı</strong></td></tr>
+                            <tr><td><strong>2.</strong></td><td>Kime Verir?</td><td><strong>TBMM</strong></td></tr>
+                            <tr><td><strong>3.</strong></td><td>Ne Zaman?</td><td>Mali yılbaşından <strong>75 gün</strong> önce</td></tr>
+                            <tr><td><strong>4.</strong></td><td>Mecliste İlk İşlem</td><td><strong>Meclis Başkanı</strong> teklifi alır</td></tr>
+                            <tr><td><strong>5.</strong></td><td>Komisyon</td><td><strong>30 kişilik</strong> Bütçe Komisyonu</td></tr>
+                            <tr><td><strong>6.</strong></td><td>Komisyon Süresi</td><td><strong>55 gün</strong> içinde karara bağlar</td></tr>
+                            <tr><td><strong>7.</strong></td><td>Genel Kurul Kısıtı</td><td>Gelir artırıcı / gider azaltıcı öneride <strong>bulunamaz</strong></td></tr>
+                            <tr><td><strong>8.</strong></td><td>CB'nin Yetkisi</td><td><strong>Veto edemez</strong>, yayımlar</td></tr>
+                            <tr><td><strong>9.</strong></td><td>Yargı Denetimi</td><td><strong>AYM'ye</strong> iptal davası açılabilir</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <p id="scrollMsg" class="scroll-msg">Sıradaki aşama için tabloları sonuna kadar okuyun 👇</p>
+                <button class="next-btn" id="goActivityBtn" disabled>Tabloları İnceledim, Etkinliğe Geç</button>
+            </div>
+        </div>
+
+        <div class="activity-container" id="activityContainer">
+            <div class="activity-header">
+                <h2>🧩 Bilgi Yerleştirme Etkinliği</h2>
+                <p>Kelime havuzundan bir öğe seçin ve şemadaki doğru boşluğa tıklayarak yerleştirin.</p>
+            </div>
+
+            <div class="flowcharts-wrapper">
+
+                <!-- ETKİNLİK 1: MECLİS BAŞKANI SEÇİMİ -->
+                <div class="flowchart blue-chart">
+                    <h3>🏛️ Meclis Başkanı Seçimi</h3>
+                    <div class="word-bank" id="wordBankBaskan">
+                        <div class="word-item" data-val="gizli">Gizli oyla</div>
+                        <div class="word-item" data-val="400">400 (2/3)</div>
+                        <div class="word-item" data-val="301_baskan">301 (Salt Çoğunluk)</div>
+                        <div class="word-item" data-val="en_cok">En çok oy alan</div>
+                        <div class="word-item" data-val="5_gun">5 gün</div>
+                        <div class="word-item" data-val="yasli">En yaşlı üye</div>
+                        <div class="word-item" data-val="iki_kez">İki kez</div>
+                        <div class="word-item" data-val="2_yil">2 yıl</div>
+                        <div class="word-item" data-val="donem_sonu">Dönem sonuna kadar</div>
+                    </div>
+                    <div class="flow-step"><div class="flow-box">TBMM Başkanı seçimi <span class="dropzone" data-answer="gizli">Boşluk 1</span> yapılır.</div></div>
+                    <div class="flow-step"><div class="flow-box">İlk iki turda <span class="dropzone" data-answer="400">Boşluk 2</span> oy aranır.</div></div>
+                    <div class="flow-step"><div class="flow-box">3. turda <span class="dropzone" data-answer="301_baskan">Boşluk 3</span> yeterlidir.</div></div>
+                    <div class="flow-step"><div class="flow-box">4. turda <span class="dropzone" data-answer="en_cok">Boşluk 4</span> seçilir.</div></div>
+                    <div class="flow-step"><div class="flow-box">Seçim, adaylıktan sonra <span class="dropzone" data-answer="5_gun">Boşluk 5</span> içinde tamamlanır.</div></div>
+                    <div class="flow-step"><div class="flow-box">Başkan seçilene kadar <span class="dropzone" data-answer="yasli">Boşluk 6</span> başkanlık yapar.</div></div>
+                    <div class="flow-step"><div class="flow-box">Bir dönemde <span class="dropzone" data-answer="iki_kez">Boşluk 7</span> seçim yapılır.</div></div>
+                    <div class="flow-step"><div class="flow-box">İlk başkan <span class="dropzone" data-answer="2_yil">Boşluk 8</span> görev yapar.</div></div>
+                    <div class="flow-step"><div class="flow-box">İkinci başkan <span class="dropzone" data-answer="donem_sonu">Boşluk 9</span> görev yapar.</div></div>
+                </div>
+
+                <!-- ETKİNLİK 2: MECLİS SORUŞTURMASI -->
+                <div class="flowchart orange-chart">
+                    <h3>🔍 Meclis Soruşturması Adımları</h3>
+                    <div class="word-bank orange" id="wordBankSorus">
+                        <div class="word-item orange-item" data-val="301_soru">301 (Salt Çoğunluk)</div>
+                        <div class="word-item orange-item" data-val="360_soru">360 (3/5)</div>
+                        <div class="word-item orange-item" data-val="400_soru">400 (2/3)</div>
+                        <div class="word-item orange-item" data-val="15_kisi">15 kişilik komisyon</div>
+                        <div class="word-item orange-item" data-val="gizli_soru">Gizli oyla</div>
+                        <div class="word-item orange-item" data-val="3_ay">3 ay</div>
+                        <div class="word-item orange-item" data-val="3_ay_ek">3 ay ek süre</div>
+                        <div class="word-item orange-item" data-val="erken_secim">Erken seçim kararı alamaz</div>
+                        <div class="word-item orange-item" data-val="mahkum">Görevi sona erer</div>
+                        <div class="word-item orange-item" data-val="yucedivan">Yüce Divan'a sevk</div>
+                    </div>
+                    <div class="flow-step"><div class="flow-box"><strong>1. Adım:</strong> Soruşturma Önergesi → <span class="dropzone" data-answer="301_soru">Boşluk 1</span></div></div>
+                    <div class="flow-step"><div class="flow-box"><strong>2. Adım:</strong> Açılma Kararı → <span class="dropzone" data-answer="360_soru">Boşluk 2</span> + <span class="dropzone" data-answer="gizli_soru">Boşluk 3</span></div></div>
+                    <div class="flow-step"><div class="flow-box"><strong>3. Adım:</strong> <span class="dropzone" data-answer="15_kisi">Boşluk 4</span> kurulur, <span class="dropzone" data-answer="3_ay">Boşluk 5</span> çalışır, gerekirse <span class="dropzone" data-answer="3_ay_ek">Boşluk 6</span></div></div>
+                    <div class="flow-step"><div class="flow-box">Soruşturma açılan <span class="dropzone" data-answer="erken_secim">Boşluk 7</span></div></div>
+                    <div class="flow-step"><div class="flow-box"><strong>4. Adım:</strong> <span class="dropzone" data-answer="yucedivan">Boşluk 8</span> kararı → <span class="dropzone" data-answer="400_soru">Boşluk 9</span></div></div>
+                    <div class="flow-step"><div class="flow-box">Seçilmeye engel suçtan mahkûm olanın <span class="dropzone" data-answer="mahkum">Boşluk 10</span></div></div>
+                </div>
+
+                <!-- ETKİNLİK 3: BÜTÇE KANUNU -->
+                <div class="flowchart">
+                    <h3>💰 Bütçe Kanunu Yapım Süreci</h3>
+                    <div class="word-bank" id="wordBankButce" style="background: #F3E5F5; border-color: #CE93D8;">
+                        <div class="word-item" style="border-color: #6A1B9A; color: #6A1B9A;" data-val="cb">Cumhurbaşkanı</div>
+                        <div class="word-item" style="border-color: #6A1B9A; color: #6A1B9A;" data-val="tbmm_butce">TBMM</div>
+                        <div class="word-item" style="border-color: #6A1B9A; color: #6A1B9A;" data-val="75_gun">75 gün önce</div>
+                        <div class="word-item" style="border-color: #6A1B9A; color: #6A1B9A;" data-val="m_baskani">Meclis Başkanı</div>
+                        <div class="word-item" style="border-color: #6A1B9A; color: #6A1B9A;" data-val="30_kisi">30 kişilik komisyon</div>
+                        <div class="word-item" style="border-color: #6A1B9A; color: #6A1B9A;" data-val="55_gun">55 gün</div>
+                        <div class="word-item" style="border-color: #6A1B9A; color: #6A1B9A;" data-val="gelir_gider">Gelir artırıcı/gider azaltıcı öneri yapamaz</div>
+                        <div class="word-item" style="border-color: #6A1B9A; color: #6A1B9A;" data-val="veto_yok">Veto edemez</div>
+                        <div class="word-item" style="border-color: #6A1B9A; color: #6A1B9A;" data-val="aym_butce">Anayasa Mahkemesi</div>
+                    </div>
+                    <div class="flow-step"><div class="flow-box"><span class="dropzone" data-answer="cb">Boşluk 1</span> teklifi hazırlar.</div></div>
+                    <div class="flow-step"><div class="flow-box"><span class="dropzone" data-answer="tbmm_butce">Boşluk 2</span>'ye sunar.</div></div>
+                    <div class="flow-step"><div class="flow-box">Mali yılbaşından <span class="dropzone" data-answer="75_gun">Boşluk 3</span> verir.</div></div>
+                    <div class="flow-step"><div class="flow-box"><span class="dropzone" data-answer="m_baskani">Boşluk 4</span> teklifi alır.</div></div>
+                    <div class="flow-step"><div class="flow-box"><span class="dropzone" data-answer="30_kisi">Boşluk 5</span>'na gönderir.</div></div>
+                    <div class="flow-step"><div class="flow-box">Komisyon <span class="dropzone" data-answer="55_gun">Boşluk 6</span> içinde karara bağlar.</div></div>
+                    <div class="flow-step"><div class="flow-box">Genel Kurulda <span class="dropzone" data-answer="gelir_gider">Boşluk 7</span></div></div>
+                    <div class="flow-step"><div class="flow-box">Cumhurbaşkanı <span class="dropzone" data-answer="veto_yok">Boşluk 8</span>, yayımlar.</div></div>
+                    <div class="flow-step"><div class="flow-box"><span class="dropzone" data-answer="aym_butce">Boşluk 9</span>'ne iptal davası açılabilir.</div></div>
+                </div>
+
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <button class="next-btn" id="startTestBtn" disabled>Şemaları Tamamladım, Teste Geç</button>
+            </div>
+        </div>
+        
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options"></div>
+            
+            <div class="feedback" id="feedback"><div id="feedbackText"></div></div>
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Sayılar ve Şemalar Testi Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. AŞAMA: NOTLAR -> ETKİNLİK GEÇİŞİ
+        const notesScrollArea = document.getElementById('notesScrollArea');
+        const goActivityBtn = document.getElementById('goActivityBtn');
+        const scrollMsg = document.getElementById('scrollMsg');
+
+        notesScrollArea.addEventListener('scroll', () => {
+            if (notesScrollArea.scrollTop + notesScrollArea.clientHeight >= notesScrollArea.scrollHeight - 10) {
+                goActivityBtn.disabled = false;
+                scrollMsg.style.display = 'none';
+            }
+        });
+
+        if (notesScrollArea.scrollHeight <= notesScrollArea.clientHeight) {
+            goActivityBtn.disabled = false;
+            scrollMsg.style.display = 'none';
+        }
+
+        goActivityBtn.addEventListener('click', () => {
+            document.getElementById('notesContainer').style.display = 'none';
+            document.getElementById('activityContainer').style.display = 'block';
+        });
+
+        // 2. AŞAMA: ŞEMA ETKİNLİĞİ MANTIĞI (Tüm Etkinlikler için)
+        let selectedWordBtn = null;
+        let totalCorrectPlacements = 0;
+        const totalPlacementsAll = 28; // 9 + 10 + 9 = 28
+        
+        // Tüm etkinliklerdeki tüm dropzone'ları ve kelimeleri birleştir
+        document.querySelectorAll('.activity-container').forEach(container => {
+            container.addEventListener('click', function(e) {
+                if (e.target.classList.contains('word-item') && !e.target.classList.contains('used')) {
+                    // Kelime seçimi
+                    const bank = e.target.closest('.word-bank');
+                    bank.querySelectorAll('.word-item').forEach(b => b.classList.remove('selected'));
+                    e.target.classList.add('selected');
+                    selectedWordBtn = e.target;
+                } else if (e.target.classList.contains('dropzone') && !e.target.classList.contains('filled')) {
+                    // Boşluğa tıklama
+                    if (!selectedWordBtn) {
+                        e.target.classList.add('error');
+                        setTimeout(() => e.target.classList.remove('error'), 500);
+                        return;
+                    }
+                    if (e.target.getAttribute('data-answer') === selectedWordBtn.getAttribute('data-val')) {
+                        e.target.textContent = selectedWordBtn.textContent;
+                        e.target.classList.add('filled');
+                        selectedWordBtn.classList.remove('selected');
+                        selectedWordBtn.classList.add('used');
+                        selectedWordBtn = null;
+                        totalCorrectPlacements++;
+                        if (totalCorrectPlacements === totalPlacementsAll) {
+                            const startTestBtn = document.getElementById('startTestBtn');
+                            startTestBtn.disabled = false;
+                            startTestBtn.textContent = "Harika! Şimdi Testi Başlat";
+                            startTestBtn.style.animation = "pulse 1.5s infinite";
+                        }
+                    } else {
+                        e.target.classList.add('error');
+                        setTimeout(() => e.target.classList.remove('error'), 500);
+                    }
+                }
+            });
+        });
+
+        // ETKİNLİK -> TEST GEÇİŞİ
+        document.getElementById('startTestBtn').addEventListener('click', () => {
+            document.getElementById('activityContainer').style.display = 'none';
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('quizContainer').style.display = 'block';
+            new QuizManager();
+        });
+
+        // 3. AŞAMA: TEST MANTIĞI
+        const QUIZ_DATA = [
+            { question: "TBMM'nin toplanabilmesi için gereken 'Toplantı Yeter Sayısı' kaçtır?", options: ["1/4'ünün 1 fazlası (151)", "1/3 (200)", "Salt Çoğunluk (301)", "3/5 (360)"], correctAnswer: 1, meaning: "TBMM, üye tam sayısının en az üçte biri (1/3 = 200 milletvekili) ile toplanmak zorundadır." },
+            { question: "TBMM'de 'Karar Yeter Sayısı' kural olarak toplantıya katılanların salt çoğunluğudur. Ancak bu sayı hiçbir zaman aşağıdakilerden hangisinden az olamaz?", options: ["1/5 (120)", "1/4'ünün 1 fazlası (151)", "1/3 (200)", "Salt Çoğunluk (301)"], correctAnswer: 1, meaning: "Karar yeter sayısı en az, üye tam sayısının dörtte birinin bir fazlası (151) olmak zorundadır." },
+            { question: "TBMM'nin kendi kararıyla 'Erken Seçim' kararı alabilmesi için gereken oran kaçtır?", options: ["Salt Çoğunluk (301)", "3/5 (360)", "2/3 (400)", "3/4 (450)"], correctAnswer: 1, meaning: "Erken seçim kararı almak için TBMM üye tam sayısının beşte üç (3/5 = 360) çoğunluğu gerekir." },
+            { question: "Genel ve özel af ilan edilebilmesi için mecliste aranacak oy oranı ve sayısı kaçtır?", options: ["1/3 (200)", "Salt Çoğunluk (301)", "3/5 (360)", "2/3 (400)"], correctAnswer: 2, meaning: "Af ilan etmek, tıpkı erken seçim kararı almak gibi üye tam sayısının 3/5'ini (360 vekil) gerektirir." },
+            { question: "Bir anayasa değişikliği TEKLİFİ verebilmek için en az kaç milletvekilinin imzası şarttır?", options: ["1/5 (120)", "1/3 (200)", "Salt Çoğunluk (301)", "3/5 (360)"], correctAnswer: 1, meaning: "Anayasa değişiklik teklifleri, üye tam sayısının en az üçte biri (1/3 = 200) tarafından sunulmalıdır." },
+            { question: "Bakanlar veya Cumhurbaşkanı yardımcıları hakkında meclis soruşturması açılması İSTEMİNDE (teklif) bulunabilmek için oran nedir?", options: ["1/3 (200)", "Salt Çoğunluk (301)", "3/5 (360)", "2/3 (400)"], correctAnswer: 1, meaning: "Soruşturma teklifi üye tam sayısının salt çoğunluğu (301) ile verilir." },
+            { question: "Bakanlar hakkında Meclis Soruşturması açılmasına KARAR verilebilmesi için oran nedir?", options: ["Salt Çoğunluk (301)", "3/5 (360)", "2/3 (400)", "3/4 (450)"], correctAnswer: 1, meaning: "Soruşturmanın açılması kararı için üye tam sayısının 3/5'i (360 oy) gereklidir." },
+            { question: "Bakanların 'Yüce Divan'a sevk KARARI' verilebilmesi için mecliste hangi oy oranına ulaşılmalıdır?", options: ["Salt Çoğunluk (301)", "3/5 (360)", "2/3 (400)", "3/4 (450)"], correctAnswer: 2, meaning: "Yüce Divan'a sevk kararı üye tam sayısının üçte iki (2/3 = 400) gizli oyunu gerektirir." },
+            { question: "Cumhurbaşkanının veto ettiği bir kanunun, TBMM tarafından aynen kabul edilebilmesi için gereken oran nedir?", options: ["1/4'ünün 1 fazlası (151)", "1/3 (200)", "Salt Çoğunluk (301)", "3/5 (360)"], correctAnswer: 2, meaning: "Veto edilen kanunun aşılması için üye tam sayısının salt çoğunluğu (301) gerekmektedir." },
+            { question: "Devamsızlık nedeniyle vekilliğin meclis kararıyla düşürülebilmesi için aranan karar yeter sayısı kaçtır?", options: ["1/4'ünün 1 fazlası (151)", "1/3 (200)", "Salt Çoğunluk (301)", "3/5 (360)"], correctAnswer: 2, meaning: "Devamsızlıktan düşürülmesi, Üye Tam Sayısının Salt Çoğunluğu (301) ile kararlaştırılır." },
+            { question: "Anayasa değişikliğinin Cumhurbaşkanınca ZORUNLU referanduma sunulduğu oy aralığı nedir?", options: ["1/3 - Salt Çoğunluk", "Salt Çoğunluk - 3/5", "3/5 (360) ile 2/3 (399) arası", "2/3 (400) ve üzeri"], correctAnswer: 2, meaning: "Anayasa değişikliği 3/5 ile 2/3 (360 - 399) arası kabul oyu alırsa zorunlu olarak halkoylamasına gider." },
+            { question: "Anayasa değişikliğinin Cumhurbaşkanınca doğrudan onaylanabilmesi (veya ihtiyari referanduma gidebilmesi) için gereken oran?", options: ["Salt Çoğunluk (301)", "3/5 (360)", "2/3 (400) ve üzeri", "3/4 (450)"], correctAnswer: 2, meaning: "Doğrudan onay için mecliste en az 2/3 (400) ve üzeri kabul oyu çıkması şarttır." },
+            { question: "TBMM tatildeyken dolaylı olağanüstü toplantı çağrısı için Meclis Başkanından talepte bulunma oranı?", options: ["1/10 (60)", "1/5 (120)", "1/4 (150)", "1/3 (200)"], correctAnswer: 1, meaning: "Üye tam sayısının beşte biri (1/5 = 120 milletvekili) yazılı olarak talep ederse toplantı çağrılır." },
+            { question: "TBMM'de 'Siyasi Parti Grubu' kurabilmek için en az kaç milletvekiline ihtiyaç vardır?", options: ["10", "15", "20", "30"], correctAnswer: 2, meaning: "Grup kurmak için 20 milletvekili şarttır." },
+            { question: "Siyasi parti kurabilmek için en az kaç vatandaşın bir araya gelmesi gerekir?", options: ["15", "20", "30", "50"], correctAnswer: 2, meaning: "Sıfırdan bir parti kurmak için en az 30 vatandaş gerekir." },
+            { question: "Güncel TBMM üye tam sayısı kaçtır?", options: ["450", "500", "550", "600"], correctAnswer: 3, meaning: "2017 anayasa değişikliği ile TBMM üye sayısı 600'e çıkarılmıştır." },
+            { question: "Milletvekili seçilebilmek için alt yaş sınırı kaçtır?", options: ["18 Yaş", "25 Yaş", "30 Yaş", "40 Yaş"], correctAnswer: 0, meaning: "2017 değişikliği ile milletvekili seçilme yaşı 18'e inmiştir." },
+            { question: "TBMM Yasama Dönemi (seçim periyodu) kaç yıldır?", options: ["4 Yıl", "5 Yıl", "6 Yıl", "7 Yıl"], correctAnswer: 1, meaning: "Seçimler 5 yılda bir yapılır." },
+            { question: "Bütçe Kanunu teklifi mali yıl başından en az kaç gün önce TBMM'ye sunulmalıdır?", options: ["30 Gün", "45 Gün", "60 Gün", "75 Gün"], correctAnswer: 3, meaning: "Bütçe teklifi 75 gün önce TBMM'ye sunulur." },
+            { question: "Kanunlar Cumhurbaşkanı tarafından en geç kaç gün içinde yayımlanır veya veto edilir?", options: ["7 Gün", "10 Gün", "15 Gün", "30 Gün"], correctAnswer: 2, meaning: "Cumhurbaşkanının onay veya veto süresi 15 gündür." },
+            { question: "Dokunulmazlığın kaldırılması kararına karşı en geç kaç gün içinde Anayasa Mahkemesine itiraz edilebilir?", options: ["3 Gün", "5 Gün", "7 Gün", "15 Gün"], correctAnswer: 2, meaning: "Genel Kurul kararına karşı itiraz süresi 7 gündür." },
+            { question: "Dokunulmazlık itirazını AYM en geç kaç gün içinde kesin karara bağlar?", options: ["7 Gün", "10 Gün", "15 Gün", "30 Gün"], correctAnswer: 2, meaning: "AYM itirazı 15 gün içinde karara bağlar." },
+            { question: "Kamu Başdenetçisi TBMM tarafından kaç yıllığına seçilir?", options: ["2 Yıllığına", "4 Yıllığına", "5 Yıllığına", "7 Yıllığına"], correctAnswer: 1, meaning: "Kamu Başdenetçisi 4 yıllığına seçilir." },
+            { question: "Yüksek Seçim Kurulu (YSK) kaç üyeden oluşur?", options: ["7 (5A, 2Y)", "11 (7A, 4Y)", "13 (9A, 4Y)", "15 (11A, 4Y)"], correctAnswer: 1, meaning: "YSK 11 üyeden (7 asıl, 4 yedek) oluşur." },
+            { question: "YSK üyelerinin görev süresi kaç yıldır?", options: ["4 Yıl", "5 Yıl", "6 Yıl", "12 Yıl"], correctAnswer: 2, meaning: "YSK üyeleri 6 yıllığına görev yapar." },
+            { question: "TBMM Başkanlığı seçimi adaylık bittikten sonra en fazla kaç günde tamamlanır?", options: ["3 Gün", "5 Gün", "7 Gün", "10 Gün"], correctAnswer: 1, meaning: "Başkan seçimi 5 gün içinde tamamlanmalıdır." },
+            { question: "Ara Seçim yapılabilmesi için genel seçimin üzerinden en az kaç ay geçmiş olmalıdır?", options: ["12 Ay", "24 Ay", "30 Ay", "36 Ay"], correctAnswer: 2, meaning: "Genel seçimlerin üzerinden 30 ay geçmedikçe ara seçime gidilemez." },
+            { question: "Genel seçimlere ne kadar süre kala ara seçim KESİNLİKLE yapılamaz?", options: ["6 Ay", "1 Yıl", "2 Yıl", "30 Ay"], correctAnswer: 1, meaning: "Son 1 yıl kala ara seçim yasaktır." },
+            { question: "TBMM'de %5 (30 vekil) boşalma olursa ara seçimler kaç ay içinde yapılmalıdır?", options: ["1 Ay", "2 Ay", "3 Ay", "6 Ay"], correctAnswer: 2, meaning: "%5 boşalmada 3 ay içinde ara seçime gidilir." }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.questions = [...QUIZ_DATA];
+                this.init();
+            }
+            
+            init() {
+                document.getElementById('total').textContent = this.questions.length;
+                document.getElementById('nextBtn').addEventListener('click', () => this.nextQuestion());
+                this.showCurrentQuestion();
+            }
+            
+            showCurrentQuestion() {
+                const q = this.questions[this.currentQuestionIndex];
+                document.getElementById('question').textContent = `${this.currentQuestionIndex + 1}. ${q.question}`;
+                
+                const optionsDiv = document.getElementById('options');
+                optionsDiv.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn fade-in';
+                    btn.textContent = opt;
+                    btn.addEventListener('click', () => this.handleAnswer(idx, q));
+                    optionsDiv.appendChild(btn);
+                });
+                
+                document.getElementById('feedback').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('progress').textContent = this.currentQuestionIndex + 1;
+                document.getElementById('progressBar').style.width = `${((this.currentQuestionIndex + 1) / this.questions.length) * 100}%`;
+            }
+            
+            handleAnswer(selected, q) {
+                const btns = document.querySelectorAll('.option-btn');
+                btns.forEach((b, i) => {
+                    b.disabled = true;
+                    if (i === q.correctAnswer) b.classList.add('correct');
+                    else if (i === selected) b.classList.add('incorrect');
+                });
+                
+                if (selected === q.correctAnswer) {
+                    this.score++;
+                    document.getElementById('score').textContent = this.score;
+                    this.showFeedback(true, q);
+                } else {
+                    this.showFeedback(false, q);
+                }
+                document.getElementById('nextBtn').style.display = 'block';
+            }
+            
+            showFeedback(isCorrect, q) {
+                const fb = document.getElementById('feedback');
+                fb.style.display = 'block';
+                fb.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+                document.getElementById('feedbackText').innerHTML = 
+                    isCorrect ? `✅ Doğru!<br><br>${q.meaning}` : `❌ Yanlış! Doğru cevap: <strong>${q.options[q.correctAnswer]}</strong><br><br>${q.meaning}`;
+            }
+            
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) this.showCurrentQuestion();
+                else this.endQuiz();
+            }
+            
+            endQuiz() {
+                document.getElementById('quizContainer').style.display = 'none';
+                document.getElementById('resultsContainer').style.display = 'block';
+                const p = Math.round((this.score / this.questions.length) * 100);
+                document.getElementById('finalScore').textContent = `${this.score}/${this.questions.length} (${p}%)`;
+                
+                let msg = p >= 90 ? "Kusursuz!" : p >= 70 ? "Çok iyi!" : "Tekrar yapmalısın.";
+                document.getElementById('resultMessage').textContent = msg;
+                
+                const wl = document.getElementById('wordList');
+                this.questions.forEach((q, i) => {
+                    wl.innerHTML += `<div class="word-card fade-in"><div class="word">${i+1}. ${q.question}</div><div style="color:var(--success); font-weight:bold; margin-bottom:5px;">Cevap: ${q.options[q.correctAnswer]}</div><div class="meaning">${q.meaning}</div></div>`;
+                });
+            }
+        }
+    </script>
+</body>
+</html>

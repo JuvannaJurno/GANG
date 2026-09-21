@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 MEB-AGS Atatürk İnkılapları III - Eğitim ve Kültür</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "📖";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            text-align: left;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Atatürk İnkılapları III</h1>
+            <div class="subtitle">Eğitim ve Kültür Alanında Yapılan İnkılaplar</div>
+            <div class="subtitle" style="font-size:0.85rem; margin-top:5px;">Maarif Kongresi'nden Üniversite Reformu'na</div>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">📊 Puan: <span id="score">0</span></div>
+                <div>📌 Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">🐾 Şıkları görmek için bir sayıya (1-4) basın veya tıklayın!</div>
+                </div>
+            </div>
+
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+
+            <button class="next-btn" id="nextBtn" style="display: none;">➡️ Sonraki Soru (Boşluk)</button>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Konu Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()">🔄 Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 36 SORU (EĞİTİM VE KÜLTÜR) ====================
+        const quizData = [
+            // I. MAARİF KONGRESİ (1-2)
+            { question: "I. Maarif Kongresi'nin toplanma zamanı ve yeriyle ilgili aşağıdakilerden hangisi doğrudur?", options: ["Sakarya Meydan Muharebesi'nden sonra Kayseri'de toplanmıştır.", "Eskişehir-Kütahya Muharebeleri sürerken Ankara'da toplanmıştır.", "Büyük Taarruz öncesinde Sivas'ta toplanmıştır.", "Cumhuriyet'in ilanından sonra İstanbul'da toplanmıştır."], correctAnswer: "B", meaning: "I. Maarif Kongresi, Eskişehir-Kütahya Muharebeleri sürerken 15-16 Temmuz 1921'de Ankara'da toplanmıştır." },
+            { question: "I. Maarif Kongresi'nin gündemiyle ilgili aşağıdakilerden hangisi yanlıştır?", options: ["İlk ve ortaöğretim kademelerinin hedef ve programı tartışılmıştır.", "Okul ve öğrenci sayıları tespit edilmeye çalışılmıştır.", "Eğitime millî bir yön kazandırılmaya çalışılmıştır.", "Yeni Türk alfabesinin kabulü kararlaştırılmıştır."], correctAnswer: "D", meaning: "Kongrede yeni Türk alfabesi kararlaştırılmamıştır; bu 1928'de gerçekleşmiştir." },
+
+            // TEVHİD-İ TEDRİSAT KANUNU (3-7)
+            { question: "Mustafa Kemal Paşa'nın 1 Mart 1922 tarihli TBMM açılış konuşmasında eğitimle ilgili sıraladığı hedefler arasında aşağıdakilerden hangisi doğrudur?", options: ["Kadınların eğitimine yer verilmemiştir.", "Ortaöğretimin yöntemlerinin pratik ve uygulamalı hâle getirilmesi vurgulanmıştır.", "Yalnızca yükseköğretime odaklanılmıştır.", "Yabancı okulların kapatılması hedeflenmiştir."], correctAnswer: "B", meaning: "Mustafa Kemal, ortaöğretimin eğitim ve öğretim yöntemlerini pratik ve uygulamalı hâle getirmeyi vurgulamıştır." },
+            { question: "Tevhid-i Tedrisat Kanunu'nun çıkarılma nedenleri arasında aşağıdakilerden hangisi yer almaz?", options: ["Eğitim-öğretimde birlik ve beraberliği sağlamak", "Eğitimde laikleşmeyi, modernleşmeyi ve ulusallığı sağlamak", "Ulusal eğitim ile millî bilinci geliştirmek", "Medreselerin sayısını ve etkisini artırmak"], correctAnswer: "D", meaning: "Tevhid-i Tedrisat Kanunu medreselerin etkisini artırmayı değil, eğitimde birliği sağlamayı amaçlamıştır." },
+            { question: "Tevhid-i Tedrisat Kanunu'nun gelişmeleriyle ilgili aşağıdakilerden hangisi doğrudur?", options: ["Kanun teklifini meclise dönemin Maarif Nazırı Vasıf Çınar sunmuştur.", "Şeriye ve Evkâf Vekâleti'ne bağlı okulların denetimi aynen korunmuştur.", "Dinî eğitim veren kurumlar hiçbir değişiklik yapılmadan devam ettirilmiştir.", "Tüm eğitim kurumları İçişleri Bakanlığına bağlanmıştır."], correctAnswer: "A", meaning: "Vasıf Çınar, Tevhid-i Tedrisat Kanunu teklifini meclise sunan Maarif Nazırı'dır." },
+            { question: "Tevhid-i Tedrisat Kanunu'nun sonuçlarından olan 'yabancı okullar üzerindeki devlet denetiminin artması' aşağıdakilerden hangisine neden olmuştur?", options: ["Tüm yabancı devletlerin memnuniyetine", "Fransa, Papalık ve birçok okulu olan devletin itiraz ederek konuyu yeniden gündeme taşımasına", "Yabancı okulların gönüllü olarak kapanmasına", "Türkiye'nin Milletler Cemiyeti'ne şikâyet edilmesine"], correctAnswer: "B", meaning: "Devlet denetimi artınca Fransa, Papalık ve diğer devletler itiraz etmiştir." },
+            { question: "Tevhid-i Tedrisat Kanunu ile ilgili aşağıdaki bilgilerden hangisi yanlıştır?", options: ["Eğitim-öğretim millîleştirilmiştir.", "Eğitim alanında ikilik ortadan kaldırılmıştır.", "Medreselerin kapatılmasına ortam hazırlanmıştır.", "Yabancı okullar tamamen kapatılmıştır."], correctAnswer: "D", meaning: "Tevhid-i Tedrisat Kanunu ile yabancı okullar kapatılmamış, sadece devlet denetimine alınmıştır." },
+
+            // MAARİF TEŞKİLATI KANUNU (8-9)
+            { question: "Maarif Teşkilatı Hakkında Kanun ile ilgili aşağıdakilerden hangisi doğrudur?", options: ["İlköğretim bütün çocuklar için zorunlu ve parasız hâle getirilmiştir.", "Karma eğitim modeli yalnızca ilköğretimde uygulanmıştır.", "Yabancı okulların tüm dersleri Türk öğretmenlerce okutulmaya başlanmıştır.", "Okul açılması tamamen serbest bırakılmıştır."], correctAnswer: "A", meaning: "Maarif Teşkilatı Kanunu (1926) ile ilköğretim tüm çocuklar için zorunlu ve parasız hâle getirilmiştir." },
+            { question: "Aşağıdakilerden hangisi Maarif Teşkilatı Hakkında Kanun'un getirdiği yeniliklerden biri değildir?", options: ["Talim Terbiye Kurulu'nun oluşturulması", "Müfredatların modern bir yapıya kavuşması", "Medreselerin yeniden açılması", "Eğitim-öğretimin dinin etkisinden kurtarılması"], correctAnswer: "C", meaning: "Medreseler yeniden açılmamış, aksine kapatılma sürecine girilmiştir." },
+
+            // MEDRESELERİN KAPATILMASI (10-11)
+            { question: "Medreselerin kapatılma süreciyle ilgili aşağıdakilerden hangisi doğrudur?", options: ["Medreseler Tevhid-i Tedrisat Kanunu'ndan önce kapatılmıştır.", "Son medreseler Şeyh Said İsyanı sonrasında kapatılmıştır.", "Kapatma talimatını dönemin başbakanı vermiştir.", "Medreselerin kapatılmasıyla eğitimde ikilik başlamıştır."], correctAnswer: "B", meaning: "Medreselerin kapatılması 11 Mart 1924'te başlamış, son medreseler Şeyh Said İsyanı sonrası kapatılmıştır." },
+            { question: "Medreselerin kapatılmasının sonuçları arasında aşağıdakilerden hangisi yer almaz?", options: ["Eğitimde ikilik ortadan kaldırılmıştır.", "Özgür düşüncenin hâkim olması sağlanmıştır.", "İnkılap karşıtı düşüncelerin gücü artmıştır.", "Eğitimin laik ve ulusal olması yolunda adımlar atılmıştır."], correctAnswer: "C", meaning: "Medreselerin kapatılması inkılap karşıtı düşüncelerin gücünü kırmıştır, artırmamıştır." },
+
+            // HARF DEVRİMİ (12-17)
+            { question: "Harf Devrimi'nin yapılmasının nedenleri arasında aşağıdakilerden hangisi yer almaz?", options: ["Düşük okuryazar oranını artırmak", "Konuşma ve yazı dili arasındaki farkı gidermek", "Arap harflerinin Türkçenin yapısına uymamasından kaynaklanan sıkıntıları gidermek", "Doğu kültürü ile ilişkileri tamamen koparmak"], correctAnswer: "D", meaning: "Doğu kültürüyle ilişkileri tamamen koparmak Harf Devrimi'nin bir nedeni olarak belirtilmemiştir." },
+            { question: "İzmir İktisat Kongresi'nde harf konusunun görüşülmesi teklifiyle ilgili aşağıdakilerden hangisi doğrudur?", options: ["Teklifi Kazım Karabekir yapmış ve kabul edilmiştir.", "Teklifi Vasıf Çınar ve Ali Nazmi yapmış, Kazım Karabekir birliği bozar düşüncesiyle reddetmiştir.", "Teklif oy birliğiyle kabul edilmiştir.", "Harf konusu kongrede hiç gündeme gelmemiştir."], correctAnswer: "B", meaning: "Vasıf Çınar ve Ali Nazmi teklif etmiş, Kazım Karabekir reddetmiştir." },
+            { question: "Harf Devrimi'nin gelişmeleriyle ilgili aşağıdakilerden hangisi doğrudur?", options: ["Elifba Raporu 1927 yılında hazırlanmıştır.", "Mustafa Kemal yeni harfleri ilk kez 1928'de İstanbul'da Halk Fırkası Şûrası'nda açıklamıştır.", "Harf Devrimi kanunu 29 Ekim 1928'de kabul edilmiştir.", "Elifba Raporu 29 Mayıs 1928'de Dil Encümeni tarafından hazırlanmıştır."], correctAnswer: "D", meaning: "Elifba Raporu, 29 Mayıs 1928'de Maarif Vekâleti'nin kurduğu Dil Encümeni tarafından hazırlanmıştır." },
+            { question: "Mustafa Kemal'in Gülhane konuşmasıyla ilgili aşağıdaki bilgilerden hangisi doğrudur?", options: ["Konuşma 29 Ekim 1928'de yapılmıştır.", "'Asırlardan beri kafalarımızı demir çerçeve içinde bulunduran işaretler' ifadesiyle eski yazı kastedilmiştir.", "Konuşmada eski yazının korunması gerektiği vurgulanmıştır.", "Konuşma İzmir'de yapılmıştır."], correctAnswer: "B", meaning: "9/10 Ağustos 1928'deki Gülhane konuşmasında 'demir çerçeve' benzetmesiyle eski yazının zorluğu vurgulanmıştır." },
+            { question: "Harf Devrimi'nin sonuçlarıyla ilgili aşağıdakilerden hangisi doğrudur?", options: ["Okuryazar oranında ciddi artış gözlemlenmiştir.", "Basılan kitap sayısı azalmıştır.", "Batı'daki teknik gelişmelerin takibi zorlaşmıştır.", "Batı eserlerinin tercümesi durma noktasına gelmiştir."], correctAnswer: "A", meaning: "Harf Devrimi ile okuryazar oranında ciddi artış gözlemlenmiş, kitap basımı artmıştır." },
+            { question: "Yeni harflerle basılan ilk dergi aşağıdakilerden hangisidir?", options: ["Ülkü", "Sebilürreşad", "Belleten", "Türk Yurdu"], correctAnswer: "C", meaning: "Yeni harflerle basılan ilk dergi Belleten dergisidir." },
+
+            // MİLLET MEKTEPLERİ (18-19)
+            { question: "Millet Mektepleri'nin hedef kitlesiyle ilgili aşağıdakilerden hangisi doğrudur?", options: ["Yalnızca ilkokul çağındaki çocuklar", "Örgün eğitim yaşı geçmiş 14-45 yaş arası vatandaşlar", "Yalnızca üniversite öğrencileri", "Yalnızca devlet memurları"], correctAnswer: "B", meaning: "Millet Mektepleri, 14-45 yaş arası örgün eğitim yaşı geçmiş vatandaşlara yeni harfleri öğretmek için açılmıştır." },
+            { question: "Millet Mektepleri ile ilgili aşağıdaki bilgilerden hangisi yanlıştır?", options: ["Mustafa Kemal'e 'Başöğretmen' unvanı verilmiştir.", "Gezici Millet Mektepleri de açılmıştır.", "Eğitim süresi yalnızca iki ay olarak belirlenmiştir.", "24 Kasım tarihi sonradan Öğretmenler Günü olarak kutlanmaya başlanmıştır."], correctAnswer: "C", meaning: "Eğitim süresi iki, dört ya da altı ay olarak belirlenmiştir, sadece iki ay değil." },
+
+            // TÜRK TARİH KURUMU (20-24)
+            { question: "Türk Tarih Kurumu'nun açılış nedenleri arasında aşağıdakilerden hangisi yer almaz?", options: ["Türklerin dünya ve İslam tarihine katkılarını ortaya koymak", "Türklerin sarı ırktan olduğu iddialarını çürütmek", "Osmanlı hanedanının üstünlüğünü kanıtlamak", "Ümmetçi tarih anlayışından millî tarih anlayışına geçmek"], correctAnswer: "C", meaning: "Türk Tarih Kurumu'nun amacı Osmanlı hanedanının üstünlüğünü kanıtlamak değildir." },
+            { question: "Türk Tarih Kurumu ile ilgili gelişmelerden hangisi doğrudur?", options: ["1932'de I. Tarih Kongresi toplanmış ve Türk Tarih Tezi ortaya atılmıştır.", "Kurumun adı kurulduğu günden itibaren Türk Tarih Kurumu'dur.", "İlk arkeolojik kazı 1930 yılında yapılmıştır.", "Belleten dergisi 1940 yılında yayımlanmaya başlamıştır."], correctAnswer: "A", meaning: "1932'de I. Tarih Kongresi toplanmış, Türk Tarih Tezi ortaya atılmıştır." },
+            { question: "Türk Tarih Kurumu'nun gelişmeleriyle ilgili aşağıdakilerden hangisi yanlıştır?", options: ["1930'da 'Türk Tarihinin Ana Hatları' adlı eser yayımlanmıştır.", "İlk arkeolojik kazı 1933'te Ahlatlıbel'de yapılmıştır.", "Belleten adını dönemin Maarif Vekili koymuştur.", "1932'de 4 ciltlik Ortaöğretim Tarih Serisi hazırlanmıştır."], correctAnswer: "C", meaning: "Belleten adını bizzat Atatürk koymuştur." },
+            { question: "Türk Tarih Kurumu'nun temel amaçları arasında aşağıdakilerden hangisi doğrudur?", options: ["Yalnızca Osmanlı tarihini araştırmak", "Türklerin medeniyete hizmetlerini ilmî yoldan incelemek ve tanıtmak", "Yabancı tarihçilerin çalışmalarını engellemek", "Yalnızca İslam tarihi üzerine çalışmalar yapmak"], correctAnswer: "B", meaning: "Kurumun temel amacı Türklerin medeniyete hizmetlerini ilmî yoldan incelemek, araştırmak ve tanıtmaktır." },
+            { question: "Atatürk'ün 'Tarih yazmak, tarih yapmak kadar mühimdir' sözüyle anlatmak istediği aşağıdakilerden hangisidir?", options: ["Tarih yazmanın tarih yapmaktan daha önemli olduğu", "Tarihî olayların kayıt altına alınmasının, olayların kendisi kadar değerli olduğu", "Tarih yazmanın tamamen gereksiz olduğu", "Yalnızca savaş meydanlarındaki başarıların önemli olduğu"], correctAnswer: "B", meaning: "Atatürk bu sözüyle tarihin yazıya geçirilmesinin, olayların kendisi kadar önemli olduğunu vurgulamıştır." },
+
+            // HALKEVLERİ (25-28)
+            { question: "Halkevleri'nin kuruluş amacı aşağıdakilerden hangisidir?", options: ["Siyasi partilere merkez oluşturmak", "Cumhuriyet'in ilke ve inkılaplarını halka aktarmak", "Yalnızca spor müsabakaları düzenlemek", "Geleneksel medrese eğitimini sürdürmek"], correctAnswer: "B", meaning: "Halkevleri, Cumhuriyet'in ilke ve inkılaplarını halka aktarmak amacıyla kurulmuştur." },
+            { question: "Halkevleri ile ilgili aşağıdaki bilgilerden hangisi yanlıştır?", options: ["Temelini 1931'de kapatılan Türk Ocakları oluşturmuştur.", "Ankara Halkevi'nin yayın organı Ülkü dergisidir.", "Tek yurt dışı şubesi 1942'de Berlin'de açılmıştır.", "1951 yılında Adnan Menderes tarafından kapatılmıştır."], correctAnswer: "C", meaning: "Tek yurt dışı şubesi 1942'de Londra'da açılmıştır, Berlin değil." },
+            { question: "Halkevlerinin şubeleri ve çalışmalarıyla ilgili aşağıdakilerden hangisi doğrudur?", options: ["Halkevlerinde yalnızca spor faaliyetleri yürütülmüştür.", "Okuma-yazma kursları verilmiş, ailelere soyadı bulma çalışmaları yapılmıştır.", "Halkevleri bünyesinde 'Köycülük' şubesi bulunmamaktadır.", "Biçki-dikiş kursları yalnızca İstanbul'daki halkevlerinde düzenlenmiştir."], correctAnswer: "B", meaning: "Halkevlerinde okuma-yazma kursları ve soyadı bulma çalışmaları yapılmıştır." },
+            { question: "Halkevleri ile ilgili aşağıdaki bilgilerden hangisi doğrudur?", options: ["Yurt dışındaki tek şubesi 1942'de Paris'te açılmıştır.", "1951'de İsmet İnönü tarafından kapatılmıştır.", "Yurt dışındaki tek şubesi 1942'de Londra'da açılmıştır.", "Halkevleri 1923'te kurulmuştur."], correctAnswer: "C", meaning: "Londra'daki şube 1942'de açılmıştır. Halkevleri 1932'de kurulmuş, 1951'de Adnan Menderes tarafından kapatılmıştır." },
+
+            // TÜRK DİL KURUMU (29-32)
+            { question: "Türk Dil Kurumu'nun açılış hedefleri arasında aşağıdakilerden hangisi doğrudur?", options: ["Türk dilini yabancı kelimelerin boyunduruğundan kurtarmak", "Arapça ve Farsçayı Türkçenin yerine geçirmek", "Yalnızca halk ağzından derlemeler yapmak", "Konuşma dili ile yazı dili arasındaki farkı korumak"], correctAnswer: "A", meaning: "Türk Dil Kurumu'nun temel hedefi, Türk dilini yabancı kelimelerin boyunduruğundan kurtarmaktır." },
+            { question: "Güneş Dil Teorisi ile ilgili aşağıdakilerden hangisi doğrudur?", options: ["1928 yılında ortaya atılmıştır.", "Türkçenin dünya dillerinin kaynağı olduğunu savunan 1936'da ortaya atılmış bir dil bilim teorisidir.", "Atatürk tarafından reddedilmiştir.", "Teoriye göre Türkçe yalnızca Asya dillerinin kaynağıdır."], correctAnswer: "B", meaning: "Güneş Dil Teorisi 1936'da ortaya atılmış, Türkçenin dünya dillerinin kaynağı olduğunu savunmuştur." },
+            { question: "Türk Dil Kurumu ile ilgili aşağıdaki bilgilerden hangisi yanlıştır?", options: ["İlk başkanı Sâmih Rifat'tır.", "1936 yılında adı Türk Dili Tetkik Cemiyeti olarak değiştirilmiştir.", "1932 yılında I. Dil Kurultayı toplanmıştır.", "1928 yılında Dil Encümeni kurulmuş ve İmla Kılavuzu hazırlanmıştır."], correctAnswer: "B", meaning: "1936'da adı Türk Dili Tetkik Cemiyeti'nden Türk Dil Kurumu'na değiştirilmiştir, tersi değil." },
+            { question: "Türk Dil Kurumu ile ilgili gelişmelerden hangisi doğrudur?", options: ["I. Dil Kurultayı 1930 yılında toplanmıştır.", "1932 yılından itibaren Dil Bayramı kabul edilmiş ve kutlanmıştır.", "Tarama Sözlüğü çalışmaları 1940 yılında başlatılmıştır.", "İmla Kılavuzu 1932 yılında hazırlanmıştır."], correctAnswer: "B", meaning: "1932'den itibaren Dil Bayramı kabul edilmiş ve kutlanmaya başlanmıştır." },
+
+            // ÜNİVERSİTE REFORMU (33-36)
+            { question: "Üniversite Reformu ile ilgili aşağıdakilerden hangisi doğrudur?", options: ["Reform için İngiltere'den Prof. Albert Malche davet edilmiştir.", "Albert Malche'nin raporuna bağlı olarak Darülfünun kapatılmış, İstanbul Üniversitesi açılmıştır.", "Reform, Harf Devrimi'nden önce gerçekleştirilmiştir.", "Reform çalışmalarını Vasıf Çınar yürütmüştür."], correctAnswer: "B", meaning: "İsviçreli Prof. Albert Malche'nin raporuyla Darülfünun kapatılmış, İstanbul Üniversitesi açılmıştır (1933)." },
+            { question: "Türkiye'de açılan ilk yükseköğrenim kurumu aşağıdakilerden hangisidir?", options: ["İstanbul Üniversitesi", "Ankara Hukuk Mektebi", "Gazi Eğitim Enstitüsü", "Yüksek Ziraat Enstitüsü"], correctAnswer: "B", meaning: "Ankara Hukuk Mektebi 1925'te açılmıştır ve Türkiye'de açılan ilk yükseköğrenim kurumudur." },
+            { question: "Atatürk Dönemi'nde açılan eğitim kurumlarıyla ilgili aşağıdakilerden hangisi doğrudur?", options: ["Gazi Eğitim Enstitüsü 1933 yılında açılmıştır.", "Ankara Siyasal Bilgiler Okulu 1936 yılında açılmıştır.", "Ankara Hukuk Mektebi 1925 yılında açılmıştır.", "Ankara Dil ve Tarih-Coğrafya Fakültesi 1930 yılında açılmıştır."], correctAnswer: "C", meaning: "Ankara Hukuk Mektebi 1925 yılında açılmıştır." },
+            { question: "Atatürk Dönemi'nde açılan eğitim kurumlarıyla ilgili aşağıdaki eşleştirmelerden hangisi yanlıştır?", options: ["1925 - Ankara Hukuk Mektebi", "1926 - Gazi Eğitim Enstitüsü", "1933 - İstanbul Üniversitesi", "1936 - Ankara Dil ve Tarih-Coğrafya Fakültesi"], correctAnswer: "D", meaning: "Ankara Dil ve Tarih-Coğrafya Fakültesi 1935'te açılmıştır, 1936 değil." }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        function shuffleArray(array) {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        function initQuiz() {
+            questions = shuffleArray(quizData);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            catCoverEl.addEventListener('click', () => catCoverEl.style.display = 'none');
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key >= '1' && e.key <= '4') {
+                    if (catCoverEl.style.display !== 'none') {
+                        catCoverEl.style.display = 'none';
+                        return;
+                    }
+                    const idx = parseInt(e.key) - 1;
+                    const btns = document.querySelectorAll('.option-btn');
+                    if (btns[idx] && !btns[idx].disabled) {
+                        btns[idx].click();
+                    }
+                }
+                if (e.code === 'Space' || e.key === ' ') {
+                    if (nextBtn.style.display !== 'none') {
+                        nextBtn.click();
+                        e.preventDefault();
+                    }
+                }
+            });
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+
+            const correctText = currentQuestion.options[currentQuestion.correctAnswer.charCodeAt(0) - 65];
+            const shuffledOptions = shuffleArray(currentQuestion.options);
+
+            optionsEl.innerHTML = '';
+            optionsEl.appendChild(catCoverEl);
+            catCoverEl.style.display = 'flex';
+
+            shuffledOptions.forEach(optionText => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = optionText;
+                button.onclick = () => selectAnswer(optionText, correctText, currentQuestion.meaning);
+                optionsEl.appendChild(button);
+            });
+
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        function selectAnswer(selectedOption, correctOptionText, meaning) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correctOptionText) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selectedOption) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            const isCorrect = selectedOption === correctOptionText;
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+            }
+
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            feedbackTextEl.innerHTML = isCorrect ?
+                `<strong>✅ Doğru!</strong><br><br>📖 ${meaning}` :
+                `<strong>❌ Hatalı!</strong><br>🔍 Doğru cevap: ${correctOptionText}<br><br>📖 ${meaning}`;
+
+            nextBtn.style.display = 'block';
+        }
+
+        nextBtn.onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        };
+
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            finalScoreEl.textContent = `📊 Puanınız: ${score} / ${questions.length}`;
+
+            wordListEl.innerHTML = '<h3 style="margin-bottom:15px;">📚 Özet Bilgi Kartları:</h3>';
+            questions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>❓ ${q.question}</strong><br><small style="color:var(--primary);">📌 ${q.meaning}</small>`;
+                wordListEl.appendChild(card);
+            });
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>

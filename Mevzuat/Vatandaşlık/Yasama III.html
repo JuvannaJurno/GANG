@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Vatandaşlık Testi</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "⚖️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .notes-container {
+            padding: 25px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .notes-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notes-scroll-area {
+            max-height: 55vh;
+            overflow-y: auto;
+            background: var(--light);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .notes-scroll-area::-webkit-scrollbar { width: 8px; }
+        .notes-scroll-area::-webkit-scrollbar-track { background: #e9ecef; border-radius: 10px; }
+        .notes-scroll-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+        .notes-scroll-area h3 {
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 5px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .notes-scroll-area h3:first-child { margin-top: 0; }
+        .notes-scroll-area ul { padding-left: 20px; margin-bottom: 15px; }
+        .notes-scroll-area li { margin-bottom: 8px; }
+
+        .table-responsive { overflow-x: auto; margin-bottom: 15px; border-radius: 8px; }
+        .notes-table { width: 100%; border-collapse: collapse; min-width: 600px; background: white; }
+        .notes-table th, .notes-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .notes-table th { background-color: var(--primary); color: white; }
+
+        .numbers-box {
+            background-color: #E3F2FD;
+            border-left: 5px solid #1976D2;
+            padding: 15px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        
+        .numbers-box h3 { color: #1565C0 !important; border-bottom: 2px solid #90CAF9 !important; margin-top: 0 !important; }
+        .numbers-box ul { list-style-type: none !important; padding-left: 0 !important; }
+        .numbers-box li {
+            background: white;
+            margin-bottom: 8px !important;
+            padding: 10px 15px !important;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid #1976D2;
+            display: flex;
+            align-items: center;
+        }
+        
+        .num-badge {
+            background: #1976D2; color: white; font-weight: bold; padding: 4px 10px;
+            border-radius: 4px; margin-right: 12px; font-size: 1.1rem; min-width: 60px; text-align: center;
+        }
+
+        .highlight-direct { background-color: #C8E6C9; color: #2E7D32; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #81C784; }
+        .highlight-indirect { background-color: #FFCDD2; color: #C62828; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #E57373; }
+
+        .important-note {
+            background-color: #FFF8E1; border-left: 5px solid #FFC107;
+            padding: 15px; margin-top: 20px; border-radius: 5px; font-size: 0.95rem;
+        }
+
+        .start-quiz-wrapper { text-align: center; padding: 10px 0; }
+        .scroll-msg { color: var(--danger); font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; }
+        #startTestBtn:disabled { background: #cccccc; color: #666666; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        
+        .progress-container { width: 100%; background-color: #e9ecef; border-radius: 10px; margin: 15px 0; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); width: 0%; transition: width 0.5s ease; border-radius: 10px; }
+        .quiz-container { padding: 25px; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 1.1rem; background-color: var(--light); padding: 15px; border-radius: 10px; border: 2px solid var(--accent); }
+        .score { color: var(--primary); font-weight: bold; font-size: 1.2rem; }
+        .question-container { background: var(--light); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .question { font-size: 1.3rem; margin-bottom: 10px; color: var(--dark); line-height: 1.5; font-weight: 600; }
+        .options { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; position: relative; }
+        .cat-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(46, 125, 50, 0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px; z-index: 10; cursor: pointer; transition: all 0.3s ease; }
+        .cat-cover:hover { background-color: rgba(46, 125, 50, 0.85); }
+        .cat-image { max-width: 200px; max-height: 150px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .cat-text { color: white; font-size: 1.2rem; text-align: center; padding: 0 15px; }
+        .option-btn { padding: 16px 20px; border: 2px solid #ddd; border-radius: 10px; background-color: white; color: var(--dark); font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; text-align: left; position: relative; overflow: hidden; }
+        .option-btn:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .option-btn.correct { background-color: var(--success); color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .feedback { padding: 20px; border-radius: 10px; margin-top: 20px; display: none; font-size: 1.1rem; line-height: 1.6; animation: fadeIn 0.5s ease; }
+        .correct-feedback { background-color: rgba(56, 142, 60, 0.1); border-left: 5px solid var(--success); }
+        .incorrect-feedback { background-color: rgba(198, 40, 40, 0.1); border-left: 5px solid var(--danger); }
+        .next-btn { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none; padding: 16px 32px; border-radius: 10px; font-size: 1.2rem; cursor: pointer; display: block; margin: 25px auto 0; transition: all 0.3s ease; font-weight: 600; width: 100%; max-width: 250px; }
+        .next-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(46, 125, 50, 0.3); }
+        .results-container { padding: 30px; text-align: center; display: none; }
+        .results-title { color: var(--primary); margin-bottom: 20px; font-size: 2rem; }
+        .final-score { font-size: 3rem; color: var(--accent); margin: 20px 0; font-weight: bold; }
+        .word-list { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 30px; }
+        .word-card { border: 2px solid var(--accent); border-radius: 12px; padding: 20px; background: var(--light); transition: all 0.3s ease; }
+        .word-card:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        .word { font-weight: bold; font-size: 1.4rem; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+        .meaning { font-size: 1.1rem; line-height: 1.6; color: var(--dark); }
+        .category { display: inline-block; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; margin-top: 10px; }
+        
+        .category-ysk { background: #1565C0; }
+        .category-secim { background: #6A1B9A; }
+        .category-yasama { background: #2E7D32; }
+        .category-dokunulmazlik { background: #FF8F00; }
+        .category-tbmm { background: #1976D2; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        
+        @media (max-width: 600px) {
+            .container { border-radius: 10px; }
+            h1 { font-size: 1.6rem; }
+            .notes-title { font-size: 1.3rem; }
+            .notes-scroll-area { max-height: 60vh; padding: 15px; }
+            .question { font-size: 1.1rem; }
+            .option-btn { padding: 14px 16px; font-size: 1rem; }
+            .cat-image { max-width: 150px; max-height: 120px; }
+            .cat-text { font-size: 1rem; }
+            .num-badge { min-width: 50px; font-size: 1rem; margin-right: 8px; padding: 3px 6px; }
+            .numbers-box li { padding: 8px 10px !important; font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ MEB-AGS Vatandaşlık</h1>
+            <div class="subtitle">Yasama III (Çıkmış Soru İlave Sürümü)</div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <h2 class="notes-title">📖 Yasama III Ders Notları</h2>
+            
+            <div class="notes-scroll-area" id="notesScrollArea">
+                <h3>1. Cumhurbaşkanı Aday Gösterme ve Seçim Zamanlaması</h3>
+                <ul>
+                    <li>Cumhurbaşkanı adayını; siyasi parti grupları, son seçimde %5 oy almış partiler ve en az <strong>100.000 seçmen</strong> gösterebilir.</li>
+                    <li>Olağan seçimlerde oy verme günü, görev süresinin dolmasından önceki <strong>son Pazar</strong> günüdür.</li>
+                    <li>Erken seçim kararı alınırsa, kararı takip eden <strong>60 gün sonraki ilk Pazar</strong> günü seçim yapılır.</li>
+                    <li>Seçim kararı <strong>48 saat</strong> içinde Resmî Gazete'de yayımlanır.</li>
+                </ul>
+
+                <h3>2. Milletvekilliğinin Sona Ermesi</h3>
+                <ul>
+                    <li><strong>Kendiliğinden Düşme:</strong> Ölüm, gaiplik, TC vatandaşlığını kaybetme, seçilme yeterliliğini kaybetme, CB seçilmek, CB yardımcısı veya bakan atanmak, YSK seçim iptali.</li>
+                    <li><strong>Meclis Kararıyla Düşme:</strong> İstifa, bağdaşmayan görevde ısrar, devamsızlık (1 ayda 5 birleşim).</li>
+                    <li><strong>Yargı Kararıyla Düşme:</strong> Kısıtlanma, engel suçtan kesin hüküm giyme (karar Meclis'te okunur).</li>
+                    <li><strong>Düşürmeyen haller:</strong> Dokunulmazlığın kaldırılması, partiden istifa, TBMM Başkanı seçilmek.</li>
+                </ul>
+
+                <h3>3. Gizli Oylama</h3>
+                <ul>
+                    <li><strong>Gizli oy zorunlu:</strong> Anayasa değişikliği, TBMM Başkanı seçimi, Kamu Başdenetçisi seçimi, Meclis soruşturması açma kararı (360), bağdaşmayan görevde ısrar eden MV'nin düşürülmesi, Yüce Divan'a sevk (400).</li>
+                    <li><strong>Gizli oy zorunlu değil:</strong> Savaş ilanı (açık oylama), bütçe kanunu, genel/özel af, seçimlerin yenilenmesi.</li>
+                </ul>
+
+                <h3>4. Görevden Çekilmedikçe MV Adayı Olamayanlar</h3>
+                <ul>
+                    <li>Hâkim ve savcılar, yüksek yargı mensupları, TSK mensupları, YÖK üyeleri, işçi statüsünde olmayan kamu görevlileri.</li>
+                    <li><strong>Seçilemezse geri dönemez:</strong> Hâkim, savcı, yüksek yargı, TSK.</li>
+                    <li><strong>Seçilemezse geri dönebilir:</strong> Üniversite öğretim elemanları, YÖK üyeleri, diğer kamu görevlileri.</li>
+                    <li><strong>İstifa şartı yok:</strong> Serbest avukatlar, belediye başkanları (izin alır).</li>
+                </ul>
+
+                <h3>5. Siyasi Partiye Üye Olamayanlar</h3>
+                <ul>
+                    <li>TSK mensupları, askeri öğrenciler, devlet memurları, yüksek yargı mensupları, hâkim ve savcılar, kolluk görevlileri.</li>
+                    <li>Yüksek öğrenim öncesi öğrenciler (lise ve altı) yaşları kaç olursa olsun üye olamazlar.</li>
+                    <li><strong>Üye olabilir:</strong> Üniversite öğretim elemanları, YÖK üyeleri, serbest meslek sahipleri.</li>
+                </ul>
+
+                <h3>6. TBMM Denetim Yolları - Amaç Karşılaştırması</h3>
+                <ul>
+                    <li><strong>Yazılı Soru:</strong> CB yardımcıları ve bakanlardan bilgi almak.</li>
+                    <li><strong>Genel Görüşme:</strong> Toplumu ilgilendiren konuyu Genel Kurulda görüşmek.</li>
+                    <li><strong>Meclis Araştırması:</strong> Belirli bir konuda bilgi edinmek (cezai sonuç yok).</li>
+                    <li><strong>Meclis Soruşturması:</strong> CB yardımcıları ve bakanların cezai sorumluluğu (Yüce Divan'a sevk edebilir).</li>
+                </ul>
+
+                <div class="numbers-box">
+                    <h3>🔢 Sınavda Çıkacak Önemli Sayılar ve Oranlar</h3>
+                    <ul>
+                        <li><span class="num-badge">100.000</span> CB adayı göstermek için gereken seçmen sayısı.</li>
+                        <li><span class="num-badge">%5</span> CB adayı gösterebilecek partinin son seçim oy oranı.</li>
+                        <li><span class="num-badge">60 Gün</span> Erken seçim kararı sonrası seçime kadar geçen süre.</li>
+                        <li><span class="num-badge">48 Saat</span> Seçim kararının Resmî Gazete'de yayımlanma süresi.</li>
+                        <li><span class="num-badge">7 Gün</span> Dokunulmazlık/düşürme kararına AYM'ye itiraz süresi.</li>
+                        <li><span class="num-badge">15 Gün</span> AYM'nin itirazı karara bağlama süresi.</li>
+                    </ul>
+                </div>
+
+                <div class="important-note">
+                    <strong>⚠️ Önemli Sınav İpucu: Gizli Oy Ayrımı</strong><br><br>
+                    • Savaş ilanı <strong>açık oylama</strong> ile yapılır, gizli oy şartı aranmaz.<br>
+                    • Meclis soruşturması açma kararı <strong>gizli oyla</strong> ve 3/5 (360) çoğunlukla alınır.<br>
+                    • Bağdaşmayan görevde ısrar eden MV'nin düşürülmesi <strong>gizli oyla</strong> yapılır.
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <p id="scrollMsg" class="scroll-msg">Testi başlatmak için notların sonuna kadar okuyun/kaydırın 👇</p>
+                <button class="next-btn" id="startTestBtn" disabled>Notları Okudum, Testi Başlat</button>
+            </div>
+        </div>
+        
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer" style="display: none;">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const QUIZ_DATA = [
+            // BÖLÜM 1: CB ADAY GÖSTERME VE SEÇİM ZAMANLAMASI (3 soru)
+            { question: "2017 Anayasa değişikliğine göre, Cumhurbaşkanı adayı gösterebilecek olanlar arasında aşağıdakilerden hangisi yer almaz?", options: ["TBMM'deki siyasi parti grupları", "Son genel seçimde tek başına veya birlikte toplam oyların %5'ini almış siyasi partiler", "En az yüz bin seçmen", "TBMM Başkanlık Divanı"], correctAnswer: 3, meaning: "Cumhurbaşkanı adayı gösterme yetkisi; siyasi parti gruplarına, son seçimde %5 oy almış partilere ve en az 100.000 seçmene aittir. TBMM Başkanlık Divanı'nın böyle bir yetkisi yoktur.", category: "Seçimler" },
+            { question: "Cumhurbaşkanı veya TBMM tarafından erken seçim (seçimlerin yenilenmesi) kararı alınması durumunda, seçimler ne zaman yapılır?", options: ["Kararın alınmasından sonraki 30. gün", "Kararın alınmasından sonraki 60 günü takip eden ilk pazar günü", "Görev süresinin dolmasından önceki son pazar günü", "Kararın Resmî Gazete'de yayımlanmasından itibaren 45 gün sonra"], correctAnswer: 1, meaning: "Erken seçim kararı alındığında seçimler, kararı takip eden 60 gün sonraki ilk pazar günü yapılır. 'Görev süresinin dolmasından önceki son pazar' kuralı olağan seçimler için geçerlidir.", category: "Seçimler" },
+            { question: "TBMM veya Cumhurbaşkanı tarafından alınan erken seçim (seçimlerin yenilenmesi) kararı, en geç kaç saat içinde Resmî Gazete'de yayımlanmak zorundadır?", options: ["24 saat", "48 saat", "15 gün", "7 gün"], correctAnswer: 1, meaning: "Alınan erken seçim kararı, yasal prosedür gereği 48 saat içinde Resmî Gazete'de yayımlanarak resmiyet kazanır. 15 gün kanun yayımlama, 7 gün ise dokunulmazlık itiraz süresidir.", category: "Seçimler" },
+
+            // BÖLÜM 2: MİLLETVEKİLLİĞİNİN SONA ERMESİ (8 soru)
+            { question: "Milletvekili olarak görev yapmakta olan bir kişi, Cumhurbaşkanı tarafından Cumhurbaşkanı yardımcısı veya bakan olarak atanırsa, milletvekilliği ile ilgili aşağıdakilerden hangisi doğrudur?", options: ["Milletvekilliği devam eder, her iki görevi birlikte yürütebilir.", "Milletvekilliği kendiliğinden sona erer.", "Milletvekilliğinin düşmesi için ayrıca TBMM kararı gerekir.", "Sadece izinli sayılır, bakanlık görevi bitince geri döner."], correctAnswer: 1, meaning: "Anayasa'ya göre, bir milletvekili Cumhurbaşkanı yardımcısı veya bakan olarak atandığında milletvekilliği kendiliğinden sona erer. Bu, 'milletvekilliği ile bağdaşmayan görev' kapsamındadır.", category: "Milletvekilliğinin Sona Ermesi" },
+            { question: "Aşağıdakilerden hangisi milletvekilliğinin 'kendiliğinden' (doğrudan) sona erme sebeplerinden biri değildir?", options: ["Cumhurbaşkanı seçilmek", "Cumhurbaşkanı yardımcısı veya bakan olarak atanmak", "Ölüm veya gaiplik", "Devamsızlık (bir ay içinde 5 birleşime katılmama)"], correctAnswer: 3, meaning: "Devamsızlık nedeniyle milletvekilliğinin düşürülmesi, Meclis kararı gerektiren bir durumdur ve üye tam sayısının salt çoğunluğu (301) ile kararlaştırılır. Diğerleri kendiliğinden sona erme halleridir.", category: "Milletvekilliğinin Sona Ermesi" },
+            { question: "Milletvekilliğinin sona ermesi ile ilgili aşağıdaki ifadelerden hangisi yanlıştır?", options: ["Cumhurbaşkanı seçilen milletvekilinin üyeliği kendiliğinden düşer.", "Cumhurbaşkanı yardımcısı veya bakan olarak atanan milletvekilinin üyeliği kendiliğinden düşer.", "Dokunulmazlığın kaldırılması milletvekilliğini düşürmez.", "Partisinden istifa eden milletvekilinin üyeliği kendiliğinden düşer."], correctAnswer: 3, meaning: "Partisinden istifa etmek, milletvekilliğini kesinlikle düşürmez. Milletvekili bağımsız olarak görevine devam eder. Bu, sınavda en sık çeldirici olarak kullanılan bilgilerden biridir.", category: "Milletvekilliğinin Sona Ermesi" },
+            { question: "Milletvekili olarak görev yapan bir kişinin Türk vatandaşlığını kaybetmesi durumunda milletvekilliği ile ilgili aşağıdakilerden hangisi doğrudur?", options: ["Milletvekilliği devam eder, vatandaşlık şartı sadece seçilme anında aranır.", "Milletvekilliği kendiliğinden sona erer.", "Milletvekilliğinin düşmesi için TBMM'nin ayrıca karar alması gerekir.", "Çifte vatandaşlık şartıyla devam edebilir."], correctAnswer: 1, meaning: "Milletvekili seçilme şartlarından biri TC vatandaşı olmaktır. Bu şartın kaybedilmesi halinde milletvekilliği kendiliğinden sona erer.", category: "Milletvekilliğinin Sona Ermesi" },
+            { question: "Bir milletvekili, seçildikten sonra milletvekili seçilme yeterliliğini kaybederse, milletvekilliğinin durumu ne olur?", options: ["Dokunulmazlığı kaldırılırsa düşer.", "TBMM kararıyla düşürülür.", "Kendiliğinden sona erer.", "Seçim dönemi sonuna kadar devam eder."], correctAnswer: 2, meaning: "Milletvekilliği sıfatı, seçilme yeterliliğinin kaybedilmesiyle kendiliğinden sona erer. Bu durum 'kendiliğinden düşme' hallerindendir.", category: "Milletvekilliğinin Sona Ermesi" },
+            { question: "Bir milletvekili hakkında mahkeme tarafından gaiplik (kayıplık) kararı verilirse, milletvekilliği nasıl sona erer?", options: ["TBMM oylamasıyla düşer.", "Kendiliğinden sona erer.", "Gaiplik kararı milletvekilliğini etkilemez.", "Sadece izinli sayılır, bulunursa geri döner."], correctAnswer: 1, meaning: "Gaiplik kararı, ölüm gibi kendiliğinden sona erme sebeplerindendir. Mahkeme kararının Meclis Genel Kuruluna bildirilmesi yeterlidir.", category: "Milletvekilliğinin Sona Ermesi" },
+            { question: "Bir milletvekili, milletvekili seçilmeye engel bir suçtan kesin hüküm giyerse, milletvekilliği nasıl sona erer?", options: ["Meclis kararıyla düşürülür.", "Mahkeme kararının Meclis Genel Kuruluna bildirilip okunmasıyla sona erer.", "Sadece dokunulmazlığı kalkar, milletvekilliği devam eder.", "Kesin hüküm yeterli değildir, ayrıca TBMM'nin düşürme kararı gerekir."], correctAnswer: 1, meaning: "Engel suçtan kesin hüküm giyme halinde, mahkeme kararının TBMM Genel Kuruluna bildirilip okunmasıyla milletvekilliği sona erer. Bu 'yargı kararıyla sona erme' halidir.", category: "Milletvekilliğinin Sona Ermesi" },
+            { question: "Bir milletvekili hakkında mahkeme tarafından kısıtlılık kararı verilirse, milletvekilliği ile ilgili aşağıdakilerden hangisi doğrudur?", options: ["Kısıtlılık milletvekilliğini etkilemez.", "TBMM'nin salt çoğunluğuyla düşürülür.", "Mahkeme kararının Meclis Genel Kuruluna bildirilip okunmasıyla sona erer.", "Sadece dokunulmazlığı kalkar, vekilliği devam eder."], correctAnswer: 2, meaning: "Kısıtlı olmamak, milletvekili seçilme şartlarındandır. Bu şartın kaybedilmesi halinde milletvekilliği, mahkeme kararının Meclis Genel Kuruluna bildirilip okunmasıyla sona erer.", category: "Milletvekilliğinin Sona Ermesi" },
+
+            // BÖLÜM 3: GİZLİ OYLAMA (5 soru)
+            { question: "Aşağıdaki TBMM oylamalarından hangisinde gizli oy zorunluluğu yoktur?", options: ["Anayasa değişikliği tekliflerinin kabulü", "TBMM Başkanlık seçimi", "Savaş ilanı kararı", "Kamu Başdenetçisi seçimi"], correctAnswer: 2, meaning: "Savaş ilanı kararı açık oylama ile yapılabilir, gizli oy şartı aranmaz. Anayasa değişikliği, TBMM Başkanlık seçimi ve Kamu Başdenetçisi seçimi ise gizli oyla yapılmak zorundadır.", category: "TBMM Çalışma Kuralları" },
+            { question: "TBMM Başkanı seçimi ile ilgili aşağıdaki ifadelerden hangisi doğrudur?", options: ["Açık oylama ile yapılır.", "Gizli oyla, en fazla 4 turda yapılır.", "Cumhurbaşkanı tarafından atanır.", "Siyasi parti grupları aday gösterebilir."], correctAnswer: 1, meaning: "TBMM Başkanı seçimi gizli oyla ve en fazla 4 turda yapılır. İlk iki turda 2/3 (400), üçüncü turda salt çoğunluk (301) aranır. Siyasi parti grupları aday gösteremez.", category: "TBMM Başkanlık Divanı" },
+            { question: "Kamu Başdenetçisi (Ombudsman) seçimi ile ilgili aşağıdaki ifadelerden hangisi yanlıştır?", options: ["TBMM tarafından seçilir.", "Gizli oyla seçilir.", "4 yıllığına seçilir.", "Açık oylama ile seçilir."], correctAnswer: 3, meaning: "Kamu Başdenetçisi, TBMM tarafından 4 turlu gizli oyla ve 4 yıllığına seçilir. Açık oylama yapılmaz.", category: "TBMM Çalışma Kuralları" },
+            { question: "Meclis soruşturması ile ilgili aşağıdaki ifadelerden hangisi doğrudur?", options: ["Soruşturma açılması kararı açık oylama ile alınır.", "Soruşturma açılması kararı gizli oyla, üye tam sayısının 3/5 çoğunluğu (360) ile alınır.", "Soruşturma açılması için toplantıya katılanların salt çoğunluğu yeterlidir.", "Soruşturma önergesi için 20 milletvekilinin imzası yeterlidir."], correctAnswer: 1, meaning: "Meclis soruşturması açılması kararı, gizli oyla ve üye tam sayısının 3/5 çoğunluğu (360 oy) ile alınır.", category: "TBMM Denetim Yolları" },
+            { question: "Milletvekilliği ile bağdaşmayan bir görevi sürdürmekte ısrar eden milletvekilinin üyeliğinin düşürülmesi oylaması ile ilgili aşağıdakilerden hangisi doğrudur?", options: ["Açık oylama ile karar verilir.", "Gizli oyla karar verilir.", "Salt çoğunluk (301) ile karar verilir.", "Toplantıya katılanların salt çoğunluğu ile karar verilir."], correctAnswer: 1, meaning: "Milletvekilliği ile bağdaşmayan bir görevi sürdürmekte ısrar eden milletvekilinin üyeliğinin düşürülmesi kararı gizli oyla alınır.", category: "Milletvekilliğinin Sona Ermesi" },
+
+            // BÖLÜM 4: GÖREVDEN ÇEKİLME (5 soru)
+            { question: "Aşağıdakilerden hangisi, görevlerinden çekilmedikçe milletvekili adayı olamayacaklar arasında yer alır?", options: ["Serbest avukatlar", "Yargıtay üyeleri", "Özel sektör çalışanları", "Esnaflar"], correctAnswer: 1, meaning: "Yargıtay, Danıştay ve Anayasa Mahkemesi gibi yüksek yargı organlarının mensupları, görevlerinden çekilmedikçe milletvekili adayı olamazlar. Seçilemezlerse mesleklerine geri de dönemezler.", category: "Milletvekili Seçilme" },
+            { question: "Türk Silahlı Kuvvetleri mensupları ile ilgili aşağıdaki ifadelerden hangisi doğrudur?", options: ["Görevlerinden istifa etmeden de milletvekili adayı olabilirler.", "Milletvekili adayı olmak için görevlerinden çekilmelidirler ve seçilemezlerse mesleklerine geri dönemezler.", "Sadece izin alarak aday olabilirler.", "Milletvekili seçilemezlerse görevlerine geri dönebilirler."], correctAnswer: 1, meaning: "TSK mensupları, tıpkı hâkim ve savcılar gibi, milletvekili adayı olmak için görevlerinden kesin olarak ayrılmak zorundadır. Seçilememeleri halinde mesleklerine geri dönemezler.", category: "Milletvekili Seçilme" },
+            { question: "Milletvekili adayı olup seçilemeyen aşağıdaki kişilerden hangisi, eski görevine geri dönebilir?", options: ["Hâkim", "Savcı", "Üniversite öğretim elemanı", "TSK mensubu"], correctAnswer: 2, meaning: "Hâkim, savcı, yüksek yargı mensupları ve TSK personeli seçilemezlerse mesleklerine geri dönemezler. Ancak üniversite öğretim elemanları ve diğer kamu görevlileri dönebilir.", category: "Milletvekili Seçilme" },
+            { question: "Görevden çekilme şartı ile ilgili aşağıdaki ifadelerden hangisi yanlıştır?", options: ["Hâkim ve savcılar aday olmak için görevlerinden çekilmelidir.", "YÖK üyeleri aday olmak için görevlerinden çekilmelidir.", "Serbest avukatlar aday olmak için mesleklerinden istifa etmelidir.", "TSK mensupları aday olmak için görevlerinden çekilmelidir."], correctAnswer: 2, meaning: "Serbest avukatların milletvekili adayı olmak için mesleklerinden istifa etmesine gerek yoktur.", category: "Milletvekili Seçilme" },
+            { question: "Aşağıdakilerden hangisi, görevlerinden çekilmedikçe milletvekili adayı olamayacaklar arasında yer almaz?", options: ["Yüksek yargı organları mensupları", "Silahlı Kuvvetler mensupları", "Belediye başkanları", "Hâkim ve savcılar"], correctAnswer: 2, meaning: "Belediye başkanları için görevden çekilme şartı yoktur; onlar izin alarak aday olabilirler. Hâkim, savcı, yüksek yargı mensupları ve TSK personeli ise görevlerinden kesin olarak çekilmedikçe aday olamazlar.", category: "Milletvekili Seçilme" },
+
+            // BÖLÜM 5: SİYASİ PARTİYE ÜYE OLAMAYANLAR (5 soru)
+            { question: "Aşağıdakilerden hangisi siyasi partilere üye olabilir?", options: ["Türk Silahlı Kuvvetleri mensupları", "Askeri öğrenciler", "Devlet memurları", "Serbest avukatlar"], correctAnswer: 3, meaning: "TSK mensupları, askeri öğrenciler ve devlet memurları siyasi partilere üye olamazlar. Serbest avukatlar ise herhangi bir kamu görevi statüsünde olmadıkları için üye olabilirler.", category: "Siyasi Partiler" },
+            { question: "Askeri öğrenciler ile ilgili aşağıdaki ifadelerden hangisi doğrudur?", options: ["Siyasi partilere üye olabilirler.", "Sadece izin alarak siyasi partilere üye olabilirler.", "Siyasi partilere üye olamazlar.", "Sadece genel seçimlerde oy kullanabilirler."], correctAnswer: 2, meaning: "Askeri öğrenciler, tıpkı TSK mensupları gibi, siyasi partilere üye olamazlar. Bu yasak, askeri disiplinin ve tarafsızlığın korunması amacıyla getirilmiştir.", category: "Siyasi Partiler" },
+            { question: "Devlet memurlarının siyasi parti üyeliği ile ilgili aşağıdakilerden hangisi doğrudur?", options: ["Tüm devlet memurları siyasi partilere üye olabilir.", "Devlet memurları siyasi partilere üye olamazlar.", "Sadece üst düzey memurlar üye olamaz.", "İzin alarak üye olabilirler."], correctAnswer: 1, meaning: "Devlet memurları, kamu hizmetinin tarafsızlığı ilkesi gereği siyasi partilere üye olamazlar. Bu yasak tüm memurlar için geçerlidir.", category: "Siyasi Partiler" },
+            { question: "Aşağıdakilerden hangisi siyasi partilere üye olamayacaklar arasında yer almaz?", options: ["Yargıtay üyeleri", "Danıştay üyeleri", "Anayasa Mahkemesi üyeleri", "Üniversite öğretim elemanları"], correctAnswer: 3, meaning: "Yüksek yargı mensupları siyasi partilere üye olamazlar. Ancak üniversite öğretim elemanları üye olabilirler. YÖK üyeleri de üye olabilir ancak MV adayı olmak için görevlerinden çekilmelidir.", category: "Siyasi Partiler" },
+            { question: "Yüksek öğrenim öncesi öğrenciler (lise ve dengi okul öğrencileri) ile ilgili aşağıdaki ifadelerden hangisi doğrudur?", options: ["18 yaşını doldurmuşlarsa siyasi partilere üye olabilirler.", "Siyasi partilere üye olamazlar.", "Aile izniyle üye olabilirler.", "Sadece gençlik kollarına üye olabilirler."], correctAnswer: 1, meaning: "Yüksek öğrenim öncesi öğrenciler yaşları kaç olursa olsun siyasi partilere üye olamazlar. Üye olabilmek için yüksek öğrenim öğrencisi olmak gerekir.", category: "Siyasi Partiler" },
+
+            // BÖLÜM 6: DENETİM YOLLARI - AMAÇ KARŞILAŞTIRMASI (1 soru)
+            { question: "TBMM'nin bilgi edinme ve denetim yolları ile ilgili aşağıdaki eşleştirmelerden hangisi yanlıştır?", options: ["Yazılı Soru → Cumhurbaşkanı yardımcıları ve bakanlardan bilgi almak", "Genel Görüşme → Toplumu ve devlet faaliyetini ilgilendiren bir konunun Genel Kurulda görüşülmesi", "Meclis Araştırması → Belirli bir konuda bilgi edinmek için inceleme yapmak", "Meclis Soruşturması → Belirli bir konuda bilgi edinmek için inceleme yapmak"], correctAnswer: 3, meaning: "Meclis soruşturması, bilgi edinme amaçlı değildir; CB yardımcıları ve bakanlar hakkında cezai sorumluluk doğurabilecek bir denetim yoludur. 'Bilgi edinmek için inceleme' Meclis araştırmasının tanımıdır.", category: "TBMM Denetim Yolları" }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.questions = [];
+                this.masteredWords = [];
+                
+                this.elements = {
+                    question: document.getElementById('question'),
+                    options: document.getElementById('options'),
+                    feedback: document.getElementById('feedback'),
+                    feedbackText: document.getElementById('feedbackText'),
+                    nextBtn: document.getElementById('nextBtn'),
+                    score: document.getElementById('score'),
+                    progress: document.getElementById('progress'),
+                    total: document.getElementById('total'),
+                    progressBar: document.getElementById('progressBar'),
+                    quizContainer: document.getElementById('quizContainer'),
+                    resultsContainer: document.getElementById('resultsContainer'),
+                    finalScore: document.getElementById('finalScore'),
+                    resultMessage: document.getElementById('resultMessage'),
+                    wordList: document.getElementById('wordList'),
+                    catCover: document.getElementById('catCover')
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.shuffleQuestions();
+                this.elements.total.textContent = this.questions.length;
+                this.setupEventListeners();
+                this.showCurrentQuestion();
+            }
+            
+            shuffleQuestions() {
+                this.questions = [...QUIZ_DATA];
+                for (let i = this.questions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [this.questions[i], this.questions[j]] = [this.questions[j], this.questions[i]];
+                }
+            }
+            
+            setupEventListeners() {
+                this.elements.catCover.addEventListener('click', () => this.removeCatCover());
+                this.elements.nextBtn.addEventListener('click', () => this.nextQuestion());
+            }
+            
+            removeCatCover() {
+                this.elements.catCover.style.display = 'none';
+            }
+            
+            showCurrentQuestion() {
+                const question = this.questions[this.currentQuestionIndex];
+                this.elements.question.textContent = question.question;
+                this.elements.catCover.style.display = 'flex';
+                this.displayOptions(question);
+                this.resetQuestionUI();
+                this.updateProgress();
+            }
+            
+            displayOptions(question) {
+                this.elements.options.innerHTML = '';
+                this.elements.options.appendChild(this.elements.catCover);
+                const shuffledOptions = this.shuffleArray([...question.options]);
+                shuffledOptions.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'option-btn fade-in';
+                    button.textContent = option;
+                    button.addEventListener('click', () => this.handleAnswer(option, question));
+                    this.elements.options.appendChild(button);
+                });
+            }
+            
+            resetQuestionUI() {
+                this.elements.feedback.style.display = 'none';
+                this.elements.nextBtn.style.display = 'none';
+                this.elements.progress.textContent = this.currentQuestionIndex + 1;
+            }
+            
+            updateProgress() {
+                const progressPercent = ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
+                this.elements.progressBar.style.width = `${progressPercent}%`;
+            }
+            
+            handleAnswer(selectedOption, question) {
+                const buttons = document.querySelectorAll('.option-btn');
+                const correctOption = question.options[question.correctAnswer];
+                
+                buttons.forEach(button => {
+                    button.disabled = true;
+                    if (button.textContent === correctOption) {
+                        button.classList.add('correct');
+                    }
+                    if (button.textContent === selectedOption && button.textContent !== correctOption) {
+                        button.classList.add('incorrect');
+                    }
+                });
+                
+                const isCorrect = selectedOption === correctOption;
+                if (isCorrect) {
+                    this.score++;
+                    this.elements.score.textContent = this.score;
+                    this.addToMasteredWords(question);
+                }
+                
+                this.showFeedback(isCorrect, question, correctOption);
+                this.elements.nextBtn.style.display = 'block';
+            }
+            
+            addToMasteredWords(question) {
+                const alreadyExists = this.masteredWords.some(w => w.question === question.question);
+                if (!alreadyExists) {
+                    this.masteredWords.push(question);
+                }
+            }
+            
+            showFeedback(isCorrect, question, correctOption) {
+                this.elements.feedback.style.display = 'block';
+                this.elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+                
+                let feedbackHTML = '';
+                if (isCorrect) {
+                    feedbackHTML = `✅ Doğru!<br><br>${question.meaning}`;
+                } else {
+                    feedbackHTML = `❌ Yanlış!<br>Doğru cevap: <strong>${correctOption}</strong><br><br>${question.meaning}`;
+                }
+                
+                this.elements.feedbackText.innerHTML = feedbackHTML;
+            }
+            
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) {
+                    this.showCurrentQuestion();
+                } else {
+                    this.endQuiz();
+                }
+            }
+            
+            endQuiz() {
+                this.elements.quizContainer.style.display = 'none';
+                this.elements.resultsContainer.style.display = 'block';
+                
+                const percentage = Math.round((this.score / this.questions.length) * 100);
+                this.elements.finalScore.textContent = `${this.score}/${this.questions.length} (${percentage}%)`;
+                
+                this.showResultMessage(percentage);
+                this.displayAllWords();
+            }
+            
+            showResultMessage(percentage) {
+                let message = "";
+                if (percentage >= 90) {
+                    message = "Mükemmel! Yasama III testini çok iyi geçtiniz! 🏆";
+                } else if (percentage >= 70) {
+                    message = "Çok iyi! Temel bilgilere hakimsiniz. 👍";
+                } else if (percentage >= 50) {
+                    message = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+                } else {
+                    message = "Öğrenmeye devam! Yasama konularını tekrar etmeniz faydalı olacaktır. 📚";
+                }
+                
+                this.elements.resultMessage.textContent = message;
+            }
+            
+            displayAllWords() {
+                this.elements.wordList.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Bilgiler</h3>';
+                
+                QUIZ_DATA.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'word-card fade-in';
+                    card.innerHTML = `
+                        <div class="word">${item.question}</div>
+                        <div class="meaning">${item.meaning}</div>
+                        <div class="category ${this.getCategoryClass(item.category)}">${item.category}</div>
+                    `;
+                    this.elements.wordList.appendChild(card);
+                });
+            }
+            
+            getCategoryClass(category) {
+                const classMap = {
+                    'Seçimler': 'category-secim',
+                    'Milletvekilliğinin Sona Ermesi': 'category-yasama',
+                    'TBMM Çalışma Kuralları': 'category-tbmm',
+                    'TBMM Başkanlık Divanı': 'category-tbmm',
+                    'TBMM Denetim Yolları': 'category-tbmm',
+                    'Milletvekili Seçilme': 'category-yasama',
+                    'Siyasi Partiler': 'category-tbmm'
+                };
+                return classMap[category] || 'category-yasama';
+            }
+            
+            shuffleArray(array) {
+                const newArray = [...array];
+                for (let i = newArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                }
+                return newArray;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const notesScrollArea = document.getElementById('notesScrollArea');
+            const startTestBtn = document.getElementById('startTestBtn');
+            const scrollMsg = document.getElementById('scrollMsg');
+            const notesContainer = document.getElementById('notesContainer');
+            const quizContainer = document.getElementById('quizContainer');
+            const progressContainer = document.getElementById('progressContainer');
+
+            notesScrollArea.addEventListener('scroll', () => {
+                if (notesScrollArea.scrollTop + notesScrollArea.clientHeight >= notesScrollArea.scrollHeight - 10) {
+                    startTestBtn.disabled = false;
+                    scrollMsg.style.display = 'none';
+                }
+            });
+
+            if (notesScrollArea.scrollHeight <= notesScrollArea.clientHeight) {
+                startTestBtn.disabled = false;
+                scrollMsg.style.display = 'none';
+            }
+
+            startTestBtn.addEventListener('click', () => {
+                notesContainer.style.display = 'none';
+                progressContainer.style.display = 'block';
+                quizContainer.style.display = 'block';
+                
+                new QuizManager();
+            });
+        });
+    </script>
+</body>
+</html>

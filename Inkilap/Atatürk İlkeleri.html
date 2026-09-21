@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ Atatürk İnkılapları (Eksiksiz Notlar)</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+        }
+        
+        .progress-container { width: 100%; background-color: #e9ecef; height: 12px; }
+        .progress-bar { height: 100%; background: var(--gold); width: 0%; transition: width 0.3s; }
+        
+        .quiz-container { padding: 25px; }
+        
+        .stats {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; background-color: var(--light);
+            padding: 15px; border-radius: 10px; border: 2px solid var(--accent);
+        }
+
+        .counter-badge {
+            background: var(--danger); color: white; padding: 5px 12px;
+            border-radius: 20px; font-weight: bold; font-size: 0.9rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .question-container {
+            background: var(--light); border-radius: 12px; padding: 25px;
+            margin-bottom: 20px; border-left: 8px solid var(--primary);
+        }
+        
+        .question { font-size: 1.4rem; font-weight: 700; color: #4b2a0d; }
+        
+        .options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; position: relative; }
+        
+        .option-btn {
+            padding: 20px; border: 2px solid #ddd; border-radius: 10px;
+            background: white; cursor: pointer; transition: all 0.2s;
+            font-size: 1.1rem; font-weight: 600; text-align: center;
+        }
+
+        .option-btn:hover { border-color: var(--accent); background: #fffcf5; }
+        .option-btn.selected { background-color: #fff3e0; border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .option-btn.correct { background-color: var(--success) !important; color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger) !important; color: white; border-color: var(--danger); }
+        
+        .cat-cover {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(139, 69, 19, 0.98); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; border-radius: 10px; z-index: 10; cursor: pointer;
+        }
+
+        .feedback { padding: 20px; border-radius: 10px; margin-top: 20px; display: none; line-height: 1.6; font-size: 1.05rem; }
+        .correct-feedback { background-color: rgba(46, 139, 87, 0.1); border-left: 5px solid var(--success); }
+        .incorrect-feedback { background-color: rgba(178, 34, 34, 0.1); border-left: 5px solid var(--danger); }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white; border: none; padding: 18px; border-radius: 10px;
+            cursor: pointer; width: 100%; font-weight: bold; font-size: 1.2rem; margin-top: 10px;
+        }
+
+        @media (max-width: 600px) { .options { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ Atatürk İnkılapları</h1>
+            <p>Sütun Notları: Kaynağa Birebir Sadık 68 Soru ve Detaylı Açıklamalar</p>
+        </header>
+        <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+        
+        <div class="quiz-container" id="quizBox">
+            <div class="stats">
+                <div>Puan: <span id="score" style="font-weight:bold; color:var(--primary)">0</span></div>
+                <div id="selectionCounter" class="counter-badge">Kalan Seçim: 1</div>
+                <div>Soru: <span id="qIdx">1</span>/68</div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="questionText">Soru yükleniyor...</div>
+            </div>
+            
+            <div class="options" id="optionsBox">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat/says/BAAAK!" style="width:150px; border-radius:10px; margin-bottom:15px;">
+                    <div style="color:white; font-weight:bold;">Şıkları görmek için dokun!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedbackBox">
+                <div id="feedbackContent"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">SIRADAKİ SORU (Enter)</button>
+        </div>
+
+        <div id="resultBox" style="display:none; padding:40px; text-align:center;">
+            <h2 style="color:var(--primary)">TEST BİTTİ! 🏆</h2>
+            <div id="finalScore" style="font-size:3rem; margin:20px 0; color:var(--accent); font-weight:bold;"></div>
+            <button class="next-btn" onclick="location.reload()">BAŞTAN BAŞLA</button>
+        </div>
+    </div>
+
+    <script>
+        const rawData = [
+            { q: "TBMM'nin açılması", a: ["Cumhuriyetçilik", "Milliyetçilik"], d: "TBMM, ulusal egemenliğin ve millet iradesinin tecelligâhı olduğu için Cumhuriyetçilik; Kurtuluş Savaşı'nı yürüterek tam bağımsızlığı sağlayan milli bir meclis olması yönüyle de Milliyetçilik ilkesi kapsamındadır." },
+            { q: "Saltanatın kaldırılması", a: ["Cumhuriyetçilik", "Laiklik", "İnkılapçılık"], d: "Egemenliğin tek bir kişiden alınıp kayıtsız şartsız millete verilmesiyle Cumhuriyetçilik; din ve devlet işlerinin ayrılması yolundaki en büyük engeli kaldırmasıyla Laiklik; eski ve köhne bir sistemi tamamen yıkarak yeniliği getirmesiyle İnkılapçılık ilkesine girer." },
+            { q: "Cumhuriyet'in ilan edilmesi", a: ["Cumhuriyetçilik", "Halkçılık", "İnkılapçılık"], d: "Milletin kendini doğrudan yönetmesi (Cumhuriyetçilik), devlet yönetiminde hiçbir kişi, zümre veya sınıfa ayrıcalık tanınmaması (Halkçılık) ve çağdaşlaşma yolunda atılan devrimci bir adım olması (İnkılapçılık) özelliklerini taşır." },
+            { q: "Halifeliğin kaldırılması", a: ["Cumhuriyetçilik", "Laiklik"], d: "Devletin laikleştirilmesi, akılcılığın ve bilimselliğin önündeki dini otoritenin kaldırılması (Laiklik) ve milli egemenliğe (Cumhuriyetçilik) rakip olabilecek bir makamın yok edilmesi açısından bu iki ilkeyle doğrudan ilişkilidir." },
+            { q: "Seçmen olmak için aranan vergi verme şartının kaldırılması", a: ["Cumhuriyetçilik", "Halkçılık"], d: "Daha fazla vatandaşın oy vermesini sağlayarak millet iradesini tam yansıtması (Cumhuriyetçilik) ve zengin-fakir ayrımı yapmadan herkese siyasi katılımda eşitlik sunması (Halkçılık) sebebiyle iki ilkeye de girer." },
+            { q: "Erkân-ı Harbiye Vekâleti'nin kapatılması", a: ["Cumhuriyetçilik"], d: "Ordunun siyasetten ayrılması, demokrasinin ve sivil idarenin (millet iradesinin) üzerindeki askeri vesayeti kaldırarak Cumhuriyetçilik ilkesini güçlendirmiştir." },
+            { q: "Subay-vekil uygulamasına son verilmesi", a: ["Cumhuriyetçilik"], d: "Ordunun doğrudan Meclis'te temsil edilmesi pratiğine son verilerek, ordunun siyaset dışına çekilmesi sağlanmış; böylece çok partili rejim ve millet egemenliği (Cumhuriyetçilik) korunmuştur." },
+            { q: "1921 ve 1924 anayasalarının kabul edilmesi", a: ["Cumhuriyetçilik"], d: "Anayasalar, 'Egemenlik kayıtsız şartsız milletindir' prensibini hukuksal olarak güvence altına alarak doğrudan Cumhuriyetçilik ilkesini kurumsallaştırmıştır." },
+            { q: "Ordunun siyasetten ayrılması", a: ["Cumhuriyetçilik"], d: "Ordunun asli görevi olan vatan savunmasına dönmesi, siyasi partilerin ve Meclis'in (millet iradesinin) özgürce çalışmasını sağlayarak Cumhuriyet rejimini teminat altına almıştır." },
+            { q: "Seçmen yaşının düşürülmesi", a: ["Cumhuriyetçilik"], d: "Seçmen yaşının düşürülmesi, daha geniş kitlelerin yönetime katılmasını ve oy vermesini sağlayarak ulusal egemenlik kavramını tabana yaymıştır." },
+            { q: "Kadınlara seçme ve seçilme hakkı tanınması", a: ["Cumhuriyetçilik", "Halkçılık"], d: "Nüfusun yarısını oluşturan kadınların siyasi hayata katılımı ile milli irade eksiksiz yansımış (Cumhuriyetçilik) ve cinsiyet temelli ayrımcılık reddedilerek kanun önünde siyasi eşitlik (Halkçılık) sağlanmıştır." },
+            { q: "Çok partili hayat denemelerinin gerçekleşmesi", a: ["Cumhuriyetçilik"], d: "Farklı görüşlerin Meclis'te temsil edilebilmesi, parti kurma hürriyeti ve demokrasinin tam olarak işletilmesi doğrudan Cumhuriyetçilik ilkesinin bir gereğidir." },
+            { q: "Tevhid-i Tedrisat Kanunu'nun kabul edilmesi", a: ["Laiklik", "Halkçılık", "Milliyetçilik"], d: "Eğitimin laikleştirilerek dinden arındırılması (Laiklik), tüm çocuklara fırsat eşitliği sunulması (Halkçılık) ve eğitimde ikiliğin kaldırılarak ortak/milli bir bilinç yaratılması (Milliyetçilik) hedeflenmiştir." },
+            { q: "Şeriye ve Evkâf Vekâleti'nin kaldırılması", a: ["Laiklik"], d: "Din işleri (Şeriye) ile vakıf işlerinin (Evkaf) ayrılıp Diyanet İşleri Başkanlığı'nın kurulması, devlet yönetiminin dini kurallardan bağımsızlaştırılmasını sağlayarak Laiklik ilkesini pekiştirmiştir." },
+            { q: "Şeriat Mahkemeleri'nin kapatılması", a: ["Laiklik"], d: "Hukuk alanında dini kuralların (şeriat) terk edilerek akla, mantığa ve çağdaş ihtiyaçlara dayalı bir hukuk sisteminin önünün açılması doğrudan Laiklik ilkesidir." },
+            { q: "Medreselerin kapatılması", a: ["Laiklik"], d: "Eğitimde akılcılığı, bilimselliği ve modern yöntemleri merkeze alan Tevhid-i Tedrisat'ın bir sonucu olarak, dini ağırlıklı eğitim veren kurumların kapatılması Laiklik ilkesinin gereğidir." },
+            { q: "Şeyhülislamlık makamının kaldırılması", a: ["Laiklik"], d: "Osmanlı'daki en yüksek dini otoritenin devlet işlerindeki fetva yetkisine son verilmesi, devletin laikleştirilmesi ve tutuculuğun kırılması yönünde atılmış dev bir adımdır." },
+            { q: "Tekke, zaviye ve türbelerin kapatılması", a: ["Laiklik"], d: "Toplumun batıl inançlardan, hurafelerden ve tarikatların baskısından kurtarılarak din ve vicdan özgürlüğünün, aklın ve bilimselliğin hakim kılınması amaçlanmıştır (Laiklik)." },
+            { q: "Türk Medeni Kanunu'nun kabul edilmesi", a: ["Laiklik", "Halkçılık"], d: "Mecelle gibi dini temelli bir hukukun kaldırılarak akılcı ve laik bir hukuka geçilmesi (Laiklik) ve kadın-erkek arasında sosyal, ekonomik hukuki eşitliğin tam sağlanması (Halkçılık) özellikleri taşır." },
+            { q: "Anayasadan 'Devletin dini İslam'dır.' maddesinin çıkarılması (1928)", a: ["Laiklik"], d: "Devletin anayasal düzlemde herhangi bir dini referans almaktan vazgeçerek tarafsızlaşması, anayasanın laikleştirilmesi yolundaki en somut adımdır." },
+            { q: "Yemin metinlerinden 'Vallahi' sözcüğünün çıkarılması", a: ["Laiklik"], d: "Milletvekili ve cumhurbaşkanı yeminlerindeki dini ifadelerin kaldırılarak 'Namusum üzerine söz veririm' şekline dönüştürülmesi devlet işlerinin laikleşmesidir." },
+            { q: "Şapka Kanunu'nun kabul edilmesi", a: ["Laiklik", "İnkılapçılık"], d: "Dini ve geleneksel bir aidiyet simgesi olan fesin kaldırılarak dinin kıyafet üzerinden siyasallaşmasının önlenmesi (Laiklik) ve çağdaş dünyaya uyum sağlanması (İnkılapçılık) hedeflenmiştir." },
+            { q: "Kılık - Kıyafet Kanunu'nun kabul edilmesi", a: ["Laiklik", "Halkçılık", "İnkılapçılık"], d: "Ruhban sınıfının ibadethane dışında dini kıyafetle gezmesinin yasaklanması (Laiklik), giyimde sınıf/statü farklarının silinmesi (Halkçılık) ve modern bir dış görünüşe kavuşulması (İnkılapçılık)." },
+            { q: "Laiklik ilkesinin anayasaya girmesi (1937)", a: ["Laiklik"], d: "Atatürk ilkelerinin tamamıyla birlikte Laikliğin de 1937'de anayasaya girmesi, devletin laik karakterinin hukuki olarak en üst düzeyde tescillenmesidir." },
+            { q: "Şeyhlik, seyitlik, üfürükçülük, dervişlik gibi sıfatların ve özel kıyafetlerin yasaklanması", a: ["Laiklik"], d: "Toplumun dini duygularının sömürülmesinin engellenmesi, irticaya karşı çıkılması ve akılcılığın ön plana çıkarılması doğrudan Laiklik ilkesiyle örtüşür." },
+            { q: "Aşar vergisinin kaldırılması", a: ["Halkçılık"], d: "Köylünün üzerindeki ağır bir yük olan bu verginin kaldırılması, ekonomik eşitsizlikleri azaltmış ve 'topluma hizmet, sosyal adalet, halkın refahı' amaçlarını taşıyan Halkçılık ilkesini yansıtmıştır." },
+            { q: "Soyadı Kanunu'nun kabul edilmesi", a: ["Halkçılık"], d: "Resmi işlerdeki karmaşayı önlemenin yanı sıra, kişileri üstün gösteren lakapların yerini eşitlikçi soyadlarının alması doğrudan 'sınıf ayrımının reddi' ve Halkçılık ilkesidir." },
+            { q: "Ayrıcalık içeren ünvanların kaldırılması", a: ["Halkçılık"], d: "Ağa, hacı, hafız, molla, efendi, bey, paşa gibi ünvanların yasaklanarak toplumda kanun önünde eşitliğin ve imtiyazsız sınıfsız bir yapının (Halkçılık) kurulması amaçlanmıştır." },
+            { q: "Patrikhane ve konsoloslukların nikâh kıyma, mahkeme kurma gibi yetkilerinin sona erdirilmesi", a: ["Halkçılık"], d: "Azınlıklara verilen bu ayrıcalıkların kaldırılarak Türk Medeni Kanunu çatısı altında tüm vatandaşların eşit (Halkçılık) yargı ve evlilik haklarına tabi olması sağlanmıştır." },
+            { q: "Millet Mektepleri'nin açılması", a: ["Halkçılık"], d: "Yeni harfleri halka öğretmek amacıyla kurulan bu okullar, eğitimde yaş ve sınıf farkı gözetmeksizin herkese hizmet götürdüğü için doğrudan 'topluma hizmet ve eşitlik' (Halkçılık) ilkesine girer." },
+            { q: "Halkevleri'nin açılması", a: ["Halkçılık"], d: "Kültür, sanat ve inkılapların halka benimsetilmesi amacıyla kurulan Halkevleri, sosyal devlet olgusuyla halkın kültürel refahını ve toplumsal dayanışmayı (Halkçılık) artırmayı hedeflemiştir." },
+            { q: "Osmanlı Devleti'nde alınan nişan, rütbe ve madalyaların kullanımının yasaklanması", a: ["Halkçılık"], d: "Eski rejime ait ayrıcalık sembollerinin kullanımdan kaldırılması, yeni toplumda hiç kimsenin bir diğerine üstünlük taslamaması (kanun önünde eşitlik - Halkçılık) hedefini taşır." },
+            { q: "Halk sağlığını ilgilendiren kurumların açılması", a: ["Halkçılık"], d: "Numune Hastaneleri, Hıfzıssıhha Enstitüsü gibi kurumların açılması, devletin vatandaşının sağlığını koruma görevini (sosyal devlet olgusu ve topluma hizmet) vurguladığı için Halkçılıktır." },
+            { q: "İlköğretimin zorunlu ve ücretsiz hâle getirilmesi", a: ["Halkçılık"], d: "Maddi durumu ne olursa olsun her çocuğun eğitim alabilmesi, devletin sınıfsal farklılıkları ortadan kaldırarak fırsat eşitliği (Halkçılık) sağlama çabasının sonucudur." },
+            { q: "Tüm azınlıkların Türk vatandaşı sayılması", a: ["Halkçılık"], d: "Lozan'dan itibaren ülkede yaşayan herkesin ayrımsız Türk vatandaşı sayılarak aynı kanunlara tabi olması, 'eşitlik ve sınıf ayrımının reddi' kavramlarını kapsayan Halkçılıktır." },
+            { q: "Kurtuluş Savaşı'nın yapılması", a: ["Milliyetçilik"], d: "Yabancı işgaline karşı milletin birlik ve beraberlik içinde ortak vatanı koruma çabası, doğrudan 'ulusal bağımsızlık ve milli bilinç' olan Milliyetçilik ilkesinin temelidir." },
+            { q: "İzmir İktisat Kongresi'nin toplanması ve Misak-ı İktisadi Kararları'nın alınması", a: ["Milliyetçilik", "Devletçilik"], d: "Ekonomik bağımsızlığın ve milli üretimin hedeflenmesi (Milliyetçilik) ile birlikte, bu hedeflere ulaşmak için devletin ekonomiye öncülük etmesi (Devletçilik) prensipleri bir aradadır." },
+            { q: "Türk Tarih Kurumu'nun kurulması", a: ["Milliyetçilik"], d: "Türk milletinin kökenlerini araştırması, milli tarih bilincini oluşturması ve ümmet tarihinden ziyade millet tarihini (ortak tarih) vurgulamasıyla Milliyetçilik ilkesinin en net temsilcisidir." },
+            { q: "Türk Dil Kurumu'nun kurulması", a: ["Milliyetçilik"], d: "Türk dilinin zenginliğini ortaya çıkarmak, yabancı dillerin boyunduruğundan kurtarmak ve milli kültürü ortak dil üzerinden inşa etmek doğrudan Milliyetçilik ilkesidir." },
+            { q: "Kabotaj Kanunu kabul edilerek denizlerin ulusallaştırılması", a: ["Milliyetçilik"], d: "Kendi karasularımızda, limanlarımızda yolcu ve yük taşıma hakkının yabancılardan alınıp sadece Türk vatandaşlarına ve gemilerine verilmesi ulusal bağımsızlık (Milliyetçilik) zaferidir." },
+            { q: "Türk Parasını Koruma kanununun çıkarılması", a: ["Milliyetçilik"], d: "Milli paranın değerinin yabancı paralar karşısında korunması, ekonomik bağımsızlık ve milli benlik kavramlarının (Milliyetçilik) finansal alandaki yansımasıdır." },
+            { q: "Reji İdaresi'nin millileştirilmesi", a: ["Milliyetçilik"], d: "Osmanlı döneminde yabancıların kontrolünde olan tütün ve tuz tekelinin (Reji) satın alınarak devletleştirilmesi, doğrudan ekonomik 'millileştirme' ve bağımsızlık adımıdır." },
+            { q: "Demir yollarının ulusallaştırılması", a: ["Milliyetçilik"], d: "Yabancı şirketlerin elindeki stratejik demir yollarının satın alınarak ulusal ağa katılması, vatan topraklarındaki fiili bağımsızlığı (Milliyetçilik) pekiştirmiştir." },
+            { q: "Yeni Türk harflerinin kabul edilmesi", a: ["Milliyetçilik"], d: "Arap alfabesinin yerine Türk dilinin fonetiğine daha uygun yeni harflerin kabul edilmesi, milli kültürün inşası ve ortak dil bilincinin artırılması (Milliyetçilik) hedefini taşır." },
+            { q: "Türkçe sözlük hazırlanması", a: ["Milliyetçilik"], d: "Dilimizi yabancı kelimelerden arındırma ve kendi öz kaynaklarımıza dönme çabası, milli benlik ve milli kültür kavramlarının temel taşıdır (Milliyetçilik)." },
+            { q: "Kapitülasyonların kaldırılması", a: ["Milliyetçilik"], d: "Yabancı devletlere verilen adli, mali ve siyasi ayrıcalıkların tamamen silinmesi, Türkiye'nin ekonomik ve hukuki 'ulusal bağımsızlık' (Milliyetçilik) kazanmasının en büyük sembolüdür." },
+            { q: "Merkez Bankası'nın kurulması", a: ["Milliyetçilik", "Devletçilik"], d: "Para basma imtiyazının yabancı ortaklı bankadan (Osmanlı Bankası) alınıp milli bir bankaya verilmesi (Milliyetçilik) ve devletin ekonomiyi/parayı kontrol etmesi (Devletçilik) ilkelerine dayanır." },
+            { q: "I. Beş Yıllık Sanayi Planı'nın hazırlanması ve uygulanması", a: ["Devletçilik"], d: "Özel sektörün sermaye yetersizliği nedeniyle yapamadığı büyük yatırımların (fabrikalar, ağır sanayi) devlet eliyle ve planlı bir şekilde yapılması doğrudan Devletçilik ilkesidir." },
+            { q: "II. Beş Yıllık Sanayi Planı'nın hazırlanması ancak uygulanamaması", a: ["Devletçilik"], d: "II. Dünya Savaşı tehlikesi sebebiyle tam uygulanamasa da, devlet planlaması ve milli kalkınma hedefleri taşıdığı için Devletçilik ilkesi kapsamında değerlendirilir." },
+            { q: "Sümerbank'ın kurulması", a: ["Devletçilik"], d: "Sanayi yatırımlarını finanse etmek, devlet fabrikaları kurmak ve işletmek amacıyla kurulan bu devlet bankası, karma ekonomi ve devlet yatırımları politikasının kalbidir." },
+            { q: "Etibank'ın kurulması", a: ["Devletçilik"], d: "Ülkenin yeraltı kaynaklarını ve madenlerini devlet kontrolünde, kamu sermayesi ile çıkarıp işlemek amacıyla kurulması Devletçilik ilkesinin bir sonucudur." },
+            { q: "Çubuk Barajı'nın inşa edilmesi", a: ["Devletçilik"], d: "Cumhuriyetin ilk barajı olarak, su ve enerji altyapısını kurmak için devlet sermayesiyle yapılmış büyük bir bayındırlık (yatırım) hizmeti olması Devletçiliktir." },
+            { q: "Elektrik İşleri Etüt İdaresi'nin kurulması", a: ["Devletçilik"], d: "Ülkenin enerji ihtiyacını karşılamak için devlet tarafından merkezi bir planlama ve etüt kurumu oluşturulması Devletçilik ilkesine dayanır." },
+            { q: "Teşvik-i Sanayi Kanunu'nun kabul edilmesi", a: ["Devletçilik"], d: "Özel sektörü sanayileşmeye teşvik etmeyi amaçlasa da, bu kanunun yetersiz kalması üzerine 'Devletçilik' politikasına (devletin ekonomiye müdahalesine) geçişin zeminini hazırlamıştır." },
+            { q: "Devlet bankalarının kurulması", a: ["Devletçilik"], d: "Büyük çaplı sanayi ve tarım yatırımları için gerekli sermayeyi sağlamak amacıyla kamu eliyle kurulan bankalar (Etibank, Sümerbank, Denizbank vb.) Devletçilik ilkesinin araçlarıdır." },
+            { q: "Kamu İktisadi Teşekkülleri'nin kurulması", a: ["Devletçilik"], d: "KİT'ler, devletin sadece güvenliği değil, doğrudan üretim, sanayi ve ekonomiyi yönetecek büyük fabrikalar ve işletmeler kurması (karma ekonomi) esasına dayanan Devletçiliğin omurgasıdır." },
+            { q: "Karabük Demir - Çelik Fabrikası'nın temellerinin atılması", a: ["Devletçilik"], d: "Ağır sanayinin temel taşı olan bu büyük fabrikanın 1937'de devlet yatırımlarıyla kurulması, ekonomik refah ve kalkınma planlarının (Devletçilik) bir sonucudur." },
+            { q: "Maden Tetkik ve Arama Enstitüsü'nün kurulması", a: ["Devletçilik"], d: "MTA, devlet eliyle yer altı zenginliklerini bilimsel yollarla tespit etmek ve bunları milli ekonomiye kazandırmak üzere kurulan bir devletçilik adımıdır." },
+            { q: "Aşevi, huzurevi ve çocuk barınma yuvaları gibi sosyal hizmet kurumlarının açılması", a: ["Devletçilik"], d: "Bu kurumlar, 'halkçılık' ilkesinin sosyal yönünü yansıtsa da notlardaki sınıflandırmaya göre devletin bizzat yatırım yapıp sosyal refahı üstlenmesi bakımından Devletçilik başlığı altındadır." },
+            { q: "Ölçü - tartı birimlerinin değiştirilmesi (Metrik sisteme geçilmesi)", a: ["İnkılapçılık"], d: "Eski arşın, okka gibi yöreden yöreye değişen birimlerin bırakılarak uygar dünyayla bütünleşmeyi sağlayan uluslararası metrik sisteme geçilmesi tam bir çağdaşlaşma (İnkılapçılık) adımıdır." },
+            { q: "Miladi takvimin kabul edilmesi", a: ["İnkılapçılık"], d: "Hicri ve Rumi takvimlerin yarattığı ikiliğe son verilerek batı dünyası ve uluslararası arenayla uyum sağlamak (modernizm) amacıyla yapılan bir yeniliktir (İnkılapçılık)." },
+            { q: "Hafta sonu tatilinin pazara alınması", a: ["İnkılapçılık"], d: "Tatil gününün Cumadan Pazara alınması, çağdaş Avrupa ülkeleriyle ticari ve diplomatik ilişkilerde senkronizasyonu sağlayan köklü bir İnkılapçılık hareketidir." },
+            { q: "Uluslararası saat sistemine geçilmesi", a: ["İnkılapçılık"], d: "Alaturka saat (ezani saat) sisteminden uluslararası zaman dilimi standardına geçilerek günlük hayatta rasyonelleşme ve çağdaşlaşma (İnkılapçılık) hedeflenmiştir." },
+            { q: "Sanayi-i Nefise Mektebi yerine Güzel Sanatlar Fakültesi'nin açılması", a: ["İnkılapçılık"], d: "Eski ve geleneksel kurumların isim, yapı ve müfredat olarak batılı, dinamik ve muasır eğitim kurumlarına dönüştürülmesi doğrudan İnkılapçılıktır." },
+            { q: "Darülfünun yerine İstanbul Üniversitesi'nin açılması", a: ["İnkılapçılık"], d: "Geleneksel yapısıyla geride kalan Darülfünun'un kapatılıp, 1933 Üniversite Reformu ile rasyonel, çağdaş ve ilerlemeye açık modern bir üniversite (İnkılapçılık) kurulmasıdır." },
+            { q: "Mülkiye Mektebi yerine Siyasal Bilgiler Fakültesi'nin açılması", a: ["İnkılapçılık"], d: "Tıpkı Darülfünun gibi eski kurumların çağa uydurulması, dinamik bir yapıya ve modern devlet yönetimi anlayışına kavuşturulması (İnkılapçılık) adımıdır." },
+            { q: "Uluslararası rakamların kullanılmaya başlanması", a: ["İnkılapçılık"], d: "Arap harfleriyle birlikte kullanılan doğu rakamları terk edilerek evrensel/uluslararası rakamlara geçilmesi, çağdaşlaşma ve muasırlaşma (İnkılapçılık) vizyonunun parçasıdır." }
+        ];
+
+        let currentQ = 0;
+        let totalScore = 0;
+        let selectedAnswers = [];
+        const principles = ["Cumhuriyetçilik", "Laiklik", "Halkçılık", "Milliyetçilik", "Devletçilik", "İnkılapçılık"];
+
+        function startQuiz() {
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const data = rawData[currentQ];
+            document.getElementById('questionText').textContent = data.q + "?";
+            document.getElementById('qIdx').textContent = currentQ + 1;
+            document.getElementById('progressBar').style.width = `${((currentQ + 1) / rawData.length) * 100}%`;
+            
+            selectedAnswers = [];
+            updateCounter();
+            
+            const optionsBox = document.getElementById('optionsBox');
+            optionsBox.innerHTML = ''; 
+            
+            const cover = document.createElement('div');
+            cover.className = 'cat-cover';
+            cover.id = 'catCover';
+            cover.innerHTML = `<img src="https://cataas.com/cat/says/BAAAK!" style="width:150px; border-radius:10px; margin-bottom:15px;">
+                               <div style="color:white; font-weight:bold;">Şıkları görmek için dokun!</div>`;
+            cover.onclick = () => cover.style.display = 'none';
+            optionsBox.appendChild(cover);
+
+            principles.forEach((p, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<span style="color:var(--accent)">${idx + 1}.</span> ${p}`;
+                btn.onclick = () => toggleOption(btn, p);
+                optionsBox.appendChild(btn);
+            });
+
+            document.getElementById('feedbackBox').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function toggleOption(btn, val) {
+            const maxNeeded = rawData[currentQ].a.length;
+            
+            if (btn.classList.contains('selected')) {
+                btn.classList.remove('selected');
+                selectedAnswers = selectedAnswers.filter(item => item !== val);
+            } else {
+                if (selectedAnswers.length < maxNeeded) {
+                    btn.classList.add('selected');
+                    selectedAnswers.push(val);
+                }
+            }
+            
+            updateCounter();
+            
+            if (selectedAnswers.length === maxNeeded) {
+                checkAnswers();
+            }
+        }
+
+        function updateCounter() {
+            const needed = rawData[currentQ].a.length;
+            const remaining = needed - selectedAnswers.length;
+            const counter = document.getElementById('selectionCounter');
+            
+            if (remaining === 0) {
+                counter.textContent = "Kontrol ediliyor...";
+                counter.style.background = "var(--success)";
+            } else {
+                counter.textContent = `Kalan Seçim: ${remaining}`;
+                counter.style.background = "var(--danger)";
+            }
+        }
+
+        function checkAnswers() {
+            const correctOnes = rawData[currentQ].a;
+            const btns = document.querySelectorAll('.option-btn');
+            let isPerfect = true;
+
+            btns.forEach(btn => {
+                const btnText = btn.textContent.split('. ')[1];
+                btn.disabled = true;
+                
+                if (correctOnes.includes(btnText)) {
+                    btn.classList.add('correct');
+                } else if (selectedAnswers.includes(btnText)) {
+                    btn.classList.add('incorrect');
+                    isPerfect = false;
+                }
+            });
+
+            if (isPerfect) totalScore++;
+            document.getElementById('score').textContent = totalScore;
+
+            const fbk = document.getElementById('feedbackBox');
+            fbk.style.display = 'block';
+            fbk.className = `feedback ${isPerfect ? 'correct-feedback' : 'incorrect-feedback'}`;
+            document.getElementById('feedbackContent').innerHTML = `
+                <strong style="font-size: 1.2rem; display:block; margin-bottom: 8px;">${isPerfect ? '✅ HARİKA BİR CEVAP!' : '❌ BİRAZ EKSİK VEYA HATALI!'}</strong>
+                Bu inkılap, notlarda <strong>${correctOnes.join(', ')}</strong> ${correctOnes.length > 1 ? 'başlıkları' : 'başlığı'} altında geçer.<br><br>
+                <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent); color: #333; font-size: 1rem;">
+                    💡 <strong>Öğrenelim:</strong> ${rawData[currentQ].d}
+                </div>
+            `;
+            
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        document.getElementById('nextBtn').onclick = () => {
+            currentQ++;
+            if (currentQ < rawData.length) {
+                showQuestion();
+            } else {
+                finishQuiz();
+            }
+        };
+
+        function finishQuiz() {
+            document.getElementById('quizBox').style.display = 'none';
+            document.getElementById('resultBox').style.display = 'block';
+            document.getElementById('finalScore').textContent = `${totalScore} / ${rawData.length}`;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            const key = e.key;
+            const cat = document.getElementById('catCover');
+            
+            if (cat && cat.style.display !== 'none') {
+                cat.style.display = 'none';
+                return;
+            }
+
+            if (key >= '1' && key <= '6') {
+                const btns = document.querySelectorAll('.option-btn');
+                if (btns[key-1] && !btns[key-1].disabled) btns[key-1].click();
+            }
+            if (key === 'Enter' && document.getElementById('nextBtn').style.display === 'block') {
+                document.getElementById('nextBtn').click();
+            }
+        });
+
+        startQuiz();
+    </script>
+</body>
+</html>

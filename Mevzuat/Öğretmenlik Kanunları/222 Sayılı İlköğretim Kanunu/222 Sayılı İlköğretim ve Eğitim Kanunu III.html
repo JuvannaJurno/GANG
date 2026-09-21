@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>222 Sayılı Kanun - 3. Parça (48 Soru)</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%); color: var(--dark); line-height: 1.6; padding: 15px; min-height: 100vh; }
+        
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow: hidden; }
+        
+        header { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; text-align: center; padding: 25px 20px; position: relative; }
+        header::before { content: "📚"; font-size: 3rem; position: absolute; top: 10px; left: 20px; opacity: 0.3; }
+        h1 { margin-bottom: 8px; font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1rem; opacity: 0.9; }
+
+        .notes-container { padding: 25px; animation: fadeIn 0.5s ease; }
+        .notes-title { color: var(--primary); margin-bottom: 15px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .notes-scroll-area { max-height: 55vh; overflow-y: auto; background: var(--light); border: 2px solid var(--accent); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        .notes-scroll-area::-webkit-scrollbar { width: 8px; }
+        .notes-scroll-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        .notes-scroll-area h3 { color: var(--dark); border-bottom: 2px solid var(--primary); padding-bottom: 5px; margin-top: 20px; margin-bottom: 10px; }
+        .notes-scroll-area ul { padding-left: 20px; margin-bottom: 15px; }
+        .notes-scroll-area li { margin-bottom: 8px; }
+
+        .numbers-box { background-color: #E3F2FD; border-left: 5px solid #1976D2; padding: 15px; margin: 20px 0; border-radius: 5px; }
+        .numbers-box h3 { color: #1565C0 !important; border-bottom: 2px solid #90CAF9 !important; margin-top: 0 !important; }
+        .numbers-box li { background: white; margin-bottom: 8px; padding: 10px; border-radius: 6px; list-style: none; display: flex; align-items: center; }
+        .num-badge { background: #1976D2; color: white; font-weight: bold; padding: 4px 10px; border-radius: 4px; margin-right: 12px; min-width: 65px; text-align: center; }
+
+        .important-note { background-color: #FFF8E1; border-left: 5px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 5px; }
+        .scroll-msg { color: var(--danger); font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; text-align: center; }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        .progress-container { width: 100%; background-color: #e9ecef; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); width: 0%; transition: width 0.5s ease; }
+        .quiz-container { padding: 25px; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; background-color: var(--light); padding: 15px; border-radius: 10px; border: 2px solid var(--accent); }
+        .question-container { background: var(--light); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .options { display: grid; gap: 12px; position: relative; }
+        .cat-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(46, 125, 50, 0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px; z-index: 10; cursor: pointer; }
+        .cat-image { max-width: 200px; border-radius: 8px; margin-bottom: 10px; }
+        .option-btn { padding: 16px; border: 2px solid #ddd; border-radius: 10px; background: white; cursor: pointer; text-align: left; font-size: 1rem; transition: 0.3s; }
+        .option-btn.correct { background-color: var(--success); color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .feedback { padding: 20px; border-radius: 10px; margin-top: 20px; display: none; line-height: 1.6; }
+        .correct-feedback { background-color: rgba(56, 142, 60, 0.1); border-left: 5px solid var(--success); }
+        .incorrect-feedback { background-color: rgba(198, 40, 40, 0.1); border-left: 5px solid var(--danger); }
+        .next-btn { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none; padding: 16px; border-radius: 10px; cursor: pointer; width: 100%; max-width: 250px; display: block; margin: 20px auto; font-weight: bold; }
+        .next-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .results-container { padding: 30px; text-align: center; display: none; }
+        .final-score { font-size: 3rem; color: var(--accent); font-weight: bold; margin: 20px 0; }
+        .word-card { border: 2px solid var(--accent); padding: 15px; margin-bottom: 15px; background: var(--light); text-align: left; border-radius: 10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 222 Sayılı İlköğretim ve Eğitim Kanunu</h1>
+            <div class="subtitle">3. PARÇA: Doğru-Yanlış ve Boşluk Doldurma (48 Soru)</div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <h2 class="notes-title">📖 Ders Notları - 3. Parça (Pekiştirme)</h2>
+            <div class="notes-scroll-area" id="notesScrollArea">
+                <h3>📌 GENEL TEKRAR - KRİTİK BİLGİLER</h3>
+                <ul>
+                    <li><strong>Kanunun kabul yılı:</strong> 1961</li>
+                    <li><strong>Mecburi ilköğretim çağı:</strong> 6-14 yaş</li>
+                    <li><strong>Kayıt için gereken ay:</strong> 72 ay (31 Aralık itibarıyla)</li>
+                    <li><strong>İlköğretim yapısı:</strong> 4 yıl ilkokul + 4 yıl ortaokul = 8 yıl</li>
+                    <li><strong>Mecburi kurumlar:</strong> İlköğretim okulları, yetiştirici sınıflar, özel eğitim okulları</li>
+                    <li><strong>İsteğe bağlı kurumlar:</strong> Okul öncesi, tamamlayıcı kurslar</li>
+                </ul>
+
+                <h3>📝 KAYIT, DEVAM VE CEZA SÜREÇLERİ</h3>
+                <ul>
+                    <li><strong>Muhtar:</strong> Ders yılından 15 gün önce, 3 nüsha çizelge hazırlar</li>
+                    <li><strong>Okul müdürü:</strong> Kayıt yaptırmayan çocuğu kendiliğinden kaydeder</li>
+                    <li><strong>Mazeret bildirim süresi:</strong> En geç 3 gün</li>
+                    <li><strong>Tarım izni:</strong> Muhtar tarafından en fazla 15 gün</li>
+                    <li><strong>15 TL/gün:</strong> Devamsızlık cezası (veliye)</li>
+                    <li><strong>500 TL:</strong> Cezaya rağmen göndermeyen veliye ek ceza</li>
+                    <li><strong>400 TL:</strong> Okula gitmesini engelleyene ceza</li>
+                    <li><strong>Mülki amir:</strong> Ceza vermeye yetkili (vali/kaymakam)</li>
+                    <li><strong>İtiraz:</strong> 15 gün içinde Sulh Ceza Mahkemesi'ne</li>
+                </ul>
+
+                <h3>⏰ ZAMAN VE TATİL</h3>
+                <ul>
+                    <li><strong>Öğretim yılı:</strong> Derslerden 1 hafta önce başlar, son sınavın bittiği gün biter</li>
+                    <li><strong>Yaz tatili:</strong> Sınavların bitiminden yeni öğretim yılı başlangıcına kadar</li>
+                    <li><strong>İlköğretim Haftası:</strong> Eylül ayının üçüncü haftası</li>
+                </ul>
+
+                <h3>🏠 ARSA VE MALİ HÜKÜMLER</h3>
+                <ul>
+                    <li><strong>Köy okulu arazi miktarı:</strong> 2-10 dekar</li>
+                    <li><strong>Uygulama bahçesi:</strong> En fazla 10 dekar</li>
+                    <li><strong>Devlet bütçesi payı:</strong> En az %3</li>
+                    <li><strong>İl Özel İdaresi payı:</strong> En az %20</li>
+                    <li><strong>Kayıt ücreti:</strong> İlköğretim geliri değildir (eğitim ücretsiz)</li>
+                    <li><strong>Harç muafiyeti:</strong> Tüm vergi, resim ve harçlardan muaf</li>
+                </ul>
+
+                <div class="numbers-box">
+                    <h3>🔢 KRİTİK SAYILAR (Bu parçada sık çıkar)</h3>
+                    <ul>
+                        <li><span class="num-badge">1961</span> Kanunun kabul yılı</li>
+                        <li><span class="num-badge">6-14</span> Mecburi ilköğretim çağı</li>
+                        <li><span class="num-badge">72 Ay</span> Kayıt için gereken süre</li>
+                        <li><span class="num-badge">4+4</span> İlkokul + Ortaokul süresi</li>
+                        <li><span class="num-badge">15 Gün</span> Muhtar/liste/tarım izni/itiraz süresi</li>
+                        <li><span class="num-badge">3 Gün</span> Mazeret bildirim süresi</li>
+                        <li><span class="num-badge">3 Nüsha</span> Çizelge adedi</li>
+                        <li><span class="num-badge">15 TL</span> Her devamsız gün için veli cezası</li>
+                        <li><span class="num-badge">500 TL</span> Israrlı devamsızlık cezası</li>
+                        <li><span class="num-badge">400 TL</span> Engelleyen/yanıltan cezası</li>
+                        <li><span class="num-badge">2-10 Dekar</span> Köy okulu arazi miktarı</li>
+                        <li><span class="num-badge">%3</span> Devlet bütçesi payı</li>
+                        <li><span class="num-badge">%20</span> İl Özel İdaresi payı</li>
+                        <li><span class="num-badge">40</span> Bir öğretmene düşen max öğrenci sayısı</li>
+                        <li><span class="num-badge">5 yıl</span> Geçici öğretmenlikte asil olma süresi</li>
+                        <li><span class="num-badge">Mülga</span> 15-42. maddeler arası yürürlükte değil</li>
+                    </ul>
+                </div>
+
+                <div class="important-note">
+                    <strong>⚠️ SIK YAPILAN HATALAR:</strong><br>
+                    - "İlköğretim ücretsizdir" ifadesi unutulmamalı (paralı değil)<br>
+                    - Mecburi yaş aralığı 6-14'tür (5-13 veya 7-15 değil)<br>
+                    - Okul öncesi EĞİTİM MECBURİ DEĞİLDİR (isteğe bağlı)<br>
+                    - 15-42 arası MÜLGA (yürürlükte değil)<br>
+                    - Tarım izni 15 gün (20 gün değil)<br>
+                    - İtiraz süresi 15 gün (30 gün değil)<br>
+                    - Kayıt ücreti GELİR DEĞİLDİR (eğitim ücretsiz)
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <p id="scrollMsg" class="scroll-msg">Testi başlatmak için notların sonuna kadar kaydırın 👇</p>
+                <button class="next-btn" id="startTestBtn" disabled>Notları Okudum, Testi Başlat</button>
+            </div>
+        </div>
+
+        <div id="quizSection" style="display: none;">
+            <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+            <div class="quiz-container">
+                <div class="stats">
+                    <div class="score">Puan: <span id="score">0</span></div>
+                    <div>İlerleme: <span id="progress">0</span>/<span id="totalQ">48</span></div>
+                </div>
+                <div class="question-container"><div class="question" id="question"></div></div>
+                <div class="options" id="options">
+                    <div class="cat-cover" id="catCover">
+                        <img src="https://cataas.com/cat" class="cat-image" alt="kedi">
+                        <div class="cat-text" style="color:white; margin-top:10px;">Cevapları görmek için tıklayın!</div>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback"><div id="feedbackText"></div></div>
+                <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru ➡️</button>
+            </div>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        // 3. PARÇA: 48 SORU (Soru 61-108)
+        const QUIZ_DATA = [
+            // DOĞRU-YANLIŞ SORULARI (61-85)
+            { question: "\"İlköğretim, kız ve erkek bütün Türk vatandaşları için mecburi olup, Devlet okullarında paralıdır.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Tamamen doğrudur", "\"Paralıdır\" kısmı yanlıştır, ücretsizdir", "\"Mecburi\" kısmı yanlıştır", "\"Kız ve erkek\" kısmı yanlıştır"], correctAnswer: 1, meaning: "İlköğretim devlet okullarında ücretsizdir." },
+            { question: "\"Mecburi ilköğretim çağı 6-14 yaş grubundaki çocukları kapsar.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "5-13 olmalıdır", "7-15 olmalıdır", "6-16 olmalıdır"], correctAnswer: 0, meaning: "6-14 yaş doğrudur." },
+            { question: "\"Mecburi ilköğretim çağı, çocuğun 5 yaşını bitirdiği yılın nisan ayı sonunda başlar.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "6 yaş olmalıdır", "5 yaş doğru ancak nisan değil eylül olmalıdır", "Tamamen yanlıştır, 7 yaşında başlar"], correctAnswer: 2, meaning: "Eylül ayında başlar, nisan değil." },
+            { question: "\"Okul öncesi eğitim kurumları mecburi ilköğretim kurumları arasında yer alır.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "Kısmen doğrudur", "Yanlıştır, okul öncesi isteğe bağlıdır", "Sadece anaokulları mecburidir"], correctAnswer: 2, meaning: "Okul öncesi isteğe bağlıdır." },
+            { question: "\"Özel eğitime muhtaç çocuklar için açılan okullar ve sınıflar mecburi ilköğretim kurumlarıdır.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "Yanlıştır, isteğe bağlıdır", "Sadece devlet okulları için doğrudur", "Sadece özel okullar için doğrudur"], correctAnswer: 0, meaning: "Özel eğitim mecburi kurumdur." },
+            { question: "\"Nüfusu az ve dağınık olan yerlerde, köyler gruplaştırılarak merkezi durumda olan köylerde ilköğretim bölge okulları kurulamaz.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "\"Kurulamaz\" değil \"kurulabilir\" olmalıdır", "Sadece yatılı okul kurulabilir", "Sadece gezici okul kurulabilir"], correctAnswer: 1, meaning: "Bölge okulları kurulabilir." },
+            { question: "\"Mecburi ilköğretim çağında olup da, memleket dışında olmak gibi nedenlerle okula gidemeyen çocukların eğitimi özel öğretimle sağlanır.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "Yanlıştır, açıköğretimle sağlanır", "Yanlıştır, eğitimden muaf tutulurlar", "Sadece yurt dışı için doğrudur"], correctAnswer: 0, meaning: "Özel öğretimle eğitim alırlar." },
+            { question: "\"Şehir ve kasabalarda ihtiyaca göre yatılı veya pansiyonlu ilköğretim okulları kurulabilir.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "Yanlıştır, sadece köylerde kurulabilir", "Yanlıştır, sadece gündüzlü okul kurulabilir", "Sadece büyükşehirlerde kurulabilir"], correctAnswer: 0, meaning: "Şehir ve kasabalarda da yatılı okul kurulabilir." },
+            { question: "\"Nüfusu az ve dağınık olup köyleri gruplaştırma imkânı olmayan yerlerde yatılı okullar açılır.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "\"Yatılı okullar\" değil \"gezici öğretmen\" görevlendirilir", "Taşımalı eğitim yapılır", "Okul açılmaz"], correctAnswer: 1, meaning: "Gezici öğretmen görevlendirilir." },
+            { question: "\"Yetiştirici ve tamamlayıcı sınıflar ve kurslar, gerçek ve tüzel kişiler tarafından açılamaz.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "\"Açılamaz\" değil \"açılabilir\" olmalıdır", "Sadece devlet açabilir", "Sadece belediyeler açabilir"], correctAnswer: 1, meaning: "Gerçek ve tüzel kişiler açabilir." },
+            { question: "\"Mecburi öğrenim çağına gelmemiş çocuklar, isteğe bağlı olarak okul öncesi eğitim kurumlarında eğitilebilir.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "Yanlıştır, mecburidir", "Sadece 5 yaş için doğrudur", "Sadece 4 yaş için doğrudur"], correctAnswer: 0, meaning: "Okul öncesi isteğe bağlıdır." },
+            { question: "\"Her köy okulunun bitişiğinde veya yakınında, öğretmen lojmanı ve uygulama bahçesi bulunması zorunlu değildir.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "Yanlıştır, zorunludur", "Sadece lojman zorunludur", "Sadece uygulama bahçesi zorunludur"], correctAnswer: 1, meaning: "Lojman ve uygulama bahçesi zorunludur." },
+            { question: "\"İlköğretim okullarının yaz tatili, sınavların bitimi ile yeni öğretim yılının başlangıcına kadar sürer.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "Haziran-eylül arasıdır", "Temmuz-ağustos arasıdır", "Öğretmenlerin kararına bağlıdır"], correctAnswer: 0, meaning: "Yaz tatili tanımı doğrudur." },
+            { question: "\"Tek öğretmenli okullarda görev yapan öğretmenlerin yaz tatili, bölge ilköğretim müfettişleri ve ilçe eğitim müdürü tarafından düzenlenir.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "Okul müdürü tarafından düzenlenir", "Valilik tarafından düzenlenir", "Millî Eğitim Bakanlığı tarafından düzenlenir"], correctAnswer: 0, meaning: "Bölge müfettişleri düzenler." },
+            { question: "\"Öğretmenler, kanunlar ve Cumhurbaşkanlığı kararnameleri ile verilen işler dışında başka bir görevle yükümlü tutulabilirler.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "\"Tutulabilirler\" değil \"tutulamazlar\" olmalıdır", "Sadece valilik izniyle tutulabilir", "Sadece il dışında tutulabilir"], correctAnswer: 1, meaning: "Öğretmenler meslek dışı görevle yükümlü tutulamaz." },
+            { question: "\"Mecburi ilköğretim çağı dışına çıkan ve ilköğretim okulunu bitiremeyen öğrencilere, öğrenimlerini tamamlamaları için en çok iki öğretim yılı daha okula devam etme izni verilir.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "Bir yıl olmalıdır", "Üç yıl olmalıdır", "Süre sınırlaması yoktur"], correctAnswer: 0, meaning: "En fazla 2 yıl ek süre verilir." },
+            { question: "\"Öğretim yılı, derslerin başlamasından bir hafta önceki günden, son sınıf sınavlarının bittiği güne kadardır.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "Derslerin başladığı gün başlar", "Eylül başı başlar, haziran sonu biter", "Öğrencilerin okula başladığı gün başlar"], correctAnswer: 0, meaning: "Öğretim yılı tanımı doğrudur." },
+            { question: "\"Her yıl derslere başlamadan en az 15 gün önce, köy ve mahalle muhtarları mecburi öğrenim çağındaki çocukların künyelerini gösteren üç nüsha çizelge hazırlar.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "10 gün olmalıdır", "20 gün olmalıdır", "Bir nüsha olmalıdır"], correctAnswer: 0, meaning: "15 gün önce, 3 nüsha doğrudur." },
+            { question: "\"Bir çocuğun okula kayıt işlemi velisi tarafından yapılmazsa, okul müdürü çocuğu kendiliğinden okula kaydeder.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "Kaymakam kaydeder", "Muhtar kaydeder", "İlçe milli eğitim müdürü kaydeder"], correctAnswer: 0, meaning: "Müdür kendiliğinden kaydeder." },
+            { question: "\"Hastalık, sel, kar gibi sebeplerle okula gidemeyen çocukların durumu, velileri tarafından en geç 3 gün içinde okul idaresine bildirilir.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "1 gün olmalıdır", "5 gün olmalıdır", "7 gün olmalıdır"], correctAnswer: 0, meaning: "3 gün doğrudur." },
+            { question: "\"Köy okullarında okuyan çocuklara, ailelerinin tarım ve hayvancılık işlerinde yardım etmeleri için muhtar tarafından 20 güne kadar izin verilebilir.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "15 gün olmalıdır", "10 gün olmalıdır", "30 gün olmalıdır"], correctAnswer: 1, meaning: "15 güne kadar izin verilir, 20 değil." },
+            { question: "\"Çocuğunu okula göndermeyen veliye, her devamsız gün için 15 Türk Lirası idari para cezası verilir.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "10 TL olmalıdır", "20 TL olmalıdır", "50 TL olmalıdır"], correctAnswer: 0, meaning: "15 TL doğrudur." },
+            { question: "\"Verilen idari para cezasına rağmen çocuğunu okula göndermeyen veliye 1000 Türk Lirası ek idari para cezası kesilir.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "500 TL olmalıdır", "300 TL olmalıdır", "200 TL olmalıdır"], correctAnswer: 1, meaning: "500 TL ek ceza kesilir." },
+            { question: "\"Okul idarelerinin ve mülki amirlerin uyarılarına rağmen çocuğunu okula göndermeyenlere verilen idari para cezası mahalli mülki amir tarafından verilir.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "Okul müdürü verir", "Muhtar verir", "İlçe milli eğitim müdürü verir"], correctAnswer: 0, meaning: "Mülki amir verir." },
+            { question: "\"Verilen idari para cezalarına tebliğ tarihinden itibaren 30 gün içinde Sulh Ceza Mahkemesine itiraz edilebilir.\" ifadesi için aşağıdakilerden hangisi doğrudur?", options: ["Doğrudur", "15 gün olmalıdır", "7 gün olmalıdır", "10 gün olmalıdır"], correctAnswer: 1, meaning: "İtiraz süresi 15 gündür, 30 değil." },
+            
+            // BOŞLUK DOLDURMA SORULARI (86-108)
+            { question: "İlköğretim, kız ve erkek bütün Türk vatandaşları için mecburi olup, Devlet okullarında _________ .", options: ["paralıdır", "ücretsizdir", "isteğe bağlıdır", "sadece belirli derslerde ücretlidir"], correctAnswer: 1, meaning: "Devlet okullarında ücretsizdir." },
+            { question: "Mecburi ilköğretim çağı _________ yaş grubundaki çocukları kapsar.", options: ["5-13", "6-13", "6-14", "7-14"], correctAnswer: 2, meaning: "6-14 yaş arasıdır." },
+            { question: "Mecburi ilköğretim çağı, çocuğun _________ yaşını bitirdiği yılın eylül ayı sonu itibarıyla başlar.", options: ["4", "5", "6", "7"], correctAnswer: 1, meaning: "5 yaşını bitirdiği yıl başlar." },
+            { question: "İlköğretim kurumları; ilköğretim okulları, _________ ve tamamlayıcı sınıflar ve kurslar ile özel eğitime muhtaç çocuklar için okullar ve sınıflardan oluşur.", options: ["yetiştirici", "gezici", "yatılı", "gündüzlü"], correctAnswer: 0, meaning: "Yetiştirici sınıflar." },
+            { question: "Nüfusu az ve dağınık olan köyler gruplaştırılarak, merkezi köylerde _________ okulları kurulur.", options: ["yatılı ilköğretim", "gezici ilköğretim", "ilköğretim bölge", "pansiyonlu ilköğretim"], correctAnswer: 2, meaning: "İlköğretim bölge okulları." },
+            { question: "Mecburi ilköğretim çağı dışına çıkan ve okulu bitiremeyen çocuklara, en fazla _________ öğretim yılı daha okula devam etme izni verilir.", options: ["bir", "iki", "üç", "dört"], correctAnswer: 1, meaning: "En fazla 2 yıl." },
+            { question: "Tek öğretmenli okullarda görevli öğretmenlerin yaz tatili, _________ müfettişleri ve ilçe eğitim müdürü tarafından düzenlenir.", options: ["bölge ilköğretim", "il milli eğitim", "başbakanlık", "maarif müfettişleri"], correctAnswer: 0, meaning: "Bölge ilköğretim müfettişleri." },
+            { question: "Her yıl derslere başlamadan en az _________ gün önce muhtarlar, mecburi öğrenim çağındaki çocukların çizelgelerini hazırlar.", options: ["7", "10", "15", "20"], correctAnswer: 2, meaning: "15 gün önce." },
+            { question: "Hastalık veya diğer meşru sebeplerle okula gidemeyen öğrencilerin velileri, durumu en geç _________ gün içinde okul idaresine bildirmek zorundadır.", options: ["1", "3", "5", "7"], correctAnswer: 1, meaning: "3 gün içinde." },
+            { question: "Köy okullarında okuyan çocuklara, tarım ve hayvancılık işlerine yardım etmeleri amacıyla muhtar tarafından _________ güne kadar izin verilebilir.", options: ["10", "15", "20", "30"], correctAnswer: 1, meaning: "15 güne kadar." },
+            { question: "Çocuğunu okula göndermeyen veliye, her devamsız gün için _________ Türk Lirası idari para cezası uygulanır.", options: ["10", "15", "20", "50"], correctAnswer: 1, meaning: "15 TL." },
+            { question: "Verilen idari para cezasına rağmen çocuğunu okula göndermeyen veliye ayrıca _________ Türk Lirası idari para cezası kesilir.", options: ["100", "300", "400", "500"], correctAnswer: 3, meaning: "500 TL ek ceza." },
+            { question: "İdari para cezalarına tebliğ tarihinden itibaren _________ gün içinde Sulh Ceza Mahkemesine itiraz edilebilir.", options: ["7", "10", "15", "30"], correctAnswer: 2, meaning: "15 gün içinde itiraz." },
+            { question: "Köy okulları için ayrılacak arazi _________ dekardan az, _________ dekardan çok olamaz.", options: ["1 / 5", "2 / 10", "3 / 15", "5 / 20"], correctAnswer: 1, meaning: "2-10 dekar." },
+            { question: "Devlet bütçesinden ilköğretime ayrılacak pay, devlet gelirlerinin %_________ 'ünden az olamaz.", options: ["1", "2", "3", "5"], correctAnswer: 2, meaning: "%3." },
+            { question: "İl özel idaresi bütçesinin yıllık gelirlerinden ilköğretime ayrılacak pay %_________ 'den az olamaz.", options: ["10", "15", "20", "25"], correctAnswer: 2, meaning: "%20." },
+            { question: "İhtiyaç fazlası okul arazileri, _________ kararı ile satılabilir.", options: ["okul müdürünün", "valiliğin", "il daimi encümeninin", "kaymakamlığın"], correctAnswer: 2, meaning: "İl Daimi Encümeni kararıyla." },
+            { question: "İlköğretim okullarına ait yapım ve onarım işlerinde her türlü sözleşme ve tapu işlemleri _________ ve resimden muaftır.", options: ["vergi", "harç", "KDV", "damga vergisi"], correctAnswer: 1, meaning: "Harç ve resimden muaf." },
+            { question: "Her yıl hangi zaman dilimi \"İlköğretim Haftası\" olarak kutlanmaktadır?", options: ["Eylül ayının ilk haftası", "Eylül ayının ikinci haftası", "Eylül ayının üçüncü haftası", "Eylül ayının son haftası"], correctAnswer: 2, meaning: "Eylül'ün 3. haftası." },
+            { question: "222 sayılı kanuna göre birleştirilmiş sınıflar da dahil olmak üzere bir öğretmene düşen öğrenci sayısı kaçtan fazla olamaz?", options: ["25", "30", "40", "45"], correctAnswer: 2, meaning: "40 öğrenciden fazla olamaz." },
+            { question: "İlköğretim okulu ve dengi okul mezunlarından olup da geçici öğretmen olarak çalışmakta bulunanlardan kaç yıl içinde öğretmen okulu bitirme imtihanlarını veremeyenlerin görevlerine son verilir?", options: ["3", "5", "7", "10"], correctAnswer: 1, meaning: "5 yıl içinde." },
+            { question: "Geçici öğretmenler ile ilgili aşağıdaki bilgilerden hangisi yanlıştır?", options: ["18 yaşını doldurmuş olmaları gerekmektedir", "Açılmış ve açılacak kurslarda başarılı olmaları gerekmektedir", "Tatil aylarında da geçici öğretmenlere ücretleri ödenmektedir", "Aralıksız beş takvim yılı geçici öğretmenlik yapanlar asıl öğretmenliğe geçirilir"], correctAnswer: 2, meaning: "Tatil aylarında ücret ödenmez." },
+            { question: "222 sayılı kanuna göre mecburi ilköğretim çağındaki çocukların çalıştırılmasıyla ilgili aşağıdakilerden hangisi doğrudur?", options: ["Hiçbir şart altında çalıştırılamazlar", "Sadece hafta sonları her türlü işte çalışabilirler", "Ders saatlerini aksatmamak ve sadece aile işlerinde çalışmak kaydıyla çalıştırılabilirler", "Sadece tarım işlerinde okul saatleri içinde çalışabilirler"], correctAnswer: 2, meaning: "Aile işinde, okul saatleri dışında hafif işlerde çalışabilir." }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.questions = [...QUIZ_DATA].sort(() => Math.random() - 0.5);
+                this.elements = {
+                    question: document.getElementById('question'), options: document.getElementById('options'),
+                    feedback: document.getElementById('feedback'), feedbackText: document.getElementById('feedbackText'),
+                    nextBtn: document.getElementById('nextBtn'), score: document.getElementById('score'),
+                    progress: document.getElementById('progress'), totalQ: document.getElementById('totalQ'),
+                    progressBar: document.getElementById('progressBar'), catCover: document.getElementById('catCover'),
+                    resultsContainer: document.getElementById('resultsContainer'), quizSection: document.getElementById('quizSection'),
+                    finalScore: document.getElementById('finalScore'), wordList: document.getElementById('wordList')
+                };
+                this.init();
+            }
+            init() {
+                this.elements.totalQ.textContent = this.questions.length;
+                this.elements.catCover.onclick = () => this.elements.catCover.style.display = 'none';
+                this.elements.nextBtn.onclick = () => this.nextQuestion();
+                this.showQuestion();
+            }
+            showQuestion() {
+                const q = this.questions[this.currentQuestionIndex];
+                this.elements.question.textContent = q.question;
+                this.elements.catCover.style.display = 'flex';
+                this.elements.options.innerHTML = '';
+                this.elements.options.appendChild(this.elements.catCover);
+                [...q.options].sort(() => Math.random() - 0.5).forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = opt;
+                    btn.onclick = () => this.handleAnswer(opt, q);
+                    this.elements.options.appendChild(btn);
+                });
+                this.elements.feedback.style.display = 'none';
+                this.elements.nextBtn.style.display = 'none';
+                this.elements.progress.textContent = this.currentQuestionIndex + 1;
+                this.elements.progressBar.style.width = `${((this.currentQuestionIndex + 1) / this.questions.length) * 100}%`;
+            }
+            handleAnswer(sel, q) {
+                const cor = q.options[q.correctAnswer];
+                document.querySelectorAll('.option-btn').forEach(b => {
+                    b.disabled = true;
+                    if (b.textContent === cor) b.classList.add('correct');
+                    if (b.textContent === sel && sel !== cor) b.classList.add('incorrect');
+                });
+                const ok = sel === cor;
+                if (ok) this.score++;
+                this.elements.score.textContent = this.score;
+                this.elements.feedback.style.display = 'block';
+                this.elements.feedback.className = `feedback ${ok ? 'correct-feedback' : 'incorrect-feedback'}`;
+                this.elements.feedbackText.innerHTML = ok ? `✅ Doğru!<br>${q.meaning}` : `❌ Yanlış!<br>Doğru Cevap: <strong>${cor}</strong><br>${q.meaning}`;
+                this.elements.nextBtn.style.display = 'block';
+            }
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) this.showQuestion();
+                else this.endQuiz();
+            }
+            endQuiz() {
+                this.elements.quizSection.style.display = 'none';
+                this.elements.resultsContainer.style.display = 'block';
+                const p = Math.round((this.score / this.questions.length) * 100);
+                this.elements.finalScore.textContent = `${this.score}/${this.questions.length} (%${p})`;
+                this.questions.forEach(q => {
+                    const d = document.createElement('div');
+                    d.className = 'word-card';
+                    d.innerHTML = `<strong>${q.question}</strong><p style="margin-top:5px; color:#555">${q.meaning}</p>`;
+                    this.elements.wordList.appendChild(d);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const scroll = document.getElementById('notesScrollArea');
+            const btn = document.getElementById('startTestBtn');
+            const msg = document.getElementById('scrollMsg');
+            scroll.onscroll = () => {
+                if (scroll.scrollTop + scroll.clientHeight >= scroll.scrollHeight - 10) {
+                    btn.disabled = false;
+                    msg.style.display = 'none';
+                }
+            };
+            if (scroll.scrollHeight <= scroll.clientHeight) {
+                btn.disabled = false;
+                msg.style.display = 'none';
+            }
+            btn.onclick = () => {
+                document.getElementById('notesContainer').style.display = 'none';
+                document.getElementById('quizSection').style.display = 'block';
+                new QuizManager();
+            };
+        });
+    </script>
+</body>
+</html>

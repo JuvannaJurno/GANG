@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>222 Sayılı Kanun - 2. Parça (43 Soru)</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%); color: var(--dark); line-height: 1.6; padding: 15px; min-height: 100vh; }
+        
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow: hidden; }
+        
+        header { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; text-align: center; padding: 25px 20px; position: relative; }
+        header::before { content: "📚"; font-size: 3rem; position: absolute; top: 10px; left: 20px; opacity: 0.3; }
+        h1 { margin-bottom: 8px; font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1rem; opacity: 0.9; }
+
+        .notes-container { padding: 25px; animation: fadeIn 0.5s ease; }
+        .notes-title { color: var(--primary); margin-bottom: 15px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .notes-scroll-area { max-height: 55vh; overflow-y: auto; background: var(--light); border: 2px solid var(--accent); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        .notes-scroll-area::-webkit-scrollbar { width: 8px; }
+        .notes-scroll-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        .notes-scroll-area h3 { color: var(--dark); border-bottom: 2px solid var(--primary); padding-bottom: 5px; margin-top: 20px; margin-bottom: 10px; }
+        .notes-scroll-area ul { padding-left: 20px; margin-bottom: 15px; }
+        .notes-scroll-area li { margin-bottom: 8px; }
+
+        .numbers-box { background-color: #E3F2FD; border-left: 5px solid #1976D2; padding: 15px; margin: 20px 0; border-radius: 5px; }
+        .numbers-box h3 { color: #1565C0 !important; border-bottom: 2px solid #90CAF9 !important; margin-top: 0 !important; }
+        .numbers-box li { background: white; margin-bottom: 8px; padding: 10px; border-radius: 6px; list-style: none; display: flex; align-items: center; }
+        .num-badge { background: #1976D2; color: white; font-weight: bold; padding: 4px 10px; border-radius: 4px; margin-right: 12px; min-width: 65px; text-align: center; }
+
+        .important-note { background-color: #FFF8E1; border-left: 5px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 5px; }
+        .scroll-msg { color: var(--danger); font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; text-align: center; }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        .progress-container { width: 100%; background-color: #e9ecef; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); width: 0%; transition: width 0.5s ease; }
+        .quiz-container { padding: 25px; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; background-color: var(--light); padding: 15px; border-radius: 10px; border: 2px solid var(--accent); }
+        .question-container { background: var(--light); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .options { display: grid; gap: 12px; position: relative; }
+        .cat-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(46, 125, 50, 0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px; z-index: 10; cursor: pointer; }
+        .cat-image { max-width: 200px; border-radius: 8px; margin-bottom: 10px; }
+        .option-btn { padding: 16px; border: 2px solid #ddd; border-radius: 10px; background: white; cursor: pointer; text-align: left; font-size: 1rem; transition: 0.3s; }
+        .option-btn.correct { background-color: var(--success); color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .feedback { padding: 20px; border-radius: 10px; margin-top: 20px; display: none; line-height: 1.6; }
+        .correct-feedback { background-color: rgba(56, 142, 60, 0.1); border-left: 5px solid var(--success); }
+        .incorrect-feedback { background-color: rgba(198, 40, 40, 0.1); border-left: 5px solid var(--danger); }
+        .next-btn { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none; padding: 16px; border-radius: 10px; cursor: pointer; width: 100%; max-width: 250px; display: block; margin: 20px auto; font-weight: bold; }
+        .next-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .results-container { padding: 30px; text-align: center; display: none; }
+        .final-score { font-size: 3rem; color: var(--accent); font-weight: bold; margin: 20px 0; }
+        .word-card { border: 2px solid var(--accent); padding: 15px; margin-bottom: 15px; background: var(--light); text-align: left; border-radius: 10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 222 Sayılı İlköğretim ve Eğitim Kanunu</h1>
+            <div class="subtitle">2. PARÇA: Kayıt, Devam, Ceza, Tatil, Arsa, Mali Hükümler (43 Soru)</div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <h2 class="notes-title">📖 Ders Notları - 2. Parça</h2>
+            <div class="notes-scroll-area" id="notesScrollArea">
+                <h3>📝 MADDE 46-57: Kayıt, Devam, İzin ve Ceza Süreçleri</h3>
+                <ul>
+                    <li><strong>Aile Başkanı:</strong> Veli veya vasi olmadığı halde çocuğun bakımını üstlenen kişidir (Madde 46).</li>
+                    <li><strong>Uzatma Hakkı:</strong> Mecburi çağ sonrası okulu bitiremeyenlere en fazla <strong>2 yıl</strong> ek süre (Madde 46).</li>
+                    <li><strong>Tasdikname:</strong> Ek süre sonunda da bitiremeyenlere verilen eğitim belgesi (Madde 46).</li>
+                    <li><strong>Muhtarın Görevi:</strong> Ders yılından <strong>15 gün önce</strong> çocuk listesini <strong>3 nüsha</strong> hazırlar (Madde 48).</li>
+                    <li><strong>Okul Müdürü:</strong> Kayıt yaptırmayan çocuğu <strong>kendiliğinden kaydeder</strong> (Madde 48).</li>
+                    <li><strong>Yaş Tespiti:</strong> Nüfus kaydı olmayan çocukların yaşını <strong>ihtiyar kurulları</strong> belirler (Madde 48).</li>
+                    <li><strong>Mazeret Bildirme:</strong> Hastalık, ölüm vb. durumlarda <strong>3 gün</strong> içinde okula bildirilir (Madde 52).</li>
+                    <li><strong>Tarım İzni:</strong> Muhtar tarafından en fazla <strong>15 gün</strong> izin verilebilir (Madde 54).</li>
+                </ul>
+
+                <h3>💰 MADDE 55-57: İdari Para Cezaları</h3>
+                <ul>
+                    <li><strong>15 TL/gün:</strong> Devamsızlıkta veliye her gün için (Madde 55).</li>
+                    <li><strong>500 TL:</strong> Cezaya rağmen göndermeyen veliye ek ceza (Madde 55).</li>
+                    <li><strong>400 TL:</strong> Okula gitmesini engelleyen veya yanıltan kişiye ceza (Madde 56).</li>
+                    <li><strong>Mülki Amir (Vali/Kaymakam):</strong> Ceza vermeye yetkilidir (Madde 57).</li>
+                    <li><strong>İtiraz:</strong> <strong>15 gün</strong> içinde <strong>Sulh Ceza Mahkemesi</strong>'ne yapılır. Mahkeme kararı <strong>kesindir</strong> (Madde 57).</li>
+                </ul>
+
+                <h3>⏰ MADDE 42-47: Öğretim Yılı ve Yaz Tatili</h3>
+                <ul>
+                    <li><strong>Öğretim Yılı:</strong> Derslerin başlamasından <strong>1 hafta önce</strong> başlar, son sınıf sınavlarının bittiği gün sona erer (Madde 47).</li>
+                    <li><strong>Yaz Tatili:</strong> Sınavların bitiminden yeni öğretim yılının başlangıcına kadar sürer (Madde 43).</li>
+                    <li><strong>Tek Öğretmenli Okullar:</strong> Yaz tatili izinleri <strong>bölge ilköğretim müfettişleri</strong> ve <strong>ilçe eğitim müdürü</strong> tarafından düzenlenir (Madde 43).</li>
+                </ul>
+
+                <h3>🏠 MADDE 60-63: Arsa ve Arazi İşleri</h3>
+                <ul>
+                    <li><strong>Arsa Temini:</strong> Önce devlet arazisi (bedelsiz), yoksa kamulaştırma (Madde 60).</li>
+                    <li><strong>Köy Okulu Arazi Miktarı:</strong> En az <strong>2 dekar</strong>, en fazla <strong>10 dekar</strong> (Madde 61).</li>
+                    <li><strong>Uygulama Bahçesi:</strong> En fazla <strong>10 dekar</strong> (Madde 61).</li>
+                    <li><strong>İhtiyaç Fazlası Arazi:</strong> <strong>İl Daimi Encümeni</strong> kararıyla satılabilir (Madde 62).</li>
+                    <li><strong>Okul-meyhane mesafesi:</strong> En az <strong>100 metre</strong> (Madde 63).</li>
+                </ul>
+
+                <h3>💰 MADDE 76-82: Gelirler ve Muafiyetler</h3>
+                <ul>
+                    <li><strong>Yardım Sandığı:</strong> Her okulda yoksul öğrencilere yardım için kurulur (Madde 59).</li>
+                    <li><strong>Devlet Bütçesi Payı:</strong> En az <strong>%3</strong> (Madde 76).</li>
+                    <li><strong>İl Özel İdaresi Payı:</strong> En az <strong>%20</strong> (Madde 76).</li>
+                    <li><strong>Kayıt ücreti</strong> ilköğretim gelirleri arasında yer almaz (eğitim ücretsizdir).</li>
+                    <li><strong>Harç Muafiyeti:</strong> İlköğretim yapım işlerinde her türlü vergi, resim ve harçtan muaftır (Madde 82).</li>
+                </ul>
+
+                <div class="numbers-box">
+                    <h3>🔢 Bu Parçadaki Kritik Sayılar</h3>
+                    <ul>
+                        <li><span class="num-badge">15 Gün</span> Muhtarın listeyi hazırlama süresi / Tarım izni / İtiraz süresi</li>
+                        <li><span class="num-badge">3 Nüsha</span> Muhtarın hazırladığı çizelge adedi</li>
+                        <li><span class="num-badge">3 Gün</span> Mazeret bildirim süresi</li>
+                        <li><span class="num-badge">15 TL</span> Her devamsız gün için veliye ceza</li>
+                        <li><span class="num-badge">500 TL</span> Israrlı devamsızlıkta ek ceza</li>
+                        <li><span class="num-badge">400 TL</span> Okula gitmesini engelleyene ceza</li>
+                        <li><span class="num-badge">2-10 Dekar</span> Köy okulu arazi miktarı</li>
+                        <li><span class="num-badge">%3</span> Devlet bütçesinden ilköğretime ayrılan pay</li>
+                        <li><span class="num-badge">%20</span> İl Özel İdaresi bütçesinden ayrılan pay</li>
+                        <li><span class="num-badge">100 Metre</span> Okul-meyhane arası minimum mesafe</li>
+                        <li><span class="num-badge">10 Yıl</span> İlköğretim yapım ve onarım planı süresi (Madde 80)</li>
+                        <li><span class="num-badge">Mülga (15-42)</span> 15. madde dahil 42. maddeye kadar tüm maddeler yürürlükten kaldırılmıştır</li>
+                    </ul>
+                </div>
+
+                <div class="important-note">
+                    <strong>⚠️ EMRAH HOCA UYARIYOR!</strong><br>
+                    222 sayılı İlköğretim ve Eğitim Kanununun <strong>15. maddesi dahil 42. maddeye kadar</strong> mülga (yürürlükten kaldırılmış, artık geçerliliği olmayan) edilmiştir.<br><br>
+                    <strong>🔄 Okul Aile Birlikleri:</strong> Daha önceden okulların ihtiyaçlarını karşılamak için dernekler kurulurken, bu madde ile dernekler kaldırılmış ve Okul-Aile Birlikleri kurulmuştur.
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <p id="scrollMsg" class="scroll-msg">Testi başlatmak için notların sonuna kadar kaydırın 👇</p>
+                <button class="next-btn" id="startTestBtn" disabled>Notları Okudum, Testi Başlat</button>
+            </div>
+        </div>
+
+        <div id="quizSection" style="display: none;">
+            <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+            <div class="quiz-container">
+                <div class="stats">
+                    <div class="score">Puan: <span id="score">0</span></div>
+                    <div>İlerleme: <span id="progress">0</span>/<span id="totalQ">43</span></div>
+                </div>
+                <div class="question-container"><div class="question" id="question"></div></div>
+                <div class="options" id="options">
+                    <div class="cat-cover" id="catCover">
+                        <img src="https://cataas.com/cat" class="cat-image" alt="kedi">
+                        <div class="cat-text" style="color:white; margin-top:10px;">Cevapları görmek için tıklayın!</div>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback"><div id="feedbackText"></div></div>
+                <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru ➡️</button>
+            </div>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        // 2. PARÇA: 43 SORU (Soru 20-56 + 58-60 + 111-113) - UYDURMA SORU (57) SİLİNDİ
+        const QUIZ_DATA = [
+            { question: "Bir kanuni temsilcinin olmadığı hâllerde ilköğretime devam mecburiyeti olan çocukları sürekli olarak yanında bulunduran veya barındıran ya da çalıştıran kişilere ne ad verilmektedir?", options: ["Kayyım", "Aile Başkanı", "Veli", "Vasi"], correctAnswer: 1, meaning: "Madde 46: Bu kişilere 'aile başkanı' denir." },
+            { question: "Mecburi öğretim çağını bitirdiği hâlde öğretim yılı sonuna kadar ilköğretim okulunu bitiremeyen çocuklara en çok kaç öğretim yılı daha okula devam izni verilir?", options: ["1", "2", "3", "4"], correctAnswer: 1, meaning: "Madde 46: En fazla 2 yıl ek süre verilir." },
+            { question: "Mecburi öğretim çağı sonrasında verilen iki yıllık uzatma süresi sonunda da okulu bitiremeyen çocuklara ne yapılır?", options: ["Bir öğretim yılı ek uzatma hakkı daha verilir", "İki öğretim yılı ek uzatma hakkı daha verilir", "Mezuniyet sınavı hakkı verilir", "Tasdikname verilerek kayıtları silinir"], correctAnswer: 3, meaning: "Madde 46: Tasdikname verilip kaydı silinir." },
+            { question: "Köy ve mahalle muhtarları, mecburi öğrenim çağındaki çocukların çizelgelerini ne zaman hazırlar?", options: ["Ders yılı başlamadan bir ay önce", "Ders yılı başlamadan 15 gün önce", "Öğretim yılının ilk haftasında", "Sınavlar bittikten hemen sonra"], correctAnswer: 1, meaning: "Madde 48: Ders yılından 15 gün önce hazırlanır." },
+            { question: "Her yıl derslere başlamadan en az kaç gün önce muhtarlar çizelgeyi hazırlar?", options: ["7", "10", "15", "30"], correctAnswer: 2, meaning: "Madde 48: 15 gün önce hazırlanır." },
+            { question: "Muhtarlar tarafından hazırlanan çizelgeler kaç nüsha olarak düzenlenir?", options: ["1", "2", "3", "4"], correctAnswer: 2, meaning: "Madde 48: 3 nüsha düzenlenir." },
+            { question: "Nüfus kaydı bulunmayan çocukların yaşını kim tespit eder?", options: ["Muhtar", "Mülki Amir", "İl MEM", "İhtiyar Kurulları"], correctAnswer: 3, meaning: "Madde 48: İhtiyar kurulları yaş tespiti yapar." },
+            { question: "Veli tarafından okula yazdırılmayan çocuğu, okul müdürü ne şekilde kaydeder?", options: ["Kaydetmez, valiliğe bildirir", "Muhtara yönlendirir", "Millî Eğitim Bakanlığına bildirir", "Kendiliğinden okula kaydeder"], correctAnswer: 3, meaning: "Madde 48: Müdür kendiliğinden kaydeder." },
+            { question: "Hastalık veya cenaze gibi mazeretler en geç kaç gün içinde okula bildirilmelidir?", options: ["1", "3", "5", "7"], correctAnswer: 1, meaning: "Madde 52: 3 gün içinde bildirilir." },
+            { question: "Öğrenci velisi, vasisi veya ev başkanı özrü yüzünden okula gidemeyen çocuğun durumunu en geç kaç gün içinde okul idaresine bildirmekle yükümlüdür?", options: ["2", "3", "5", "7"], correctAnswer: 1, meaning: "Madde 52: 3 gün içinde bildirilir." },
+            { question: "Bir öğrenciye ailesi yanında kalmayı gerektirecek bir ölüm veya yaralanma söz konusu olursa okul idaresi tarafından bir yıl içinde kaç günü geçmemek üzere izin verilebilir?", options: ["3", "5", "7", "15"], correctAnswer: 3, meaning: "Madde 52: Ölüm/yaralanmada izin sınırı 15 gündür." },
+            { question: "Tarım işleri için muhtar tarafından en fazla kaç gün izin verilebilir?", options: ["5", "10", "15", "20"], correctAnswer: 2, meaning: "Madde 54: 15 güne kadar izin verilebilir." },
+            { question: "Devamsızlıkta veliye her gün için ne kadar ceza kesilir?", options: ["10 TL", "15 TL", "20 TL", "50 TL"], correctAnswer: 1, meaning: "Madde 55: 15 TL/gün ceza kesilir." },
+            { question: "Cezaya rağmen çocuğunu okula göndermeyen veliye ek kaç TL ceza kesilir?", options: ["100 TL", "300 TL", "400 TL", "500 TL"], correctAnswer: 3, meaning: "Madde 55: 500 TL ek ceza kesilir." },
+            { question: "Okula gitmesini engelleyen veya yanıltan kişiye kaç TL ceza kesilir?", options: ["100 TL", "300 TL", "400 TL", "500 TL"], correctAnswer: 2, meaning: "Madde 56: 400 TL ceza kesilir." },
+            { question: "İdari para cezalarını vermeye kim yetkilidir?", options: ["Okul Müdürü", "Muhtar", "Mülki İdare Amiri", "İlçe MEM"], correctAnswer: 2, meaning: "Madde 57: Mülki amir (vali/kaymakam) verir." },
+            { question: "İdari para cezasına itiraz süresi kaç gündür?", options: ["7", "10", "15", "30"], correctAnswer: 2, meaning: "Madde 57: 15 gün içinde itiraz edilir." },
+            { question: "İdari para cezasına itiraz nereye yapılır?", options: ["İl MEM", "Bölge İdare Mahkemesi", "Sulh Ceza Mahkemesi", "Danıştay"], correctAnswer: 2, meaning: "Madde 57: Sulh Ceza Mahkemesi'ne itiraz edilir." },
+            { question: "Sulh Ceza Mahkemesi'nin itiraz kararı nasıldır?", options: ["Temyiz edilebilir", "İstinaf edilebilir", "Kesindir", "Yargıtay'a gider"], correctAnswer: 2, meaning: "Madde 57: Mahkeme kararı kesindir." },
+            { question: "Öğretim yılı ne zaman başlar?", options: ["Derslerin başladığı gün", "Derslerin başlamasından 1 hafta önce", "Eylülün ilk günü", "Öğrencilerin kayıt yaptırdığı gün"], correctAnswer: 1, meaning: "Madde 47: Öğretim yılı, derslerden 1 hafta önce başlar." },
+            { question: "Yaz tatili ne zaman başlar ve biter?", options: ["Haziran başı - Eylül sonu", "Ders bitimi - Eylül ilk hafta", "Sınavların bitimi - Yeni öğretim yılı başlangıcı", "Temmuz - Ekim"], correctAnswer: 2, meaning: "Madde 43: Yaz tatili sınav bitiminden yeni yıl başlangıcına kadardır." },
+            { question: "Tek öğretmenli okullarda yaz tatili izinlerini kim düzenler?", options: ["Okul müdürü", "Valilik", "Bölge ilköğretim müfettişleri ve ilçe eğitim müdürü", "Millî Eğitim Bakanlığı"], correctAnswer: 2, meaning: "Madde 43: Bölge müfettişleri ve ilçe eğitim müdürü düzenler." },
+            { question: "Okul binaları ve arsaları şehir/kasabalarda kim, köylerde kim tarafından sağlanır?", options: ["Belediye - İl Özel İdaresi", "İl Özel İdaresi - Köy tüzel kişiliği", "Valilik - Belediye", "MEB - Köy ihtiyar heyeti"], correctAnswer: 1, meaning: "Madde 63: Şehirde İl Özel İdaresi, köyde köy tüzel kişiliği sağlar." },
+            { question: "Köy okullarına tahsis edilecek arazi miktarı nedir?", options: ["1-5 dekar", "2-10 dekar", "3-15 dekar", "5-20 dekar"], correctAnswer: 1, meaning: "Madde 61: En az 2, en fazla 10 dekar." },
+            { question: "Köy okullarının uygulama bahçesi en fazla kaç dekar olabilir?", options: ["2", "5", "10", "15"], correctAnswer: 2, meaning: "Madde 61: Uygulama bahçesi en fazla 10 dekar olabilir." },
+            { question: "Okulların uygulama bahçeleri ile ilgili hangisi yanlıştır?", options: ["Tarım dersleri uygulaması yapılır", "Gelirler öğrenci beslenmesine harcanır", "Özel idare bütçelerine gelir kaydedilir", "Tesisler köy ihtiyar heyeti tarafından belirlenir"], correctAnswer: 2, meaning: "Madde 61: Gelirler özel idare bütçesine değil, okula kalır." },
+            { question: "İhtiyaç fazlası arazi kimin kararıyla satılır?", options: ["Okul müdürü", "Vali", "İl Daimi Encümeni", "Kaymakam"], correctAnswer: 2, meaning: "Madde 62: İl Daimi Encümeni karar verir." },
+            { question: "Köy okulu arsa seçim komisyonuna kim başkanlık eder?", options: ["Vali", "Bölge İlköğretim Müfettişi veya İlçe Eğitim Müdürü", "Köy Muhtarı", "Mal Müdürü"], correctAnswer: 1, meaning: "Madde 62: Bölge müfettişi veya ilçe eğitim müdürü başkanlık eder." },
+            { question: "Köy okulu arsa seçim komisyonunda kim bulunmak zorundadır?", options: ["Belediye Başkanı", "Tarım İl Müdürü", "Mahalle veya köy muhtarı", "Garnizon Komutanı"], correctAnswer: 2, meaning: "Madde 62: Muhtar komisyonda bulunmak zorundadır." },
+            { question: "Meyhane, bar gibi yerler okula en az kaç metre uzaklıkta olmalıdır?", options: ["100", "200", "300", "500"], correctAnswer: 0, meaning: "Madde 63: En az 100 metre uzaklıkta olmalıdır." },
+            { question: "Yoksul öğrencilere yardım için kurulan sandığın adı nedir?", options: ["Okul Aile Birliği", "İlköğretim Okulları Yardım Sandığı", "Sosyal Yardımlaşma Kulübü", "Eğitim Vakfı"], correctAnswer: 1, meaning: "Madde 59: İlköğretim Okulları Yardım Sandığı kurulur." },
+            { question: "Devlet bütçesinden ilköğretime ayrılacak asgari pay yüzde kaçtır?", options: ["%1", "%2", "%3", "%5"], correctAnswer: 2, meaning: "Madde 76: En az %3 ayrılmalıdır." },
+            { question: "İl Özel İdaresi bütçesinden ilköğretime ayrılacak asgari pay yüzde kaçtır?", options: ["%10", "%15", "%20", "%25"], correctAnswer: 2, meaning: "Madde 76: En az %20 ayrılmalıdır." },
+            { question: "Aşağıdakilerden hangisi ilköğretim gelirleri arasında yer almaz?", options: ["Devlet bütçesi %3", "Özel idare %20", "İdari para cezaları", "Öğrenci kayıt ücretleri"], correctAnswer: 3, meaning: "Madde 2 + 76: Kayıt ücreti ilköğretim geliri değildir (eğitim ücretsizdir)." },
+            { question: "İlköğretim yapım işlerinde sözleşme ve tapu işlemleri hangi vergi ve harçtan muaftır?", options: ["Sadece KDV", "Sadece damga vergisi", "Her türlü vergi, resim ve harç", "Sadece harçlar"], correctAnswer: 2, meaning: "Madde 82: Tüm vergi, resim ve harçlardan muaftır." },
+            { question: "Okul için seçilen arsaların temel kullanım amacı nedir?", options: ["Köy tüzel kişiliğine gelir sağlamak", "Okulun gelir kaynaklarını artırmak", "Muhtarlık binası yapmak", "Tarım kooperatifine kiralamak"], correctAnswer: 1, meaning: "Madde 59,61: Okulun gelir kaynaklarını artırmak." },
+            { question: "Öğretmen lojmanlarının kira bedellerini kim belirler?", options: ["Mülki amirler", "Belediyeler", "İl Daimi Komisyonu", "Okul Aile Birliği"], correctAnswer: 2, meaning: "Madde 77: İl Daimi Komisyonu belirler." },
+            { question: "Köy tüzel kişiliğine ait taşınmaz mallar kimin izni olmadan satılamaz?", options: ["Cumhurbaşkanlığı", "İçişleri Bakanlığı", "Milli Eğitim Bakanlığı", "Çevre Bakanlığı"], correctAnswer: 2, meaning: "Madde 62: Milli Eğitim Bakanlığı izni gerekir." },
+            { question: "222 sayılı Kanun'un yürütülmesinden kim sorumludur?", options: ["TBMM", "Bakanlar Kurulu", "Milli Eğitim Bakanlığı", "İçişleri Bakanlığı"], correctAnswer: 2, meaning: "Madde 83: Milli Eğitim Bakanlığı sorumludur." },
+            { question: "Okulların açılma, kapanma zamanlarını düzenleyen yönetmelik kim tarafından çıkarılır?", options: ["Cumhurbaşkanlığı", "TBMM", "Milli Eğitim Bakanlığı", "İçişleri Bakanlığı"], correctAnswer: 2, meaning: "Madde 42: MEB tarafından çıkarılır." },
+            { question: "İlköğretim kurumlarının yapım ve onarım planı en fazla kaç yıllık hazırlanır?", options: ["5 yıl", "7 yıl", "10 yıl", "15 yıl"], correctAnswer: 2, meaning: "Madde 80: 10 yıllık plan hazırlanır." },
+            { question: "222 sayılı Kanun'un 15-42. maddeleri arası için hangisi doğrudur?", options: ["Halen yürürlüktedir", "Kısmen yürürlüktedir", "Mülga edilmiştir", "Sadece 15. madde mülgadır"], correctAnswer: 2, meaning: "15-42 arası tüm maddeler mülgadır." },
+            { question: "Okulların ihtiyaçları için dernekler kaldırılarak yerine ne kurulmuştur?", options: ["Öğrenci Meclisleri", "Okul-Aile Birlikleri", "Eğitim Vakıfları", "Yardım Sandıkları"], correctAnswer: 1, meaning: "Okul-Aile Birlikleri kurulmuştur." }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.questions = [...QUIZ_DATA].sort(() => Math.random() - 0.5);
+                this.elements = {
+                    question: document.getElementById('question'), options: document.getElementById('options'),
+                    feedback: document.getElementById('feedback'), feedbackText: document.getElementById('feedbackText'),
+                    nextBtn: document.getElementById('nextBtn'), score: document.getElementById('score'),
+                    progress: document.getElementById('progress'), totalQ: document.getElementById('totalQ'),
+                    progressBar: document.getElementById('progressBar'), catCover: document.getElementById('catCover'),
+                    resultsContainer: document.getElementById('resultsContainer'), quizSection: document.getElementById('quizSection'),
+                    finalScore: document.getElementById('finalScore'), wordList: document.getElementById('wordList')
+                };
+                this.init();
+            }
+            init() {
+                this.elements.totalQ.textContent = this.questions.length;
+                this.elements.catCover.onclick = () => this.elements.catCover.style.display = 'none';
+                this.elements.nextBtn.onclick = () => this.nextQuestion();
+                this.showQuestion();
+            }
+            showQuestion() {
+                const q = this.questions[this.currentQuestionIndex];
+                this.elements.question.textContent = q.question;
+                this.elements.catCover.style.display = 'flex';
+                this.elements.options.innerHTML = '';
+                this.elements.options.appendChild(this.elements.catCover);
+                [...q.options].sort(() => Math.random() - 0.5).forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = opt;
+                    btn.onclick = () => this.handleAnswer(opt, q);
+                    this.elements.options.appendChild(btn);
+                });
+                this.elements.feedback.style.display = 'none';
+                this.elements.nextBtn.style.display = 'none';
+                this.elements.progress.textContent = this.currentQuestionIndex + 1;
+                this.elements.progressBar.style.width = `${((this.currentQuestionIndex + 1) / this.questions.length) * 100}%`;
+            }
+            handleAnswer(sel, q) {
+                const cor = q.options[q.correctAnswer];
+                document.querySelectorAll('.option-btn').forEach(b => {
+                    b.disabled = true;
+                    if (b.textContent === cor) b.classList.add('correct');
+                    if (b.textContent === sel && sel !== cor) b.classList.add('incorrect');
+                });
+                const ok = sel === cor;
+                if (ok) this.score++;
+                this.elements.score.textContent = this.score;
+                this.elements.feedback.style.display = 'block';
+                this.elements.feedback.className = `feedback ${ok ? 'correct-feedback' : 'incorrect-feedback'}`;
+                this.elements.feedbackText.innerHTML = ok ? `✅ Doğru!<br>${q.meaning}` : `❌ Yanlış!<br>Doğru Cevap: <strong>${cor}</strong><br>${q.meaning}`;
+                this.elements.nextBtn.style.display = 'block';
+            }
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) this.showQuestion();
+                else this.endQuiz();
+            }
+            endQuiz() {
+                this.elements.quizSection.style.display = 'none';
+                this.elements.resultsContainer.style.display = 'block';
+                const p = Math.round((this.score / this.questions.length) * 100);
+                this.elements.finalScore.textContent = `${this.score}/${this.questions.length} (%${p})`;
+                this.questions.forEach(q => {
+                    const d = document.createElement('div');
+                    d.className = 'word-card';
+                    d.innerHTML = `<strong>${q.question}</strong><p style="margin-top:5px; color:#555">${q.meaning}</p>`;
+                    this.elements.wordList.appendChild(d);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const scroll = document.getElementById('notesScrollArea');
+            const btn = document.getElementById('startTestBtn');
+            const msg = document.getElementById('scrollMsg');
+            scroll.onscroll = () => {
+                if (scroll.scrollTop + scroll.clientHeight >= scroll.scrollHeight - 10) {
+                    btn.disabled = false;
+                    msg.style.display = 'none';
+                }
+            };
+            if (scroll.scrollHeight <= scroll.clientHeight) {
+                btn.disabled = false;
+                msg.style.display = 'none';
+            }
+            btn.onclick = () => {
+                document.getElementById('notesContainer').style.display = 'none';
+                document.getElementById('quizSection').style.display = 'block';
+                new QuizManager();
+            };
+        });
+    </script>
+</body>
+</html>

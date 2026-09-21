@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MEB-AGS Türkiye Tarihi - Kırım Savaşı ve Dağılma Dönemi (1853-1897)</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "🏛️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            text-align: left;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ MEB-AGS Türkiye Tarihi</h1>
+            <div class="subtitle">Kırım Savaşı ve Dağılma Dönemi Siyasi Olayları (1853-1897)</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                correctAnswer: "D",
+                meaning: "Kırım Savaşı'nın nedenleri: Sinop Baskını, Mençikof'un istekleri, Kutsal Yerler Sorunu, Mülteci Sorunu (Leh ve Macarların sığınması) ve Rusya'nın Boğazlar'da kaybettiği hakları geri alma isteğidir. Rusya'nın Ege Adaları üzerinde böyle bir talebi olmamıştır.",
+                question: "Aşağıdakilerden hangisi 1853-56 Kırım Savaşı'nın başlamasına zemin hazırlayan nedenlerden biri değildir?",
+                options: ["Osmanlı donanmasının Sinop'ta yakılması", "Rus elçisi Mençikof'un istekleri", "Leh ve Macar mültecilerin Osmanlı Devleti'ne sığınmasıyla ortaya çıkan Mülteci Sorunu", "Rusya'nın Ege Adaları üzerindeki egemenlik hakkından vazgeçmek istemesi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1853-56 yılları Sultan Abdülmecid'in saltanat yıllarına denk gelir. Osmanlı Devleti ilk dış borcunu Kırım Savaşı'nın finansmanını sağlamak amacıyla İngiltere'den almıştır.",
+                question: "Osmanlı Devleti, Kırım Savaşı sırasında İngiltere'den tarihinde ilk kez dış borç almıştır. Bu bilgiye göre ilk dış borçlanma hangi padişah döneminde gerçekleşmiştir?",
+                options: ["Sultan II. Mahmud", "Sultan Abdülmecid", "Sultan Abdülaziz", "Sultan II. Abdülhamid"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Kırım Savaşı sırasında savaş muhaberatını hızlandırmak için ilk defa Kırım, Varna ve Edirne arasında telgraf hatları döşenmiştir.",
+                question: "Kırım Savaşı sırasında Osmanlı topraklarında ilk defa hangi bölgeler arasında telgraf hatları çekilmiştir?",
+                options: ["İstanbul - Selanik - Belgrad", "Kırım - Varna - Edirne", "İzmir - Aydın - Konya", "Trabzon - Erzurum - Kars"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Florence Nightingale, 1853-56 Kırım Savaşı sırasında özellikle Selimiye Kışlası'nda yaralılara bakmış ve gece elinde lamba ile dolaştığı için 'Lambalı Kadın' (Lady With the Lamp) ünvanını almıştır.",
+                question: "\"Lambalı Kadın\" (Lady With the Lamp) lakabıyla anılan ve modern hemşireliğin kurucusu sayılan Florence Nightingale, hangi savaşta yaralı İngiliz ve Osmanlı askerlerini tedavi etmiştir?",
+                options: ["93 Harbi (1877-78 Osmanlı-Rus Savaşı)", "Trablusgarp Savaşı", "Kırım Savaşı", "Dömeke Meydan Muharebesi"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1856'da ilan edilen Islahat Fermanı, Müslüman ve gayrimüslim eşitliğini vurgulayarak Avrupa'nın iç işlerimize karışmasını önlemek amacıyla Paris Konferansı'nın hemen öncesinde yayınlanmıştır.",
+                question: "Paris Barış Konferansı öncesinde, konferansta Avrupalı devletleri etkilemek ve toprak bütünlüğünü garanti altına almak isteyen Osmanlı Devleti hangi önemli belgeyi ilan etmiştir?",
+                options: ["Tanzimat Fermanı", "Islahat Fermanı", "Sened-i İttifak", "Kanun-i Esasi"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Savaşta Rusya yenilmiş olmasına rağmen, Karadeniz'in tarafsızlaştırılması maddesi ile Osmanlı Devleti de kendi denizinde asker bulundurma egemenlik hakkından mahrum bırakılmıştır. Bu, galip bir devlete değil, yenik bir devlete uygulanan silahsızlandırma politikasıdır.",
+                question: "Paris Barış Antlaşması'nın (1856) aşağıdaki hükümlerinden hangisi, Osmanlı Devleti'nin savaşın galibi olmasına rağmen \"yenik bir devlet muamelesi\" gördüğünün en açık kanıtıdır?",
+                options: ["Osmanlı toprak bütünlüğünün Avrupa devletlerince korunması", "Osmanlı'nın Avrupa devletler hukukundan faydalanması", "Hem Osmanlı'nın hem de Rusya'nın Karadeniz'de donanma ve tersane bulunduramaması", "Osmanlı topraklarının tek başına koruyamayacağının ortaya çıkması"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Bu madde görünüşte bir prestij gibi dursa da, Avrupa devletler hukuku gereği 'Avrupalı' sayılan bir devlet, diğer büyük devletlerin müdahalesine ve denetimine açık hale gelmiştir.",
+                question: "Paris Barış Konferansı'nda alınan \"Osmanlı Devleti bir Avrupa devleti sayılacak ve Avrupa devletlerinin hukukundan faydalanacaktır\" kararının temel sonucu ne olmuştur?",
+                options: ["Osmanlı Devleti'nin kapitülasyonları tek taraflı kaldırabilmesi", "Avrupalı devletlerin Osmanlı'nın iç işlerine karışma hakkının resmen tanınması", "Osmanlı Devleti'nin Avrupa Konseyi'nin kurucu üyesi olması", "Osmanlı tebaasına Avrupa'da serbest dolaşım hakkı verilmesi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "1875 yılında Hersek'te başlayan isyan, kısa sürede Balkan Bunalımı olarak adlandırılan büyük bir krize dönüşmüştür.",
+                question: "Balkan Bunalımı'nın başladığı ve isyanların tüm Balkanlara yayılmaya başladığı yıl olarak kayıtlara geçen tarih hangisidir?",
+                options: ["1875", "1876", "1877", "1878"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Tersane Konferansı (1876), İngiltere'nin 'Hasta Adam' politikasında dönüm noktasıdır. Bu konferansta İngiltere ilk defa Osmanlı'nın parçalanmasına göz yumacağının sinyallerini vermiştir.",
+                question: "Balkan Sorunu'nu çözmek amacıyla İstanbul'da toplanan Tersane Konferansı'nda (1876), o güne kadar Osmanlı toprak bütünlüğünü savunan İngiltere'nin bu politikadan ilk defa vazgeçmesinin sebebi aşağıdakilerden hangisidir?",
+                options: ["Osmanlı'nın ilk dış borcunu İngiltere yerine Fransa'dan alması", "II. Abdülhamid'in Kanun-i Esasi'yi ilan ederek meşrutiyete geçmesi", "İngiltere'nin artık Osmanlı'nın kendi kendini ıslah edemeyeceğine kanaat getirmesi", "Kırım Savaşı'nın sonuçlarının İngiltere tarafından yeterli bulunmaması"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Seyit Onbaşı Çanakkale Savaşı'nın (1915) kahramanıdır. Gazi Osman Paşa (Plevne), Gazi Ahmet Muhtar Paşa (Kafkas Cephesi) ve Nene Hatun (Aziziye Tabyaları) ise 93 Harbi'nin öne çıkan isimleridir.",
+                question: "1877-78 Osmanlı-Rus Savaşı (93 Harbi) sırasında aşağıdaki kahramanlardan hangisi ün kazanmamıştır?",
+                options: ["Plevne Kahramanı Gazi Osman Paşa", "Gazi Ahmet Muhtar Paşa", "Nene Hatun", "Seyit Onbaşı"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "93 Harbi sonunda imzalanan Ayastefanos Antlaşması, özellikle Büyük Bulgaristan maddesi nedeniyle İngiltere ve Avusturya'nın tepkisini çekmiş ve yürürlüğe girmeden Berlin Antlaşması ile değiştirilmiştir. Osmanlı tarihinde imzalanıp yürürlüğe girmeyen iki antlaşma vardır: Ayastefanos ve Sevr.",
+                question: "Osmanlı Devleti tarihinde imzalanmasına rağmen yürürlüğe girmeyen ilk antlaşma aşağıdakilerden hangisidir?",
+                options: ["Berlin Antlaşması", "Paris Antlaşması", "Ayastefanos (Yeşilköy) Antlaşması", "Küçük Kaynarca Antlaşması"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Berlin Antlaşması'na göre birinci bölge Osmanlı'ya bağlı Bulgaristan Prensliği, ikinci bölge idari özerkliğe sahip Doğu Rumeli Vilayeti, üçüncü bölge ise ıslahat yapılmak şartıyla Osmanlı'ya bırakılan Makedonya olarak belirlenmiştir.",
+                question: "Berlin Antlaşması'na göre Bulgaristan'ın üç bölgeye ayrılması düzenlemesinde, idari yönden bağımsız olmakla birlikte siyasi ve askeri yönden Osmanlı Devleti'ne bağlı bir eyalet olarak belirlenen ikinci bölge aşağıdakilerden hangisidir?",
+                options: ["Bulgaristan Prensliği", "Doğu Rumeli Vilayeti", "Makedonya", "Bosna-Hersek"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Ayastefanos ile kurulan Büyük Bulgaristan, Rusya'nın sıcak denizlere inmesi demekti. Berlin Antlaşması ile Bulgaristan parçalanarak Makedonya Osmanlı'ya bırakılmış ve Rusya'nın Ege kıyılarına ulaşması engellenmiştir.",
+                question: "Berlin Antlaşması'na (1878) göre Bulgaristan üç bölgeye ayrılmıştır. Bu düzenleme ile Avrupalı devletlerin esas amacı aşağıdakilerden hangisidir?",
+                options: ["Osmanlı'nın Balkanlardaki nüfuzunu tamamen bitirmek", "Rusya'nın Bulgaristan üzerinden Akdeniz'e (Ege Denizi'ne) inmesini engellemek", "Bulgaristan'da demokratik bir yönetim kurulmasını sağlamak", "Makedonya bölgesini bağımsız bir devlet haline getirmek"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Berlin Antlaşması'na göre Girit'te ıslahat yapılacak ve Avrupalı devletler buna destek verecektir. Bu karar, Halepa Fermanı'nın da dayanaklarından biri olmuştur.",
+                question: "Berlin Antlaşması'na göre Girit ile ilgili alınan karar aşağıdakilerden hangisidir?",
+                options: ["Girit, Yunanistan'a bırakılacaktır", "Girit'te ıslahat yapılacak ve Avrupalı devletler buna destek verecektir", "Girit, İngiltere yönetimine bırakılacaktır", "Girit'te bağımsız bir devlet kurulacaktır"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Bölgenin hukuki olarak Osmanlı'ya bağlı kalması ancak fiili yönetimin Avusturya'ya verilmesi, ileride yaşanacak ilhakın (1908) zeminini hazırlayan bir 'geçici yönetim' modelidir.",
+                question: "Berlin Antlaşması'nın \"Bosna-Hersek, Osmanlı Devleti'ne bağlı kalacak ancak Avusturya tarafından yönetilecektir\" maddesi, aşağıdaki kavramlardan hangisi ile en iyi açıklanabilir?",
+                options: ["İlhak (Katma)", "İşgal", "Geçici İdare ve Himaye", "Bağımsızlık"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Yunanistan bağımsızlığını 1830'da (Edirne Antlaşması ve Londra Protokolü ile) kazanmıştır. Berlin Antlaşması (1878) ile bağımsız olanlar Sırbistan, Karadağ ve Romanya'dır.",
+                question: "Aşağıdaki devletlerden hangisi Berlin Antlaşması (1878) ile bağımsızlığını kazanan devletlerden biri değildir?",
+                options: ["Sırbistan", "Karadağ", "Romanya", "Yunanistan"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "93 Harbi'nin kaybedilmesi sonucu Kars, Ardahan ve Batum Rusya'ya bırakılmış, Doğubayazıt ise Osmanlı Devleti'nde kalmıştır.",
+                question: "Berlin Antlaşması'na göre Kars, Ardahan ve Batum hangi devlete bırakılmıştır?",
+                options: ["İngiltere", "Fransa", "Rusya", "Avusturya"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Berlin Antlaşması'nın 'Osmanlı Devleti, Ermenilerin bulunduğu Doğu Anadolu bölgesinde ıslahat yapacaktır' maddesi ile Avrupalı devletler ilk kez Ermenilerin hamiliğini üstlenmiş ve 'Ermeni Islahatı' adı altında Osmanlı'nın iç işlerine karışma hakkını elde etmişlerdir.",
+                question: "Berlin Antlaşması'nın \"Osmanlı Devleti, Ermenilerin bulunduğu Doğu Anadolu bölgesinde ıslahat yapacaktır\" maddesinin en önemli sonucu aşağıdakilerden hangisidir?",
+                options: ["Doğu Anadolu'da bayındırlık faaliyetlerinin hızlanması", "Ermeni Sorunu'nun uluslararası bir sorun haline gelmesi", "Osmanlı-Rus dostluğunun pekişmesi", "Berlin'de bir Ermeni Patrikhanesi'nin açılması"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "İngiltere, Berlin Kongresi'nde Osmanlı'yı destekleme vaadi karşılığında 1878'de Kıbrıs'ın idaresini geçici olarak devralmıştır.",
+                question: "Berlin Antlaşması imzalanmadan hemen önce, İngiltere'nin Akdeniz'deki stratejik çıkarları gereği idaresini Osmanlı'dan devraldığı ada aşağıdakilerden hangisidir?",
+                options: ["Girit", "Rodos", "Kıbrıs", "Midilli"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "1878 yılında Giritli Rumların ayaklanması üzerine Osmanlı Devleti adada yaşayan Rumlara yeni imtiyazlar tanımak amacıyla Halepa Fermanı'nı (Halepa Sözleşmesi) çıkarmıştır.",
+                question: "1878 yılında Giritli Rumların ayaklanması üzerine Osmanlı Devleti adada yaşayan Rumlara yeni imtiyazlar tanımak amacıyla hangi fermanı çıkarmıştır?",
+                options: ["Tanzimat Fermanı", "Islahat Fermanı", "Halepa Fermanı", "Adalet Fermanı"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Fransa 1881'de Tunus'u, 1882'de ise teknik olarak Osmanlı'ya bağlı olan ancak fiilen Hidivlerce yönetilen Mısır'ı işgal etmiştir.",
+                question: "Fransa, 1881'de Tunus'u işgal ettikten hemen sonra, 1882'de Osmanlı toprağı olarak görülen hangi bölgeyi işgal etmiştir?",
+                options: ["Cezayir", "Fas", "Mısır", "Trablusgarp"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1897 Türk-Yunan Savaşı'nda Osmanlı ordusu Dömeke'de (Teselya) büyük bir zafer kazanmış ancak büyük devletlerin baskısıyla savaş ganimetlerinin çoğundan mahrum kalmıştır.",
+                question: "Osmanlı Devleti ile Yunanistan arasında 1897 yılında yapılan ve Osmanlı ordusunun galibiyetiyle sonuçlanan muharebenin adı nedir?",
+                options: ["Plevne Müdafaası", "Dömeke Meydan Muharebesi", "Birinci Kosova Savaşı", "Niğbolu Savaşı"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Kutsal Yerler Sorunu, Kudüs'teki kutsal mekanların anahtarlarının ve bakım hakkının Katoliklerde mi (Fransa'nın himayesi) yoksa Ortodokslarda mı (Rusya'nın himayesi) olacağı konusunda çıkmıştır.",
+                question: "Kırım Savaşı'nın (1853-56) başlamasına neden olan gelişmelerden biri olan \"Kutsal Yerler Sorunu\" hangi iki mezhep arasındaki çatışmadan kaynaklanmıştır?",
+                options: ["Protestanlık ve Anglikanizm", "Katoliklik ve Ortodoksluk", "Sünnilik ve Şiilik", "Yahudilik ve Hristiyanlık"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Mençikof, Osmanlı topraklarında yaşayan tüm Ortodoks Hristiyanların resmi koruyuculuğunun Rus Çarı'na verilmesini talep etmiştir. Bu talep kabul edilseydi, Osmanlı tebaasının yaklaşık üçte biri üzerinde Rusya'nın hukuki bir vesayeti doğacaktı.",
+                question: "Rus elçisi Mençikof'un istekleri arasında aşağıdakilerden hangisi yer almaktadır?",
+                options: ["Osmanlı Devleti'ndeki Ortodoksların koruyuculuğunun Rusya'ya verilmesi", "Kırım'ın tamamen Rusya'ya bırakılması", "Osmanlı donanmasının İngiltere'ye teslim edilmesi", "İstanbul Boğazı'nın tüm devletlere kapatılması"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1848 İhtilalleri sonrası Avusturya ve Rusya'ya karşı ayaklanan Macar ve Leh milliyetçileri, ayaklanma bastırılınca Osmanlı Devleti'ne sığınmıştır. Osmanlı'nın bu mültecileri Rusya ve Avusturya'ya iade etmeyi reddetmesi krize yol açmıştır.",
+                question: "\"Mülteci Sorunu\" olarak bilinen ve Kırım Savaşı'nın nedenlerinden biri olan olayda, hangi iki milletten mülteciler Osmanlı Devleti'ne sığınmıştır?",
+                options: ["Sırplar ve Bulgarlar", "Lehler (Polonyalılar) ve Macarlar", "Rumlar ve Ermeniler", "Araplar ve Kürtler"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Rusya, 1833 Hünkar İskelesi Antlaşması ile Boğazlar üzerinde özel bir nüfuz elde etmişti. Ancak 1841 Londra Boğazlar Sözleşmesi ile Boğazlar uluslararası bir statüye kavuşmuş ve Rusya bu ayrıcalığını kaybetmişti. Çar I. Nikola, bu hakkı geri almak istiyordu.",
+                question: "Rusya'nın Kırım Savaşı öncesinde \"Boğazlarda kaybettiği hakkı geri almak istemesi\" ifadesiyle kastedilen, Rusya'nın Boğazlar üzerindeki hangi hak kaybıdır?",
+                options: ["1841 Londra Boğazlar Sözleşmesi ile Boğazların uluslararası bir statüye kavuşması", "1833 Hünkar İskelesi Antlaşması'nın süresinin dolması", "1829 Edirne Antlaşması ile kapitülasyon hakkı elde etmesi", "1774 Küçük Kaynarca Antlaşması'nın geçersiz sayılması"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Paris Antlaşması'nın 7. maddesi gereğince Osmanlı Devleti'nin toprak bütünlüğü, antlaşmayı imzalayan tüm Avrupa devletlerinin ortak garantisi altına alınmıştır.",
+                question: "Paris Barış Antlaşması'na göre Osmanlı Devleti'nin toprak bütünlüğünü koruma görevi aşağıdakilerden hangisine verilmiştir?",
+                options: ["Yalnızca İngiltere'ye", "Yalnızca Fransa'ya", "Avrupa devletlerinin ortak garantisine", "Rusya ve Avusturya'nın ortak kararına"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Osmanlı Devleti, Kırım Savaşı'nda İngiltere ve Fransa'nın yardımıyla ayakta kalabildiğini anlamış ve bundan sonraki süreçte Avrupalı büyük devletler arasında bir 'Denge Politikası' izleyerek varlığını sürdürmeye çalışmıştır.",
+                question: "Paris Barış Antlaşması'ndan çıkarılan sonuçlardan biri olan \"Osmanlı Devleti'nin topraklarını tek başına koruyamayacağının ortaya çıkması\" durumu, Osmanlı'nın hangi dönemden itibaren hangi politikayı izlemesine neden olmuştur?",
+                options: ["Yalnızlık politikası (İzolasyonizm)", "Denge politikası (İngiltere-Fransa-Rusya arasında denge kurma)", "Yayılma politikası (Emperyalizm)", "Tarafsızlık politikası (Nötralite)"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Tarih yazımında Osmanlı Dağılma Dönemi, ilk kez büyük toprak kayıplarının yaşandığı ve ilk kez bir Müslüman toprağın (Kırım) elden çıktığı 1792 Yaş Antlaşması ile başlatılır. 1922'de saltanatın kaldırılması ile sona erer.",
+                question: "Osmanlı Devleti'nin Dağılma Dönemi (1792 - 1922) olarak adlandırılan tarih aralığının başlangıcı olarak hangi olay kabul edilir?",
+                options: ["Fransız İhtilali'nin başlaması (1789)", "Ziştovi ve Yaş Antlaşmaları'nın imzalanması (1791-1792)", "III. Selim'in tahta çıkması (1789)", "Mısır'ın Fransızlar tarafından işgali (1798)"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Dağılma Dönemi, Osmanlı saltanatının resmen sona erdiği 1 Kasım 1922 tarihinde kapanmıştır. 1923 Cumhuriyetin ilanı, yeni bir dönemin başlangıcıdır.",
+                question: "XIX. Yüzyılda Osmanlı Devleti'nin Dağılma Dönemi hangi yılda sona ermiştir?",
+                options: ["1918 (Mondros Mütarekesi)", "1920 (Sevr Antlaşması)", "1922 (Saltanatın Kaldırılması)", "1923 (Cumhuriyetin İlanı)"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Berlin Antlaşması'na göre Makedonya, ıslahat yapılmak şartıyla Osmanlı Devleti'ne bırakılmıştır. Ancak bu 'ıslahat' maddesi, ileride Makedonya Sorunu'nun temelini oluşturacaktır.",
+                question: "Berlin Antlaşması'nın Makedonya ile ilgili hükmü aşağıdakilerden hangisidir?",
+                options: ["Makedonya bağımsız bir devlet haline getirilecektir", "Makedonya, Yunanistan'a bırakılacaktır", "Makedonya, ıslahat yapılmak şartıyla Osmanlı Devleti'ne bırakılacaktır", "Makedonya, Bulgaristan Prensliği'ne katılacaktır"]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        function shuffleArray(array) {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        function initQuiz() {
+            questions = shuffleArray(quizData);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            catCoverEl.addEventListener('click', () => catCoverEl.style.display = 'none');
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            const correctText = currentQuestion.options[currentQuestion.correctAnswer.charCodeAt(0) - 65];
+            const shuffledOptions = shuffleArray(currentQuestion.options);
+            
+            optionsEl.innerHTML = '';
+            optionsEl.appendChild(catCoverEl);
+            catCoverEl.style.display = 'flex';
+
+            shuffledOptions.forEach(optionText => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = optionText;
+                button.onclick = () => selectAnswer(optionText, correctText, currentQuestion.meaning);
+                optionsEl.appendChild(button);
+            });
+            
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        function selectAnswer(selectedOption, correctOptionText, meaning) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correctOptionText) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selectedOption) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            const isCorrect = selectedOption === correctOptionText;
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+            }
+
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            feedbackTextEl.innerHTML = isCorrect ? 
+                `<strong>✅ Doğru!</strong><br><br>${meaning}` : 
+                `<strong>❌ Yanlış!</strong><br>Doğru Cevap: ${correctOptionText}<br><br>${meaning}`;
+            
+            nextBtn.style.display = 'block';
+        }
+
+        nextBtn.onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        };
+
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            finalScoreEl.textContent = `Puanınız: ${score} / ${questions.length}`;
+            
+            wordListEl.innerHTML = '<h3 style="margin-bottom:15px;">Genel Tekrar:</h3>';
+            questions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>${q.question}</strong><br><small style="color:var(--primary)">${q.meaning}</small>`;
+                wordListEl.appendChild(card);
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (quizContainer.style.display === 'none') return;
+            if ((e.key === 'Enter' || e.code === 'Space') && nextBtn.style.display === 'block') {
+                if (e.code === 'Space') e.preventDefault();
+                nextBtn.click();
+                return;
+            }
+            if (catCoverEl.style.display !== 'none') {
+                if (['1', '2', '3', '4'].includes(e.key)) {
+                    catCoverEl.style.display = 'none';
+                }
+                return; 
+            }
+            const buttons = document.querySelectorAll('.option-btn');
+            if (buttons.length === 0 || buttons[0].disabled) return;
+            if (e.key === '1' && buttons[0]) buttons[0].click();
+            if (e.key === '2' && buttons[1]) buttons[1].click();
+            if (e.key === '3' && buttons[2]) buttons[2].click();
+            if (e.key === '4' && buttons[3]) buttons[3].click();
+        });
+
+        initQuiz();
+    </script>
+</body>
+</html>

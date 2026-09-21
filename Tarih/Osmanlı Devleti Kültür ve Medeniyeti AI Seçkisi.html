@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Osmanlı Devleti Kültür ve Medeniyeti AI Seçkisi Testi</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "🏛️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(139, 69, 19, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(139, 69, 19, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            background: var(--primary);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @media (max-width: 600px) {
+            .container { border-radius: 10px; }
+            h1 { font-size: 1.6rem; }
+            .question { font-size: 1.1rem; }
+            .option-btn { padding: 14px 16px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Osmanlı Devleti Kültür ve Medeniyeti<br>AI Seçkisi</h1>
+            <div class="subtitle">İstatistiksel Frekans Analizine Göre En Çok Çıkan Kavramlar</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+    {
+        "correctAnswer": "B",
+        "meaning": "Mirî arazi, mülkiyeti devlete ait olan arazilerdir. Alınıp satılamaz, devredilemez veya miras bırakılamaz.",
+        "category": "Toprak ve Vergi Sistemi",
+        "question": "Osmanlı Devleti'nde mülkiyeti devlete ait olan, alınıp satılamayan ve devredilemeyen arazilere genel olarak ne ad verilir?",
+        "options": [
+            "Mülk Arazi",
+            "Mirî Arazi",
+            "Vakıf Arazi",
+            "Haraci Arazi"
+        ]
+    },
+    {
+        "correctAnswer": "C",
+        "meaning": "Dirlik topraklar, rütbe ve derecelerine göre devlet adamlarına yıllık gelirlerine (Has, Zeamet, Tımar) göre ayrılmıştır.",
+        "category": "Toprak ve Vergi Sistemi",
+        "question": "Dirlik sistemi; Has, Zeamet ve Tımar olmak üzere üç bölüme ayrılmıştır. Bu ayrımın yapılmasındaki temel ölçüt aşağıdakilerden hangisidir?",
+        "options": [
+            "Toprağın verimliliği",
+            "Hizmetin süresi",
+            "Arazinin yıllık geliri",
+            "Arazinin merkeze uzaklığı"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Tımar sistemi devlete doğrudan nakit para sağlamaz; aksine hizmet ve asker (cebelü) sağlar. Nakit ihtiyacı İltizam ile karşılanırdı.",
+        "category": "Toprak ve Vergi Sistemi",
+        "question": "Aşağıdakilerden hangisi Osmanlı Devleti'nde uygulanan Tımar sisteminin faydalarından biri değildir?",
+        "options": [
+            "Üretimde sürekliliğin sağlanması",
+            "Devletin nakit (sıcak para) ihtiyacının karşılanması",
+            "Eyalet ordusunun (Cebelü) masrafsız yetiştirilmesi",
+            "Taşrada devlet otoritesinin ve güvenliğin sağlanması"
+        ]
+    },
+    {
+        "correctAnswer": "A",
+        "meaning": "İltizam, vergi toplama hakkının mültezimlere peşin para karşılığında kiralanmasıdır. Devletin sıcak para ihtiyacını çözer.",
+        "category": "Toprak ve Vergi Sistemi",
+        "question": "Osmanlı Devleti'nde nakit para ihtiyacını karşılamak amacıyla, devlete ait mukataa arazilerin vergi toplama hakkının açık artırma yoluyla belirli bir süreliğine (genellikle 3 yıl) mültezim denilen kişilere kiralanması sistemine ne ad verilir?",
+        "options": [
+            "İltizam Sistemi",
+            "Malikâne Sistemi",
+            "Müsaadere Sistemi",
+            "Devşirme Sistemi"
+        ]
+    },
+    {
+        "correctAnswer": "C",
+        "meaning": "İltizam sistemindeki vergi toplama hakkının ömür boyu kiralanmasına \"Malikâne sistemi\" denir.",
+        "category": "Toprak ve Vergi Sistemi",
+        "question": "17. yüzyıldan itibaren Osmanlı ekonomisinin bozulmasıyla birlikte İltizam sisteminin ömür boyu (sürekli) hâle getirilmiş şekline verilen isim aşağıdakilerden hangisidir?",
+        "options": [
+            "Müsadere",
+            "Cizye",
+            "Malikâne",
+            "Salyane"
+        ]
+    },
+    {
+        "correctAnswer": "D",
+        "meaning": "Mukataa, geliri doğrudan devlet hazinesine ayrılan topraklardır.",
+        "category": "Toprak ve Vergi Sistemi",
+        "question": "Osmanlı Devleti'nde geliri doğrudan devlet hazinesine aktarılan ve genellikle İltizam sisteminin uygulandığı arazilere ne ad verilir?",
+        "options": [
+            "Ocaklık",
+            "Yurtluk",
+            "Paşmaklık",
+            "Mukataa"
+        ]
+    },
+    {
+        "correctAnswer": "A",
+        "meaning": "Sınır boylarındaki akıncılara ve askerlere ayrılan sınır arazilerine \"Yurtluk\" denir.",
+        "category": "Toprak ve Vergi Sistemi",
+        "question": "Geliri sınır boylarını koruyan askerlere bırakılan arazi çeşidi aşağıdakilerden hangisidir?",
+        "options": [
+            "Yurtluk",
+            "Ocaklık",
+            "Dirlik",
+            "Vakıf"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Haraç, gayrimüslim tebaadan elde ettikleri tarımsal ürün üzerinden alınan şer'i vergidir.",
+        "category": "Toprak ve Vergi Sistemi",
+        "question": "Aşağıdaki vergilerden hangisi sadece gayrimüslim tebaadan alınan şer'i vergiler arasında yer alır?",
+        "options": [
+            "Öşür (Aşar)",
+            "Haraç",
+            "Avarız",
+            "Çiftbozan"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Cizye, askerlik çağına gelmiş sağlıklı gayrimüslim erkeklerden orduya katılmamaları karşılığında alınan vergidir.",
+        "category": "Toprak ve Vergi Sistemi",
+        "question": "Osmanlı'da gayrimüslim, sağlıklı ve yetişkin erkeklerden askerlik yapmamaları (orduda görev almamaları) karşılığında alınan baş vergisi aşağıdakilerden hangisidir?",
+        "options": [
+            "İspenç",
+            "Cizye",
+            "Ağnam",
+            "Derbent"
+        ]
+    },
+    {
+        "correctAnswer": "A",
+        "meaning": "Çiftbozan, tımar topraklarını terk eden veya nedensiz yere 3 yıl üst üste boş bırakanlardan alınan ceza vergisidir.",
+        "category": "Toprak ve Vergi Sistemi",
+        "question": "Üretimde sürekliliği sağlamak amacıyla, toprağını mazeretsiz olarak üst üste 3 yıl ekmeyen çiftçiden ceza niteliğinde alınan vergi hangisidir?",
+        "options": [
+            "Çiftbozan",
+            "Avarız",
+            "İmdadiye-i Seferiye",
+            "Bac"
+        ]
+    },
+    {
+        "correctAnswer": "A",
+        "meaning": "Avarız, başlangıçta savaş veya afet gibi durumlarda toplanan olağanüstü hal vergisidir; sonraları kalıcılaşmıştır.",
+        "category": "Toprak ve Vergi Sistemi",
+        "question": "Osmanlı Devleti'nde olağanüstü durumlarda (savaş, doğal afet vb.) halktan toplanan, ancak zamanla kalıcı hâle gelen vergi aşağıdakilerden hangisidir?",
+        "options": [
+            "Avarız",
+            "Öşür",
+            "Cizye",
+            "Ağnam"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Ağnam (koyun, keçi vb.) resmi, küçükbaş hayvan yetiştiricilerinden alınan hayvancılık vergisidir.",
+        "category": "Toprak ve Vergi Sistemi",
+        "question": "Küçükbaş hayvancılıkla uğraşan konargöçerlerden alınan vergiye ne ad verilir?",
+        "options": [
+            "Bac",
+            "Ağnam (Adet-i Ağnam)",
+            "Bennak",
+            "Mücerret"
+        ]
+    },
+    {
+        "correctAnswer": "C",
+        "meaning": "Kazasker, ilmiye sınıfının Divan'daki temsilcisidir; adalet (kadı ataması) ve eğitim (müderris ataması) işlerine bakar.",
+        "category": "Merkez Teşkilatı ve Divan",
+        "question": "Divan-ı Hümayun'da eğitim, adalet ve yargı işlerinden sorumlu olan; aynı zamanda kadı ve müderrislerin atamasını yapan görevli kimdir?",
+        "options": [
+            "Nişancı",
+            "Defterdar",
+            "Kazasker (Kadıasker)",
+            "Şeyhülislam"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Defterdar, devletin gelir ve giderlerinden sorumlu, bütçeyi hazırlayan maliye bakanıdır.",
+        "category": "Merkez Teşkilatı ve Divan",
+        "question": "Osmanlı merkez teşkilatında maliye işlerinden sorumlu olan ve devletin bütçesini hazırlayan Divan üyesi aşağıdakilerden hangisidir?",
+        "options": [
+            "Reisülküttap",
+            "Defterdar",
+            "Veziriazam",
+            "Nişancı"
+        ]
+    },
+    {
+        "correctAnswer": "A",
+        "meaning": "Nişancı, kalemiye sınıfına mensuptur, yazışmalara tuğra çeker ve dirlik arazilerinin kayıtlarını tahrir defterlerine işler.",
+        "category": "Merkez Teşkilatı ve Divan",
+        "question": "Divan-ı Hümayun'da padişahın ferman ve beratlarına padişahın tuğrasını çeken, aynı zamanda fethedilen yeni toprakları tahrir defterlerine kaydeden görevli kimdir?",
+        "options": [
+            "Nişancı",
+            "Kazasker",
+            "Defterdar",
+            "Reisülküttap"
+        ]
+    },
+    {
+        "correctAnswer": "C",
+        "meaning": "Reisülküttap, başlangıçta Nişancı'nın yardımcısıyken zamanla devletin dış yazışmalarından ve diplomasi işlerinden sorumlu hale gelmiştir.",
+        "category": "Merkez Teşkilatı ve Divan",
+        "question": "Kuruluş ve Yükselme dönemlerinde Nişancı'ya bağlı bir memur iken, 17. yüzyıldan itibaren devletin diplomasi ihtiyacının artmasıyla doğrudan \"Dışişleri Bakanı\" statüsüne yükselen görevli kimdir?",
+        "options": [
+            "Şeyhülislam",
+            "Kapudan-ı Derya",
+            "Reisülküttap",
+            "Yeniçeri Ağası"
+        ]
+    },
+    {
+        "correctAnswer": "D",
+        "meaning": "Şeyhülislam, devletin en yüksek dinî yetkilisidir; siyasi ve idari kararların İslam'a uygunluğunu (fetva) onaylar.",
+        "category": "Merkez Teşkilatı ve Divan",
+        "question": "Divan-ı Hümayun'da alınan kararların İslam dinine (Şer'i hukuka) uygun olup olmadığına dair ifta (fetva) veren makam aşağıdakilerden hangisidir?",
+        "options": [
+            "Veziriazam",
+            "Kazasker",
+            "Nişancı",
+            "Şeyhülislam"
+        ]
+    },
+    {
+        "correctAnswer": "A",
+        "meaning": "Veziriazam (Sadrazam), padişahtan sonraki en yetkili kişidir; padişahın mührünü taşır ve onun vekilidir.",
+        "category": "Merkez Teşkilatı ve Divan",
+        "question": "Padişahın mutlak vekili olan, padişah sefere çıkmadığı zamanlarda \"Serdar-ı Ekrem\" unvanıyla orduya komuta eden Divan üyesi kimdir?",
+        "options": [
+            "Sadrazam (Veziriazam)",
+            "Kazasker",
+            "Kaptan-ı Derya",
+            "Yeniçeri Ağası"
+        ]
+    },
+    {
+        "correctAnswer": "C",
+        "meaning": "İlmiye sınıfı; Şeyhülislam, Kazasker, kadı ve müderrislerden oluşan eğitim, hukuk ve din bürokrasisidir.",
+        "category": "Merkez Teşkilatı ve Divan",
+        "question": "Osmanlı bürokrasisinde eğitim, din ve hukuk işleriyle uğraşanların oluşturduğu sınıfa ne ad verilir?",
+        "options": [
+            "Seyfiye",
+            "Kalemiye",
+            "İlmiye",
+            "Reaya"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Seyfiye (kılıç ehli), devletin askerî ve idari kadrolarını yöneten, yürütme gücüne sahip sınıftır.",
+        "category": "Merkez Teşkilatı ve Divan",
+        "question": "Vezirler, beylerbeyleri, sancakbeyleri ve askerî yetkililerin oluşturduğu, yürütme ve askerî yetkiyi elinde bulunduran yönetici sınıf hangisidir?",
+        "options": [
+            "İlmiye",
+            "Seyfiye (Ümera)",
+            "Kalemiye",
+            "Esnaf"
+        ]
+    },
+    {
+        "correctAnswer": "A",
+        "meaning": "Kalemiye (kalem ehli), devletin sivil bürokrasisi olan yazışma, maliye ve diplomasi görevlilerinin oluşturduğu sınıftır.",
+        "category": "Merkez Teşkilatı ve Divan",
+        "question": "Nişancı, Defterdar ve Reisülküttap gibi bürokratların (yazışma ve maliye işleri) mensup olduğu sınıf aşağıdakilerden hangisidir?",
+        "options": [
+            "Kalemiye",
+            "İlmiye",
+            "Seyfiye",
+            "Yeniçeri"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Salyanesiz eyaletler, merkeze yakın olup tımar sisteminin uygulandığı, yöneticilerine dirlik toprağı tahsis edilen bölgelerdir.",
+        "category": "Taşra Teşkilatı",
+        "question": "Taşra teşkilatında Tımar sisteminin uygulandığı, yöneticilerine maaş yerine dirlik arazisi verilen eyalet sistemine ne ad verilir?",
+        "options": [
+            "Salyaneli (Yıllıklı) Eyaletler",
+            "Salyanesiz (Yıllıksız) Eyaletler",
+            "İmtiyazlı Eyaletler",
+            "Muhtar Eyaletler"
+        ]
+    },
+    {
+        "correctAnswer": "C",
+        "meaning": "Salyaneli eyaletler, verginin yıllık nakit olarak toplandığı (iltizam) merkeze uzak bölgelerdir.",
+        "category": "Taşra Teşkilatı",
+        "question": "Mısır, Tunus, Cezayir ve Bağdat gibi merkeze uzak eyaletlerde uygulanan; tımarın olmadığı ve vergilerin doğrudan İltizam yoluyla hazineye aktarıldığı eyaletlere ne ad verilir?",
+        "options": [
+            "Salyanesiz Eyaletler",
+            "Yurtluk Eyaletler",
+            "Salyaneli (Yıllıklı) Eyaletler",
+            "İmtiyazlı Eyaletler"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Kadı, taşrada hem adaleti (yargı) sağlar hem de bulunduğu kazanın genel yönetim ve idaresinden sorumludur.",
+        "category": "Taşra Teşkilatı",
+        "question": "Osmanlı taşra yönetiminde kaza ve nahiyelerde adaleti sağlayan, aynı zamanda bulunduğu yerin sivil ve idari amiri statüsünde olan görevli kimdir?",
+        "options": [
+            "Subaşı",
+            "Kadı",
+            "Muhtesip",
+            "Sancakbeyi"
+        ]
+    },
+    {
+        "correctAnswer": "A",
+        "meaning": "Muhtesip, çarşı-pazarı denetleyen, üretimin kalitesini ve narh (fiyat) kurallarına uyulup uyulmadığını kontrol eden görevlidir (zabıta).",
+        "category": "Taşra Teşkilatı",
+        "question": "Şehir ve kasabalarda çarşı ve pazarların denetimini yapan, fiyatları, tartı ve ölçüleri kontrol eden görevli aşağıdakilerden hangisidir?",
+        "options": [
+            "Muhtesip",
+            "Kapan Emini",
+            "Gümrük Emini",
+            "Kethüda"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Ulufe, yeniçeriler dâhil tüm Kapıkulu ordusunun her üç ayda bir devletten aldığı nakit maaştır.",
+        "category": "Ordu",
+        "question": "Merkez ordusu olan Kapıkulu Askerleri'nin her üç ayda bir devlet hazinesinden aldıkları nakit maaşa ne ad verilir?",
+        "options": [
+            "Cülus",
+            "Ulufe",
+            "Dirlik",
+            "İcazet"
+        ]
+    },
+    {
+        "correctAnswer": "C",
+        "meaning": "Cülus bahşişi, her yeni padişahın tahta çıkışında Kapıkulu askerlerine dağıttığı ödüldür.",
+        "category": "Ordu",
+        "question": "Padişah değişikliklerinde (tahta çıkma törenlerinde) Kapıkulu Askerleri'ne dağıtılan bahşişe ne ad verilir?",
+        "options": [
+            "Ulufe",
+            "İkramiye",
+            "Cülus",
+            "Gülbang"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Devşirme sistemi, Hristiyan ailelerin çocuklarının alınarak zeki olanların Enderun'a, güçlü olanların Kapıkulu ordusuna yetiştirildiği sistemdir.",
+        "category": "Ordu",
+        "question": "Kapıkulu ordusuna asker yetiştirmek amacıyla Hristiyan çocuklarının alınıp Türk-İslam âdetlerine göre yetiştirilmesini sağlayan sistem aşağıdakilerden hangisidir?",
+        "options": [
+            "Pençik Sistemi",
+            "Devşirme Sistemi",
+            "İskân Politikası",
+            "İstimalet Politikası"
+        ]
+    },
+    {
+        "correctAnswer": "C",
+        "meaning": "Tımarlı sipahiler barış zamanında kendi bölgelerinin güvenliğini sağlar ve tarımsal faaliyetin sürekliliğini denetlerdi.",
+        "category": "Ordu",
+        "question": "Tımarlı Sipahiler'in savaş zamanı dışında barış döneminde, bulundukları bölgede yerine getirdikleri temel görev aşağıdakilerden hangisidir?",
+        "options": [
+            "Yeniçerileri eğitmek",
+            "Dış ülkelerle diplomasiyi yürütmek",
+            "Güvenliği sağlamak ve tarımsal üretimi denetlemek",
+            "Fetvalar verip hukuki uyuşmazlıkları çözmek"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Derbent teşkilatı, ticaret yollarındaki kritik geçitlerin ve köprülerin güvenliğinden sorumlu birimdir.",
+        "category": "Ekonomi ve Toplum",
+        "question": "Osmanlı Devleti'nde ticari yollar üzerindeki geçitlerin güvenliğini sağlayan ve bu hizmet karşılığında vergiden muaf tutulan teşkilat hangisidir?",
+        "options": [
+            "Menzil Teşkilatı",
+            "Derbent Teşkilatı",
+            "Mekkâri Taifesi",
+            "Hirfet Teşkilatı"
+        ]
+    },
+    {
+        "correctAnswer": "A",
+        "meaning": "Menzil teşkilatı, yollardaki konaklama ve haberleşme noktalarını (menzil) kurarak posta-kargo işlerini hızlandırmıştır.",
+        "category": "Ekonomi ve Toplum",
+        "question": "Haberleşme, posta ve taşımacılık işlerinin devlet kontrolünde hızlı bir şekilde yürütülmesini sağlayan yol ağı teşkilatına ne ad verilir?",
+        "options": [
+            "Menzil Teşkilatı",
+            "Lonca Teşkilatı",
+            "Gedik Teşkilatı",
+            "Derbent Teşkilatı"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Lonca Teşkilatı, Osmanlı esnaf ve zanaatkârlarının mesleki dayanışma ve denetim örgütüdür; Ahilikten farklı olarak gayrimüslimlere de açıktır.",
+        "category": "Ekonomi ve Toplum",
+        "question": "Selçuklulardaki Ahilik teşkilatının Osmanlı'daki devamı niteliğinde olan, esnaflar arası dayanışmayı sağlayan ve gayrimüslimlerin de üye olabildiği yapı hangisidir?",
+        "options": [
+            "Hirfet",
+            "Lonca",
+            "Kapan",
+            "Enderun"
+        ]
+    },
+    {
+        "correctAnswer": "A",
+        "meaning": "Narh sistemi, tüketiciyi korumak ve haksız rekabeti önlemek için malların tavan veya taban fiyatlarının belirlenmesidir.",
+        "category": "Ekonomi ve Toplum",
+        "question": "Devletin veya Lonca teşkilatının piyasada satılan malların fiyatlarına müdahale ederek alt ve üst sınır (tavan-taban fiyat) belirlemesi uygulamasına ne ad verilir?",
+        "options": [
+            "Narh Kesmek",
+            "Gedik Hakkı",
+            "İhtisap",
+            "Müsadere"
+        ]
+    },
+    {
+        "correctAnswer": "C",
+        "meaning": "Gedik hakkı, Lonca teşkilatında kalfalıktan ustalığa geçen zanaatkâra verilen resmi dükkân açma ruhsatıdır.",
+        "category": "Ekonomi ve Toplum",
+        "question": "Esnafların dükkân açma (iş yeri sahibi olma) hakkına ve ruhsatına Osmanlı Devleti'nde verilen isim nedir?",
+        "options": [
+            "İcazetname",
+            "Berat",
+            "Gedik",
+            "Ferman"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Osmanlı'da farklı inanç ve gruplara yönelik birden fazla mahkeme türünün olması (Cemaat, Şer'i, Konsolosluk) hukuk birliği olmadığının göstergesidir.",
+        "category": "Eğitim ve Hukuk",
+        "question": "Osmanlı Devleti'nde hukuk birliğinin olmadığının (farklı hukuk sistemlerinin bir arada uygulandığının) en net kanıtı aşağıdakilerden hangisidir?",
+        "options": [
+            "Sadece örfi hukukun uygulanması",
+            "Şer'i, Örfi, Cemaat ve Konsolosluk mahkemelerinin aynı anda faaliyet göstermesi",
+            "Kadıların Kazasker tarafından atanması",
+            "Kanunnamelerin padişah tarafından hazırlanması"
+        ]
+    },
+    {
+        "correctAnswer": "A",
+        "meaning": "Müsadere, memurların mülklerine devlet tarafından el konulmasıdır; Tanzimat Fermanı ile resmen kaldırılarak özel mülkiyet güvence altına alınmıştır.",
+        "category": "Eğitim ve Hukuk",
+        "question": "Devlet memurlarının ölümleri veya görevden alınmaları durumunda haksız kazançla elde ettikleri mallarına devlet tarafından el konulması sistemine ne ad verilir? (Tanzimat ile resmen kaldırılmıştır).",
+        "options": [
+            "Müsadere",
+            "İltizam",
+            "Narh",
+            "Sürgün"
+        ]
+    },
+    {
+        "correctAnswer": "C",
+        "meaning": "İcazetname, medrese öğrencilerinin (suhte/danişmend) eğitimlerini tamamladıklarında aldıkları resmi diplomadır.",
+        "category": "Eğitim ve Hukuk",
+        "question": "Osmanlı Devleti'nde medreselerden mezun olan öğrencilere verilen diplomaya ne ad verilir?",
+        "options": [
+            "Berat",
+            "Ferman",
+            "İcazetname",
+            "Ahidname"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "İskân (yerleştirme) politikası, fethedilen Rumeli topraklarına Türk nüfusun yerleştirilerek bölgenin Türkleşmesini ve İslamlaşmasını sağlamaktır.",
+        "category": "Fetih Politikaları",
+        "question": "Balkanlar'da fethedilen bölgelere Anadolu'dan getirilen Türkmenlerin yerleştirilmesiyle uygulanan \"şenlendirme\" politikasına ne ad verilir?",
+        "options": [
+            "İstimalet Politikası",
+            "İskân Politikası",
+            "Devşirme Sistemi",
+            "Gaza Politikası"
+        ]
+    },
+    {
+        "correctAnswer": "A",
+        "meaning": "İstimalet (hoşgörü) politikası, fetholunan yerlerdeki gayrimüslim tebaanın adil yönetim ve din özgürlüğü sayesinde devlete bağlılığını sağlayan sistemdir.",
+        "category": "Fetih Politikaları",
+        "question": "Osmanlı Devleti'nin fethettiği bölgelerdeki gayrimüslim halka inanç, dil ve kültür özgürlüğü tanıyarak onları devlete ısındırma politikası hangisidir?",
+        "options": [
+            "İstimalet Politikası",
+            "İskân Politikası",
+            "Cihat Politikası",
+            "Tekfur Politikası"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Enderun Mektebi, devşirme sistemiyle saraya alınan yetenekli çocukların devletin üst kademeleri (sadrazamlığa kadar) için yetiştirildiği idari okuldur.",
+        "category": "Fetih Politikaları",
+        "question": "Padişahın sarayında yer alan, devşirmelerin askerî ve mülkî idareci (sadrazam, vezir, komutan) olarak yetiştirildiği üst düzey eğitim kurumunun adı nedir?",
+        "options": [
+            "Sahn-ı Seman Medresesi",
+            "Enderun Mektebi",
+            "Harem",
+            "Şehzadegân Mektebi"
+        ]
+    },
+    {
+        "correctAnswer": "D",
+        "meaning": "Ayan Meclisi, 1876 Kanun-ı Esasi'ye göre üyeleri padişah tarafından ömür boyu seçilen, Meclis-i Mebusan ile birlikte Meclis-i Umumi'yi (parlamentoyu) oluşturan meclistir.",
+        "category": "Yönetim",
+        "question": "Osmanlı Devleti'nde I. Meşrutiyet'in ilanıyla açılan, üyeleri padişah tarafından ömür boyu atanan meclis aşağıdakilerden hangisidir?",
+        "options": [
+            "Dar-ı Şura-yı Babıali",
+            "Meclis-i Mebusan",
+            "Meclis-i Vala",
+            "Ayan Meclisi"
+        ]
+    },
+    {
+        "correctAnswer": "A",
+        "meaning": "Esame defterleri, Yeniçerilerin isimlerinin, eşkâllerinin ve aldıkları ulufe maaşlarının kaydedildiği resmi yoklama defterleridir.",
+        "category": "Ordu",
+        "question": "Osmanlı Devleti'nde Kapıkulu askerlerinin (Yeniçerilerin) isimlerinin ve maaşlarının (ulufe) kaydedildiği resmi defterlere ne ad verilir?",
+        "options": [
+            "Esame Defteri",
+            "Tahrir Defteri",
+            "Mühimme Defteri",
+            "Tereke Defteri"
+        ]
+    },
+    {
+        "correctAnswer": "A",
+        "meaning": "Encümen-i Danış, Tanzimat Dönemi'nde (1851) ders kitapları hazırlamak ve bilimsel çalışmalar yapmak üzere kurulan, Osmanlı'nın ilk bilim akademisidir.",
+        "category": "Eğitim ve Hukuk",
+        "question": "Tanzimat Dönemi'nde ders kitapları hazırlamak, bilim ve dil çalışmalarını yürütmek amacıyla kurulan bilim kurulu (akademisi) aşağıdakilerden hangisidir?",
+        "options": [
+            "Encümen-i Danış",
+            "Darülfünun",
+            "Mekteb-i Maarif-i Adliye",
+            "Mekteb-i Harbiye"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Hassa Ordusu, doğrudan hükümdarın şahsına bağlı olan, savaşlarda padişahı koruyan ve merkezde bulunan özel askeri birliklerdir.",
+        "category": "Ordu",
+        "question": "Osmanlı Devleti'nde merkezde bulunan, doğrudan padişahın şahsına bağlı olan maaşlı özel birliklere (veya kapıkulu ordusunun merkez kuvvetlerine) genel olarak ne ad verilir?",
+        "options": [
+            "Tımarlı Sipahiler",
+            "Hassa Ordusu",
+            "Akıncılar",
+            "Eyalet Askerleri"
+        ]
+    },
+    {
+        "correctAnswer": "C",
+        "meaning": "Kılıç, Osmanlı toprak sisteminde sefere katılan sipahiye hizmetine karşılık ilk olarak verilen başlangıç dirliğine (çekirdek dirliğe) verilen addır.",
+        "category": "Toprak ve Vergi Sistemi",
+        "question": "Osmanlı toprak sisteminde, Tımarlı Sipahiye göreve ilk başladığında tahsis edilen çekirdek dirliğe (başlangıç dirliğine) ne ad verilir?",
+        "options": [
+            "Hisse",
+            "Cebelü",
+            "Kılıç (Kılıç Tımarı)",
+            "Gedik"
+        ]
+    },
+    {
+        "correctAnswer": "A",
+        "meaning": "Sefaretnameler, Osmanlı elçilerinin (sefirlerin) görev yaptıkları yabancı ülkelerin durumu, kültürü ve siyaseti hakkında bilgi vererek hazırladıkları ve padişaha sundukları eserlerdir.",
+        "category": "Merkez Teşkilatı ve Divan",
+        "question": "Osmanlı elçilerinin görev yaptıkları ülkelerin siyasi, sosyal ve kültürel durumları hakkında hazırladıkları rapor niteliğindeki eserlere ne ad verilir?",
+        "options": [
+            "Sefaretname",
+            "Siyasetname",
+            "Seyahatname",
+            "Ahidname"
+        ]
+    },
+    {
+        "correctAnswer": "B",
+        "meaning": "Ehl-i Şer, şeriatı uygulayan İlmiye sınıfını; Ehl-i Örf ve Ehl-i Seyf ise kılıç taşıyan ve yürütme/askeri yetkiyi elinde bulunduran Seyfiye sınıfını (yönetici kesimi) ifade eder.",
+        "category": "Merkez Teşkilatı ve Divan",
+        "question": "Osmanlı devlet yapısında şer'i hukuku uygulayan ulema kesimine 'Ehl-i Şer', padişahın yürütme ve askerî gücünü temsil edenlere ise genel olarak ne ad verilirdi?",
+        "options": [
+            "Ehl-i Kalem",
+            "Ehl-i Örf / Ehl-i Seyf",
+            "Ehl-i Divan",
+            "Ehl-i Hiref"
+        ]
+    },
+    {
+        "correctAnswer": "D",
+        "meaning": "Emanet usulü, devletin bir mukataa gelirini mültezime kiralamayıp doğrudan devletin atadığı maaşlı bir memur (Emin) aracılığıyla toplaması sistemidir.",
+        "category": "Ekonomi ve Toplum",
+        "question": "Osmanlı'da devletin bir gelir kaynağının iltizama verilmeyip, doğrudan devlet tarafından atanan maaşlı bir memur aracılığıyla toplanması usulüne ve bu memura ne ad verilir?",
+        "options": [
+            "Malikâne / Mültezim",
+            "İltizam / Mültezim",
+            "Müsadere / Muhassıl",
+            "Emanet / Emin"
+        ]
+    }
+];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const catCover = document.getElementById('catCover');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressBar = document.getElementById('progressBar');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const resultMessageEl = document.getElementById('resultMessage');
+        const wordListEl = document.getElementById('wordList');
+
+        function initQuiz() {
+            totalEl.textContent = questions.length;
+            showQuestion();
+            
+            catCover.addEventListener('click', () => {
+                catCover.style.display = 'none';
+            });
+        }
+
+        const questions = [...quizData].sort(() => Math.random() - 0.5);
+
+        function showQuestion() {
+            answered = false;
+            const currentQuestion = questions[currentQuestionIndex];
+            
+            questionEl.textContent = currentQuestion.question;
+            
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBar.style.width = `${((currentQuestionIndex) / questions.length) * 100}%`;
+            
+            optionsEl.innerHTML = '';
+            optionsEl.appendChild(catCover);
+            catCover.style.display = 'flex';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn');
+                button.innerHTML = `<strong>${String.fromCharCode(65 + index)})</strong> ${option}`;
+                button.addEventListener('click', () => selectOption(index, button));
+                optionsEl.appendChild(button);
+            });
+            
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+        }
+
+        function selectOption(selectedIndex, selectedButton) {
+            if (answered) return;
+            answered = true;
+            
+            const currentQuestion = questions[currentQuestionIndex];
+            const correctIndex = currentQuestion.correctAnswer.charCodeAt(0) - 65;
+            const correctText = currentQuestion.options[correctIndex];
+            const isCorrect = selectedIndex === correctIndex;
+            
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === correctIndex) btn.classList.add('correct');
+                else if (idx === selectedIndex && !isCorrect) btn.classList.add('incorrect');
+            });
+
+            if (isCorrect) { score += 10; scoreEl.textContent = score; }
+            
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            feedbackTextEl.innerHTML = isCorrect ? `✅ Doğru!<br><br>${currentQuestion.meaning}` : 
+                `❌ Yanlış!<br>Doğru cevap: <strong>${correctText}</strong><br><br>${currentQuestion.meaning}`;
+            
+            nextBtn.style.display = 'block';
+        }
+
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) showQuestion();
+            else endQuiz();
+        });
+
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            progressBar.style.width = '100%';
+            
+            const percentage = Math.round((score / (questions.length * 10)) * 100);
+            finalScoreEl.textContent = `${score} Puan`;
+            
+            if (percentage >= 90) resultMessageEl.textContent = "Mükemmel! Osmanlı Kültür ve Medeniyeti'ne tam hakimsin! 🏆";
+            else if (percentage >= 70) resultMessageEl.textContent = "Harika! Toprak sistemi ve Divan konularında çok iyisin. 👍";
+            else if (percentage >= 50) resultMessageEl.textContent = "İyi gidiyorsun! Eksik olduğun ekonomi ve hukuk kavramlarına tekrar göz at. 💪";
+            else resultMessageEl.textContent = "Biraz daha tekrar! Bu konu KPSS'nin kalbidir, çalışmaya devam. 📚";
+            
+            wordListEl.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Bilgiler</h3>';
+            quizData.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('word-card', 'fade-in');
+                card.innerHTML = `
+                    <div class="word">${item.question}</div>
+                    <div class="meaning"><strong>Cevap:</strong> ${item.meaning}</div>
+                    <div class="category">${item.category.toUpperCase()}</div>
+                `;
+                wordListEl.appendChild(card);
+            });
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>

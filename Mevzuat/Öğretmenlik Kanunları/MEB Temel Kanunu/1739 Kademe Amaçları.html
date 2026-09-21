@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Eğitim Kademeleri Amaç Testi</title>
+    <style>
+        :root {
+            --bg: #fdfdfd;
+            --text: #2d3436;
+            --border: #dfe6e9;
+            --primary: #0984e3;
+            --success: #00b894;
+            --danger: #d63031;
+            --btn-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .progress {
+            font-size: 0.9rem;
+            color: #636e72;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: var(--btn-bg);
+            border: 1px solid var(--border);
+            padding: 18px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: var(--text);
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        .option-btn.correct {
+            background-color: var(--success);
+            border-color: var(--success);
+            color: white;
+            font-weight: 600;
+        }
+
+        .option-btn.wrong {
+            background-color: var(--danger);
+            border-color: var(--danger);
+            color: white;
+            opacity: 0.8;
+        }
+
+        .next-btn {
+            display: none;
+            width: 100%;
+            margin-top: 30px;
+            padding: 18px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(9, 132, 227, 0.2);
+        }
+
+        .result-screen {
+            display: none;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+
+        .restart-btn {
+            background-color: var(--text);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="quiz-container">
+        <div class="header">
+            <div class="title">Kademe Amaçları</div>
+            <div class="progress" id="progress-text">1 / 15</div>
+        </div>
+
+        <div class="question-text" id="question-text">Soru yükleniyor...</div>
+
+        <div class="options-grid" id="options-container">
+            </div>
+
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Sonraki Soru</button>
+    </div>
+
+    <div class="container result-screen" id="result-container">
+        <h2>Test Tamamlandı</h2>
+        <div class="score-display" id="score-text">0/15</div>
+        <p style="color: #636e72;">Kanundaki amaçları ne kadar iyi bildiğini gördün.</p>
+        <button class="restart-btn" onclick="startQuiz()">Yeniden Çöz</button>
+    </div>
+
+    <script>
+        const rawData = [
+            // Okul Öncesi
+            { text: "Çocukların beden, zihin ve duygu gelişmesini ve iyi alışkanlıklar kazanmasını sağlamak;", answer: "Okul Öncesi Eğitim" },
+            { text: "Onları ilk öğretime hazırlamak;", answer: "Okul Öncesi Eğitim" },
+            { text: "Şartları elverişsiz çevrelerden ve ailelerden gelen çocuklar için ortak bir yetişme ortamı yaratmak;", answer: "Okul Öncesi Eğitim" },
+            { text: "Çocukların Türkçeyi doğru ve güzel konuşmalarını sağlamaktır.", answer: "Okul Öncesi Eğitim" },
+            
+            // İlköğretim
+            { text: "Her Türk çocuğuna iyi bir vatandaş olmak için gerekli temel bilgi, beceri, davranış ve alışkanlıkları kazandırmak; onu milli ahlak anlayışına uygun olarak yetiştirmek;", answer: "İlköğretim" },
+            { text: "Her Türk çocuğunu ilgi, istidat ve kabiliyetleri yönünden yetiştirerek hayata ve üst öğrenime hazırlamaktır.", answer: "İlköğretim" },
+            { text: "İlköğretimin son ders yılının ikinci yarısında öğrencilere, ortaöğretimde devam edilebilecek okul ve programların hangi mesleklerin yolunu açabileceği ve bu mesleklerin kendilerine sağlayacağı yaşam standardı konusunda tanıtıcı bilgiler vermek üzere rehberlik servislerince gerekli çalışmalar yapılır.", answer: "İlköğretim" },
+            
+            // Ortaöğretim
+            { text: "Bütün öğrencilere ortaöğretim seviyesinde asgari ortak bir genel kültür vermek suretiyle onlara kişi ve toplum sorunlarını tanımak, çözüm yolları aramak ve yurdun iktisadi sosyal ve kültürel kalkınmasına katkıda bulunmak bilincini ve gücünü kazandırmak,", answer: "Ortaöğretim" },
+            { text: "Öğrencileri, çeşitli program ve okullarla ilgi, istidat ve kabiliyetleri ölçüsünde ve doğrultusunda yüksek öğretime veya hem mesleğe hem de yüksek öğretime veya hayata ve iş alanlarına hazırlamaktır.", answer: "Ortaöğretim" },
+            
+            // Yükseköğretim
+            { text: "Öğrencileri ilgi, istidat ve kabiliyetleri ölçüsünde ve doğrultusunda yurdumuzun bilim politikasına ve toplumun yüksek seviyede ve çeşitli kademelerdeki insan gücü ihtiyaçlarına göre yetiştirmek;", answer: "Yükseköğretim" },
+            { text: "Çeşitli kademelerde bilimsel öğretim yapmak;", answer: "Yükseköğretim" },
+            { text: "Yurdumuzu ilgilendirenler başta olmak üzere, bütün bilimsel, teknik ve kültürel sorunları çözmek için bilimleri genişletip derinleştirecek inceleme ve araştırmalarda bulunmak;", answer: "Yükseköğretim" },
+            { text: "Yurdumuzun türlü yönde ilerleme ve gelişmesini ilgilendiren bütün sorunları, Hükümet ve kurumlarla da elbirliği etmek suretiyle öğretim ve araştırma konusu yaparak sonuçlarını toplumun yararlanmasına sunmak ve Hükümetçe istenecek inceleme ve araştırmaları sonuçlandırarak düşüncelerini bildirmek;", answer: "Yükseköğretim" },
+            { text: "Araştırma ve incelemelerinin sonuçlarını gösteren, bilim ve tekniğin ilerlemesini sağlayan her türlü yayınları yapmak;", answer: "Yükseköğretim" },
+            { text: "Türk toplumunun genel seviyesini yükseltici ve kamu oyunu aydınlatıcı bilim verilerini sözle, yazı ile halka yaymak ve yaygın eğitim hizmetlerinde bulunmaktır.", answer: "Yükseköğretim" }
+        ];
+
+        const optionsList = ["Okul Öncesi Eğitim", "İlköğretim", "Ortaöğretim", "Yükseköğretim"];
+        let questions = [];
+        let currentIndex = 0;
+        let score = 0;
+
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        function startQuiz() {
+            questions = shuffle([...rawData]);
+            currentIndex = 0;
+            score = 0;
+            document.getElementById('result-container').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            document.getElementById('next-btn').style.display = 'none';
+            const currentQ = questions[currentIndex];
+            
+            document.getElementById('progress-text').innerText = `${currentIndex + 1} / ${questions.length}`;
+            document.getElementById('question-text').innerText = currentQ.text;
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            // Şıkları her soru için karıştırıyoruz
+            const shuffledOptions = shuffle([...optionsList]);
+
+            shuffledOptions.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = option;
+                btn.onclick = () => checkAnswer(btn, option, currentQ.answer);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedBtn, selectedAnswer, correctAnswer) {
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            // Tüm butonları pasif yap
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (selectedAnswer === correctAnswer) {
+                selectedBtn.classList.add('correct');
+                score++;
+            } else {
+                selectedBtn.classList.add('wrong');
+                // Doğru olanı yeşil göster
+                buttons.forEach(btn => {
+                    if (btn.innerText === correctAnswer) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('score-text').innerText = `${score}/${questions.length}`;
+        }
+
+        // Başlat
+        startQuiz();
+    </script>
+</body>
+</html>

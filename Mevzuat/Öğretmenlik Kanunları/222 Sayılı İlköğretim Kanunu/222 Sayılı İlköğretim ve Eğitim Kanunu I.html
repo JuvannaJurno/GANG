@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>222 Sayılı Kanun - 1. Parça (21 Soru)</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%); color: var(--dark); line-height: 1.6; padding: 15px; min-height: 100vh; }
+        
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow: hidden; }
+        
+        header { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; text-align: center; padding: 25px 20px; position: relative; }
+        header::before { content: "📚"; font-size: 3rem; position: absolute; top: 10px; left: 20px; opacity: 0.3; }
+        h1 { margin-bottom: 8px; font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1rem; opacity: 0.9; }
+
+        .notes-container { padding: 25px; animation: fadeIn 0.5s ease; }
+        .notes-title { color: var(--primary); margin-bottom: 15px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .notes-scroll-area { max-height: 55vh; overflow-y: auto; background: var(--light); border: 2px solid var(--accent); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        .notes-scroll-area::-webkit-scrollbar { width: 8px; }
+        .notes-scroll-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        .notes-scroll-area h3 { color: var(--dark); border-bottom: 2px solid var(--primary); padding-bottom: 5px; margin-top: 20px; margin-bottom: 10px; }
+        .notes-scroll-area ul { padding-left: 20px; margin-bottom: 15px; }
+        .notes-scroll-area li { margin-bottom: 8px; }
+
+        .numbers-box { background-color: #E3F2FD; border-left: 5px solid #1976D2; padding: 15px; margin: 20px 0; border-radius: 5px; }
+        .numbers-box h3 { color: #1565C0 !important; border-bottom: 2px solid #90CAF9 !important; margin-top: 0 !important; }
+        .numbers-box li { background: white; margin-bottom: 8px; padding: 10px; border-radius: 6px; list-style: none; display: flex; align-items: center; }
+        .num-badge { background: #1976D2; color: white; font-weight: bold; padding: 4px 10px; border-radius: 4px; margin-right: 12px; min-width: 65px; text-align: center; }
+
+        .important-note { background-color: #FFF8E1; border-left: 5px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 5px; }
+        .scroll-msg { color: var(--danger); font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; text-align: center; }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        .progress-container { width: 100%; background-color: #e9ecef; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); width: 0%; transition: width 0.5s ease; }
+        .quiz-container { padding: 25px; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; background-color: var(--light); padding: 15px; border-radius: 10px; border: 2px solid var(--accent); }
+        .question-container { background: var(--light); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .options { display: grid; gap: 12px; position: relative; }
+        .cat-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(46, 125, 50, 0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px; z-index: 10; cursor: pointer; }
+        .cat-image { max-width: 200px; border-radius: 8px; margin-bottom: 10px; }
+        .option-btn { padding: 16px; border: 2px solid #ddd; border-radius: 10px; background: white; cursor: pointer; text-align: left; font-size: 1rem; transition: 0.3s; }
+        .option-btn.correct { background-color: var(--success); color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .feedback { padding: 20px; border-radius: 10px; margin-top: 20px; display: none; line-height: 1.6; }
+        .correct-feedback { background-color: rgba(56, 142, 60, 0.1); border-left: 5px solid var(--success); }
+        .incorrect-feedback { background-color: rgba(198, 40, 40, 0.1); border-left: 5px solid var(--danger); }
+        .next-btn { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none; padding: 16px; border-radius: 10px; cursor: pointer; width: 100%; max-width: 250px; display: block; margin: 20px auto; font-weight: bold; }
+        .next-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .results-container { padding: 30px; text-align: center; display: none; }
+        .final-score { font-size: 3rem; color: var(--accent); font-weight: bold; margin: 20px 0; }
+        .word-card { border: 2px solid var(--accent); padding: 15px; margin-bottom: 15px; background: var(--light); text-align: left; border-radius: 10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 222 Sayılı İlköğretim ve Eğitim Kanunu</h1>
+            <div class="subtitle">1. PARÇA: Tanım, Zorunluluk, Yaş, Kurumlar ve Görevliler (21 Soru)</div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <h2 class="notes-title">📖 Ders Notları - 1. Parça</h2>
+            <div class="notes-scroll-area" id="notesScrollArea">
+                <h3>📌 MADDE 1-3: Tanım, Zorunluluk ve Yaş Aralığı</h3>
+                <ul>
+                    <li><strong>Madde 1:</strong> İlköğretim, kız ve erkek tüm Türk vatandaşlarının <strong>bedeni, zihni ve ahlaki</strong> gelişimlerini milli hedeflere uygun destekleyen temel eğitim sürecidir.</li>
+                    <li><strong>Madde 2:</strong> İlköğretim çağındaki tüm çocuklar için eğitim <strong>zorunludur</strong> ve devlet okullarında <strong>ücretsizdir</strong>.</li>
+                    <li><strong>Madde 3:</strong> Mecburi ilköğretim çağı <strong>6-14 yaş</strong> arasını kapsar. Kayıt yaşı 31 Aralık itibarıyla <strong>72 ay</strong>'dır.</li>
+                    <li><strong>Madde 4:</strong> Tüm Türk vatandaşı çocuklar resmi veya özel Türk okullarında eğitim görmekle yükümlüdür. Yurt dışında ise <strong>Türk okullarına</strong> devam zorunludur.</li>
+                    <li><strong>Madde 5:</strong> Memleket dışı, okul bulunmaması veya sağlık nedeniyle okula gidemeyen çocuklar <strong>özel öğretim</strong> yoluyla eğitim alır ve <strong>sınavla</strong> uygun sınıfa yerleştirilir.</li>
+                </ul>
+
+                <h3>🏫 MADDE 6-14: Kurum Türleri ve Görevliler</h3>
+                <ul>
+                    <li><strong>Mecburi Kurumlar:</strong> İlköğretim okulları (gündüzlü, pansiyonlu, yatılı, gezici), yetiştirici/tamamlayıcı sınıflar, özel eğitim okulları.</li>
+                    <li><strong>İsteğe Bağlı Kurumlar:</strong> Okul öncesi eğitim kurumları, tamamlayıcı sınıflar ve kurslar.</li>
+                    <li><strong>İlköğretim Yapısı:</strong> 4 yıl ilkokul + 4 yıl ortaokul = <strong>8 yıl zorunlu eğitim</strong>.</li>
+                    <li><strong>Dağınık Nüfus:</strong> Gruplaştırılmış köylerde <strong>bölge okulu</strong>, gruplaşma mümkün değilse <strong>gezici öğretmen</strong> görevlendirilir.</li>
+                    <li><strong>Görevli Türleri:</strong> Müdür, sınıf öğretmeni, branş öğretmeni, rehberlik uzmanı, sağlık personeli, yardımcı hizmetler vb.</li>
+                </ul>
+
+                <div class="numbers-box">
+                    <h3>🔢 Bu Parçadaki Kritik Sayılar</h3>
+                    <ul>
+                        <li><span class="num-badge">6-14</span> Mecburi ilköğretim çağı (yaş aralığı)</li>
+                        <li><span class="num-badge">72 Ay</span> İlkokula kayıt için gereken asgari ay (31 Aralık itibarıyla)</li>
+                        <li><span class="num-badge">8 Yıl</span> Zorunlu ilköğretim süresi (4+4)</li>
+                        <li><span class="num-badge">4+4</span> İlkokul + Ortaokul yapısı</li>
+                    </ul>
+                </div>
+
+                <div class="important-note">
+                    <strong>⚠️ NOT:</strong> 222 sayılı İlköğretim ve Eğitim Kanunu 1961 yılında kabul edilmiştir. Amacı; ilköğretim çağındaki tüm çocukların eğitim hakkını güvence altına almak, öğretim süreçlerini düzenlemek ve topluma katkı sağlayan bireyler yetiştirmektir.
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <p id="scrollMsg" class="scroll-msg">Testi başlatmak için notların sonuna kadar kaydırın 👇</p>
+                <button class="next-btn" id="startTestBtn" disabled>Notları Okudum, Testi Başlat</button>
+            </div>
+        </div>
+
+        <div id="quizSection" style="display: none;">
+            <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+            <div class="quiz-container">
+                <div class="stats">
+                    <div class="score">Puan: <span id="score">0</span></div>
+                    <div>İlerleme: <span id="progress">0</span>/<span id="totalQ">21</span></div>
+                </div>
+                <div class="question-container"><div class="question" id="question"></div></div>
+                <div class="options" id="options">
+                    <div class="cat-cover" id="catCover">
+                        <img src="https://cataas.com/cat" class="cat-image" alt="kedi">
+                        <div class="cat-text" style="color:white; margin-top:10px;">Cevapları görmek için tıklayın!</div>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback"><div id="feedbackText"></div></div>
+                <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru ➡️</button>
+            </div>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. PARÇA: 21 SORU (Tanım, Zorunluluk, Yaş, Kurumlar, Görevliler)
+        const QUIZ_DATA = [
+            { question: "222 Sayılı İlköğretim ve Eğitim Kanunu Madde 1'e göre ilköğretim aşağıdakilerden hangisi olarak tanımlanır?", options: ["Sadece akademik başarıyı hedefleyen eğitim süreci", "Kadın ve erkek tüm Türklerin bedensel, zihinsel ve ahlaki gelişimlerine milli gayelere uygun hizmet eden temel eğitim ve öğretim", "Ortaöğretime hazırlık aşaması", "Zorunlu eğitimin ilk basamağı"], correctAnswer: 1, meaning: "İlköğretim bedensel, zihinsel ve ahlaki gelişimi hedefler." },
+            { question: "222 Sayılı İlköğretim ve Eğitim Kanunu'na göre, aşağıdakilerden hangisi ilköğretim kurumlarının amaçları arasında yer almaz?", options: ["Çocukların bedeni ve zihni gelişimlerini sağlamak", "Çocukları millî gayelere uygun olarak yetiştirmek", "Çocukları iyi vatandaşlar olarak yetiştirmek", "Sadece akademik bilgi vermek"], correctAnswer: 3, meaning: "İlköğretim sadece akademik bilgiyi değil, bütünsel gelişimi hedefler." },
+            { question: "222 Sayılı İlköğretim ve Eğitim Kanunu Madde 2'ye göre ilköğretim ile ilgili aşağıdakilerden hangisi doğrudur?", options: ["Yalnızca erkek çocuklar için zorunludur ve ücretlidir", "Kız ve erkek tüm öğrenim çağındaki çocuklar için zorunlu olup devlet okullarında ücretsizdir", "Sadece şehirlerde yaşayan çocuklar için zorunludur", "Zorunlu değildir ancak devlet okullarında ücretsizdir"], correctAnswer: 1, meaning: "İlköğretim tüm çocuklar için zorunlu ve devlet okullarında ücretsizdir." },
+            { question: "222 Sayılı Kanun'a göre mecburi ilköğretim çağı hangi yaş grubunu kapsar?", options: ["5-13 yaş", "6-13 yaş", "6-14 yaş", "7-14 yaş"], correctAnswer: 2, meaning: "Mecburi ilköğretim çağı 6-14 yaş aralığıdır." },
+            { question: "31 Aralık tarihi itibarı ile kaç ayını dolduran çocukların ilköğretime kaydı yapılmaktadır?", options: ["60", "65", "70", "72"], correctAnswer: 3, meaning: "Kayıt için 72 ay şarttır." },
+            { question: "Mecburi ilköğretim çağı, çocuğun kaç yaşını bitirdiği yılın eylül ayı sonunda başlar?", options: ["4 yaşını bitirdiği yıl", "5 yaşını bitirdiği yıl", "6 yaşını bitirdiği yıl", "7 yaşını bitirdiği yıl"], correctAnswer: 1, meaning: "5 yaşını bitirdiği yılın eylül ayında başlar." },
+            { question: "222 Sayılı İlköğretim ve Eğitim Kanunu Madde 3'e göre Türk vatandaşı kız ve erkek çocuklar ilköğretimlerini nasıl yapmakla yükümlüdür?", options: ["Sadece resmi okullarda", "Sadece özel okullarda", "Resmi veya özel Türk ilköğretim okullarında; yurt dışında ise o ülkedeki Türk okullarında", "İstediği herhangi bir okulda"], correctAnswer: 2, meaning: "Resmi/özel Türk okulu veya yurt dışındaki Türk okuluna devam zorunludur." },
+            { question: "222 Sayılı İlköğretim ve Eğitim Kanunu Madde 3'e göre, mecburî öğretim çağındaki ve özel öğretim gören vatandaşların ilkokul sınıflarına veya mezuniyet imtihanlarına alınabilmesi için aşağıdaki şartlardan hangisi gerekmemektedir?", options: ["Memleket dışında bulunmak", "Oturduğu yerde okul bulunmamak", "Sağlık durumu dolayısıyla okula devam edememek", "Ailenin ekonomik durumu yetersiz olmak"], correctAnswer: 3, meaning: "Ekonomik yetersizlik bu kapsamda değildir." },
+            { question: "Aşağıdakilerden hangisi 222 sayılı Kanun'a göre mecburi ilköğretim kurumlarından biri değildir?", options: ["Gündüzlü ilköğretim okulları", "Yatılı ilköğretim okulları", "Okul öncesi eğitim kurumları", "Gezici okullar"], correctAnswer: 2, meaning: "Okul öncesi eğitim isteğe bağlıdır." },
+            { question: "222 Sayılı İlköğretim ve Eğitim Kanunu Madde 6'ya göre aşağıdakilerden hangisi mecburi ilköğretim kurumları arasında yer alır?", options: ["Gündüzlü, pansiyonlu ve gezici ilköğretim okulları", "Okul öncesi eğitim kurumları", "Tamamlayıcı sınıflar ve kurslar (isteğe bağlı)", "Yetiştirici ve tamamlayıcı kurslar (isteğe bağlı)"], correctAnswer: 0, meaning: "İlköğretim okulları mecburidir." },
+            { question: "222 sayılı kanuna göre aşağıda verilenlerden hangisi isteğe bağlı olan eğitim kurumlarından birisidir?", options: ["Gezici okullar", "Pansiyonlu ilköğretim okulları", "Yatılı ilköğretim okulları", "Okul öncesi eğitim kurumları"], correctAnswer: 3, meaning: "Okul öncesi eğitim isteğe bağlıdır." },
+            { question: "222 Sayılı İlköğretim ve Eğitim Kanunu Madde 6'ya göre, öğrenim çağında olup eksik eğitim almış bireyler için hangi kurumlar düzenlenir?", options: ["Gündüzlü ilköğretim okulları", "Yetiştirici ve tamamlayıcı sınıflar ve kurslar", "Özel eğitime muhtaç çocuklar için okullar", "Okul öncesi eğitim kurumları"], correctAnswer: 1, meaning: "Yetiştirici sınıflar eksik eğitim alanlar içindir." },
+            { question: "222 Sayılı İlköğretim ve Eğitim Kanunu'na göre ilköğretim kaç yıllık zorunlu örgün eğitim sürecinden oluşur?", options: ["4 yıl", "5 yıl", "8 yıl", "12 yıl"], correctAnswer: 2, meaning: "4 yıl ilkokul + 4 yıl ortaokul = 8 yıl." },
+            { question: "Nüfusu az ve dağınık olan yerlerde ilköğretim hizmetlerini sağlamak için hangi okullar kurulur?", options: ["Sadece gündüzlü okullar", "İlköğretim bölge okulları", "Mesleki eğitim merkezleri", "Açıköğretim okulları"], correctAnswer: 1, meaning: "Dağınık nüfusta bölge okulları kurulur." },
+            { question: "Özel eğitime muhtaç çocuklar için açılan okullar ve sınıflar aşağıdakilerden hangisidir?", options: ["İsteğe bağlı ilköğretim kurumları", "Mecburi ilköğretim kurumları", "Yaygın eğitim kurumları", "Okul öncesi eğitim kurumları"], correctAnswer: 1, meaning: "Özel eğitim mecburi ilköğretim kurumlarındandır." },
+            { question: "Aşağıda verilenlerden hangisi 222 sayılı kanuna göre ildeki ilköğretim görevlilerinden birisi değildir?", options: ["Rehberlik uzmanları", "Belediye meclis üyeleri", "Gezici öğretmenler", "Yardımcı hizmetler sınıfına dahil personel"], correctAnswer: 1, meaning: "Belediye meclis üyeleri ilköğretim görevlisi değildir." },
+            { question: "222 sayılı Kanun'a göre mecburi öğrenim çağında olup da çeşitli nedenlerle okula gidemeyen çocukların eğitimi nasıl sağlanır?", options: ["Açıköğretim yoluyla", "Özel öğretimle", "Eğitime ara verilerek", "Aile içinde eğitimle"], correctAnswer: 1, meaning: "Özel öğretim yoluyla eğitim alırlar." },
+            { question: "Geçici öğretmenler ile ilgili aşağıdaki bilgilerden hangisi yanlıştır?", options: ["18 yaşını doldurmuş olmaları gerekmektedir", "Açılmış ve açılacak kurslarda başarılı olmaları gerekmektedir", "Tatil aylarında da geçici öğretmenlere ücretleri ödenmektedir", "Aralıksız beş takvim yılı geçici öğretmenlik yapanlar asıl öğretmenliğe geçirilir"], correctAnswer: 2, meaning: "Tatil aylarında geçici öğretmenlere ücret ödenmez." },
+            { question: "Öğretmenlerin meslek dışı görevle yükümlü tutulamayacağı hükmü aşağıdakilerden hangisini ifade eder?", options: ["Öğretmenler her türlü görevi yapmak zorundadır", "Sadece kanun ve Cumhurbaşkanlığı kararnamesiyle verilen görevleri yapar", "Sadece valilik emirlerini yerine getirir", "Okul dışında hiçbir iş yapamaz"], correctAnswer: 1, meaning: "Madde 44: Öğretmenler meslek dışı işlerle yükümlü tutulamaz." },
+            { question: "222 sayılı Kanun'a göre kesilen idari para cezaları hangi kanun hükümlerine göre tahsil edilir?", options: ["Borçlar Kanunu", "6183 sayılı Amme Alacaklarının Tahsil Usulü Hakkında Kanun", "Ceza Muhakemesi Kanunu", "İcra ve İflas Kanunu"], correctAnswer: 1, meaning: "6183 sayılı Kanun'a göre tahsil edilir." },
+            { question: "222 sayılı İlköğretim ve Eğitim Kanunu hangi yıl kabul edilmiştir?", options: ["1923", "1950", "1961", "1982"], correctAnswer: 2, meaning: "Kanun 1961 yılında kabul edilmiştir." }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.questions = [...QUIZ_DATA].sort(() => Math.random() - 0.5);
+                this.elements = {
+                    question: document.getElementById('question'), options: document.getElementById('options'),
+                    feedback: document.getElementById('feedback'), feedbackText: document.getElementById('feedbackText'),
+                    nextBtn: document.getElementById('nextBtn'), score: document.getElementById('score'),
+                    progress: document.getElementById('progress'), totalQ: document.getElementById('totalQ'),
+                    progressBar: document.getElementById('progressBar'), catCover: document.getElementById('catCover'),
+                    resultsContainer: document.getElementById('resultsContainer'), quizSection: document.getElementById('quizSection'),
+                    finalScore: document.getElementById('finalScore'), wordList: document.getElementById('wordList')
+                };
+                this.init();
+            }
+            init() {
+                this.elements.totalQ.textContent = this.questions.length;
+                this.elements.catCover.onclick = () => this.elements.catCover.style.display = 'none';
+                this.elements.nextBtn.onclick = () => this.nextQuestion();
+                this.showQuestion();
+            }
+            showQuestion() {
+                const q = this.questions[this.currentQuestionIndex];
+                this.elements.question.textContent = q.question;
+                this.elements.catCover.style.display = 'flex';
+                this.elements.options.innerHTML = '';
+                this.elements.options.appendChild(this.elements.catCover);
+                [...q.options].sort(() => Math.random() - 0.5).forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = opt;
+                    btn.onclick = () => this.handleAnswer(opt, q);
+                    this.elements.options.appendChild(btn);
+                });
+                this.elements.feedback.style.display = 'none';
+                this.elements.nextBtn.style.display = 'none';
+                this.elements.progress.textContent = this.currentQuestionIndex + 1;
+                this.elements.progressBar.style.width = `${((this.currentQuestionIndex + 1) / this.questions.length) * 100}%`;
+            }
+            handleAnswer(sel, q) {
+                const cor = q.options[q.correctAnswer];
+                document.querySelectorAll('.option-btn').forEach(b => {
+                    b.disabled = true;
+                    if (b.textContent === cor) b.classList.add('correct');
+                    if (b.textContent === sel && sel !== cor) b.classList.add('incorrect');
+                });
+                const ok = sel === cor;
+                if (ok) this.score++;
+                this.elements.score.textContent = this.score;
+                this.elements.feedback.style.display = 'block';
+                this.elements.feedback.className = `feedback ${ok ? 'correct-feedback' : 'incorrect-feedback'}`;
+                this.elements.feedbackText.innerHTML = ok ? `✅ Doğru!<br>${q.meaning}` : `❌ Yanlış!<br>Doğru Cevap: <strong>${cor}</strong><br>${q.meaning}`;
+                this.elements.nextBtn.style.display = 'block';
+            }
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) this.showQuestion();
+                else this.endQuiz();
+            }
+            endQuiz() {
+                this.elements.quizSection.style.display = 'none';
+                this.elements.resultsContainer.style.display = 'block';
+                const p = Math.round((this.score / this.questions.length) * 100);
+                this.elements.finalScore.textContent = `${this.score}/${this.questions.length} (%${p})`;
+                this.questions.forEach(q => {
+                    const d = document.createElement('div');
+                    d.className = 'word-card';
+                    d.innerHTML = `<strong>${q.question}</strong><p style="margin-top:5px; color:#555">${q.meaning}</p>`;
+                    this.elements.wordList.appendChild(d);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const scroll = document.getElementById('notesScrollArea');
+            const btn = document.getElementById('startTestBtn');
+            const msg = document.getElementById('scrollMsg');
+            scroll.onscroll = () => {
+                if (scroll.scrollTop + scroll.clientHeight >= scroll.scrollHeight - 10) {
+                    btn.disabled = false;
+                    msg.style.display = 'none';
+                }
+            };
+            if (scroll.scrollHeight <= scroll.clientHeight) {
+                btn.disabled = false;
+                msg.style.display = 'none';
+            }
+            btn.onclick = () => {
+                document.getElementById('notesContainer').style.display = 'none';
+                document.getElementById('quizSection').style.display = 'block';
+                new QuizManager();
+            };
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Öğretmenlik Mesleği Kanunu Testi</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "📚";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .notes-container {
+            padding: 25px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .notes-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notes-scroll-area {
+            max-height: 55vh;
+            overflow-y: auto;
+            background: var(--light);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .notes-scroll-area::-webkit-scrollbar {
+            width: 8px;
+        }
+        .notes-scroll-area::-webkit-scrollbar-track {
+            background: #e9ecef;
+            border-radius: 10px;
+        }
+        .notes-scroll-area::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+
+        .notes-scroll-area h3 {
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 5px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .notes-scroll-area h3:first-child {
+            margin-top: 0;
+        }
+
+        .notes-scroll-area ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .notes-scroll-area li {
+            margin-bottom: 8px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+        .notes-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+            background: white;
+        }
+
+        .notes-table th, .notes-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .notes-table th {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .numbers-box {
+            background-color: #E3F2FD;
+            border-left: 5px solid #1976D2;
+            padding: 15px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        
+        .numbers-box h3 {
+            color: #1565C0 !important;
+            border-bottom: 2px solid #90CAF9 !important;
+            margin-top: 0 !important;
+        }
+        
+        .numbers-box ul {
+            list-style-type: none !important;
+            padding-left: 0 !important;
+        }
+        
+        .numbers-box li {
+            background: white;
+            margin-bottom: 8px !important;
+            padding: 10px 15px !important;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid #1976D2;
+            display: flex;
+            align-items: center;
+        }
+        
+        .num-badge {
+            background: #1976D2;
+            color: white;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-right: 12px;
+            font-size: 1.1rem;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .highlight-direct {
+            background-color: #C8E6C9;
+            color: #2E7D32;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            border: 1px solid #81C784;
+        }
+
+        .highlight-indirect {
+            background-color: #FFCDD2;
+            color: #C62828;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            border: 1px solid #E57373;
+        }
+
+        .important-note {
+            background-color: #FFF8E1;
+            border-left: 5px solid #FFC107;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+        }
+
+        .start-quiz-wrapper {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .scroll-msg {
+            color: var(--danger);
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        #startTestBtn:disabled {
+            background: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 125, 50, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(46, 125, 50, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(56, 142, 60, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(198, 40, 40, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 125, 50, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-genelsartlar { background: #2E7D32; }
+        .category-kavramlar { background: #1565C0; }
+        .category-hazirlik { background: #6A1B9A; }
+        .category-sinav { background: #C62828; }
+        .category-sorumluluk { background: #FF8F00; }
+        .category-izin { background: #00838F; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            h1 { font-size: 1.6rem; }
+            .notes-title { font-size: 1.3rem; }
+            .notes-scroll-area { max-height: 60vh; padding: 15px; }
+            .question { font-size: 1.1rem; }
+            .option-btn { padding: 14px 16px; font-size: 1rem; }
+            .cat-image { max-width: 150px; max-height: 120px; }
+            .cat-text { font-size: 1rem; }
+            .num-badge { min-width: 50px; font-size: 1rem; margin-right: 8px; padding: 3px 6px; }
+            .numbers-box li { padding: 8px 10px !important; font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 MEB-AGS Hazırlık</h1>
+            <div class="subtitle">7528 Sayılı Öğretmenlik Mesleği Kanunu</div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <h2 class="notes-title">📖 Genel Bilgi ve Kavramlar Notları</h2>
+            
+            <div class="notes-scroll-area" id="notesScrollArea">
+                <h3>Kanunun Amacı ve Temel Kavramlar</h3>
+                <ul>
+                    <li><strong>Kanunun Amacı:</strong> Öğretmenlerin seçilmelerini, atamalarını ve Millî Eğitim Akademisinin kurulmasını düzenlemektir. (Not: Yıllık izinler bu kanunun temel amaç maddesinde yer almaz.)</li>
+                    <li><strong>Ders Yılı:</strong> Derslerin başladığı günden derslerin kesildiği güne kadar geçen süredir.</li>
+                    <li><strong>Eğitim ve Öğretim Yılı:</strong> Ders yılının başladığı tarihten ertesi ders yılının başladığı tarihe kadar geçen süredir.</li>
+                    <li><strong>Norm Kadro:</strong> Bakanlığa bağlı eğitim kurumlarında bulunması gereken yönetici ve öğretmen sayısını ifade eder.</li>
+                    <li><strong>Tür:</strong> Aynı kademedeki eğitim kurumlarından farklı eğitim programı uygulanan eğitim kurumlarını belirtir.</li>
+                </ul>
+
+                <h3>Öğretmen ve Yöneticilerin Sorumlulukları</h3>
+                <ul>
+                    <li>Atatürk ilke ve inkılaplarına bağlı, milliyetçi insanlar yetiştirmek.</li>
+                    <li>Öğrencilerin bedensel, zihinsel, duygusal ve ahlaki gelişimi için çaba göstermek, meslektaş, aile ve veli ile iş birliği yapmak.</li>
+                    <li>Öğrencileri eğitim ortamında olumsuz söz, tavır ve davranışlardan korumak.</li>
+                    <li><strong>Dikkat:</strong> Eğitim faaliyetleri için sendika, siyasi parti ve meslek kuruluşu ile iş birliği yapmak ödev ve sorumluluklar arasında <span style="color:var(--danger)">yer almaz.</span></li>
+                    <li><strong>Yöneticiler:</strong> Eğitim programlarının amaca uygun yürütülmesini sağlar, iş bölümü yapar ve huzurlu ortam temin eder. Özel sektör eğitim kurumlarıyla işbirliği yaparak istihdam sağlamak ödevleri <span style="color:var(--danger)">değildir.</span></li>
+                </ul>
+
+                <h3>Hazırlık Eğitimi ve Alınma Şartları</h3>
+                <ul>
+                    <li>Hazırlık eğitimi <strong>Millî Eğitim Akademisi</strong> tarafından verilir ve genel itibarıyla <strong>4 dönemdir.</strong></li>
+                    <li>Hazırlık eğitiminin içeriği, süresi ve diğer hususlar <strong>Millî Eğitim Bakanlığı</strong> tarafından çıkarılacak yönetmelikle belirlenir.</li>
+                    <li><strong>Şartlar:</strong> Kamu haklarından mahrum olmamak, 1 yıl veya daha fazla kasten suçtan hapis cezası almamak, uygun yükseköğretim mezunu olmak, sağlık engeli bulunmamak, güvenlik/arşiv araştırmasından geçmek ve ÖSYM (AGS) sınavından gerekli puanı almak.</li>
+                    <li><strong>Şart OLMAYANLAR:</strong> Askerlik hizmetini tamamlamış olmak, mesleki deneyim sahibi olmak ve YDS'den belirli bir puan almış olmak şart <span class="highlight-indirect">değildir.</span></li>
+                    <li><strong>ÖSYM Sınav Şartı İstisnaları:</strong> Sosyal Hizmetler Kanunu kapsamındakiler, Terörle Mücadele kapsamındakiler ve millî sporcular istisnadır. (Özel öğretimde 5 yıl çalışma bir istisna değildir.)</li>
+                    <li>Adayların belirlenmesinde, atama izni verilen pozisyon sayısını geçmemek üzere <strong>sınav puanı üstünlüğü</strong> esas alınır.</li>
+                    <li>Hazırlık eğitimi şartlarını taşımadığı sonradan anlaşılanların veya bu şartları sonradan kaybedenlerin <strong>Akademi ile ilişikleri kesilir.</strong></li>
+                </ul>
+
+                <h3>Sınavlar, Değerlendirme ve Başarı Durumu</h3>
+                <div class="table-responsive">
+                    <table class="notes-table">
+                        <thead>
+                            <tr>
+                                <th>Kategori</th>
+                                <th>Özellikler ve Detaylar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Teorik Dersler</strong></td>
+                                <td>Her bir teorik dersten en az <strong>2 yazılı sınav</strong> yapılır. Geçme notu 100 üzerinden en az <strong>60'tır.</strong> Başarısız olana her ders için <strong>1 ek sınav hakkı</strong> verilir. Ek sınavda da başarısız olanın <strong>Akademi ile ilişiği kesilir.</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Uygulamalı Dersler</strong></td>
+                                <td>Başarı puanı 100 üzerinden <strong>70 olmalıdır.</strong> Adaylar <strong>3 defa</strong> değerlendirmeye tabi tutulur.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Değerlendirenler</strong></td>
+                                <td>1) Uygulamadan sorumlu eğitim personeli, 2) Uygulamanın yapıldığı eğitim kurumunun müdürü, 3) Uygulama öğretmeni. (Not: Okul müdürü uygulama öğretmeni olarak görevlendirilemez.)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Puan Hesaplama</strong></td>
+                                <td>3 yetkilinin verdiği puanın <strong>aritmetik ortalaması</strong> alınarak 1., 2. ve 3. değerlendirme puanları oluşturulur. Bu puanların sırasıyla <strong>%20, %30 ve %50'si</strong> toplanarak uygulama başarı puanı bulunur.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Atamaya Esas Puan</strong></td>
+                                <td>Teorik ders başarı notları ortalamasının <strong>%40'ı</strong> + Uygulamalı ders başarı notları ortalamasının <strong>%60'ı</strong> dikkate alınır.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="numbers-box">
+                    <h3>🔢 Sınavda Çıkacak Önemli Sayılar ve Oranlar</h3>
+                    <ul>
+                        <li><span class="num-badge">4 Dönem</span> Hazırlık eğitiminin genel süresi.</li>
+                        <li><span class="num-badge">2 Sınav</span> Teorik derslerden yapılması gereken en az sınav sayısı.</li>
+                        <li><span class="num-badge">60 Puan</span> Teorik derslerden başarılı sayılmak için gereken minimum ortalama.</li>
+                        <li><span class="num-badge">70 Puan</span> Uygulamalı derslerden başarılı sayılmak için gereken minimum puan.</li>
+                        <li><span class="num-badge">1 Hak</span> Teorik dersten başarısız olanlara verilen ek sınav hakkı sayısı.</li>
+                        <li><span class="num-badge">%40 / %60</span> Atamaya esas puan oranı (Teorik %40 - Uygulama %60).</li>
+                        <li><span class="num-badge">10 Gün</span> Belgeye dayalı sağlık mazeretleri dışında verilebilecek maksimum izin süresi.</li>
+                        <li><span class="num-badge">20 Gün</span> Kayıt dondurmayı gerektiren sağlık mazereti devamsızlık sınırı. (Mazeret bitince sonraki ilk eğitime baştan başlarlar).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <p id="scrollMsg" class="scroll-msg">Testi başlatmak için notların sonuna kadar okuyun/kaydırın 👇</p>
+                <button class="next-btn" id="startTestBtn" disabled>Notları Okudum, Testi Başlat</button>
+            </div>
+        </div>
+        
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer" style="display: none;">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+       const QUIZ_DATA = [
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre hazırlık eğitimini alacaklarda aranan şartlar arasında aşağıdakilerden hangisi yer almaz?", options: ["Kamu haklarından mahrum bulunmamak", "Kasten işlenen bir suçtan dolayı bir yıl veya daha fazla süreli hapis cezasına mahkum olmamak", "Askerlik hizmetini tamamlamış olmak", "Öğretmenliğe atanacağı alan için Bakanlıkça belirlenen yükseköğretim programlarından mezun olmak"], correctAnswer: 2, meaning: "Askerlik hizmetini tamamlamış olmak, hazırlık eğitimine alınacaklarda aranan bir şart değildir.", category: "Genel Şartlar" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Millî Eğitim Bakanlığına bağlı resmî eğitim kurumlarında derslerin başladığı günden derslerin kesildiği güne kadar geçen süreye ne ad verilir?", options: ["Eğitim yılı", "Öğretim yılı", "Çalışma takvimi", "Ders yılı"], correctAnswer: 3, meaning: "Derslerin başladığı günden derslerin kesildiği güne kadar geçen süre 'Ders yılı' olarak tanımlanır.", category: "Kavramlar" },
+            { question: "Aşağıdakilerden hangisi 7528 sayılı Öğretmenlik Mesleği Kanunu'nun 1. maddesinde düzenlenen amaçlardan biri değildir?", options: ["Öğretmenlerin seçilmelerini düzenlemek", "Öğretmenlerin atamalarını düzenlemek", "Millî Eğitim Akademisinin kurulmasını düzenlemek", "Öğretmenlerin yıllık izinleri"], correctAnswer: 3, meaning: "Öğretmenlerin yıllık izinleri, kanunun 1. maddesinde yer alan genel amaçlardan biri değildir.", category: "Kavramlar" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, ders yılının başladığı tarihten ertesi ders yılının başladığı tarihe kadar geçen süreye ne ad verilir?", options: ["Ders yılı", "Eğitim ve öğretim yılı", "Akademik takvim", "Öğretim dönemi"], correctAnswer: 1, meaning: "Ders yılının başladığı tarihten ertesi ders yılının başladığı tarihe kadar geçen süre 'Eğitim ve öğretim yılı'dır.", category: "Kavramlar" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Bakanlığa bağlı eğitim kurumlarında bulunması gereken yönetici ve öğretmen sayısını ifade eden kavram aşağıdakilerden hangisidir?", options: ["Standart kadro", "Norm kadro", "Personel kapasitesi", "İhtiyaç kontenjanı"], correctAnswer: 1, meaning: "Bulunması gereken yönetici ve öğretmen sayısını ifade eden kavram 'Norm kadro'dur.", category: "Kavramlar" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre hazırlık eğitimi genel itibarıyla kaç dönemdir?", options: ["2", "3", "4", "5"], correctAnswer: 2, meaning: "Hazırlık eğitimi genel itibarıyla 4 dönem olarak uygulanır.", category: "Hazırlık Eğitimi" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, aynı kademedeki eğitim kurumlarından farklı eğitim programı uygulanan eğitim kurumlarını ifade eden kavram aşağıdakilerden hangisidir?", options: ["Kademe", "Derece", "Tür", "Aşama"], correctAnswer: 2, meaning: "Aynı kademedeki ancak farklı program uygulanan kurumları ifade eden kavram 'Tür'dür.", category: "Kavramlar" },
+            { question: "Aşağıdakilerden hangisi, 7528 sayılı Öğretmenlik Mesleği Kanunu'nda yer alan öğretmenlerin hak, ödev ve sorumluluklarından değildir?", options: ["Öğrencilerini Atatürk ilke ve inkılaplarına bağlı yetiştirmek", "Öğrencilerin gelişimi için aile ve veli ile iş birliği yapmak", "Eğitim ve öğretim faaliyetlerini gerçekleştirmek için her türlü sendika, siyasi parti ve meslek kuruluşu ile iş birliği yapmak.", "Öğrencilerin, her türlü olumsuz söz, tavır ve davranışlardan korunmaları için çaba göstermek."], correctAnswer: 2, meaning: "Eğitim ve öğretim için sendika veya siyasi parti gibi kuruluşlarla iş birliği yapmak öğretmenin anayasal veya yasal ödevi değildir.", category: "Ödev ve Sorumluluklar" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre hazırlık eğitimi aşağıdakilerden hangisi tarafından verilmektedir?", options: ["Yükseköğretim Kurulu", "Millî Eğitim Akademisi", "Talim ve Terbiye Kurulu Başkanlığı", "Ölçme, Seçme ve Yerleştirme Merkezi (ÖSYM)"], correctAnswer: 1, meaning: "Hazırlık eğitimi, kanunla kurulan 'Millî Eğitim Akademisi' tarafından verilmektedir.", category: "Hazırlık Eğitimi" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, hazırlık eğitiminde her bir teorik dersten en az kaç yazılı sınav yapılır?", options: ["1", "2", "3", "4"], correctAnswer: 1, meaning: "Hazırlık eğitiminde her teorik dersten en az 2 yazılı sınav yapılması zorunludur.", category: "Sınavlar ve Değerlendirme" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, teorik derslerden başarısız olanlara başarısız oldukları her bir ders için kaç ek sınav hakkı verilir?", options: ["1", "2", "3", "4"], correctAnswer: 0, meaning: "Teorik dersten başarısız olan adaya, her bir ders için sadece 1 ek sınav hakkı verilir.", category: "Sınavlar ve Değerlendirme" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, aşağıdakilerden hangisi yöneticilerin ödev ve sorumluluklarından değildir?", options: ["Öğretmen ve diğer çalışanlara iş bölümü yapmak ve rehberlik etmek", "Eğitim öğretim programlarının amaçlarına uygun yürütülmesini sağlamak", "Eğitim faaliyetlerinin sağlıklı ve huzurlu bir ortamda yürütülebilmesi için tedbir almak", "Özel sektörde yer alan eğitim kurumları ile işbirliği yaparak istihdam sağlamak"], correctAnswer: 3, meaning: "Okul yöneticilerinin, özel sektörle işbirliği yaparak istihdam sağlama gibi bir yasal sorumluluğu bulunmamaktadır.", category: "Ödev ve Sorumluluklar" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, öğretmen adaylarının uygulamalı ders başarı puanı yüz üzerinden kaç olanlar başarılı sayılır?", options: ["40", "50", "60", "70"], correctAnswer: 3, meaning: "Uygulamalı derslerde başarılı sayılabilmek için geçme notu 100 üzerinden 70'tir.", category: "Sınavlar ve Değerlendirme" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, hazırlık eğitiminde edinilen bilgi ve becerilerin yansıtılmasını belirlemek amacıyla öğretmen adayı, kaç defa değerlendirmeye tabi tutulur?", options: ["1", "2", "3", "4"], correctAnswer: 2, meaning: "Uygulamalı süreçte öğretmen adayı 3 defa değerlendirmeye tabi tutulmaktadır.", category: "Sınavlar ve Değerlendirme" },
+            { question: "Öğretmen adaylarından belgeye dayalı sağlık mazeretleri sebebiyle hazırlık eğitimi süresince toplam kaç gün ve üzeri katılamayanların kayıtları dondurulur?", options: ["10", "20", "30", "40"], correctAnswer: 1, meaning: "Sağlık mazereti nedeniyle devamsızlığın 20 günü bulması durumunda adayın kaydı dondurulur.", category: "İzin ve Mazeret" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, belgeye dayalı sağlık mazeretleri dışında öğretmen adaylarına mazeretlerine bağlı olarak en fazla kaç güne kadar izin verilebilir?", options: ["10", "20", "30", "40"], correctAnswer: 0, meaning: "Sağlık dışındaki mazeretlerde verilebilecek toplam maksimum izin süresi 10 gündür.", category: "İzin ve Mazeret" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, hazırlık eğitimi alacaklarda aranan şartlar arasında aşağıdakilerden hangisi yer almaz?", options: ["Bakanlıkça belirlenen yükseköğretim programlarından mezun olmak", "ÖSYM tarafından yapılan sınavlarda Bakanlıkça belirlenen puan türüne sahip olmak", "Sağlık engeli olmamak", "Öğretmenlik alanında en az iki yıl mesleki deneyime sahip olmak"], correctAnswer: 3, meaning: "Adaylarda mesleki deneyim şartı aranmaz, eğitim sonrası öğretmenlik mesleğine adım atılır.", category: "Genel Şartlar" },
+            { question: "Hazırlık eğitimine alınacaklarda aranan \"ÖSYM sınav puanı şartının\" istisnaları arasında aşağıdakilerden hangisi yer almaz?", options: ["Sosyal Hizmetler Kanunu kapsamında korunma kararı alınanlar", "Terörle Mücadele Kanunu kapsamında aylık bağlananlar ile bunların eş ve çocukları", "Millî sporcular", "Özel öğretim kurumlarında aralıksız en az beş yıl öğretmenlik yapmış olanlar"], correctAnswer: 3, meaning: "Özel sektörde çalışmış olmak, ÖSYM'nin yaptığı KPSS/AGS sınavı şartından bir muafiyet sağlamaz.", category: "Genel Şartlar" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, hazırlık eğitimi alacaklarda aranan şartlar arasında aşağıdakilerden hangisi yer almaz?", options: ["Güvenlik soruşturması ve arşiv araştırması yapılmış olmak", "Bakanlıkça belirlenen yükseköğretim programlarından mezun olmak", "Sağlık engeli olmamak", "Yabancı dil yeterlilik sınavından en az 70 puan almış olmak"], correctAnswer: 3, meaning: "Kanunda hazırlık eğitimine kabul için genel bir Yabancı Dil (YDS) şartı yer almamaktadır.", category: "Genel Şartlar" },
+            { question: "Hazırlık eğitiminin içeriği, süresi ve hazırlık eğitimine ilişkin diğer hususlar aşağıdakilerden hangisi tarafından çıkarılacak yönetmelikle belirlenir?", options: ["Yükseköğretim Kurulu", "Millî Eğitim Akademisi", "Millî Eğitim Bakanlığı", "Talim ve Terbiye Kurulu Başkanlığı"], correctAnswer: 2, meaning: "Bu yönetmeliği çıkarma yetkisi doğrudan Millî Eğitim Bakanlığı'na verilmiştir.", category: "Hazırlık Eğitimi" },
+            { question: "Hazırlık eğitimine alınacak adayların belirlenmesinde aşağıdakilerden hangisi esas alınır?", options: ["Adayların lisans mezuniyet not ortalaması üstünlüğü", "KPSS ve mülakat puanlarının aritmetik ortalaması", "Atama izni verilen pozisyon sayısını geçmemek üzere sınav puanı üstünlüğü", "Atama izni verilen pozisyon sayısının iki katı aday arasından kura çekimi"], correctAnswer: 2, meaning: "Sınav (AGS) puanı üstünlüğüne göre, ayrılan kontenjan (pozisyon) kadar aday eğitime alınır.", category: "Genel Şartlar" },
+            { question: "\"Hazırlık eğitiminde her bir teorik dersten en az ..... sınav yapılır. Her bir dersten not ortalaması 100 üzerinden ..... ve üzerinde olan başarılı sayılır.\" cümlesindeki boşluklara sırasıyla ne gelmelidir?", options: ["1 - 50", "2 - 60", "3 - 65", "2 - 70"], correctAnswer: 1, meaning: "Teorik dersler için en az 2 sınav yapılır ve geçme notu 60'tır.", category: "Sınavlar ve Değerlendirme" },
+            { question: "Ek sınavlar sonunda herhangi bir dersten başarısız olanlara aşağıdaki işlemlerden hangisi uygulanır?", options: ["Hazırlık eğitimini baştan tekrar ederler", "Sadece başarısız oldukları dersleri bir sonraki dönem tekrar alırlar", "Akademi ile ilişiği kesilir", "Mazeret sınavına girme hakkı tanınır"], correctAnswer: 2, meaning: "Adaya verilen 1 ek sınav hakkı sonunda da başarısız olunursa Akademi ile ilişiği tamamen kesilir.", category: "Sınavlar ve Değerlendirme" },
+            { question: "7528 sayılı Kanuna göre, uygulamalı derslerde başarılı sayılabilmek için başarı puanının 100 üzerinden en az kaç olması gerekir?", options: ["50", "60", "70", "80"], correctAnswer: 2, meaning: "Uygulamalı derslerin barajı daha yüksektir ve başarılı olmak için en az 70 puan şarttır.", category: "Sınavlar ve Değerlendirme" },
+            { question: "Hazırlık eğitimindeki uygulamalı derslerde öğretmen adayını değerlendirme formu ile puanlayan yetkililerden biri aşağıdakilerden hangisidir?", options: ["İl Millî Eğitim Müdürü", "Uygulamadan sorumlu eğitim personeli", "Akademi Başkanı", "Rehberlik öğretmeni"], correctAnswer: 1, meaning: "Değerlendirmeyi yapan 3 kişiden biri Akademi'de görevli 'Uygulamadan sorumlu eğitim personeli'dir.", category: "Sınavlar ve Değerlendirme" },
+            { question: "Öğretmen adaylarının uygulamalı derslerdeki başarı düzeyini belirlemek için değerlendirme yapan üç kişiden biri aşağıdakilerden hangisidir?", options: ["Uygulamanın yapıldığı eğitim kurumunun müdürü", "İlçe Millî Eğitim Müdürü", "Eğitim müfettişi", "Zümre başkanı"], correctAnswer: 0, meaning: "Değerlendirme sürecindeki ikinci yetkili, adayın staj yaptığı/uygulama gördüğü okulun müdürüdür.", category: "Sınavlar ve Değerlendirme" },
+            { question: "Hazırlık eğitimi sürecinde uygulamalı derslerde puanlama yaparak değerlendirme sürecine katılan üçüncü yetkili aşağıdakilerden hangisidir?", options: ["Sınıf başkanı", "Şube müdürü", "Uygulama öğretmeni", "Program koordinatörü"], correctAnswer: 2, meaning: "Adayın doğrudan yanında bulunduğu 'Uygulama öğretmeni' değerlendirme yapan üçüncü yetkilidir.", category: "Sınavlar ve Değerlendirme" },
+            { question: "Hazırlık eğitimindeki uygulamalı derslerde başarı puanı hesaplanırken; 1. değerlendirmenin %....'si, 2. değerlendirmenin %....'ü ve 3. değerlendirmenin %....'si dikkate alınır.", options: ["10 - 20 - 70", "20 - 30 - 50", "25 - 25 - 50", "15 - 35 - 50"], correctAnswer: 1, meaning: "Uygulama puanının ağırlıkları sırasıyla %20, %30 ve %50 olarak hesaplanır.", category: "Sınavlar ve Değerlendirme" },
+            { question: "Hazırlık eğitimini tamamlayan öğretmen adaylarının \"atamaya esas başarı puanı\" hesaplanırken; teorik ve uygulamalı derslerin ağırlıkları sırasıyla yüzde kaçtır?", options: ["Teorik %50 - Uygulamalı %50", "Teorik %40 - Uygulamalı %60", "Teorik %60 - Uygulamalı %40", "Teorik %30 - Uygulamalı %70"], correctAnswer: 1, meaning: "Atamaya esas puanda teorik ders ortalaması %40, uygulamalı ders ortalaması %60 etkilidir.", category: "Sınavlar ve Değerlendirme" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, uygulama öğretmeni olarak görevlendirilebilecek kişiler arasında aşağıdakilerden hangisi yer almaz?", options: ["Başöğretmen", "Uzman öğretmen", "Okul müdürü", "En uzun süre öğretmenlik yapmış kişi"], correctAnswer: 2, meaning: "Okul müdürü zaten değerlendirme yapan ikinci merci olduğu için 'uygulama öğretmeni' olarak görevlendirilemez.", category: "Sınavlar ve Değerlendirme" },
+            { question: "Uygulamalı derslerde 1., 2. ve 3. değerlendirme puanları hesaplanırken değerlendirme yapan 3 kişinin verdiği puanların hangi değeri dikkate alınarak yüzdeleri alınır?", options: ["En yüksek puan", "Medyan (ortanca) değeri", "Aritmetik ortalaması", "En düşük puan"], correctAnswer: 2, meaning: "Üç yetkilinin (Eğitim personeli, Okul müdürü, Uygulama öğretmeni) verdiği notların önce aritmetik ortalaması alınır.", category: "Sınavlar ve Değerlendirme" },
+            { question: "Öğretmen adaylarının \"atamaya esas başarı puanı\" hesaplanırken teorik ve uygulamalı derslerin ağırlıkları sırasıyla yüzde kaçtır?", options: ["Teorik %50 - Uygulamalı %50", "Teorik %40 - Uygulamalı %60", "Teorik %60 - Uygulamalı %40", "Teorik %30 - Uygulamalı %70"], correctAnswer: 1, meaning: "Atama puanının %40'ı teorik derslerden, %60'ı ise uygulamalı derslerden gelmektedir.", category: "Sınavlar ve Değerlendirme" },
+            { question: "Belgeye dayalı sağlık mazereti nedeniyle hazırlık eğitimine 20 gün ve üzeri katılamayan öğretmen adaylarına aşağıdaki işlemlerden hangisi uygulanır?", options: ["Devamsızlıktan başarısız sayılarak Akademi ile ilişikleri kesilir.", "Kayıtları dondurulur ve mazeret bitince aynı dönemde eğitime devam ederler.", "Kayıtları dondurulur ve mazeretleri ortadan kalktığında sonraki ilk hazırlık eğitimine baştan başlarlar.", "Sadece katılamadıkları günlerin telafi eğitimini alırlar."], correctAnswer: 2, meaning: "Kayıt dondurulur ancak telafi yapılmaz, bir sonraki eğitime sıfırdan baştan başlamak zorundadırlar.", category: "İzin ve Mazeret" },
+            { question: "Öğretmen adaylarından belgeye dayalı sağlık mazeretleri sebebiyle hazırlık eğitimi süresince toplam kaç gün ve üzeri eğitime katılamayanların kayıtları dondurulur?", options: ["10", "15", "20", "30"], correctAnswer: 2, meaning: "Kayıt dondurmayı gerektiren sağlık raporu sınırı 20 gündür.", category: "İzin ve Mazeret" },
+            { question: "Adayların, kanunda belirtilen hazırlık eğitimine alınma şartlarını taşımadığı sonradan anlaşılırsa veya süreçte bu şartlardan herhangi birini kaybederlerse ne olur?", options: ["Bir sonraki dönem mazeretli olarak hazırlık eğitimine yeniden alınırlar.", "Eksik şartları tamamlamaları için kendilerine ek süre tanınır.", "Disiplin soruşturması açılarak uyarma cezası verilir.", "Akademi ile ilişikleri kesilir."], correctAnswer: 3, meaning: "Kayıt şartlarının olmaması veya kaybedilmesi Akademi ile ilişiğin doğrudan kesilmesi sebebidir.", category: "Genel Şartlar" }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.questions = [];
+                this.masteredWords = [];
+                
+                this.elements = {
+                    question: document.getElementById('question'),
+                    options: document.getElementById('options'),
+                    feedback: document.getElementById('feedback'),
+                    feedbackText: document.getElementById('feedbackText'),
+                    nextBtn: document.getElementById('nextBtn'),
+                    score: document.getElementById('score'),
+                    progress: document.getElementById('progress'),
+                    total: document.getElementById('total'),
+                    progressBar: document.getElementById('progressBar'),
+                    quizContainer: document.getElementById('quizContainer'),
+                    resultsContainer: document.getElementById('resultsContainer'),
+                    finalScore: document.getElementById('finalScore'),
+                    resultMessage: document.getElementById('resultMessage'),
+                    wordList: document.getElementById('wordList'),
+                    catCover: document.getElementById('catCover')
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.shuffleQuestions();
+                this.elements.total.textContent = this.questions.length;
+                this.setupEventListeners();
+                this.showCurrentQuestion();
+            }
+            
+            shuffleQuestions() {
+                this.questions = [...QUIZ_DATA];
+                for (let i = this.questions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [this.questions[i], this.questions[j]] = [this.questions[j], this.questions[i]];
+                }
+            }
+            
+            setupEventListeners() {
+                this.elements.catCover.addEventListener('click', () => this.removeCatCover());
+                this.elements.nextBtn.addEventListener('click', () => this.nextQuestion());
+            }
+            
+            removeCatCover() {
+                this.elements.catCover.style.display = 'none';
+            }
+            
+            showCurrentQuestion() {
+                const question = this.questions[this.currentQuestionIndex];
+                this.elements.question.textContent = question.question;
+                this.elements.catCover.style.display = 'flex';
+                this.displayOptions(question);
+                this.resetQuestionUI();
+                this.updateProgress();
+            }
+            
+            displayOptions(question) {
+                this.elements.options.innerHTML = '';
+                this.elements.options.appendChild(this.elements.catCover);
+                const shuffledOptions = this.shuffleArray([...question.options]);
+                shuffledOptions.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'option-btn fade-in';
+                    button.textContent = option;
+                    button.addEventListener('click', () => this.handleAnswer(option, question));
+                    this.elements.options.appendChild(button);
+                });
+            }
+            
+            resetQuestionUI() {
+                this.elements.feedback.style.display = 'none';
+                this.elements.nextBtn.style.display = 'none';
+                this.elements.progress.textContent = this.currentQuestionIndex + 1;
+            }
+            
+            updateProgress() {
+                const progressPercent = ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
+                this.elements.progressBar.style.width = `${progressPercent}%`;
+            }
+            
+            handleAnswer(selectedOption, question) {
+                const buttons = document.querySelectorAll('.option-btn');
+                const correctOption = question.options[question.correctAnswer];
+                
+                buttons.forEach(button => {
+                    button.disabled = true;
+                    if (button.textContent === correctOption) {
+                        button.classList.add('correct');
+                    }
+                    if (button.textContent === selectedOption && button.textContent !== correctOption) {
+                        button.classList.add('incorrect');
+                    }
+                });
+                
+                const isCorrect = selectedOption === correctOption;
+                if (isCorrect) {
+                    this.score++;
+                    this.elements.score.textContent = this.score;
+                    this.addToMasteredWords(question);
+                }
+                
+                this.showFeedback(isCorrect, question, correctOption);
+                this.elements.nextBtn.style.display = 'block';
+            }
+            
+            addToMasteredWords(question) {
+                const alreadyExists = this.masteredWords.some(w => w.question === question.question);
+                if (!alreadyExists) {
+                    this.masteredWords.push(question);
+                }
+            }
+            
+            showFeedback(isCorrect, question, correctOption) {
+                this.elements.feedback.style.display = 'block';
+                this.elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+                
+                let feedbackHTML = '';
+                if (isCorrect) {
+                    feedbackHTML = `✅ Doğru!<br><br>${question.meaning}`;
+                } else {
+                    feedbackHTML = `❌ Yanlış!<br>Doğru cevap: <strong>${correctOption}</strong><br><br>${question.meaning}`;
+                }
+                
+                this.elements.feedbackText.innerHTML = feedbackHTML;
+            }
+            
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) {
+                    this.showCurrentQuestion();
+                } else {
+                    this.endQuiz();
+                }
+            }
+            
+            endQuiz() {
+                this.elements.quizContainer.style.display = 'none';
+                this.elements.resultsContainer.style.display = 'block';
+                
+                const percentage = Math.round((this.score / this.questions.length) * 100);
+                this.elements.finalScore.textContent = `${this.score}/${this.questions.length} (${percentage}%)`;
+                
+                this.showResultMessage(percentage);
+                this.displayAllWords();
+            }
+            
+            showResultMessage(percentage) {
+                let message = "";
+                if (percentage >= 90) {
+                    message = "Mükemmel! Öğretmenlik Mesleği Kanunu testini çok iyi geçtiniz! 🏆";
+                } else if (percentage >= 70) {
+                    message = "Çok iyi! Temel bilgilere hakimsiniz. 👍";
+                } else if (percentage >= 50) {
+                    message = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+                } else {
+                    message = "Öğrenmeye devam! Kanun maddelerini tekrar etmeniz faydalı olacaktır. 📚";
+                }
+                
+                this.elements.resultMessage.textContent = message;
+            }
+            
+            displayAllWords() {
+                this.elements.wordList.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Bilgiler</h3>';
+                
+                QUIZ_DATA.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'word-card fade-in';
+                    card.innerHTML = `
+                        <div class=\"word\">${item.question}</div>
+                        <div class=\"meaning\">${item.meaning}</div>
+                        <div class=\"category ${this.getCategoryClass(item.category)}\">${item.category}</div>
+                    `;
+                    this.elements.wordList.appendChild(card);
+                });
+            }
+            
+            getCategoryClass(category) {
+                const classMap = {
+                    'Genel Şartlar': 'category-genelsartlar',
+                    'Kavramlar': 'category-kavramlar',
+                    'Hazırlık Eğitimi': 'category-hazirlik',
+                    'Sınavlar ve Değerlendirme': 'category-sinav',
+                    'Ödev ve Sorumluluklar': 'category-sorumluluk',
+                    'İzin ve Mazeret': 'category-izin'
+                };
+                return classMap[category] || 'category-genelsartlar';
+            }
+            
+            shuffleArray(array) {
+                const newArray = [...array];
+                for (let i = newArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                }
+                return newArray;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const notesScrollArea = document.getElementById('notesScrollArea');
+            const startTestBtn = document.getElementById('startTestBtn');
+            const scrollMsg = document.getElementById('scrollMsg');
+            const notesContainer = document.getElementById('notesContainer');
+            const quizContainer = document.getElementById('quizContainer');
+            const progressContainer = document.getElementById('progressContainer');
+
+            notesScrollArea.addEventListener('scroll', () => {
+                if (notesScrollArea.scrollTop + notesScrollArea.clientHeight >= notesScrollArea.scrollHeight - 10) {
+                    startTestBtn.disabled = false;
+                    scrollMsg.style.display = 'none';
+                }
+            });
+
+            if (notesScrollArea.scrollHeight <= notesScrollArea.clientHeight) {
+                startTestBtn.disabled = false;
+                scrollMsg.style.display = 'none';
+            }
+
+            startTestBtn.addEventListener('click', () => {
+                notesContainer.style.display = 'none';
+                progressContainer.style.display = 'block';
+                quizContainer.style.display = 'block';
+                
+                new QuizManager();
+            });
+        });
+    </script>
+</body>
+</html>

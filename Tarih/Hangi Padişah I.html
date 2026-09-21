@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚔️ Osmanlı Kuruluş: Padişahlar AI Seçkisi</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin-bottom: 5px; }
+        .subtitle { font-size: 1.1rem; opacity: 0.9; }
+
+        .progress-container { width: 100%; background-color: #e9ecef; height: 12px; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); width: 0%; transition: width 0.5s ease; }
+        
+        .quiz-container { padding: 25px; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; background: var(--light); padding: 15px; border-radius: 10px; border: 2px solid var(--accent); }
+        
+        .question-container { background: var(--light); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .question { font-size: 1.25rem; font-weight: 600; margin-bottom: 15px; color: var(--dark); }
+        
+        .options { display: grid; grid-template-columns: 1fr; gap: 12px; position: relative; }
+        
+        .cat-cover {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(139, 69, 19, 0.95);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border-radius: 10px; z-index: 10; cursor: pointer;
+        }
+        .cat-image { max-width: 150px; border-radius: 8px; margin-bottom: 10px; border: 3px solid var(--gold); }
+        .cat-text { color: white; font-weight: bold; font-size: 1.1rem; }
+
+        .option-btn {
+            padding: 16px 20px; border: 2px solid #ddd; border-radius: 10px;
+            background: white; cursor: pointer; transition: 0.3s; text-align: left; font-size: 1.1rem;
+        }
+        .option-btn:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .option-btn.correct { background-color: var(--success) !important; color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger) !important; color: white; border-color: var(--danger); }
+        
+        .feedback { padding: 20px; border-radius: 10px; margin-top: 20px; display: none; border-left: 5px solid; line-height: 1.6; }
+        .correct-feedback { background: rgba(46, 139, 87, 0.1); border-color: var(--success); }
+        .incorrect-feedback { background: rgba(178, 34, 34, 0.1); border-color: var(--danger); }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white; border: none; padding: 16px 32px;
+            border-radius: 10px; font-size: 1.2rem; cursor: pointer; display: block;
+            margin: 25px auto 0; width: 100%; max-width: 250px; font-weight: bold;
+        }
+
+        .results-container { padding: 30px; text-align: center; display: none; }
+        .final-score { font-size: 3rem; color: var(--accent); margin: 20px 0; font-weight: bold; }
+        .word-list { text-align: left; margin-top: 30px; }
+        .word-card { background: var(--light); padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚔️ Osmanlı Kuruluş: Padişahlar AI Seçkisi</h1>
+            <div class="subtitle">Hangi Padişahtır? (40 Kritik Soru)</div>
+        </header>
+        <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <span>Puan: <span id="score">0</span></span>
+                <span>Soru: <span id="progress">1</span>/40</span>
+            </div>
+            <div class="question-container"><div class="question" id="question"></div></div>
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Cat" class="cat-image">
+                    <div class="cat-text">Padişahları Görmek İçin Tıkla!</div>
+                </div>
+            </div>
+            <div class="feedback" id="feedback"></div>
+            <button class="next-btn" id="nextBtn" style="display: none;">Sıradaki Padişaha Geç</button>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <h2>🏆 Kuruluş Dönemi Analizi Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()">Tekrar Çöz</button>
+        </div>
+    </div>
+
+    <script>
+        const sultans = ["Osman Bey", "Orhan Bey", "I. Murat", "Yıldırım Bayezid", "I. Mehmet (Çelebi)", "II. Murat"];
+
+        const quizData = [
+            { q: "Halil İnalcık'a göre 1302 Koyunhisar Savaşı ile devleti asıl kuran padişah hangisidir?", a: "Osman Bey", m: "1302 Bafeon Zaferi, Bizans'a karşı kazanılan ilk büyük zaferdir ve hanedan kimliğini tescillemiştir." },
+            { q: "İlk Osmanlı medresesini İznik'te açan ve ilk müderris olarak Davud-u Kayseri'yi atayan padişah hangisidir?", a: "Orhan Bey", m: "İznik Orhaniyesi Osmanlı'nın ilk eğitim kurumudur." },
+            { q: "Haçlılarla yapılan ilk büyük savaş olan Sırpsındığı Savaşı (1364) hangi padişah döneminde gerçekleşmiştir?", a: "I. Murat", m: "Bu savaş sonucunda Edirne ve Filibe'nin fethi kalıcı hale gelmiştir." },
+            { q: "1396 Niğbolu Zaferi sonrası Abbasi Halifesi tarafından 'Sultan-ı İklim-i Rum' unvanı verilen padişah hangisidir?", a: "Yıldırım Bayezid", m: "Bu unvan, onun İslam dünyasındaki prestijini ve Anadolu üzerindeki hakimiyet iddiasını güçlendirmiştir." },
+            { q: "Fetret Devri'ne son vererek devleti yıkılmaktan kurtardığı için 'İkinci Kurucu' sayılan padişah hangisidir?", a: "I. Mehmet (Çelebi)", m: "Şehzadeler arasındaki 11 yıllık mücadeleyi sonlandırarak merkezi otoriteyi yeniden sağlamıştır." },
+            { q: "Balkanların kesin olarak Türk yurdu olduğunu 1448 II. Kosova Savaşı ile kanıtlayan padişah hangisidir?", a: "II. Murat", m: "Bu zaferle Avrupalıların Türkleri Balkanlardan atma ümidi tamamen sona ermiştir." },
+            { q: "Osmanlı'nın Rumeli'deki ilk üssü olan Çimpe Kalesi'ni 1353'te teslim alan padişah hangisidir?", a: "Orhan Bey", m: "Bizans'taki taht kavgalarına yardım karşılığı alınarak Rumeli fetihlerine kapı açılmıştır." },
+            { q: "Savaş meydanında şehit edilen ilk ve tek Osmanlı padişahı hangisidir?", a: "I. Murat", m: "1389 I. Kosova Savaşı sonrası alanı gezerken Miloş Obiliç tarafından şehit edilmiştir." },
+            { q: "Osmanlı'da ilk düzenli ordu olan 'Yaya ve Müsellem' teşkilatını kuran padişah hangisidir?", a: "Orhan Bey", m: "Beylikten devlete geçişin en önemli askeri kurumsallaşma adımıdır." },
+            { q: "İlk Osmanlı deniz savaşı olan Venediklilerle 'Çalı Bey Savaşı'nı yapan padişah hangisidir?", a: "I. Mehmet (Çelebi)", m: "Donanma henüz zayıf olduğu için bu savaş kaybedilmiştir." },
+            { q: "Anadolu Türk siyasi birliğini (ATSB) büyük ölçüde sağlayan ancak 1402 Ankara Savaşı'nda Timur'a esir düşen padişah hangisidir?", a: "Yıldırım Bayezid", m: "Bu yenilgi Anadolu beyliklerinin tekrar kurulmasına ve Fetret Devri'ne yol açmıştır." },
+            { q: "Osmanlı tarihinde ilk defa Yeniçeri isyanı olan 'Buçuktepe İsyanı' ile karşılaşan padişah hangisidir?", a: "II. Murat", m: "1446'da yaşanan bu olay ilk askeri darbe girişimi/isyan kabul edilir[cite: 2]." },
+            { q: "Osmanlı'da ilk gümüş akçeyi bastıran ve Bursa'yı fethederek başkent yapan padişah hangisidir?", a: "Orhan Bey", m: "Bursa'nın fethiyle devletin ekonomik ve siyasi merkezi Marmara'nın güneyine kaymıştır." },
+            { q: "Sultan ve Hüdavendigar unvanlarını kullanan, devletin sınırlarını 'çeyiz ve para' yoluyla genişleten padişah hangisidir?", a: "I. Murat", m: "Germiyanoğullarından çeyiz, Hamitoğullarından para yoluyla toprak alarak barışçıl genişleme sağlamıştır[cite: 1]." },
+            { q: "İstanbul'u kuşatan ilk Osmanlı padişahı hangisidir?", a: "Yıldırım Bayezid", m: "Dört kez kuşatmış, kuşatmaya yardımcı olması için Anadoluhisarı'nı (Güzelcehisar) yaptırmıştır[cite: 2]." },
+            { q: "Osmanlı'da 'Hayır Babası' (Ebu'l Hayrat) unvanıyla tanınan ve tahtı bir süre oğluna bırakan padişah hangisidir?", a: "II. Murat", m: "Edirne-Segedin Antlaşması sonrası tahtı 12 yaşındaki oğlu II. Mehmet'e bırakmıştır[cite: 2]." },
+            { q: "İlk Osmanlı parasını (bakır mangır) bastıran ve ilk kadı atamasını (Dursun Fakih) yapan padişah hangisidir?", a: "Osman Bey", m: "Karacahisar'ın fethi sonrası kurumsallaşmanın ilk adımlarını atmıştır." },
+            { q: "Devletin merkezi otoritesini artırmak için 'Ülke padişah ve oğullarınındır' veraset sistemini getiren padişah hangisidir?", a: "I. Murat", m: "Hanedanın ortak malı anlayışını daraltarak taht kavgalarını azaltmayı amaçlamıştır[cite: 1]." },
+            { q: "Karesioğulları Beyliği'ne son vererek Osmanlı'nın ilk donanma gücüne sahip olmasını sağlayan padişah hangisidir?", a: "Orhan Bey", m: "Bu olay Anadolu Türk siyasi birliğinin ilk adımı ve Rumeli'ye geçişin anahtarıdır." },
+            { q: "İlk dini ve sosyal nitelikli isyan olan 'Şeyh Bedreddin İsyanı'nı bastıran padişah hangisidir?", a: "I. Mehmet (Çelebi)", m: "Fetret Devri'nin yarattığı kaos ortamında çıkan bu isyan devletin bekasını tehdit etmiştir." },
+            { q: "Rumeli Beylerbeyliği'ni kuran ve merkezini Manastır yapan padişah hangisidir?", a: "I. Murat", m: "Lala Şahin Paşa ilk Rumeli Beylerbeyi olarak atanmıştır." },
+            { q: "Anadolu Beylerbeyliği'ni kuran ve merkezini Kütahya yapan padişah hangisidir?", a: "Yıldırım Bayezid", m: "Anadolu'daki toprakların genişlemesi üzerine idari kolaylık için kurulmuştur." },
+            { q: "Enderun Mektebi'ni ilk kez Edirne Sarayı'nda açarak devlet adamı yetiştirme geleneğini başlatan padişah hangisidir?", a: "II. Murat", m: "Devşirme sisteminin en üst eğitim kademesini oluşturmuştur[cite: 2]." },
+            { q: "Osmanlı ordusuna ilk defa 'Topçu Ocağı'nı ekleyen ve I. Kosova'da topu kullanan padişah hangisidir?", a: "I. Murat", m: "Klasik dönem askeri teknolojisinin öncü adımlarından biridir." },
+            { q: "Gelibolu'da ilk büyük Osmanlı tersanesini inşa ettiren padişah hangisidir?", a: "Yıldırım Bayezid", m: "Denizlerdeki hakimiyeti güçlendirmek için stratejik bir adım atmıştır." },
+            { q: "Divan-ı Hümayun'u kuran, Vezirlik ve Kazaskerlik makamlarını (ilk kez) oluşturan padişah hangisidir?", a: "Orhan Bey", m: "Devletin yönetim mekanizmalarını sistemli hale getirmiştir." },
+            { q: "1329 Pelekanon (Maltepe) Savaşı ile Bizans'ı yenerek Anadolu'daki direnişini kıran padişah hangisidir?", a: "Orhan Bey", m: "Kocaeli yarımadasının fethini büyük oranda tamamlamıştır[cite: 1]." },
+            { q: "Macarlarla 1444 Edirne-Segedin Antlaşması'nı imzalayan ancak Haçlıların antlaşmayı bozmasıyla Varna'da savaşan padişah hangisidir?", a: "II. Murat", m: "Oğlunun tahta geçmesini fırsat bilen Haçlıları bozguna uğratmıştır[cite: 2]." },
+            { q: "Fahrüddin lakabıyla bilinen, Bizans valileri (tekfurlar) ile 'müdara' politikasını uygulayan padişah hangisidir?", a: "Osman Bey", m: "Müdara, zayıf olduğu dönemlerde Bizans ile iyi geçinme taktiğidir[cite: 1]." },
+            { q: "Sancak sisteminden yetişen ilk padişah kabul edilen ve Amasya'da tecrübe kazanan padişah hangisidir?", a: "I. Mehmet (Çelebi)", m: "Sancak eğitiminin önemini Fetret Devri'ndeki başarısıyla kanıtlamıştır." },
+            { q: "İlk defa maliye teşkilatını (Defterdarlık) kuran ve Pençik sistemini yasallaştıran padişah hangisidir?", a: "I. Murat", m: "Devletin vergi gelirlerini ve askeri insan kaynağını kontrol altına almıştır." },
+            { q: "Bursa'da ilk Osmanlı hastanesini (Darüşşifa) yaptıran padişah hangisidir?", a: "Yıldırım Bayezid", m: "Sosyal devlet ve sağlık hizmetleri alanında Kuruluş döneminin en ileri adımıdır[cite: 2]." },
+            { q: "Osmanlı'da 'Kılıç Hakkı' yerine devletin merkezi otoritesini korumak için mülkiyet ve kul sistemini ön plana çıkaran padişah hangisidir?", a: "I. Murat", m: "Merkeziyetçi yapının temelini atan en önemli padişahlardandır." },
+            { q: "Karamanoğulları ile Frenkyazısı Savaşı'nı yaparak 'Yıldırım' unvanını kazanan padişah hangisidir?", a: "Yıldırım Bayezid", m: "Hızlı hareket etme ve stratejik manevra kabiliyetiyle bu unvanı almıştır[cite: 2]." },
+            { q: "Bizans İmparatoru'nun kızıyla evlenerek (Kantakuzen ile ittifak) diplomatik evlilik geleneğini başlatan padişah hangisidir?", a: "Orhan Bey", m: "Bu evlilik aynı zamanda Çimpe Kalesi'nin alınmasına zemin hazırlamıştır." },
+            { q: "Bulgaristan ve Edirne'nin kapısını açan 1363 Sazlıdere Savaşı'nı kazanan padişah hangisidir?", a: "I. Murat", m: "Bu zafer Edirne'nin fethini sağlamıştır[cite: 1]." },
+            { q: "Şeyh Edebali'nin kızı ile evlenerek Ahi teşkilatının tam desteğini arkasına alan padişah hangisidir?", a: "Osman Bey", m: "Bu evlilik beyliğin sosyal ve ekonomik gücünü hızla artırmıştır[cite: 1]." },
+            { q: "Edirne'yi başkent yapan ve Sırplara karşı Çirmen Zaferi'ni kazanan padişah hangisidir?", a: "I. Murat", m: "Makedonya ve Sırbistan yolunu Osmanlı'ya açmıştır[cite: 1]." },
+            { q: "Beylikten Devlete geçiş sürecindeki en radikal kurumsallaşma adımlarını (Divan, Ordu, Eğitim) atan padişah hangisidir?", a: "Orhan Bey", m: "Halil İnalcık onu Osmanlı'nın gerçek anlamdaki ilk hükümdarı ve devletin kurucusu sayar." },
+            { q: "Fetret Devri'nde Edirne'de bağımsızlığını ilan eden kardeşi Musa Çelebi'yi yenerek birliği sağlayan padişah hangisidir?", a: "I. Mehmet (Çelebi)", m: "Musa Çelebi'yi Çamurlu Derbent Savaşı'nda yenerek tek hükümdar olmuştur[cite: 2]." }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let shuffledQuiz = [];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startQuiz() {
+            shuffledQuiz = shuffleArray([...quizData]);
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = shuffledQuiz[currentQuestion];
+            document.getElementById('question').innerText = q.q;
+            document.getElementById('progress').innerText = currentQuestion + 1;
+            document.getElementById('progressBar').style.width = ((currentQuestion + 1) / 40 * 100) + "%";
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = `
+                <div class="cat-cover" id="catCover" onclick="revealOptions()">
+                    <img src="https://cataas.com/cat" class="cat-image">
+                    <div class="cat-text">Padişahları Görmek İçin Tıkla!</div>
+                </div>
+            `;
+            
+            // Randomize options for current question
+            let currentOptions = shuffleArray([...sultans]);
+            
+            currentOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt);
+                optionsDiv.appendChild(btn);
+            });
+            
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function revealOptions() {
+            document.getElementById('catCover').style.display = 'none';
+        }
+
+        function checkAnswer(selected) {
+            const q = shuffledQuiz[currentQuestion];
+            const btns = document.getElementsByClassName('option-btn');
+            
+            for (let btn of btns) {
+                btn.disabled = true;
+                if (btn.innerText === q.a) btn.classList.add('correct');
+                else if (btn.innerText === selected) btn.classList.add('incorrect');
+            }
+
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'block';
+            if (selected === q.a) {
+                score += 10;
+                feedback.className = 'feedback correct-feedback';
+                feedback.innerHTML = `<strong>✅ Tebrikler, Doğru Padişah!</strong><br>${q.m}`;
+                document.getElementById('score').innerText = score;
+            } else {
+                feedback.className = 'feedback incorrect-feedback';
+                feedback.innerHTML = `<strong>❌ Karıştırdın!</strong> Doğru Padişah: <b>${q.a}</b><br>${q.m}`;
+            }
+            
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        document.getElementById('nextBtn').onclick = () => {
+            currentQuestion++;
+            if (currentQuestion < 40) showQuestion();
+            else finishQuiz();
+        };
+
+        function finishQuiz() {
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'block';
+            document.getElementById('finalScore').innerText = `${score} / 400`;
+            
+            const list = document.getElementById('wordList');
+            list.innerHTML = "<h3>Padişah-Bilgi Karnesi</h3>";
+            shuffledQuiz.forEach(q => {
+                list.innerHTML += `<div class="word-card"><b>${q.a}</b>: ${q.q}<br><small>${q.m}</small></div>`;
+            });
+        }
+
+        startQuiz();
+    </script>
+</body>
+</html>

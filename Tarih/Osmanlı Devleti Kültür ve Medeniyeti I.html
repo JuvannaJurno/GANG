@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Osmanlı Devleti Kültür ve Medeniyeti I Testi</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "🏛️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(139, 69, 19, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(139, 69, 19, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-hukumdarlik { background: #8B4513; }
+        .category-saray { background: #B22222; }
+        .category-yonetim { background: #2E8B57; }
+        .category-hukuk { background: #D2691E; }
+        .category-genel { background: #2F4F4F; }
+        .category-vergi { background: #4B0082; }
+        .category-beylik { background: #2F4F4F; }
+        .category-ilkbeylik { background: #008080; }
+        .category-kurum { background: #800080; }
+        .category-ekonomi { background: #D2691E; }
+        .category-saglik { background: #2E8B57; }
+        .category-mimari { background: #8B4513; }
+        .category-donanma { background: #1E90FF; }
+        .category-ticaret { background: #228B22; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option-btn {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .cat-image {
+                max-width: 150px;
+                max-height: 120px;
+            }
+            
+            .cat-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ MEB-AGS Osmanlı Devleti Kültür ve Medeniyeti I Testi</h1>
+            <div class="subtitle">Osmanlı Yönetim Sistemi ve Kültür Testi</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                correctAnswer: "D",
+                meaning: "Osmanlı Devleti'nin 'Devlet-i Âliyye' dışındaki diğer adları: Osmaniye, Atman, Gaziler, Ottoman, Osmanoğulları. İmparatorluk bu adlardan biri değildir.",
+                category: "Genel",
+                question: "Osmanlı Devleti'nin 'Devlet-i Âliyye' dışındaki diğer adları arasında aşağıdakilerden hangisi yoktur?",
+                options: ["Osmaniye", "Atman", "Gaziler", "İmparatorluk"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Osmanlı klasik dönem kültür ve medeniyetinin oluşumunda Orta Asya Türk gelenekleri, İslam'ın getirdiği esaslar ve fethedilen bölgelerdeki kültürel esaslar etkili olmuştur. Batı Avrupa hukuk sistemi etkili olmamıştır.",
+                category: "Genel",
+                question: "Osmanlı klasik dönem kültür ve medeniyetinin oluşumunda aşağıdakilerden hangisi etkili olmamıştır?",
+                options: ["Orta Asya Türk gelenekleri", "İslam'ın getirdiği esaslar", "Batı Avrupa hukuk sistemi", "Fethedilen bölgelerdeki kültürel esaslar"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Osmanlı Devleti'nde 'sultan' unvanını ilk kez Orhan Bey (Sultanü'l-Guzat) kullanmıştır.",
+                category: "Hükümdarlık",
+                question: "Osmanlı Devleti'nde 'sultan' unvanını ilk kez kullanan padişah kimdir?",
+                options: ["Osman Bey", "Orhan Bey", "I. Murat", "Fatih Sultan Mehmet"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Osmanlı veraset sisteminde 'Ülke hükümdar ve oğullarının ortak malıdır' anlayışını getiren ilk değişikliği I. Murat yapmıştır.",
+                category: "Hükümdarlık",
+                question: "Osmanlı veraset sisteminde 'Ülke hükümdar ve oğullarının ortak malıdır' anlayışını getiren ilk değişikliği yapan padişah kimdir?",
+                options: ["Osman Bey", "I. Murat", "Fatih Sultan Mehmet", "I. Ahmet"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "'Ekber ve Erşed' (en büyük ve en akıllı) veraset sistemi ilk kez I. Ahmet döneminde uygulanmaya başlamıştır.",
+                category: "Hükümdarlık",
+                question: "'Ekber ve Erşed' (en büyük ve en akıllı) veraset sistemi ilk kez hangi padişah döneminde uygulanmaya başlamıştır?",
+                options: ["I. Murat", "Fatih Sultan Mehmet", "I. Ahmet", "II. Mahmut"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Osmanlı padişahının herhangi bir konuda yazılı emrine 'Ferman' adı verilir.",
+                category: "Hükümdarlık",
+                question: "Osmanlı padişahının herhangi bir konuda yazılı emrine ne ad verilir?",
+                options: ["Ferman", "Hatt-ı Hümayun", "Yasakname", "Adaletname"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Osmanlı padişahının bir memurun mallarına el koyma yetkisine 'Müsadere' denir.",
+                category: "Hükümdarlık",
+                question: "Osmanlı padişahının bir memurun mallarına el koyma yetkisine ne denir?",
+                options: ["Kulluk hakkı", "Müsadere", "Beratname", "İfta"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Padişahın bir kişiyi himayesi altına aldığını gösteren belgeye 'Amanname' adı verilir.",
+                category: "Hükümdarlık",
+                question: "Padişahın bir kişiyi himayesi altına aldığını gösteren belgeye ne ad verilir?",
+                options: ["Amanname", "Beratname", "Yasakname", "Hatt-ı Hümayun"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Osmanlı Devleti'nin sürekliliğini sağlamak amacıyla uyguladığı 'dünya düzeni' anlamına gelen ilke 'Nizam-ı Âlem'dir.",
+                category: "Genel",
+                question: "Osmanlı Devleti'nin sürekliliğini sağlamak amacıyla uyguladığı 'dünya düzeni' anlamına gelen ilke aşağıdakilerden hangisidir?",
+                options: ["Devlet-i Ebed Müddet", "Nizam-ı Âlem", "Kanun-ı Kadim", "Tahrir Sistemi"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Osmanlı Devleti genel olarak Anadolu'nun 'Bitinya' bölgesinde (Kocaeli, Sakarya, Bilecik, Bursa, İznik, Düzce, Yalova, Bolu, Bartın, Zonguldak) kurulmuştur.",
+                category: "Genel",
+                question: "Osmanlı Devleti genel olarak Anadolu'nun hangi tarihi bölgesinde kurulmuştur?",
+                options: ["Lidya", "İyonya", "Bitinya", "Kapadokya"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Osmanlıların ilk başkenti Söğüt'tür. Kuruluş yeri Söğüt-Domaniç'tir.",
+                category: "Genel",
+                question: "Osmanlıların ilk başkenti aşağıdakilerden hangisidir?",
+                options: ["Söğüt", "Bilecik", "İznik", "Bursa"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Edirne, Bursa ve İznik Osmanlı Devleti'ne başkentlik yapmıştır. Sivas başkentlik yapmamıştır.",
+                category: "Genel",
+                question: "Aşağıdaki şehirlerden hangisi Osmanlı Devleti'ne başkentlik yapmamıştır?",
+                options: ["Edirne", "Bursa", "İznik", "Sivas"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "İstanbul'un Osmanlı dönemindeki adları: Konstantiniyye, Dersaadet, Asitane, Payitaht, İslambol. İskenderiye bu adlardan biri değildir.",
+                category: "Genel",
+                question: "İstanbul'un Osmanlı dönemindeki adları arasında aşağıdakilerden hangisi yoktur?",
+                options: ["Konstantiniyye", "Dersaadet", "Asitane", "İskenderiye"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Osmanlı Devleti'nde ilk saray (Bey Sarayı) Bursa'da Orhan Bey döneminde açılmıştır.",
+                category: "Saray",
+                question: "Osmanlı Devleti'nde ilk saray (Bey Sarayı) nerede ve kimin döneminde açılmıştır?",
+                options: ["Edirne - I. Murat", "Bursa - Orhan Bey", "İznik - Osman Bey", "İstanbul - Fatih Sultan Mehmet"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Osmanlı Devleti'nin en uzun süre yönetim merkezi olarak kullanılan saray Topkapı Sarayı'dır (Yeni Saray).",
+                category: "Saray",
+                question: "Osmanlı Devleti'nin en uzun süre yönetim merkezi olarak kullanılan saray aşağıdakilerden hangisidir?",
+                options: ["Topkapı Sarayı", "Dolmabahçe Sarayı", "Yıldız Sarayı", "İshak Paşa Sarayı"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Batı sarayları örnek alınarak inşa edilen ilk Osmanlı sarayı Dolmabahçe Sarayı'dır.",
+                category: "Saray",
+                question: "Batı sarayları örnek alınarak inşa edilen ilk Osmanlı sarayı aşağıdakilerden hangisidir?",
+                options: ["Topkapı Sarayı", "Dolmabahçe Sarayı", "Beylerbeyi Sarayı", "Yıldız Sarayı"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Topkapı Sarayı'nda divan toplantılarının yapıldığı ve dışarıdan gelen elçilerin kabul edildiği bölüm 'Birun'dur (dış kısım).",
+                category: "Saray",
+                question: "Topkapı Sarayı'nda divan toplantılarının yapıldığı ve dışarıdan gelen elçilerin kabul edildiği bölüm aşağıdakilerden hangisidir?",
+                options: ["Enderun", "Birun", "Harem", "Has Oda"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Topkapı Sarayı'nda padişah ve ailesinin özel yaşam alanı olan, 'saklı' anlamına gelen bölüm 'Harem'dir.",
+                category: "Saray",
+                question: "Topkapı Sarayı'nda padişah ve ailesinin özel yaşam alanı olan, 'saklı' anlamına gelen bölüm aşağıdakilerden hangisidir?",
+                options: ["Birun", "Enderun", "Harem", "Sofa-i Hümayun"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Osmanlı Devleti'nde Divan-ı Hümayun'u Orhan Bey kurmuş, II. Mahmut kaldırmıştır.",
+                category: "Yönetim",
+                question: "Osmanlı Devleti'nde Divan-ı Hümayun'u kuran padişah ile kaldıran padişah aşağıdaki seçeneklerin hangisinde doğru eşleştirilmiştir?",
+                options: ["Kurucu: Osman Bey - Kaldıran: II. Mahmut", "Kurucu: Orhan Bey - Kaldıran: II. Mahmut", "Kurucu: I. Murat - Kaldıran: I. Mahmut", "Kurucu: Fatih - Kaldıran: Abdülmecid"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Divan-ı Hümayun'da alınan kararların yazıldığı deftere 'Mühimme Defteri' adı verilir.",
+                category: "Yönetim",
+                question: "Divan-ı Hümayun'da alınan kararların yazıldığı deftere ne ad verilir?",
+                options: ["Ruznamçe", "Mühimme", "Tahrir Defteri", "Kanunname"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Sadece hükümdarın oturduğu, diğer üyelerin ayakta durduğu olağanüstü divan çeşidi 'Ayak Divanı'dır.",
+                category: "Yönetim",
+                question: "Sadece hükümdarın oturduğu, diğer üyelerin ayakta durduğu olağanüstü divan çeşidi aşağıdakilerden hangisidir?",
+                options: ["İkindi Divanı", "Galebe Divanı", "Sefer Divanı", "Ayak Divanı"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Elçi ve yabancı konukların kabulü için toplanan divan çeşidi 'Galebe Divanı'dır.",
+                category: "Yönetim",
+                question: "Elçi ve yabancı konukların kabulü için toplanan divan çeşidi aşağıdakilerden hangisidir?",
+                options: ["İkindi Divanı", "Galebe Divanı", "Sefer Divanı", "Ayak Divanı"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Fatih Sultan Mehmet'ten sonra Divan-ı Hümayun'a Sadrazam başkanlık etmiştir.",
+                category: "Yönetim",
+                question: "Fatih Sultan Mehmet'ten sonra Divan-ı Hümayun'a kim başkanlık etmiştir?",
+                options: ["Padişah", "Sadrazam", "Şeyhülislam", "Kazasker"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Sadrazamın padişah sefere çıkmadığı zamanlarda 'Serdar-ı Ekrem' unvanıyla ordunun başına geçmesi, onun padişahın mutlak vekili olduğunu gösterir.",
+                category: "Yönetim",
+                question: "Sadrazamın padişah sefere çıkmadığı zamanlarda 'Serdar-ı Ekrem' unvanıyla ordunun başına geçmesi, onun hangi görevini gösterir?",
+                options: ["İç işleri sorumlusu olmasını", "Padişahın mutlak vekili olmasını", "Adalet işlerinden sorumlu olmasını", "Maliyeden sorumlu olmasını"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Sadrazamın verdiği yazılı emirlere 'Buyruldu' denir.",
+                category: "Yönetim",
+                question: "Sadrazamın verdiği yazılı emirlere ne ad verilir?",
+                options: ["Ferman", "Buyruldu", "Hatt-ı Hümayun", "Fetva"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Osmanlı Devleti'ndeki ilk vezir Alaaddin Paşa'dır.",
+                category: "Yönetim",
+                question: "Osmanlı Devleti'ndeki ilk vezir kimdir?",
+                options: ["Çandarlı Halil Hayrettin Paşa", "Alaaddin Paşa", "Sokullu Mehmet Paşa", "Köprülü Mehmet Paşa"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Günümüzdeki maliye bakanına denk gelen divan üyesi 'Defterdar'dır.",
+                category: "Yönetim",
+                question: "Günümüzdeki maliye bakanına denk gelen divan üyesi aşağıdakilerden hangisidir?",
+                options: ["Nişancı", "Kazasker", "Defterdar", "Reisülküttab"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Osmanlı bütçesini yapan ve sayıları zamanla ikiye çıkan (Rumeli, Anadolu) divan üyesi 'Defterdar'dır.",
+                category: "Yönetim",
+                question: "Osmanlı bütçesini yapan ve sayıları zamanla ikiye çıkan (Rumeli, Anadolu) divan üyesi kimdir?",
+                options: ["Vezir", "Defterdar", "Kazasker", "Nişancı"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Kadı ve müderris atamalarını yapan, günümüzdeki millî eğitim ve adalet bakanlarına denk gelen divan üyesi 'Kazasker'dir.",
+                category: "Yönetim",
+                question: "Kadı ve müderris atamalarını yapan, günümüzdeki millî eğitim ve adalet bakanlarına denk gelen divan üyesi aşağıdakilerden hangisidir?",
+                options: ["Nişancı", "Reisülküttab", "Kazasker", "Şeyhülislam"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Kazaskerlerin atama kayıtlarını tuttuğu deftere 'Ruznamçe' denir.",
+                category: "Yönetim",
+                question: "Kazaskerlerin atama kayıtlarını tuttuğu deftere ne ad verilir?",
+                options: ["Mühimme Defteri", "Tahrir Defteri", "Ruznamçe", "Kanunname"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "XVII. yüzyılda nişancıdan ayrılarak dış işlerinden sorumlu hale gelen ve divan gündemini belirleyen üye 'Reisülküttab'dır.",
+                category: "Yönetim",
+                question: "XVII. yüzyılda nişancıdan ayrılarak dış işlerinden sorumlu hale gelen ve divan gündemini belirleyen üye aşağıdakilerden hangisidir?",
+                options: ["Reisülküttab", "Kaptan-ı Derya", "Defterdar", "Yeniçeri Ağası"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Tımar topraklarının dağıtımından, tapu-kadastro işlerinden ve padişah tuğrasını çekmekten sorumlu divan üyesi 'Nişancı'dır.",
+                category: "Yönetim",
+                question: "Tımar topraklarının dağıtımından, tapu-kadastro işlerinden ve padişah tuğrasını çekmekten sorumlu divan üyesi aşağıdakilerden hangisidir?",
+                options: ["Kazasker", "Nişancı", "Defterdar", "Sadrazam"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Bir bölgenin sosyoekonomik yapısını kaydeden 'Tahrir Defteri'ni tutmak 'Nişancı'nın görevidir.",
+                category: "Yönetim",
+                question: "Bir bölgenin sosyoekonomik yapısını kaydeden 'Tahrir Defteri'ni tutmak hangi divan üyesinin görevidir?",
+                options: ["Defterdar", "Kazasker", "Nişancı", "Reisülküttab"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Divan-ı Hümayun'a Kaptan-ı Derya ilk kez XVI. yüzyılda Kanuni Sultan Süleyman döneminde üye olmuştur.",
+                category: "Yönetim",
+                question: "Divan-ı Hümayun'a ilk kez hangi yüzyılda ve kimin döneminde üye olmuştur?",
+                options: ["XV. yy. - Fatih Sultan Mehmet", "XVI. yy. - Kanuni Sultan Süleyman", "XVII. yy. - IV. Murat", "XVIII. yy. - III. Selim"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Osmanlı Devleti'nde divana üye olan ilk Kaptan-ı Derya Barbaros Hayrettin Paşa'dır.",
+                category: "Yönetim",
+                question: "Osmanlı Devleti'nde divana üye olan ilk Kaptan-ı Derya kimdir?",
+                options: ["Kemal Reis", "Piri Reis", "Barbaros Hayrettin Paşa", "Turgut Reis"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Osmanlı Devleti'nde ilk şeyhülislam Molla Fenari'dir.",
+                category: "Yönetim",
+                question: "Osmanlı Devleti'nde ilk şeyhülislam kimdir?",
+                options: ["Ebussuud Efendi", "Molla Gürani", "Molla Fenari", "Şeyh Bedrettin"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Şeyhülislam'ın divanda alınan bir kararın İslam dinine uygun olup olmadığına dair verdiği hükme 'Fetva (İfta)' denir.",
+                category: "Yönetim",
+                question: "Şeyhülislam'ın divanda alınan bir kararın İslam dinine uygun olup olmadığına dair verdiği hükme ne ad verilir?",
+                options: ["Berat", "Ferman", "Fetva (İfta)", "Hüküm"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Vezir, Kazasker ve Defterdar'ın sayısı zamanla artmıştır. Nişancı'nın sayısı zamanla artmamıştır.",
+                category: "Yönetim",
+                question: "Aşağıdaki divan üyelerinden hangisinin sayısı zamanla artmamıştır?",
+                options: ["Vezir", "Kazasker", "Nişancı", "Defterdar"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "1840 yılına kadar uygulanan taşra teşkilatına göre, en büyük idari birim olan eyaletin yöneticisi 'Beylerbeyi'dir.",
+                category: "Taşra Yönetimi",
+                question: "1840 yılına kadar uygulanan taşra teşkilatına göre, en büyük idari birim olan eyaletin yöneticisi kimdir?",
+                options: ["Sancakbeyi", "Beylerbeyi", "Kadı", "Subaşı"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Taşra teşkilatında hem yöneticilik (mülki idare) hem de adalet görevini üstlenen idari birim 'Kaza'dır.",
+                category: "Taşra Yönetimi",
+                question: "Taşra teşkilatında hem yöneticilik (mülki idare) hem de adalet görevini üstlenen idari birim aşağıdakilerden hangisidir?",
+                options: ["Eyalet", "Sancak", "Kaza", "Köy"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Köy biriminde güvenlikten sorumlu olan görevli 'Yiğitbaşı'dır.",
+                category: "Taşra Yönetimi",
+                question: "Köy biriminde güvenlikten sorumlu olan görevli aşağıdakilerden hangisidir?",
+                options: ["Naib", "Subaşı", "Yiğitbaşı", "Kethüda"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Taşra teşkilatında 'sancak' biriminin yöneticisi 'Sancakbeyi'dir.",
+                category: "Taşra Yönetimi",
+                question: "Taşra teşkilatında 'sancak' biriminin yöneticisi aşağıdakilerden hangisidir?",
+                options: ["Beylerbeyi", "Sancakbeyi", "Kadı", "Voyvoda"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Şehzadelerin sancağa çıkma yaşı 12'dir ve sancakta başlarına verilen tecrübeli devlet adamına 'Lala' denir.",
+                category: "Hükümdarlık",
+                question: "Şehzadelerin sancağa çıkma yaşı ve sancakta başlarına verilen tecrübeli devlet adamına verilen unvan aşağıdakilerden hangisinde doğru verilmiştir?",
+                options: ["10 yaş - Atabey", "12 yaş - Lala", "14 yaş - Vezir", "7 yaş - Hoca"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Sancağa çıkan şehzadelere 'Çelebi Sultan' unvanı verilmiştir.",
+                category: "Hükümdarlık",
+                question: "Sancağa çıkan şehzadelere verilen unvan aşağıdakilerden hangisidir?",
+                options: ["Veliaht", "Haseki Sultan", "Çelebi Sultan", "Hanedan Efendisi"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Topkapı Sarayı'ndaki iç eğitim bölümü 'Enderun'dur ve buradan görevlendirmeye 'Çıkma' adı verilir.",
+                category: "Saray",
+                question: "Topkapı Sarayı'ndaki iç eğitim bölümü ve buradan görevlendirmeye ne ad verilir?",
+                options: ["Birun - Atama", "Harem - Çıkma", "Enderun - Çıkma", "Enderun - Berat"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "Harem'de padişaha erkek çocuk doğuran kadına 'Haseki' unvanı verilmiştir.",
+                category: "Saray",
+                question: "Harem'de padişaha erkek çocuk doğuran kadına verilen unvan aşağıdakilerden hangisidir?",
+                options: ["Cariye", "Kadın Efendi", "Haseki", "Valide Sultan"]
+            },
+            {
+                correctAnswer: "D",
+                meaning: "Konya, Sivas ve Manisa önemli şehzade sancaklarıdır. Kayseri önemli bir şehzade sancağı değildir.",
+                category: "Genel",
+                question: "Aşağıdaki şehirlerden hangisi önemli bir şehzade sancağı değildir?",
+                options: ["Konya", "Sivas", "Manisa", "Kayseri"]
+            },
+            {
+                correctAnswer: "C",
+                meaning: "İstanbul'un güvenliğinden sorumlu olan görevli 'Yeniçeri Ağası'dır.",
+                category: "Genel",
+                question: "İstanbul'un güvenliğinden sorumlu olan görevli aşağıdakilerden hangisidir?",
+                options: ["Şehremini", "Taht Kadısı", "Yeniçeri Ağası", "Kaptan-ı Derya"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "İstanbul'un imar işlerinden sorumlu olan görevli 'Mimarbaşı'dır.",
+                category: "Genel",
+                question: "İstanbul'un imar işlerinden sorumlu olan görevli aşağıdakilerden hangisidir?",
+                options: ["Mimarbaşı", "Şehremini", "Hassa Mimarları Ocağı Başkanı", "Sadrazam"]
+            },
+            {
+                correctAnswer: "B",
+                meaning: "Topkapı Sarayı'nda devşirme çocuklarının alındığı ve sadrazam gibi üst düzey yöneticilerin yetiştiği bölüm 'Enderun'dur.",
+                category: "Saray",
+                question: "Topkapı Sarayı'nda devşirme çocuklarının alındığı ve sadrazam gibi üst düzey yöneticilerin yetiştiği bölüm aşağıdakilerden hangisidir?",
+                options: ["Harem", "Enderun", "Birun", "Has Bahçe"]
+            }
+        ];
+
+        // DOM elements
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const resultMessageEl = document.getElementById('resultMessage');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+        let masteredWords = [];
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Initialize quiz
+        function initQuiz() {
+            questions = shuffleArray([...quizData]);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            
+            // Add click event to cat cover
+            catCoverEl.addEventListener('click', removeCatCover);
+        }
+
+        // Remove cat cover to reveal answers
+        function removeCatCover() {
+            catCoverEl.style.display = 'none';
+        }
+
+        // Show current question
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            // Reset cat cover
+            catCoverEl.style.display = 'flex';
+            
+            // Shuffle options
+            const options = shuffleArray([...currentQuestion.options]);
+            
+            // Clear previous options
+            optionsEl.innerHTML = '';
+            
+            // Add cat cover back
+            optionsEl.appendChild(catCoverEl);
+            
+            // Create new option buttons
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = option;
+                button.addEventListener('click', () => selectAnswer(option, currentQuestion));
+                optionsEl.appendChild(button);
+            });
+            
+            // Reset UI for new question
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        // Handle answer selection
+        function selectAnswer(selectedOption, currentQuestion) {
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // Disable all buttons
+            optionButtons.forEach(button => {
+                button.disabled = true;
+                
+                // Find the correct answer by index
+                const correctOptionIndex = currentQuestion.options.findIndex(opt => 
+                    opt === currentQuestion.options[parseInt(currentQuestion.correctAnswer.charCodeAt(0) - 65)]
+                );
+                const correctOptionText = currentQuestion.options[correctOptionIndex];
+                
+                // Mark correct answer
+                if (button.textContent === correctOptionText) {
+                    button.classList.add('correct');
+                }
+                
+                // Mark incorrect selected answer
+                if (button.textContent === selectedOption && button.textContent !== correctOptionText) {
+                    button.classList.add('incorrect');
+                }
+            });
+            
+            // Check if answer is correct
+            const correctOptionIndex = parseInt(currentQuestion.correctAnswer.charCodeAt(0) - 65);
+            const isCorrect = selectedOption === currentQuestion.options[correctOptionIndex];
+            
+            // Update score if correct
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+                
+                // Add to mastered words if not already there
+                if (!masteredWords.some(w => w.question === currentQuestion.question)) {
+                    masteredWords.push(currentQuestion);
+                }
+            }
+            
+            // Show feedback
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            
+            if (isCorrect) {
+                feedbackTextEl.innerHTML = `✅ Doğru!<br><br>${currentQuestion.meaning}`;
+            } else {
+                const correctOptionIndex = parseInt(currentQuestion.correctAnswer.charCodeAt(0) - 65);
+                const correctOption = currentQuestion.options[correctOptionIndex];
+                feedbackTextEl.innerHTML = `❌ Yanlış!<br>Doğru cevap: <strong>${correctOption}</strong><br><br>${currentQuestion.meaning}`;
+            }
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        // End quiz and show results
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            finalScoreEl.textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            // Result message based on performance
+            if (percentage >= 90) {
+                resultMessageEl.textContent = "Mükemmel! Osmanlı Devleti Kültür ve Medeniyeti konusunu çok iyi biliyorsunuz! 🏆";
+            } else if (percentage >= 70) {
+                resultMessageEl.textContent = "Çok iyi! Temel bilgilere hakimsiniz. 👍";
+            } else if (percentage >= 50) {
+                resultMessageEl.textContent = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+            } else {
+                resultMessageEl.textContent = "Öğrenmeye devam! Konuyu tekrar etmeniz faydalı olacaktır. 📚";
+            }
+            
+            // Display all words learned
+            wordListEl.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Bilgiler</h3>';
+            quizData.forEach(item => {
+                const wordCard = document.createElement('div');
+                wordCard.classList.add('word-card', 'fade-in');
+                wordCard.innerHTML = `
+                    <div class="word">${item.question}</div>
+                    <div class="meaning">${item.meaning}</div>
+                    <div class="category category-${getCategoryClass(item.category)}">${item.category}</div>
+                `;
+                wordListEl.appendChild(wordCard);
+            });
+        }
+
+        // Helper function to get CSS class for category
+        function getCategoryClass(category) {
+            const classes = {
+                'Genel': 'genel',
+                'Hükümdarlık': 'hukumdarlik',
+                'Saray': 'saray',
+                'Yönetim': 'yonetim',
+                'Taşra Yönetimi': 'yonetim'
+            };
+            return classes[category] || 'genel';
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', nextQuestion);
+        
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>

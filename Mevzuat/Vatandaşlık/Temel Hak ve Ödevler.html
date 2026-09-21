@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Vatandaşlık Testi</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "⚖️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 125, 50, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(46, 125, 50, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(56, 142, 60, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(198, 40, 40, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 125, 50, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-kisisel { background: #2E7D32; }
+        .category-sosyal { background: #4CAF50; }
+        .category-genel { background: #1B5E20; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option-btn {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .cat-image {
+                max-width: 150px;
+                max-height: 120px;
+            }
+            
+            .cat-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ MEB-AGS Vatandaşlık</h1>
+            <div class="subtitle">Temel Hak ve Ödevler</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        // 📝 Vatandaşlık - Temel Hak ve Ödevler Soruları 📝
+        const QUIZ_DATA = [
+            {
+                question: "Negatif statü hakkıdır. Devletin müdahale etmemesini gerektiren, koruyucu nitelikteki haklar aşağıdaki sınıflandırmalardan hangisinde doğru olarak verilmiştir?",
+                options: ["Sosyal Haklar", "Siyasal Haklar", "Kişisel Haklar", "Ekonomik Haklar"],
+                correctAnswer: 2,
+                meaning: "Kişisel haklar (negatif statü hakları), devletin müdahale etmemesini gerektiren, koruyucu nitelikteki haklardır. Bireyin devlet karşısındaki özgürlük alanını belirler.",
+                category: "Kişisel"
+            },
+            {
+                question: "Kişi dokunulmazlığı hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Siyasal Hak", "Ekonomik Hak"],
+                correctAnswer: 0,
+                meaning: "Kişi dokunulmazlığı hakkı, kişisel haklar (birinci kuşak/negatif statü hakları) grubuna girer.",
+                category: "Kişisel"
+            },
+            {
+                question: "Zorla çalıştırma yasağı hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Siyasal Hak", "Kolektif Hak"],
+                correctAnswer: 1,
+                meaning: "Zorla çalıştırma yasağı, kişisel haklar kapsamındadır. Bireyin bedensel bütünlüğünü korumaya yöneliktir.",
+                category: "Kişisel"
+            },
+            {
+                question: "Kişi hürriyeti ve güvenliği hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Üçüncü Kuşak Hak", "Ekonomik Hak"],
+                correctAnswer: 0,
+                meaning: "Kişi hürriyeti ve güvenliği hakkı, temel kişisel haklardandır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Özel hayatın gizliliği hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Pozitif Statü Hakkı", "Sosyal Hak", "Kişisel Hak", "Aktif Statü Hakkı"],
+                correctAnswer: 2,
+                meaning: "Özel hayatın gizliliği, kişisel haklar (negatif statü hakları) kapsamındadır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Kişisel verilerin korunmasını isteme hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Siyasal Hak", "İkinci Kuşak Hak"],
+                correctAnswer: 1,
+                meaning: "Kişisel verilerin korunması, özel hayatın gizliliği kapsamında kişisel bir haktır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Konut dokunulmazlığı hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Devletin aktif hizmet sunduğu hak", "Sosyal Hak", "Katılma Hakkı"],
+                correctAnswer: 0,
+                meaning: "Konut dokunulmazlığı, kişisel haklar grubundadır. Konut hakkı (sosyal hak) ile karıştırılmamalıdır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Haberleşme hürriyeti hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "İstemeye Yönelik Hak", "Aktif Statü Hakkı"],
+                correctAnswer: 1,
+                meaning: "Haberleşme hürriyeti, kişisel haklardandır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Yerleşme ve seyahat hürriyeti hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Pozitif Statü Hakkı", "Sosyal Hak", "Üçüncü Kuşak Hak"],
+                correctAnswer: 0,
+                meaning: "Yerleşme ve seyahat hürriyeti, kişisel haklar kapsamındadır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Din ve vicdan hürriyeti hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Devletin hizmet sunduğu hak", "Katılma Hakkı"],
+                correctAnswer: 1,
+                meaning: "Din ve vicdan hürriyeti, temel kişisel haklardandır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Düşünce ve kanaat hürriyeti hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "İkinci Kuşak Hak", "Sosyal Hak", "Ekonomik Hak"],
+                correctAnswer: 0,
+                meaning: "Düşünce ve kanaat hürriyeti, kişisel haklar grubundadır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Düşünceyi açıklama ve yayma hürriyeti hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Pozitif Statü Hakkı", "Devletleştirme ile ilgili hak"],
+                correctAnswer: 0,
+                meaning: "Düşünceyi açıklama ve yayma hürriyeti, kişisel haklardandır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Bilim ve sanat hürriyeti hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Sadece Ekonomik Hak", "Üçüncü Kuşak Kolektif Hak"],
+                correctAnswer: 0,
+                meaning: "Bilim ve sanat hürriyeti, kişisel haklar kapsamındadır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Basın hürriyeti hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Devletin aktif rol aldığı hak", "Katılma Hakkı"],
+                correctAnswer: 1,
+                meaning: "Basın hürriyeti, kişisel haklardandır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Süreli ve süresiz yayın hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "İkinci Kuşak Hak", "Devlet müdahalesini gerektiren hak"],
+                correctAnswer: 0,
+                meaning: "Süreli ve süresiz yayın hakkı, basın hürriyeti kapsamında kişisel bir haktır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Basın araçlarının korunması hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Siyasal Hak", "Çevre Hakkı"],
+                correctAnswer: 1,
+                meaning: "Basın araçlarının korunması, basın hürriyetini güvence altına alan kişisel bir haktır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Kamu tüzel kişilerinin elindeki basın dışı kitle haberleşme araçlarından yararlanma hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Üçüncü Kuşak Hak", "Sadece Ödev"],
+                correctAnswer: 0,
+                meaning: "Bu hak, düşünceyi açıklama ve yayma hürriyetinin bir uzantısı olarak kişisel haklar kapsamındadır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Düzeltme ve cevap hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Devletin sosyal hizmet sunduğu hak", "Sosyal Hak", "Ekonomik Hak"],
+                correctAnswer: 0,
+                meaning: "Düzeltme ve cevap hakkı, kişilik haklarının korunması amacıyla düzenlenmiş kişisel bir haktır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Dernek kurma hürriyeti hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Aktif Statü Hakkı (Siyasal Hak)", "Pozitif Statü Hakkı"],
+                correctAnswer: 0,
+                meaning: "Dernek kurma hürriyeti, örgütlenme özgürlüğü kapsamında kişisel bir haktır. Sendika kurma ise sosyal/ekonomik haklar kapsamındadır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Toplantı ve gösteri yürüyüşü düzenleme hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Ekonomik Hak", "Kültürel Hak"],
+                correctAnswer: 0,
+                meaning: "Toplantı ve gösteri yürüyüşü düzenleme hakkı, kişisel haklar (birinci kuşak haklar) kapsamındadır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Mülkiyet hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Siyasal Hak", "Kolektif Hak"],
+                correctAnswer: 0,
+                meaning: "Mülkiyet hakkı, klasik kişisel haklardandır. Ancak sosyal sınırlamalara tabidir.",
+                category: "Kişisel"
+            },
+            {
+                question: "Hak arama hürriyeti temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Pozitif Statü Hakkı", "İkinci Kuşak Hak"],
+                correctAnswer: 0,
+                meaning: "Hak arama hürriyeti, adil yargılanma hakkı kapsamında kişisel bir haktır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Kanuni hâkim güvencesi temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Devletin hizmet sunduğu ekonomik hak", "Katılma Hakkı"],
+                correctAnswer: 0,
+                meaning: "Kanuni hâkim güvencesi, adil yargılanma hakkının bir parçası olarak kişisel haklar kapsamındadır.",
+                category: "Kişisel"
+            },
+            {
+                question: "İspat hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Üçüncü Kuşak Hak", "Çevre Hakkı"],
+                correctAnswer: 1,
+                meaning: "İspat hakkı, adil yargılanma hakkı kapsamında kişisel bir haktır.",
+                category: "Kişisel"
+            },
+            {
+                question: "Ailenin korunması ve çocuk hakları temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Negatif Statü Hakkı", "Siyasal Hak"],
+                correctAnswer: 1,
+                meaning: "Ailenin korunması ve çocuk hakları, devletin pozitif yükümlülük üstlendiği sosyal haklar grubundadır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Eğitim ve öğrenim hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Birinci Kuşak Hak", "Aktif Statü Hakkı"],
+                correctAnswer: 1,
+                meaning: "Eğitim ve öğrenim hakkı, devletin hizmet sunmasını gerektiren sosyal bir haktır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Kıyılardan yararlanma hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Siyasal Hak", "Koruyucu Hak"],
+                correctAnswer: 0,
+                meaning: "Kıyılardan yararlanma hakkı, Anayasa'da sosyal ve ekonomik haklar başlığı altında düzenlenmiştir.",
+                category: "Sosyal"
+            },
+            {
+                question: "Toprak mülkiyeti hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Katılma Hakkı", "İnsani Gelişme Hakkı"],
+                correctAnswer: 0,
+                meaning: "Toprak mülkiyeti, Anayasa'da sosyal ve ekonomik haklar başlığı altında düzenlenmiştir.",
+                category: "Sosyal"
+            },
+            {
+                question: "Tarım, hayvancılık ve bu üretim dallarında çalışanların korunması temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Birinci Kuşak Hak", "Siyasal Hak"],
+                correctAnswer: 1,
+                meaning: "Bu düzenlemeler, sosyal ve ekonomik haklar kapsamındadır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Kamulaştırma ile ilgili düzenlemeler temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Negatif Statü Hakkı", "Medeni Hak"],
+                correctAnswer: 0,
+                meaning: "Kamulaştırma, Anayasa'da sosyal ve ekonomik haklar başlığı altında düzenlenmiştir.",
+                category: "Sosyal"
+            },
+            {
+                question: "Devletleştirme ve özelleştirme ile ilgili düzenlemeler temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Siyasal Hak", "Koruyucu Hak"],
+                correctAnswer: 1,
+                meaning: "Devletleştirme ve özelleştirme, ekonomik hayatın düzenlenmesi kapsamında sosyal haklar grubundadır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Çalışma ve sözleşme hürriyeti temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Katılma Hakkı", "Kolektif Hak"],
+                correctAnswer: 0,
+                meaning: "Çalışma ve sözleşme hürriyeti, sosyal ve ekonomik haklar kapsamındadır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Çalışma hakkı ve ödevi temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Birinci Kuşak Hak", "Aktif Statü Hakkı"],
+                correctAnswer: 1,
+                meaning: "Çalışma hakkı ve ödevi, sosyal haklar grubundadır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Çalışma şartları ve dinlenme hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Devletin müdahale etmediği hak", "Siyasal Hak"],
+                correctAnswer: 0,
+                meaning: "Çalışma şartları ve dinlenme hakkı, sosyal haklar kapsamındadır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Sendika kurma hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Siyasal Hak", "İfade Hürriyeti"],
+                correctAnswer: 1,
+                meaning: "Sendika kurma hakkı, sosyal ve ekonomik haklar (ikinci kuşak haklar) kapsamındadır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Toplu iş sözleşmesi ve toplu sözleşme hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Medeni Hak", "Kültürel Hak"],
+                correctAnswer: 0,
+                meaning: "Toplu iş sözleşmesi hakkı, sosyal haklar grubundadır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Grev hakkı ve lokavt temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Siyasal Hak", "İnsancıl Hukuk Hakkı"],
+                correctAnswer: 1,
+                meaning: "Grev hakkı ve lokavt, sosyal ve ekonomik haklar kapsamındadır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Ücrette adalet sağlanması temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Katılma Hakkı", "Birinci Kuşak Hak"],
+                correctAnswer: 0,
+                meaning: "Ücrette adalet sağlanması, sosyal haklar kapsamındadır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Sağlık hizmetleri ve çevrenin korunması temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Siyasal Hak", "Koruyucu Hak"],
+                correctAnswer: 1,
+                meaning: "Sağlık hizmetleri ve çevrenin korunması, sosyal haklar grubundadır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Konut hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak (Konut dokunulmazlığı)", "Sosyal Hak (Konut hakkı)", "Siyasal Hak", "Ekonomik Hak"],
+                correctAnswer: 1,
+                meaning: "Konut hakkı (devletin konut edindirmeye yönelik yükümlülükleri) sosyal bir haktır. Konut dokunulmazlığı ise kişisel haktır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Gençliğin korunması temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Negatif Statü Hakkı", "Siyasal Katılma Hakkı"],
+                correctAnswer: 0,
+                meaning: "Gençliğin korunması, sosyal haklar kapsamındadır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Sporun geliştirilmesi ve tahkim temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "İlk Kuşak Hak", "Kolektif Dayanışma Hakkı"],
+                correctAnswer: 1,
+                meaning: "Sporun geliştirilmesi, sosyal haklar kapsamındadır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Sosyal güvenlik hakkı temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Aktif Statü Hakkı", "Koruyucu Hak"],
+                correctAnswer: 0,
+                meaning: "Sosyal güvenlik hakkı, tipik bir sosyal haktır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Yabancı ülkelerde çalışan Türk vatandaşları ile ilgili düzenlemeler temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak", "Sosyal Hak", "Siyasal Hak", "Dördüncü Kuşak Hak"],
+                correctAnswer: 1,
+                meaning: "Bu düzenlemeler, sosyal ve ekonomik haklar kapsamındadır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Tarih, kültür ve tabiat varlıklarının korunması temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Sosyal Hak", "Kişisel Hak", "Medeni Hak", "Siyasal Hak"],
+                correctAnswer: 0,
+                meaning: "Kültürel varlıkların korunması, sosyal haklar kapsamındadır.",
+                category: "Sosyal"
+            },
+            {
+                question: "Sanatın ve sanatçının korunması temel haklar sınıflandırmasında hangi gruba girer?",
+                options: ["Kişisel Hak (Sanat hürriyeti)", "Sosyal Hak (Sanatın ve sanatçının korunması)", "Siyasal Hak", "Ekonomik Hak"],
+                correctAnswer: 1,
+                meaning: "Sanatın ve sanatçının korunması, devletin pozitif yükümlülüğünü içeren sosyal bir haktır. Sanat hürriyeti ise kişisel haktır.",
+                category: "Sosyal"
+            }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.questions = [];
+                this.masteredWords = [];
+                
+                // DOM Elements
+                this.elements = {
+                    question: document.getElementById('question'),
+                    options: document.getElementById('options'),
+                    feedback: document.getElementById('feedback'),
+                    feedbackText: document.getElementById('feedbackText'),
+                    nextBtn: document.getElementById('nextBtn'),
+                    score: document.getElementById('score'),
+                    progress: document.getElementById('progress'),
+                    total: document.getElementById('total'),
+                    progressBar: document.getElementById('progressBar'),
+                    quizContainer: document.getElementById('quizContainer'),
+                    resultsContainer: document.getElementById('resultsContainer'),
+                    finalScore: document.getElementById('finalScore'),
+                    resultMessage: document.getElementById('resultMessage'),
+                    wordList: document.getElementById('wordList'),
+                    catCover: document.getElementById('catCover')
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.shuffleQuestions();
+                this.elements.total.textContent = this.questions.length;
+                this.setupEventListeners();
+                this.showCurrentQuestion();
+            }
+            
+            shuffleQuestions() {
+                this.questions = [...QUIZ_DATA];
+                for (let i = this.questions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [this.questions[i], this.questions[j]] = [this.questions[j], this.questions[i]];
+                }
+            }
+            
+            setupEventListeners() {
+                this.elements.catCover.addEventListener('click', () => this.removeCatCover());
+                this.elements.nextBtn.addEventListener('click', () => this.nextQuestion());
+            }
+            
+            removeCatCover() {
+                this.elements.catCover.style.display = 'none';
+            }
+            
+            showCurrentQuestion() {
+                const question = this.questions[this.currentQuestionIndex];
+                
+                // Soruyu göster
+                this.elements.question.textContent = question.question;
+                
+                // Kedi kapağını sıfırla
+                this.elements.catCover.style.display = 'flex';
+                
+                // Seçenekleri karıştır ve göster
+                this.displayOptions(question);
+                
+                // UI'ı sıfırla
+                this.resetQuestionUI();
+                
+                // İlerlemeyi güncelle
+                this.updateProgress();
+            }
+            
+            displayOptions(question) {
+                // Önceki seçenekleri temizle
+                this.elements.options.innerHTML = '';
+                
+                // Kedi kapağını ekle
+                this.elements.options.appendChild(this.elements.catCover);
+                
+                // Seçenekleri karıştır
+                const shuffledOptions = this.shuffleArray([...question.options]);
+                
+                // Her seçenek için buton oluştur
+                shuffledOptions.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'option-btn fade-in';
+                    button.textContent = option;
+                    button.addEventListener('click', () => this.handleAnswer(option, question));
+                    this.elements.options.appendChild(button);
+                });
+            }
+            
+            resetQuestionUI() {
+                this.elements.feedback.style.display = 'none';
+                this.elements.nextBtn.style.display = 'none';
+                this.elements.progress.textContent = this.currentQuestionIndex + 1;
+            }
+            
+            updateProgress() {
+                const progressPercent = ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
+                this.elements.progressBar.style.width = `${progressPercent}%`;
+            }
+            
+            handleAnswer(selectedOption, question) {
+                const buttons = document.querySelectorAll('.option-btn');
+                const correctOption = question.options[question.correctAnswer];
+                
+                // Tüm butonları devre dışı bırak
+                buttons.forEach(button => {
+                    button.disabled = true;
+                    
+                    // Doğru cevabı işaretle
+                    if (button.textContent === correctOption) {
+                        button.classList.add('correct');
+                    }
+                    
+                    // Yanlış seçileni işaretle
+                    if (button.textContent === selectedOption && button.textContent !== correctOption) {
+                        button.classList.add('incorrect');
+                    }
+                });
+                
+                // Puanı güncelle
+                const isCorrect = selectedOption === correctOption;
+                if (isCorrect) {
+                    this.score++;
+                    this.elements.score.textContent = this.score;
+                    
+                    // Öğrenilen kelimelere ekle
+                    this.addToMasteredWords(question);
+                }
+                
+                // Geri bildirimi göster
+                this.showFeedback(isCorrect, question, correctOption);
+                
+                // Sonraki butonunu göster
+                this.elements.nextBtn.style.display = 'block';
+            }
+            
+            addToMasteredWords(question) {
+                const alreadyExists = this.masteredWords.some(w => w.question === question.question);
+                if (!alreadyExists) {
+                    this.masteredWords.push(question);
+                }
+            }
+            
+            showFeedback(isCorrect, question, correctOption) {
+                this.elements.feedback.style.display = 'block';
+                this.elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+                
+                let feedbackHTML = '';
+                if (isCorrect) {
+                    feedbackHTML = `✅ Doğru!<br><br>${question.meaning}`;
+                } else {
+                    feedbackHTML = `❌ Yanlış!<br>Doğru cevap: <strong>${correctOption}</strong><br><br>${question.meaning}`;
+                }
+                
+                this.elements.feedbackText.innerHTML = feedbackHTML;
+            }
+            
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                
+                if (this.currentQuestionIndex < this.questions.length) {
+                    this.showCurrentQuestion();
+                } else {
+                    this.endQuiz();
+                }
+            }
+            
+            endQuiz() {
+                this.elements.quizContainer.style.display = 'none';
+                this.elements.resultsContainer.style.display = 'block';
+                
+                const percentage = Math.round((this.score / this.questions.length) * 100);
+                this.elements.finalScore.textContent = `${this.score}/${this.questions.length} (${percentage}%)`;
+                
+                this.showResultMessage(percentage);
+                this.displayAllWords();
+            }
+            
+            showResultMessage(percentage) {
+                let message = "";
+                if (percentage >= 90) {
+                    message = "Mükemmel! Temel Hak ve Ödevler konusunu çok iyi biliyorsunuz! 🏆";
+                } else if (percentage >= 70) {
+                    message = "Çok iyi! Temel bilgilere hakimsiniz. 👍";
+                } else if (percentage >= 50) {
+                    message = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+                } else {
+                    message = "Öğrenmeye devam! Konuyu tekrar etmeniz faydalı olacaktır. 📚";
+                }
+                
+                this.elements.resultMessage.textContent = message;
+            }
+            
+            displayAllWords() {
+                this.elements.wordList.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Bilgiler</h3>';
+                
+                QUIZ_DATA.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'word-card fade-in';
+                    card.innerHTML = `
+                        <div class="word">${item.question}</div>
+                        <div class="meaning">${item.meaning}</div>
+                        <div class="category ${this.getCategoryClass(item.category)}">${item.category === "Kişisel" ? "Kişisel Haklar" : "Sosyal Haklar"}</div>
+                    `;
+                    this.elements.wordList.appendChild(card);
+                });
+            }
+            
+            getCategoryClass(category) {
+                const classMap = {
+                    'Kişisel': 'category-kisisel',
+                    'Sosyal': 'category-sosyal'
+                };
+                return classMap[category] || 'category-genel';
+            }
+            
+            shuffleArray(array) {
+                const newArray = [...array];
+                for (let i = newArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                }
+                return newArray;
+            }
+        }
+
+        // Uygulamayı başlat
+        document.addEventListener('DOMContentLoaded', () => {
+            new QuizManager();
+        });
+    </script>
+</body>
+</html>

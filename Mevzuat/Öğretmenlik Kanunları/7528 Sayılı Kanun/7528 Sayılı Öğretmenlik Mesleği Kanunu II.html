@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Disiplin Hükümleri Testi</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "⚖️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .notes-container {
+            padding: 25px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .notes-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notes-scroll-area {
+            max-height: 55vh;
+            overflow-y: auto;
+            background: var(--light);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .notes-scroll-area::-webkit-scrollbar {
+            width: 8px;
+        }
+        .notes-scroll-area::-webkit-scrollbar-track {
+            background: #e9ecef;
+            border-radius: 10px;
+        }
+        .notes-scroll-area::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+
+        .notes-scroll-area h3 {
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 5px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .notes-scroll-area h3:first-child {
+            margin-top: 0;
+        }
+
+        .notes-scroll-area ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .notes-scroll-area li {
+            margin-bottom: 8px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+        .notes-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+            background: white;
+            font-size: 0.95rem;
+        }
+
+        .notes-table th, .notes-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .notes-table th {
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+        }
+
+        .numbers-box {
+            background-color: #E3F2FD;
+            border-left: 5px solid #1976D2;
+            padding: 15px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        
+        .numbers-box h3 {
+            color: #1565C0 !important;
+            border-bottom: 2px solid #90CAF9 !important;
+            margin-top: 0 !important;
+        }
+        
+        .numbers-box ul {
+            list-style-type: none !important;
+            padding-left: 0 !important;
+        }
+        
+        .numbers-box li {
+            background: white;
+            margin-bottom: 8px !important;
+            padding: 10px 15px !important;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid #1976D2;
+            display: flex;
+            align-items: center;
+        }
+        
+        .num-badge {
+            background: #1976D2;
+            color: white;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-right: 12px;
+            font-size: 1.1rem;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .highlight-direct {
+            background-color: #C8E6C9;
+            color: #2E7D32;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            border: 1px solid #81C784;
+        }
+
+        .highlight-indirect {
+            background-color: #FFCDD2;
+            color: #C62828;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            border: 1px solid #E57373;
+        }
+
+        .important-note {
+            background-color: #FFF8E1;
+            border-left: 5px solid #FFC107;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+        }
+
+        .start-quiz-wrapper {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .scroll-msg {
+            color: var(--danger);
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        #startTestBtn:disabled {
+            background: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 125, 50, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(46, 125, 50, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(56, 142, 60, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(198, 40, 40, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 125, 50, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-kinama { background: #FF9800; }
+        .category-kesinti { background: #F44336; }
+        .category-cikarma { background: #B71C1C; }
+        .category-kurul { background: #1565C0; }
+        .category-sureler { background: #6A1B9A; }
+        .category-sorusturma { background: #00838F; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            h1 { font-size: 1.6rem; }
+            .notes-title { font-size: 1.3rem; }
+            .notes-scroll-area { max-height: 60vh; padding: 15px; }
+            .question { font-size: 1.1rem; }
+            .option-btn { padding: 14px 16px; font-size: 1rem; }
+            .cat-image { max-width: 150px; max-height: 120px; }
+            .cat-text { font-size: 1rem; }
+            .num-badge { min-width: 50px; font-size: 1rem; margin-right: 8px; padding: 3px 6px; }
+            .numbers-box li { padding: 8px 10px !important; font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ MEB-AGS Disiplin Hükümleri</h1>
+            <div class="subtitle">7528 Sayılı Öğretmenlik Mesleği Kanunu</div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <h2 class="notes-title">📖 Disiplin Süreçleri ve Cezalar</h2>
+            
+            <div class="notes-scroll-area" id="notesScrollArea">
+                <h3>Yetkili Makamlar ve Kurullar</h3>
+                <ul>
+                    <li><strong>Disiplin Soruşturması Açma Yetkisi:</strong> Eğitim ve Uygulama Merkezi Müdürü.</li>
+                    <li><strong>Soruşturmacı (Muhakkik) Seçimi:</strong> Eğitim ve Uygulama Merkezi yöneticileri, eğitim personeli veya Akademi personeli arasından görevlendirilir.</li>
+                    <li><strong>Kınama ve Ödeme Kesintisi Veren Makam:</strong> Eğitim ve Uygulama Merkezi Müdürü.</li>
+                    <li><strong>Akademiden Çıkarma Cezası Veren Makam:</strong> Disiplin Kurulu.</li>
+                    <li><strong>İtiraz Mercileri:</strong> Kınama ve Ödeme Kesintisi cezalarına <strong>Disiplin Kurulunda</strong>, Akademiden Çıkarma cezasına ise <strong>Akademi Kurulunda</strong> itiraz edilir.</li>
+                    <li>Eğer Disiplin Kurulu "Akademiden Çıkarma" teklifini reddederse, <strong>Eğitim ve Uygulama Merkezi Müdürü</strong> cezayı hafifletebilir veya tamamen kaldırabilir.</li>
+                </ul>
+
+                <h3>Disiplin Kurulunun Yapısı ve İşleyişi</h3>
+                <ul>
+                    <li>Disiplin Kurulu toplam <strong>5 Asıl - 5 Yedek</strong> üyeden oluşur.</li>
+                    <li>Üye dağılımı: <strong>Akademik Kuruldan 3 üye</strong> ve <strong>Daire Başkanlarından 2 üye</strong>.</li>
+                    <li>Toplantı Yeter Sayısı: <strong>Üye Tam Sayısı (5 Üye)</strong>. (Kurul eksik üyeyle toplanamaz.)</li>
+                    <li>Karar Yeter Sayısı: <strong>Oy Çokluğu</strong>.</li>
+                </ul>
+
+                <h3>⚠️ Disiplin Fiilleri ve Cezaları Özel Tablosu</h3>
+                <div class="table-responsive">
+                    <table class="notes-table">
+                        <thead>
+                            <tr>
+                                <th>Ceza Türü</th>
+                                <th>Gerektiren Fiil ve Davranışlar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>KINAMA</strong><br><span style="font-size:0.8rem; font-weight:normal">(İtiraz: Disiplin Kurulu)</span></td>
+                                <td>
+                                    • Çalışma düzenini bozmak.<br>
+                                    • Geç gelmeyi/erken çıkmayı alışkanlık edinmek.<br>
+                                    • Kopyaya <strong>teşebbüs</strong> etmek.<br>
+                                    • <strong>2 gün</strong> mazeretsiz devamsızlık.<br>
+                                    • Akademi imkanlarından hakkı olmadan yararlanmak veya bu imkânlardan başkasını yararlandırmak.<br>
+                                    • Kaba ve yaralayıcı söz söylemek.<br>
+                                    • İşleyişi olumsuz etkileyen davranışlarda bulunmak.<br>
+                                    • İzinsiz ses ve görüntü paylaşmak.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>ÖDEME KESİNTİSİ<br>(1/10)</strong><br><span style="font-size:0.8rem; font-weight:normal">(İtiraz: Disiplin Kurulu)</span></td>
+                                <td>
+                                    • Alkollü içki içmek, bulundurmak veya sarhoş gelmek.<br>
+                                    • Kasten eksik/gerçeğe aykırı bilgi bildirmek.<br>
+                                    • <strong>4 gün</strong> mazeretsiz devamsızlık.<br>
+                                    • Kasıtlı olarak bina/demirbaş veya bilişim sistemine zarar vermek/tahrip etmek.<br>
+                                    • Şeref ve haysiyeti zedeleyen söz/davranış veya <strong>tehdit</strong> etmek.<br>
+                                    • Kopya <strong>çekmek veya çektirmek</strong>.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>AKADEMİDEN ÇIKARMA</strong><br><span style="font-size:0.8rem; font-weight:normal">(İtiraz: Akademi Kurulu)</span></td>
+                                <td>
+                                    • Terör örgütü propagandası veya lehine davranış.<br>
+                                    • Bölücü, yıkıcı, şiddet içeren içerik üretmek/yaymak.<br>
+                                    • Faaliyet/işleyiş veya programı engellemek.<br>
+                                    • <strong>Cebir ve şiddet</strong> kullanmak, vücut dokunulmazlığını ihlal etmek.<br>
+                                    • Uyuşturucu/uyarıcı madde (kullanmak, satmak).<br>
+                                    • Ateşli silah, patlayıcı/kesici alet bulundurmak.<br>
+                                    • Bilişime hukuka aykırı girmek, değiştirmek, silmek.<br>
+                                    • Sahte belge sunmak, evrakta tahrifat.<br>
+                                    • <strong>6 gün</strong> mazeretsiz devamsızlık.<br>
+                                    • Yerine başkasını sınava sokmak/başkasının yerine girmek.<br>
+                                    • Soruşturmacıyı, kurulu veya tanığı baskı altına almak/tehdit etmek.<br>
+                                    • Yüz kızartıcı/utanç verici suç işlemek.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="numbers-box">
+                    <h3>⏳ Sınavda Çıkacak Önemli Süreler</h3>
+                    <ul>
+                        <li><span class="num-badge">10 Gün</span> Savunma yapmak için verilen <strong>en az</strong> süre.</li>
+                        <li><span class="num-badge">5 İş Günü</span> Tüm cezalara itiraz için tanınan başvuru süresi.</li>
+                        <li><span class="num-badge">30+30</span> Muhakkik soruşturmayı 30 günde bitiremezse en fazla <strong>30 gün ek süre</strong> alabilir.</li>
+                        <li><span class="num-badge">10 Gün</span> Kınama ve Ödeme Kesintisi cezalarının karara bağlanma süresi (Soruşturma bitiminden itibaren).</li>
+                        <li><span class="num-badge">1 Ay</span> Akademiden Çıkarma cezasının karara bağlanma süresi (Dosya kurula gittikten sonra).</li>
+                        <li><span class="num-badge">15 Gün</span> İtirazın reddi halinde, yetkili müdürün "bir alt ceza" uygulayabileceği süre.</li>
+                        <li><span class="num-badge">20 Gün</span> Kınama/Ödeme kesintisi itirazlarının karara bağlanma süresi.</li>
+                        <li><span class="num-badge">30 Gün</span> Çıkarma cezası itirazlarının karara bağlanma süresi.</li>
+                        <li><span class="num-badge">10 Gün</span> Raportörün dosyayı inceleyip kurula sunma süresi.</li>
+                    </ul>
+                </div>
+                
+                <div class="numbers-box" style="background-color: #FFF3E0; border-left: 5px solid #FF9800;">
+                    <h3 style="color: #E65100 !important; border-bottom: 2px solid #FFCC80 !important;">⚖️ Zamanaşımı Süreleri</h3>
+                    <ul>
+                        <li><span class="num-badge" style="background:#F57C00">6 Ay</span> Kınama ve Ödeme Kesintisi için <strong>soruşturmaya başlama</strong> zamanaşımı.</li>
+                        <li><span class="num-badge" style="background:#F57C00">1 Yıl</span> Akademiden Çıkarma için <strong>soruşturmaya başlama</strong> zamanaşımı.</li>
+                        <li><span class="num-badge" style="background:#D84315">2 Yıl</span> Fiilin işlendiği tarihten itibaren mücbir sebepler olsa dahi <strong>ceza verme yetkisi</strong> zamanaşımı.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <p id="scrollMsg" class="scroll-msg">Testi başlatmak için notların sonuna kadar okuyun/kaydırın 👇</p>
+                <button class="next-btn" id="startTestBtn" disabled>Notları Okudum, Testi Başlat</button>
+            </div>
+        </div>
+        
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer" style="display: none;">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+       const QUIZ_DATA = [
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Akademide veya Akademiye ait alanlarda alkollü içki içmek fiilini işleyen öğretmen adayının aylık ödemesinden ne kadar kesinti yapılır?", options: ["1/30", "1/20", "1/10", "1/5"], correctAnswer: 2, meaning: "Alkollü içki içmek, bulundurmak veya sarhoş gelmek ödemeden 1/10 oranında kesinti cezasını gerektirir.", category: "Ödeme Kesintisi" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, öğretmen adaylarına yönelik \"kınama\" ve \"aylıktan kesme (ödeme kesintisi)\" cezalarını vermeye yetkili makam aşağıdakilerden hangisidir?", options: ["Akademi Başkanı", "Millî Eğitim Bakanı", "Eğitim ve Uygulama Merkezi Müdürü", "İl Millî Eğitim Müdürü"], correctAnswer: 2, meaning: "Kınama ve Ödeme Kesintisi cezaları Eğitim ve Uygulama Merkezi Müdürü tarafından verilir.", category: "Kurullar ve Yetkiler" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, öğretmen adaylarına verilen \"kınama\" ve \"ödeme kesintisi\" cezalarına karşı yapılacak itirazlar aşağıdakilerden hangisine sunulur?", options: ["Akademi Başkanı", "Disiplin Kurulu", "İl Millî Eğitim Müdürlüğü", "Yüksek Disiplin Kurulu"], correctAnswer: 1, meaning: "Kınama ve ödeme kesintisi cezalarına Disiplin Kurulunda itiraz edilir.", category: "İtiraz Süreçleri" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, öğretmen adaylarına verilen \"Akademiden çıkarma\" cezası aşağıdakilerden hangisi tarafından verilir?", options: ["Eğitim ve Uygulama Merkezi Müdürü", "Akademi Başkanı", "Disiplin Kurulu", "Bakanlık Yüksek Disiplin Kurulu"], correctAnswer: 2, meaning: "En ağır disiplin yaptırımı olan Akademiden Çıkarma cezası Disiplin Kurulu tarafından verilir.", category: "Kurullar ve Yetkiler" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, öğretmen adaylarına verilen \"Akademiden çıkarma\" cezasına karşı yapılacak itirazlar aşağıdakilerden hangisine sunulur?", options: ["Eğitim ve Uygulama Merkezi Müdürlüğü", "Akademi Kurulu", "Disiplin Kurulu", "Bakanlık Yüksek Disiplin Kurulu"], correctAnswer: 1, meaning: "Akademiden çıkarma cezalarına karşı Akademi Kuruluna itiraz edilir.", category: "İtiraz Süreçleri" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Akademide \"çalışma düzenini bozmak\" fiilini işleyen bir öğretmen adayına aşağıdaki disiplin cezalarından hangisi verilir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 1, meaning: "Çalışma düzenini bozmak kınama cezasını gerektirir.", category: "Kınama" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Akademideki derslere ve uygulamalara \"geç gelmeyi ve erken çıkmayı alışkanlık haline getirmek\" fiili aşağıdaki disiplin cezalarından hangisini gerektirir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 1, meaning: "Geç gelmeyi veya erken çıkmayı alışkanlık edinmek kınama cezasını gerektirir.", category: "Kınama" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Akademide yapılan sınavlarda \"kopyaya teşebbüs etmek\" fiilinin disiplin yönünden cezası aşağıdakilerden hangisidir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 1, meaning: "Kopyaya teşebbüs kınama, kopyayı çekmek/çektirmek ise ödeme kesintisi cezasıdır.", category: "Kınama" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, hazırlık eğitimi sürecinde \"mazeretsiz olarak iki gün devamsızlık yapmak\" fiilini işleyen öğretmen adayına hangi disiplin cezası uygulanır?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 1, meaning: "2 gün mazeretsiz devamsızlık kınama, 4 gün ödeme kesintisi, 6 gün akademiden çıkarma gerektirir.", category: "Kınama" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, \"Akademi imkanlarından hakkı olmadan yararlanmak veya bu imkânlardan başkasını yararlandırmak.\" fiilini işleyen bir öğretmen adayına uygulanacak disiplin cezası aşağıdakilerden hangisidir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 1, meaning: "İmkanlardan hakkı olmadan yararlanmak kınama gerektiren hafif kusurlu fiillerdendir.", category: "Kınama" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Akademideki görevlilere veya diğer adayları \"kaba veya yaralayıcı sözle rencide etmek\" fiili hangi disiplin cezasını gerektirir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 1, meaning: "Kaba ve yaralayıcı söz kınama, şeref ve haysiyet zedeleyici/tehdit sözler ise ödeme kesintisi gerektirir.", category: "Kınama" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, \"Akademinin işleyişini olumsuz etkileyen davranışlarda bulunmak\" fiilini işleyen öğretmen adayına verilecek disiplin cezası aşağıdakilerden hangisidir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 1, meaning: "İşleyişi olumsuz etkilemek kınama, engellemek (daha ağır fiil) ise akademiden çıkarma gerektirir.", category: "Kınama" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, yetkili makamların izni olmaksızın \"Akademideki eğitim faaliyetlerine ilişkin ses ve görüntüler paylaşmak\" fiilini işleyen öğretmen adayına aşağıdaki cezalardan hangisi verilir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 1, meaning: "Eğitim faaliyetine ilişkin içerikleri izinsiz paylaşmak kınama sebebidir.", category: "Kınama" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Akademide \"istenilen bilgileri kasten eksik ya da gerçeğe aykırı bildirmek\" fiilini işleyen bir öğretmen adayına aşağıdaki disiplin cezalarından hangisi verilir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 2, meaning: "Bilgileri kasten eksik/gerçeğe aykırı vermek ödeme kesintisi (1/10) yaptırımını gerektirir.", category: "Ödeme Kesintisi" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, \"Akademide alkollü içki bulundurmak ya da Akademiye sarhoş gelmek\" fiili aşağıdaki disiplin cezalarından hangisini gerektirir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 2, meaning: "Alkollü içki içmek, bulundurmak veya sarhoş gelmek ödeme kesintisi yaptırımıdır.", category: "Ödeme Kesintisi" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, hazırlık eğitimi sürecinde \"mazeretsiz olarak toplam 4 gün devamsızlık yapmak\" fiilini işleyen öğretmen adayına hangi disiplin cezası uygulanır?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 2, meaning: "4 günlük mazeretsiz devamsızlık ödeme kesintisi gerektirir.", category: "Ödeme Kesintisi" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, \"kasıtlı olarak Akademi binasını, demirbaş eşyasını ve benzerini tahrip etmek veya bilişim sistemlerine zarar vermek\" fiilinin disiplin yönünden cezası aşağıdakilerden hangisidir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 2, meaning: "Tahribat yapmak ve zarar vermek ödeme kesintisi gerektirir.", category: "Ödeme Kesintisi" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Akademide görevlilere veya diğer adaylara karşı \"şeref ve haysiyeti zedeleyen söz ve davranışlarda bulunmak veya onları tehdit etmek\" fiilini işleyen bir öğretmen adayına uygulanacak disiplin cezası aşağıdakilerden hangisidir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 2, meaning: "Kaba söz kınamaydı ancak şeref/haysiyet zedeleme veya tehdit ödeme kesintisi gerektirir.", category: "Ödeme Kesintisi" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Akademide yapılan sınavlarda \"kopya çekmek veya çektirmek\" fiilini işleyen öğretmen adayına aşağıdaki cezalardan hangisi verilir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 2, meaning: "Kopyaya teşebbüs kınama iken, eyleme döküp kopya çekmek veya çektirmek ödeme kesintisidir.", category: "Ödeme Kesintisi" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, \"terör örgütlerinin propagandasını yapmak veya devletin millî güvenliğine karşı faaliyette bulunan yapı, oluşum veya örgütler lehine davranışlarda bulunmak\" fiilini işleyen bir öğretmen adayına aşağıdaki disiplin cezalarından hangisi verilir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 3, meaning: "Terör ve milli güvenlik aleyhtarı faaliyetler doğrudan Akademiden çıkarma sebebidir.", category: "Akademiden Çıkarma" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Akademide veya Akademiye ait alanlarda \"bölücü, yıkıcı, ahlak dışı veya şiddet içeren ya da şiddeti özendiren ses, görüntü veya yazılı içerikler üretmek, yaymak veya bulundurmak\" fiili aşağıdaki disiplin cezalarından hangisini gerektirir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 3, meaning: "Bölücü, yıkıcı içerik üretimi veya yayımı Akademiden çıkarma cezasını gerektirir.", category: "Akademiden Çıkarma" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, \"Akademinin faaliyetlerini engelleyici eylemlerde veya saldırıda bulunma.\" fiilini işleyen öğretmen adayına uygulanacak disiplin cezası aşağıdakilerden hangisidir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 3, meaning: "Olumsuz etkilemek kınama iken, doğrudan 'engellemek' Akademiden çıkarma sebebidir.", category: "Akademiden Çıkarma" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Akademide görevlilere, eğitim personeline veya diğer adaylara karşı \"cebir ve şiddet kullanmak\" fiilinin cezası aşağıdakilerden hangisidir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 3, meaning: "Fiziksel cebir ve şiddet doğrudan Akademiden çıkarma cezasını gerektirir.", category: "Akademiden Çıkarma" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, \"uyuşturucu veya uyarıcı maddeleri kullanmak, bulundurmak, satmak veya kullanılmasını kolaylaştırmak\" fiilini işleyen bir öğretmen adayına hangi yaptırım uygulanır?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 3, meaning: "Uyuşturucu madde suçları en ağır disiplin cezası olan Akademiden Çıkarma ile cezalandırılır.", category: "Akademiden Çıkarma" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Akademide veya Akademiye ait alanlarda \"kanuna aykırı olarak ateşli silah, mermi, patlayıcı madde veya kesici/delici alet bulundurmak ya da taşımak\" fiilinin disiplin cezası aşağıdakilerden hangisidir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 3, meaning: "Kanuna aykırı silah veya kesici alet bulundurmak Akademiden Çıkarma nedenidir.", category: "Akademiden Çıkarma" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, \"Akademinin bilişim sistemlerine hukuka aykırı yollarla girmek, sistemdeki verileri değiştirmek, silmek, kopyalamak veya sistemi engellemek\" fiilini işleyen öğretmen adayına hangi ceza verilir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 3, meaning: "Bilişim sistemlerine sızıp veri hırsızlığı veya tahribat yapmak en ağır cezayı (çıkarma) gerektirir.", category: "Akademiden Çıkarma" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Akademide görevlilere veya diğer adaylara karşı \"kişilerin vücut dokunulmazlığını ihlal edecek nitelikte haksız fiillerde bulunmak\" fiilini işleyen öğretmen adayına uygulanacak ceza hangisidir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 3, meaning: "Vücut dokunulmazlığını ihlal (taciz, saldırı vb.) Akademiden çıkarma ile yaptırıma tabidir.", category: "Akademiden Çıkarma" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Akademiye kayıtta veya eğitim sürecinde \"kendisinden istenen belgeleri gerçeğe aykırı olarak düzenlemek, tahrif etmek veya sahte belge sunmak\" fiilinin cezası aşağıdakilerden hangisidir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 3, meaning: "Evrakta sahtecilik ve sahte belge sunmak Akademiden çıkarma cezasını gerektirir.", category: "Akademiden Çıkarma" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, hazırlık eğitimi süresince \"mazeretsiz olarak toplam 6 gün devamsızlık yapmak\" fiili aşağıdaki disiplin cezalarından hangisini gerektirir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 3, meaning: "6 günlük devamsızlık eğitim hakkının sona ermesi (Akademiden Çıkarma) anlamı taşır.", category: "Akademiden Çıkarma" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Akademide yapılan sınavlarda veya değerlendirmelerde \"kendi yerine başkasını sınava sokmak veya başkasının yerine sınava girmek\" fiilini işleyen öğretmen adayına hangi ceza verilir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 3, meaning: "Sınavda joker (başkası) kullanmak Akademiden çıkarma fiilidir.", category: "Akademiden Çıkarma" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, yürütülen bir idari veya disiplin soruşturmasında \"soruşturmacıyı (muhakkiki), disiplin kurulu üyelerini veya tanıkları tehdit etmek ya da baskı altına almak\" fiili hangi cezayı gerektirir?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 3, meaning: "Soruşturmanın selametini tehdit ile bozmaya çalışmak Akademiden çıkarılma sebebidir.", category: "Akademiden Çıkarma" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, \"yüz kızartıcı veya utanç verici bir suç işlemek\" fiilini işleyen öğretmen adayına aşağıdaki disiplin cezalarından hangisi uygulanır?", options: ["Uyarma", "Kınama", "Ödeme kesintisi", "Akademiden çıkarma"], correctAnswer: 3, meaning: "Yüz kızartıcı suçlar (hırsızlık, rüşvet vb.) doğrudan çıkarma sebebidir.", category: "Akademiden Çıkarma" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre kurulacak Disiplin Kurulu, kaç asıl ve kaç yedek üyeden oluşur?", options: ["3 asıl - 3 yedek", "5 asıl - 5 yedek", "7 asıl - 7 yedek", "5 asıl - 3 yedek"], correctAnswer: 1, meaning: "Disiplin Kurulu 5 asıl ve 5 yedek üyeden oluşmaktadır.", category: "Kurullar ve Yetkiler" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, 5 asıl üyeden oluşan Disiplin Kurulunun üyelerinin dağılımı aşağıdakilerden hangisinde doğru olarak verilmiştir?", options: ["Akademik Kuruldan 2 üye - Daire başkanlarından 3 üye", "Akademik Kuruldan 3 üye - Daire başkanlarından 2 üye", "Akademik Kuruldan 4 üye - Daire başkanlarından 1 üye", "Akademik Kuruldan 1 üye - Daire başkanlarından 4 üye"], correctAnswer: 1, meaning: "Üyeler, Akademik Kuruldan 3 kişi ve Daire başkanlarından 2 kişi şeklinde belirlenir.", category: "Kurullar ve Yetkiler" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Disiplin Kurulu toplantılarının yapılabilmesi için aranan toplantı yeter sayısı aşağıdakilerden hangisidir?", options: ["Üye tam sayısının salt çoğunluğu (3 üye)", "Üye tam sayısı (5 üye)", "Üye tam sayısının üçte ikisi (4 üye)", "En az 4 üyenin katılımı"], correctAnswer: 1, meaning: "Kurul, eksik üyeyle toplanamaz. Mutlaka Üye tam sayısı (5 üye) ile toplanmalıdır.", category: "Kurullar ve Yetkiler" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Disiplin Kurulu kararlarını aşağıdakilerden hangisiyle alır?", options: ["Oy birliği", "Oy çokluğu", "Üye tam sayısının üçte iki çoğunluğu", "Salt çoğunluk aranmaksızın başkanın tercihiyle"], correctAnswer: 1, meaning: "Disiplin Kurulunda kararlar katılanların oy çokluğu ile alınır.", category: "Kurullar ve Yetkiler" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Disiplin Kurulu Başkanı tarafından üyeler arasından görevlendirilen raportör, kendisine tevdi edilen soruşturma dosyasını en geç kaç gün içinde inceleyerek raporunu kurula sunar?", options: ["5", "7", "10", "15"], correctAnswer: 2, meaning: "Raportör, kendisine verilen dosyayı en geç 10 gün içinde hazırlayıp sunmak zorundadır.", category: "Süreler ve Zamanaşımı" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, öğretmen adayları hakkında disiplin soruşturması açma yetkisi aşağıdakilerden hangisine aittir?", options: ["Akademi Başkanı", "Eğitim ve Uygulama Merkezi Müdürü", "Disiplin Kurulu Başkanı", "Bakanlık Müfettişi"], correctAnswer: 1, meaning: "Disiplin soruşturmalarını açma ve yürütme yetkisi Eğitim ve Uygulama Merkezi Müdürüne aittir.", category: "Soruşturma Süreci" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, görevlendirilen muhakkik (soruşturmacı) kendisine verilen 30 günlük süre içinde soruşturmayı tamamlayamazsa, en fazla kaç gün daha ek süre alabilir?", options: ["15", "30", "45", "60"], correctAnswer: 1, meaning: "Muhakkik normalde 30 gün olan soruşturma süresini ancak ek bir 30 gün daha alarak uzatabilir.", category: "Süreler ve Zamanaşımı" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, öğretmen adayları hakkında açılan disiplin soruşturmasını yürütme görevi aşağıdakilerden hangisine aittir?", options: ["Akademi Genel Sekreteri", "Eğitim ve Uygulama Merkezi müdürü veya Akademi başkanının belirleyeceği muhakkik", "İl Millî Eğitim Müdürü tarafından görevlendirilecek eğitim müfettişleri", "Sadece Bakanlık Müfettişleri"], correctAnswer: 1, meaning: "Soruşturma, Merkezi Müdürü veya Akademi başkanının görevlendirdiği muhakkik tarafından yürütülür.", category: "Soruşturma Süreci" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, öğretmen adayları hakkında açılan disiplin soruşturmalarında görevlendirilecek muhakkik (soruşturmacı), aşağıdaki gruplardan hangileri arasından seçilir?", options: ["Sadece Bakanlık Müfettişleri veya İl Eğitim Müfettişleri", "Eğitim ve Uygulama Merkezi yöneticileri, eğitim personeli veya Akademi Başkanlığı personeli", "Sadece adli yargıda görevli hakimler veya Cumhuriyet savcıları", "Sadece resmi okullarda görev yapan okul müdürleri veya başöğretmenler"], correctAnswer: 1, meaning: "Muhakkikler Akademi ve Merkez personeli içinden seçilir.", category: "Soruşturma Süreci" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, öğretmen adaylarına verilen ve en ağır disiplin yaptırımı olan \"Akademiden çıkarma\" cezası aşağıdakilerden hangisi tarafından verilir?", options: ["Eğitim ve Uygulama Merkezi Müdürü", "Akademi Başkanı", "Disiplin Kurulu", "Millî Eğitim Bakanı"], correctAnswer: 2, meaning: "En ağır yaptırım olan çıkarma işlemi yetkisi Disiplin Kurulundadır.", category: "Kurullar ve Yetkiler" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, bir öğretmen adayına teklif edilen \"Akademiden çıkarma\" cezası Disiplin Kurulu tarafından reddedilirse, teklif edilen bu cezayı hafifletmeye veya tamamen kaldırmaya yetkili makam aşağıdakilerden hangisidir?", options: ["Akademi Başkanı", "Eğitim ve Uygulama Merkezi Müdürü", "Millî Eğitim Bakanı", "Akademi Kurulu"], correctAnswer: 1, meaning: "Kurulun reddi halinde Merkez Müdürü dosyayı inceleyip hafifletme veya kaldırma yetkisine sahiptir.", category: "Kurullar ve Yetkiler" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Disiplin Kurulu kendisine tevdi edilen soruşturma dosyalarını en geç ne kadar süre içinde karara bağlamak zorundadır?", options: ["15 gün", "1 ay", "2 ay", "3 ay"], correctAnswer: 1, meaning: "Disiplin Kuruluna giden çıkarma dosyaları en geç 1 ay içinde karara bağlanmalıdır.", category: "Süreler ve Zamanaşımı" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, öğretmen adaylarına uygulanacak kınama ve ödeme kesintisi cezalarında soruşturmaya başlama zamanaşımı süresi kaç aydır?", options: ["1 ay", "3 ay", "6 ay", "12 ay"], correctAnswer: 2, meaning: "Hafif cezalar (Kınama/Ödeme kesintisi) için yetkililerin öğrenmesinden veya fiilden itibaren 6 ay içinde soruşturmaya başlanmalıdır.", category: "Süreler ve Zamanaşımı" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, öğretmen adaylarına uygulanacak en ağır disiplin yaptırımı olan \"Akademiden çıkarma\" cezasında soruşturmaya başlama zamanaşımı süresi ne kadardır?", options: ["6 ay", "1 yıl", "2 yıl", "3 yıl"], correctAnswer: 1, meaning: "Çıkarma cezaları için soruşturmaya başlama zamanaşımı 1 yıldır.", category: "Süreler ve Zamanaşımı" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, deprem gibi özel veya mücbir durumlar sebebiyle olağan soruşturma süreçleri aksamış olsa dahi, disiplin cezasını gerektiren fiillerin işlendiği tarihten itibaren en geç kaç yıl içinde disiplin cezası verilmediği takdirde ceza verme yetkisi zamanaşımına uğrar?", options: ["1 yıl", "2 yıl", "3 yıl", "5 yıl"], correctAnswer: 1, meaning: "Her şart altında disiplin suçu işlendiği tarihten itibaren 2 yıl geçerse ceza verme yetkisi zamanaşımına uğrar.", category: "Süreler ve Zamanaşımı" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, öğretmen adaylarına disiplin cezası verilebilmesi için adayın savunmasının alınması zorunludur. Buna göre, öğretmen adayına tanınan savunma süresi kaç günden az olamaz?", options: ["5", "7", "10", "15"], correctAnswer: 2, meaning: "Adayların savunma hakkı güvencesi kapsamında bu süre en az 10 gün olmalıdır.", category: "Süreler ve Zamanaşımı" },
+            { question: "\"Kınama cezası soruşturmanın tamamlanmasından itibaren ............ içinde, ödeme kesintisi cezası ............ içinde ve Akademiden çıkarma cezası ise dosya Disiplin Kuruluna tevdi edildikten sonra ............ içinde karara bağlanmak zorundadır.\" Cümledeki boşluklara sırasıyla getirilmesi gereken süreler aşağıdakilerden hangisinde doğru olarak verilmiştir?", options: ["7 gün / 7 gün / 15 gün", "10 gün / 10 gün / 1 ay", "10 gün / 15 gün / 1 ay", "15 gün / 15 gün / 2 ay"], correctAnswer: 1, meaning: "Karar verme süreleri Kınama için 10 gün, Kesinti için 10 gün, Çıkarma için 1 aydır.", category: "Süreler ve Zamanaşımı" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, öğretmen adaylarına verilen kınama ve ödeme kesintisi cezalarına karşı itiraz süresi ile Akademiden çıkarma cezasına karşı yapılacak itiraz/başvuru süresi sırasıyla kaçar iş günüdür?", options: ["3 iş günü / 5 iş günü", "5 iş günü / 5 iş günü", "7 iş günü / 7 iş günü", "5 iş günü / 10 iş günü"], correctAnswer: 1, meaning: "Tüm disiplin cezalarında itiraz süresi standart olarak 5 iş günüdür.", category: "İtiraz Süreçleri" },
+            { question: "\"Kınama ve ödeme kesintisi cezalarına karşı yapılan itirazlar ............ içinde, Akademiden çıkarma cezasına karşı yapılan itirazlar ise ............ içinde karara bağlanmak zorundadır.\" Cümledeki boşluklara sırasıyla getirilmesi gereken süreler aşağıdakilerden hangisinde doğru olarak verilmiştir?", options: ["10 gün / 20 gün", "15 gün / 30 gün", "20 gün / 30 gün", "30 gün / 60 gün"], correctAnswer: 2, meaning: "İtirazları karara bağlama süresi alt kurullarda 20 gün, Akademi Kurulunda (Çıkarma için) 30 gündür.", category: "İtiraz Süreçleri" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, öğretmen adayının aldığı disiplin cezasına karşı yaptığı itirazın yetkili merci tarafından reddedilmesi hâlinde, Eğitim ve Uygulama Merkezi tarafından en geç kaç gün içinde bir alt ceza uygulanabilir?", options: ["7 gün", "10 gün", "15 gün", "20 gün"], correctAnswer: 2, meaning: "İtiraz mercisi reddettikten sonra, bir alt cezanın tayin süresi 15 gündür.", category: "İtiraz Süreçleri" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, aşağıdakilerden hangisi aylık ödemeden onda bir (1/10) oranında kesinti yapılmasını gerektiren fiil ve davranışlardan biri değildir?", options: ["Hazırlık eğitimine mazeretsiz olarak toplam 3 gün katılmamak", "Sınavlarda kopya çekmek veya çektirmek", "Görevlilere veya diğer adaylara karşı şeref ve haysiyeti zedeleyen söz ve davranışlarda bulunmak", "Akademi personelini, eğitim personelini veya öğretmen adaylarını tehdit etmek"], correctAnswer: 0, meaning: "Ödeme kesintisi için devamsızlık sınırı tam 4 gündür (2 gün kınama, 6 gün çıkarma).", category: "Ödeme Kesintisi" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, aşağıdakilerden hangisi \"Akademiden çıkarma\" cezasını gerektiren fiil ve davranışlardan biri değildir?", options: ["Akademiye sarhoş gelmek veya Akademide alkollü içki bulundurmak", "Uyuşturucu veya uyarıcı maddeleri kullanmak, bulundurmak, satmak veya kullanılmasını kolaylaştırmak", "Akademinin eğitim ve öğretim faaliyetlerini, işleyişini veya programlarını engellemek", "Terör örgütlerinin propagandasını yapmak veya bunların siyasi ve ideolojik görüşleri doğrultusunda eylemde bulunmak"], correctAnswer: 0, meaning: "Sarhoş gelmek veya içki bulundurmak ödeme kesintisi (1/10) yaptırımıdır.", category: "Akademiden Çıkarma" },
+            { question: "7528 sayılı Öğretmenlik Mesleği Kanunu'na göre, Disiplin Kurulunun çalışma usulüne ilişkin aşağıda verilenlerden hangisi yanlıştır?", options: ["Disiplin Kurulu; kurul başkanının çağrısı üzerine belirlenecek yer, gün ve saatte toplanır.", "Toplantı gündeminin hazırlanması ve düzeni kurul başkanı tarafından sağlanır.", "Disiplin Kurulu, üye tam sayısının salt çoğunluğu olan en az 3 üyenin katılımı ile toplanır.", "Disiplin kurulunda çalışmalar kurul başkanının yönetiminde yürütülür."], correctAnswer: 2, meaning: "Kurul salt çoğunlukla (3 kişi) DEĞİL, Üye Tam Sayısı olan 5 kişiyle toplanmak zorundadır.", category: "Kurullar ve Yetkiler" }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.questions = [];
+                this.masteredWords = [];
+                
+                this.elements = {
+                    question: document.getElementById('question'),
+                    options: document.getElementById('options'),
+                    feedback: document.getElementById('feedback'),
+                    feedbackText: document.getElementById('feedbackText'),
+                    nextBtn: document.getElementById('nextBtn'),
+                    score: document.getElementById('score'),
+                    progress: document.getElementById('progress'),
+                    total: document.getElementById('total'),
+                    progressBar: document.getElementById('progressBar'),
+                    quizContainer: document.getElementById('quizContainer'),
+                    resultsContainer: document.getElementById('resultsContainer'),
+                    finalScore: document.getElementById('finalScore'),
+                    resultMessage: document.getElementById('resultMessage'),
+                    wordList: document.getElementById('wordList'),
+                    catCover: document.getElementById('catCover')
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.shuffleQuestions();
+                this.elements.total.textContent = this.questions.length;
+                this.setupEventListeners();
+                this.showCurrentQuestion();
+            }
+            
+            shuffleQuestions() {
+                this.questions = [...QUIZ_DATA];
+                for (let i = this.questions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [this.questions[i], this.questions[j]] = [this.questions[j], this.questions[i]];
+                }
+            }
+            
+            setupEventListeners() {
+                this.elements.catCover.addEventListener('click', () => this.removeCatCover());
+                this.elements.nextBtn.addEventListener('click', () => this.nextQuestion());
+            }
+            
+            removeCatCover() {
+                this.elements.catCover.style.display = 'none';
+            }
+            
+            showCurrentQuestion() {
+                const question = this.questions[this.currentQuestionIndex];
+                this.elements.question.textContent = question.question;
+                this.elements.catCover.style.display = 'flex';
+                this.displayOptions(question);
+                this.resetQuestionUI();
+                this.updateProgress();
+            }
+            
+            displayOptions(question) {
+                this.elements.options.innerHTML = '';
+                this.elements.options.appendChild(this.elements.catCover);
+                const shuffledOptions = this.shuffleArray([...question.options]);
+                shuffledOptions.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'option-btn fade-in';
+                    button.textContent = option;
+                    button.addEventListener('click', () => this.handleAnswer(option, question));
+                    this.elements.options.appendChild(button);
+                });
+            }
+            
+            resetQuestionUI() {
+                this.elements.feedback.style.display = 'none';
+                this.elements.nextBtn.style.display = 'none';
+                this.elements.progress.textContent = this.currentQuestionIndex + 1;
+            }
+            
+            updateProgress() {
+                const progressPercent = ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
+                this.elements.progressBar.style.width = `${progressPercent}%`;
+            }
+            
+            handleAnswer(selectedOption, question) {
+                const buttons = document.querySelectorAll('.option-btn');
+                const correctOption = question.options[question.correctAnswer];
+                
+                buttons.forEach(button => {
+                    button.disabled = true;
+                    if (button.textContent === correctOption) {
+                        button.classList.add('correct');
+                    }
+                    if (button.textContent === selectedOption && button.textContent !== correctOption) {
+                        button.classList.add('incorrect');
+                    }
+                });
+                
+                const isCorrect = selectedOption === correctOption;
+                if (isCorrect) {
+                    this.score++;
+                    this.elements.score.textContent = this.score;
+                    this.addToMasteredWords(question);
+                }
+                
+                this.showFeedback(isCorrect, question, correctOption);
+                this.elements.nextBtn.style.display = 'block';
+            }
+            
+            addToMasteredWords(question) {
+                const alreadyExists = this.masteredWords.some(w => w.question === question.question);
+                if (!alreadyExists) {
+                    this.masteredWords.push(question);
+                }
+            }
+            
+            showFeedback(isCorrect, question, correctOption) {
+                this.elements.feedback.style.display = 'block';
+                this.elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+                
+                let feedbackHTML = '';
+                if (isCorrect) {
+                    feedbackHTML = `✅ Doğru!<br><br>${question.meaning}`;
+                } else {
+                    feedbackHTML = `❌ Yanlış!<br>Doğru cevap: <strong>${correctOption}</strong><br><br>${question.meaning}`;
+                }
+                
+                this.elements.feedbackText.innerHTML = feedbackHTML;
+            }
+            
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) {
+                    this.showCurrentQuestion();
+                } else {
+                    this.endQuiz();
+                }
+            }
+            
+            endQuiz() {
+                this.elements.quizContainer.style.display = 'none';
+                this.elements.resultsContainer.style.display = 'block';
+                
+                const percentage = Math.round((this.score / this.questions.length) * 100);
+                this.elements.finalScore.textContent = `${this.score}/${this.questions.length} (${percentage}%)`;
+                
+                this.showResultMessage(percentage);
+                this.displayAllWords();
+            }
+            
+            showResultMessage(percentage) {
+                let message = "";
+                if (percentage >= 90) {
+                    message = "Mükemmel! Disiplin Hükümleri testini çok iyi geçtiniz! 🏆";
+                } else if (percentage >= 70) {
+                    message = "Çok iyi! Disiplin cezalarına ve sürelere hakimsiniz. 👍";
+                } else if (percentage >= 50) {
+                    message = "Güzel! Kanunu biraz daha tekrar etmeniz faydalı olacaktır. 💪";
+                } else {
+                    message = "Öğrenmeye devam! Hangi kusurun hangi cezayı gerektirdiğini gözden geçirin. 📚";
+                }
+                
+                this.elements.resultMessage.textContent = message;
+            }
+            
+            displayAllWords() {
+                this.elements.wordList.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Bilgiler</h3>';
+                
+                QUIZ_DATA.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'word-card fade-in';
+                    card.innerHTML = `
+                        <div class=\"word\">${item.question}</div>
+                        <div class=\"meaning\">${item.meaning}</div>
+                        <div class=\"category ${this.getCategoryClass(item.category)}\">${item.category}</div>
+                    `;
+                    this.elements.wordList.appendChild(card);
+                });
+            }
+            
+            getCategoryClass(category) {
+                const classMap = {
+                    'Kınama': 'category-kinama',
+                    'Ödeme Kesintisi': 'category-kesinti',
+                    'Akademiden Çıkarma': 'category-cikarma',
+                    'Kurullar ve Yetkiler': 'category-kurul',
+                    'Süreler ve Zamanaşımı': 'category-sureler',
+                    'İtiraz Süreçleri': 'category-sureler',
+                    'Soruşturma Süreci': 'category-sorusturma'
+                };
+                return classMap[category] || 'category-kinama';
+            }
+            
+            shuffleArray(array) {
+                const newArray = [...array];
+                for (let i = newArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                }
+                return newArray;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const notesScrollArea = document.getElementById('notesScrollArea');
+            const startTestBtn = document.getElementById('startTestBtn');
+            const scrollMsg = document.getElementById('scrollMsg');
+            const notesContainer = document.getElementById('notesContainer');
+            const quizContainer = document.getElementById('quizContainer');
+            const progressContainer = document.getElementById('progressContainer');
+
+            notesScrollArea.addEventListener('scroll', () => {
+                if (notesScrollArea.scrollTop + notesScrollArea.clientHeight >= notesScrollArea.scrollHeight - 10) {
+                    startTestBtn.disabled = false;
+                    scrollMsg.style.display = 'none';
+                }
+            });
+
+            if (notesScrollArea.scrollHeight <= notesScrollArea.clientHeight) {
+                startTestBtn.disabled = false;
+                scrollMsg.style.display = 'none';
+            }
+
+            startTestBtn.addEventListener('click', () => {
+                notesContainer.style.display = 'none';
+                progressContainer.style.display = 'block';
+                quizContainer.style.display = 'block';
+                
+                new QuizManager();
+            });
+        });
+    </script>
+</body>
+</html>

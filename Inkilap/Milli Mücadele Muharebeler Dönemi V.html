@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MEB-AGS Türkiye Tarihi - TBMM ve Muharebeler</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "📜";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            text-align: left;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📜 MEB-AGS Türkiye Tarihi</h1>
+            <div class="subtitle">TBMM Muharebeler ve Antlaşmalar Dönemi</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                correctAnswer: "A",
+                meaning: "Mustafa Kemal Paşa, İsmet İnönü'ye çektiği telgrafta bu zaferin sadece askeri bir başarı değil, Türk milletinin yıllardır süren kötü gidişatının da kırılması olduğunu belirtmiştir.",
+                question: "\"Siz orada yalnız düşmanı değil, milletin makus (kötü giden) talihini de yendiniz.\" sözü kim tarafından kime söylenmiştir ve hangi zaferin ardından çekilen telgrafta geçer?",
+                options: ["Mustafa Kemal'den İsmet İnönü'ye - II. İnönü", "Mustafa Kemal'den İsmet İnönü'ye - I. İnönü", "Fevzi Çakmak'tan İsmet İnönü'ye - II. İnönü", "Fevzi Çakmak'tan İsmet İnönü'ye - I. İnönü"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Osmanlı Hükümeti delegesi Tevfik Paşa, İtilaf Devletleri'nin ikilik çıkarma oyununu bozarak söz hakkını TBMM temsilcisi Bekir Sami Bey'e bırakmıştır.",
+                question: "\"Ben sözü Türk milletinin hakiki ve meşru temsilcisi olan TBMM başdelegesi'ne bırakıyorum.\" diyerek İtilaf Devletleri'nin ikilik çıkarma planını bozan Osmanlı sadrazamı kimdir ve bu olay nerede yaşanmıştır?",
+                options: ["Tevfik Paşa - Londra Konferansı", "Tevfik Paşa - Lozan Konferansı", "Damad Ferit Paşa - Londra Konferansı", "Damad Ferit Paşa - Lozan Konferansı"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "İsmet İnönü, Lozan'da Türk milletinin bağımsızlık ve eşitlik talebini bu efsanevi cümleyle dile getirerek ezik bir mağlup devlet değil, muzaffer bir devlet olarak orada olduklarını vurgulamıştır.",
+                question: "\"Çok ıstırap çektik, çok kan akıttık. Bütün uygar uluslar gibi eşit ve bağımsız bir yaşam istiyoruz.\" tarihi restini çeken Türk başdelegesi kimdir ve bu sözü nerede söylemiştir?",
+                options: ["İsmet İnönü - Lozan Konferansı", "İsmet İnönü - Mudanya Mütarekesi", "Rauf Orbay - Lozan Konferansı", "Rauf Orbay - Mudanya Mütarekesi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "İngiliz temsilci Lord Curzon, kapitülasyonlar ve ekonomik konularda taviz vermeyen İsmet Paşa'ya karşı bu küstah cümleyi kurmuş, ancak Türkiye bir daha onlardan para istememiştir.",
+                question: "\"Ne reddederseniz cebime atıyorum, yarın harap bir memleketi imar etmek için para istemeye geldiğinizde hepsini cebimden çıkarıp önünüze koyacağım.\" diyerek Türk heyetini tehdit eden diplomat kimdir ve hangi masada söylenmiştir?",
+                options: ["Lord Curzon - Lozan Konferansı", "Lord Curzon - Londra Konferansı", "Lloyd George - Lozan Konferansı", "Lloyd George - Londra Konferansı"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Mustafa Kemal, Büyük Taarruz'da esir düşen Yunan Başkomutanı Trikopis'i Uşak'taki karargahında ağırlamış ve ona bir komutan gibi saygı göstererek teselli etmiştir.",
+                question: "\"Üzülmeyin general, askerlikte yenilmek de vardır. Napolyon da esir düşmüştü. Siz görevinizi yaptınız, şimdi misafirimizsiniz.\" sözü kimden kime söylenmiştir ve hangi savaşın ardından gerçekleşmiştir?",
+                options: ["Mustafa Kemal'den Trikopis'e - Büyük Taarruz", "Mustafa Kemal'den Trikopis'e - Sakarya", "İsmet İnönü'den Trikopis'e - Büyük Taarruz", "İsmet İnönü'den Trikopis'e - Sakarya"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Eğitime verdiği devasa önemin kanıtı olarak Mustafa Kemal, ordunun en zor günlerinde bile Ankara'da öğretmenleri toplayarak Maarif Kongresi'ni iptal etmemiş ve bu tarihi sözü söylemiştir.",
+                question: "\"Cehille savaş, düşmanla savaştan daha az önemli değildir. Silahıyla savaşan ordunun arkasında, irfanıyla savaşan bir ordu lazımdır.\" sözü kime aittir ve hangi olay sırasında söylenmiştir?",
+                options: ["Mustafa Kemal - Kütahya/Eskişehir Muharebeleri (Maarif Kongresi)", "Mustafa Kemal - Sakarya Muharebesi (Maarif Kongresi)", "Hamdullah Suphi - Kütahya/Eskişehir Muharebeleri (Maarif Kongresi)", "Hamdullah Suphi - Sakarya Muharebesi (Maarif Kongresi)"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Çerkez Ethem, I. İnönü Muharebesi arefesinde düzenli orduya katılmayı reddederek isyan etmiş, Yunanlılar da bu iç karışıklıktan faydalanarak taarruza geçmişlerdir.",
+                question: "Düzenli ordunun kurulmasına karşı çıkarak \"Kuvâ-yi Seyyare\" adlı birliğiyle meclise isyan eden milis komutanı kimdir ve Yunanlılar bu isyanı fırsat bilip hangi muharebeyi başlatmıştır?",
+                options: ["Çerkez Ethem - I. İnönü", "Çerkez Ethem - II. İnönü", "Demirci Mehmet Efe - I. İnönü", "Demirci Mehmet Efe - II. İnönü"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Ali Fuat Paşa'nın Yunanlılara karşı düzenlediği başarısız Gediz Taarruzu, Kuva-yi Milliye'nin düzensiz saldırılarla başarılı olamayacağını kanıtlamış, Paşa Moskova'ya elçi olarak gönderilmiştir.",
+                question: "Batı Cephesi'ndeki başarısız bir taarruz denemesi sonrası \"Kuvayi Milliye ile bu iş olmaz, düzenli ordu şarttır\" denilerek görevden alınıp Moskova'ya elçi gönderilen komutan kimdir ve bu olay nedir?",
+                options: ["Ali Fuat Cebesoy - Gediz Taarruzu", "Ali Fuat Cebesoy - Aslıhanlar Taarruzu", "Refet Bele - Gediz Taarruzu", "Refet Bele - Aslıhanlar Taarruzu"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Sakarya Zaferi'nin ardından Fransız diplomat Franklin Bouillon, TBMM ile Ankara Antlaşması'nı imzalayarak İtilaf bloğundan ayrılan ilk devlet olmalarını sağlamış ve Türk direnişine hayran kalmıştır.",
+                question: "\"Bu antlaşma ile Türkler, kendi topraklarında bağımsız yaşamayı bize kabul ettirmişlerdir. Bu adamlar yenilmez!\" diyerek TBMM'yi resmen tanıyan yabancı diplomat kimdir ve imzaladığı antlaşma nedir?",
+                options: ["Franklin Bouillon - Ankara Antlaşması", "Franklin Bouillon - Gümrü Antlaşması", "General Harrington - Ankara Antlaşması", "General Harrington - Gümrü Antlaşması"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "15. Kolordu Komutanı Kâzım Karabekir, Doğu Cephesi'nde Ermenileri mağlup ederek TBMM'nin ilk askeri ve siyasi başarısı olan Gümrü Antlaşması'nı imzalamış ve Sevr'i fiilen geçersiz kılan ilk adımı atmıştır.",
+                question: "\"Ermenilere Sevr'i silah zoruyla reddettirdik!\" diyerek TBMM'nin uluslararası alandaki ilk siyasi antlaşmasını imzalayan \"Şark Fatihi\" kimdir ve hangi antlaşmadır?",
+                options: ["Kâzım Karabekir - Gümrü Antlaşması", "Kâzım Karabekir - Moskova Antlaşması", "Bekir Sami Bey - Gümrü Antlaşması", "Bekir Sami Bey - Moskova Antlaşması"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Mustafa Kemal Paşa, attan düşüp kaburgaları kırılmasına rağmen Sakarya Meydan Muharebesi'ni sedyeden yönetmiş ve dünya savaş tarihine geçen o efsanevi emri vermiştir.",
+                question: "Cephede attan düşerek kaburga kemikleri kırılmasına rağmen, \"Hattı müdafaa yoktur, sathı müdafaa vardır. O satıh bütün vatandır!\" emriyle savaşı yöneten Başkomutan kimdir ve bu destan nerede yazılmıştır?",
+                options: ["Mustafa Kemal - Sakarya Meydan Muharebesi", "Mustafa Kemal - Büyük Taarruz", "Fevzi Çakmak - Sakarya Meydan Muharebesi", "Fevzi Çakmak - Büyük Taarruz"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Bekir Sami Bey, I. İnönü sonrası Londra Konferansı'nda İtalya, Fransa ve İngiltere ile meclisin onayından geçmeyen, bağımsızlığa aykırı (esir mübadelesi vb.) ikili antlaşmalar yaptığı için istifa ettirilmiştir.",
+                question: "İkili antlaşmalar yaparak \"esir mübadelesi\" ve \"ekonomik imtiyaz\" gibi tam bağımsızlığa aykırı maddeleri kabul ettiği için Mustafa Kemal tarafından görevden alınan dönemin Dışişleri Bakanı kimdir ve olay nerede geçmiştir?",
+                options: ["Bekir Sami Bey - Londra Konferansı", "Bekir Sami Bey - Lozan Konferansı", "Yusuf Kemal Tengirşenk - Londra Konferansı", "Yusuf Kemal Tengirşenk - Lozan Konferansı"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Dönemin Maarif Vekili Hamdullah Suphi (Tanrıöver), I. İnönü Zaferi'nin coşkusuyla mecliste İstiklal Marşı'nı defalarca gür sesiyle okutarak kabul edilmesini sağlamıştır.",
+                question: "İstiklal Marşı'nın kabul edildiği günlerde, marşı meclis kürsüsünden coşkuyla ve defalarca okuyan dönemin Maarif Vekili (Eğitim Bakanı) kimdir ve marş hangi zaferin ardından kabul edilmiştir?",
+                options: ["Hamdullah Suphi Tanrıöver - I. İnönü Muharebesi", "Hamdullah Suphi Tanrıöver - Sakarya Muharebesi", "Hasan Ali Yücel - I. İnönü Muharebesi", "Hasan Ali Yücel - Sakarya Muharebesi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "İsmet Paşa, Mudanya'da Türk heyetinin haklarını sonuna kadar savunmuş, İngiliz General Harrington'un oyalama taktiklerine karşı sert çıkarak gerekirse barış masasından kalkıp savaşacaklarını belirtmiştir.",
+                question: "Görüşmelerde İngilizlerin oyalama taktiklerine karşı \"Gerekirse savaşırız!\" diyerek masaya yumruğunu vuran ve Yunan delegelerini masaya dahi oturtmayan Türk Başdelegesi kimdir, bu diplomatik savaş nerede verilmiştir?",
+                options: ["İsmet İnönü - Mudanya Mütarekesi", "İsmet İnönü - Moskova Antlaşması", "Rauf Orbay - Mudanya Mütarekesi", "Rauf Orbay - Moskova Antlaşması"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Sakarya'dan sonra yaklaşık 1 yıl süren bekleme evresinde mecliste \"Ordu neden saldırmıyor?\" eleştirileri artınca, Mustafa Kemal taarruzun eksiksiz olması gerektiğini belirterek ordunun eğitim ve ikmalini tamamlamıştır.",
+                question: "\"Yarım hazırlıkla taarruz, hiç taarruz etmemekten daha kötüdür\" diyerek, meclisteki şiddetli eleştirileri aylarca göğüsleyen komutan kimdir ve bu bekletilen harekat hangisidir?",
+                options: ["Mustafa Kemal - Büyük Taarruz", "Mustafa Kemal - Sakarya Muharebesi", "Fevzi Çakmak - Büyük Taarruz", "Fevzi Çakmak - Sakarya Muharebesi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Mondros Mütarekesi'ni imzalayarak büyük bir tarihi yükün altına giren Rauf Orbay, Mudanya Mütarekesi'ni imzalayarak bu yükü hafifleten İsmet Paşa'ya bu sözlerle teşekkür etmiştir.",
+                question: "\"Benim imzaladığım Mondros'un kara lekesini sen Mudanya'da sildin kardeşim\" diyerek İsmet İnönü'yü tebrik eden dönemin İcra Vekilleri Heyeti Reisi (Başbakanı) kimdir ve bu kutlama hangi olay sonrası yapılmıştır?",
+                options: ["Rauf Orbay - Mudanya Mütarekesi", "Rauf Orbay - Lozan Konferansı", "Fevzi Çakmak - Mudanya Mütarekesi", "Fevzi Çakmak - Lozan Konferansı"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Kütahya-Eskişehir Muharebeleri'nde ordunun Sakarya'nın doğusuna çekilmesi üzerine mecliste büyük bir panik yaşanmış ve hükümet merkezinin (meclisin) Ankara'dan Kayseri'ye taşınması tartışılmıştır.",
+                question: "Yunan ordusunun Ankara'ya yaklaşması üzerine mecliste büyük bir panikle \"Meclisi ...'ye taşıyalım\" tartışmalarının yapıldığı kriz dönemi hangi muharebedeki yenilgimiz sonrası yaşanmıştır ve meclis nereye taşınmak istenmiştir?",
+                options: ["Kayseri'ye taşıma - Kütahya/Eskişehir Muharebeleri", "Kayseri'ye taşıma - Sakarya Muharebesi", "Sivas'a taşıma - Kütahya/Eskişehir Muharebeleri", "Sivas'a taşıma - Sakarya Muharebesi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Mustafa Kemal, Başkomutanlık yetkisiyle Sakarya Muharebesi öncesi ordunun silah, erzak ve giyecek ihtiyacını karşılamak için Tekalif-i Milliye (Milli Yükümlülükler) Emirlerini yayımlamıştır.",
+                question: "Ordunun lojistik ihtiyacını doğrudan halktan karşılamak için 'Tekalif-i Milliye Emirleri'ni yayımlayan makam hangisidir ve bu emirler hangi hayati muharebe öncesinde çıkarılmıştır?",
+                options: ["Başkomutanlık (M. Kemal) - Sakarya Muharebesi Öncesi", "Başkomutanlık (M. Kemal) - Büyük Taarruz Öncesi", "TBMM Genel Kurulu - Sakarya Muharebesi Öncesi", "TBMM Genel Kurulu - Büyük Taarruz Öncesi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Gümrü Antlaşması ile Doğu sınırı kısmen çizilmiş, ancak kesin halini Sakarya Muharebesi sonrası Kafkas Cumhuriyetleri (Azerbaycan, Gürcistan, Ermenistan) ile imzalanan Kars Antlaşması almıştır.",
+                question: "Doğu sınırımızın \"Kars, Ardahan, Batum (Elviye-i Selase) bizde kalacak şekilde\" KESİN olarak belirlendiği antlaşma hangisidir ve hangi muharebenin ardından imzalanmıştır?",
+                options: ["Kars Antlaşması - Sakarya Muharebesi Sonrası", "Kars Antlaşması - I. İnönü Muharebesi Sonrası", "Moskova Antlaşması - Sakarya Muharebesi Sonrası", "Moskova Antlaşması - I. İnönü Muharebesi Sonrası"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Büyük Taarruz sırasında Dumlupınar Meydan Muharebesi'nde (Başkomutanlık Meydan Muharebesi) Yunan ordusunun ana gövdesi yok edilmiş ve geri çekilen düşmanı kovalayan Türk ordusuna bu emir verilmiştir.",
+                question: "\"Ordular, ilk hedefiniz Akdeniz'dir, ileri!\" tarihi emri Mustafa Kemal tarafından verilerek Yunan ordusunun denize döküldüğü o meşhur harekat hangisidir?",
+                options: ["Mustafa Kemal - Büyük Taarruz / Dumlupınar", "Mustafa Kemal - Sakarya / Duatepe", "Fevzi Çakmak - Büyük Taarruz / Dumlupınar", "Fevzi Çakmak - Sakarya / Duatepe"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Yusuf Kemal Tengirşenk, Dr. Rıza Nur ve Ali Fuat Cebesoy'dan oluşan heyet, I. İnönü Zaferi sonrası Sovyet Rusya ile Moskova Antlaşması'nı imzalayarak TBMM'yi tanıyan ilk Avrupalı/Büyük devleti tescillemişlerdir.",
+                question: "TBMM'yi ve Misak-ı Milli'yi tanıyan ilk büyük Avrupa devletiyle masaya oturan ve antlaşmayı imzalayan dönemin Dışişleri Bakanı kimdir, antlaşmanın adı nedir?",
+                options: ["Yusuf Kemal Tengirşenk - Moskova Antlaşması", "Yusuf Kemal Tengirşenk - Gümrü Antlaşması", "Bekir Sami Bey - Moskova Antlaşması", "Bekir Sami Bey - Gümrü Antlaşması"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Sakarya Meydan Muharebesi'ndeki efsanevi idaresi ve başarısı sebebiyle, TBMM tarafından Mustafa Kemal Paşa'ya Gazilik ünvanı ve Mareşallik rütbesi verilmiştir.",
+                question: "Tarihin en uzun süren meydan savaşlarından birini kazanarak TBMM tarafından kendisine \"Gazi\" ünvanı ve \"Mareşal\" rütbesi tevcih edilen komutan kimdir, bu ünvan hangi savaştan sonra verilmiştir?",
+                options: ["Mustafa Kemal - Sakarya Meydan Muharebesi", "Mustafa Kemal - Büyük Taarruz", "Fevzi Çakmak - Sakarya Meydan Muharebesi", "Fevzi Çakmak - Büyük Taarruz"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Fevzi Çakmak, Büyük Taarruz (Dumlupınar/Başkomutanlık Meydan Muharebesi) sırasındaki üstün karargah ve cephe yönetimi nedeniyle, Mustafa Kemal'in önerisiyle Mareşal rütbesine terfi ettirilmiştir.",
+                question: "Mustafa Kemal'den sonra Türkiye Cumhuriyeti'nin ikinci ve son \"Mareşal\"i olan komutan kimdir ve bu rütbeyi hangi zaferin ardından almıştır?",
+                options: ["Fevzi Çakmak - Büyük Taarruz (Dumlupınar)", "Fevzi Çakmak - Sakarya Meydan Muharebesi", "İsmet İnönü - Büyük Taarruz (Dumlupınar)", "İsmet İnönü - Sakarya Meydan Muharebesi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Lozan'da TBMM'nin İsmet Paşa'ya verdiği kesin talimatlardan ikisi asla taviz verilmemesi gereken konulardı: Ermeni yurdu taleplerinin reddi ve Kapitülasyonların kesin olarak kaldırılması.",
+                question: "Lozan'a giden Türk heyetine TBMM tarafından \"Gerekirse masadan kalkın ama asla taviz vermeyin!\" denilen iki kırmızı çizgi hangi başlıkları içeriyordu ve bu heyetin başkanı kimdi?",
+                options: ["Ermeni Yurdu ve Kapitülasyonlar - İsmet İnönü", "Ermeni Yurdu ve Kapitülasyonlar - Rauf Orbay", "Boğazlar ve Dış Borçlar - İsmet İnönü", "Boğazlar ve Dış Borçlar - Rauf Orbay"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Dr. Rıza Nur, Lozan görüşmelerinde Ermeni heyetinin Doğu Anadolu'da toprak (Ermeni yurdu) talebini dile getirmesi üzerine masayı yumruklayarak protesto etmiş ve salonu terk etmiştir.",
+                question: "Lozan görüşmeleri sırasında \"Ermeni Yurdu\" meselesi gündeme gelince \"Biz buraya galip bir devlet olarak geldik!\" diyerek oturumu terk eden ve taviz vermeyen Türk delege kimdir ve hangi konferanstadır?",
+                options: ["Dr. Rıza Nur - Lozan Konferansı", "Dr. Rıza Nur - Londra Konferansı", "Hasan Saka - Lozan Konferansı", "Hasan Saka - Londra Konferansı"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Sakarya Meydan Muharebesi sonrasında İtalya Anadolu'yu tamamen terk etmiş, Fransa ise Ankara Antlaşması'nı imzalayarak işgale son vermiştir.",
+                question: "İtalyanların Anadolu'dan tamamen ve kesin olarak çekildiği, Fransızların ise işgalden vazgeçerek TBMM ile masaya oturduğu savaş hangisidir ve İtilaf bloğunun parçalanmasını tescilleyen belge nedir?",
+                options: ["Sakarya Muharebesi - Ankara Antlaşması", "Sakarya Muharebesi - Mudanya Mütarekesi", "Büyük Taarruz - Ankara Antlaşması", "Büyük Taarruz - Mudanya Mütarekesi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Mudanya Mütarekesi ile İstanbul, Boğazlar ve Doğu Trakya savaşılmadan, diplomatik yollarla kurtarılmıştır. Bu, askeri zaferlerin siyasi zafere dönüştüğünün en büyük kanıtıdır.",
+                question: "Büyük Taarruz zaferinin ardından silahlı çatışma yaşanmadan, kurşun atılmadan \"diplomatik yollarla\" kurtarılan 3 stratejik bölge (Doğu Trakya, İstanbul, Boğazlar) hangi antlaşma ile geri alınmıştır?",
+                options: ["Mudanya Mütarekesi ile savaşılmadan alındı", "Lozan Antlaşması ile savaşılmadan alındı", "Ankara Antlaşması ile savaşılmadan alındı", "Kars Antlaşması ile savaşılmadan alındı"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Refet Bele, Mudanya Mütarekesi kararları uyarınca Yunanlıların boşalttığı Doğu Trakya'yı TBMM adına teslim almak üzere 'Trakya Yüksek Komiseri' sıfatıyla bölgeye gönderilmiştir.",
+                question: "Mudanya Mütarekesi sonrası Yunan ordusunun boşalttığı Doğu Trakya'yı TBMM adına teslim almak üzere \"Trakya Yüksek Komiseri\" sıfatıyla görevlendirilen komutan kimdir?",
+                options: ["Refet Bele - Doğu Trakya'nın teslim alınması", "Refet Bele - İstanbul'un teslim alınması", "Ali Fuat Cebesoy - Doğu Trakya'nın teslim alınması", "Ali Fuat Cebesoy - İstanbul'un teslim alınması"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Büyük Taarruz sonrasında Türk ordusunun Çanakkale üzerinden Boğazlara ve İstanbul'a yürümesi ihtimali, İngiltere'de büyük bir siyasi krize (Çanakkale Krizi) neden olmuş ve Başbakan Lloyd George hükümeti istifa etmiştir.",
+                question: "Mudanya Mütarekesi öncesinde Türk ordusunun Boğazlar üzerine yürümesi sebebiyle ülkesinde büyük bir siyasi kriz çıkan (Çanakkale Krizi) ve istifa etmek zorunda kalan İngiliz Başbakanı kimdir?",
+                options: ["Lloyd George - Çanakkale Krizi", "Lloyd George - Süveyş Krizi", "Winston Churchill - Çanakkale Krizi", "Winston Churchill - Süveyş Krizi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "I. İnönü Muharebesi'nin kazanılmasıyla Teşkilat-ı Esasiye (1921 Anayasası) kabul edilmiş, İstiklal Marşı onaylanmış, Londra Konferansı toplanmış, Afganistan ile Dostluk ve SSCB ile Moskova Antlaşmaları yapılmıştır (Milat şifresi).",
+                question: "Düzenli ordunun kazandığı ilk askeri zafer olan ve sonucunda Teşkilat-ı Esasiye'nin ilanı, İstiklal Marşı'nın kabulü ile Moskova Antlaşması gibi devasa diplomatik başarılar getiren muharebe hangisidir?",
+                options: ["I. İnönü Muharebesi", "II. İnönü Muharebesi", "Sakarya Meydan Muharebesi", "Büyük Taarruz"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "II. İnönü Zaferi sonrasında İtalyanlar Anadolu'dan çekilmeye başlamış (Sakarya'da kesinleşecek), Fransızlar Zonguldak'ı boşaltmış ve İngilizler Malta esirlerinin bir kısmını serbest bırakmıştır.",
+                question: "İtalyanların Anadolu'daki kuvvetlerini geri çekmeye başladığı ve Fransızların Zonguldak'ı boşalttığı ilk önemli kırılma noktası olan muharebe hangisidir?",
+                options: ["II. İnönü Muharebesi", "I. İnönü Muharebesi", "Kütahya-Eskişehir Muharebeleri", "Aslıhanlar ve Dumlupınar Çarpışmaları"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Büyük Taarruz harekatının ana karargahı ve planlarının son kez gözden geçirildiği yer Afyonkarahisar - Şuhut - Kocatepe hattıdır.",
+                question: "\"Bizim asıl ordumuz şimdiye kadar hiç savaşmadı. Onları bu büyük gün için sakladık\" denilerek başlatılan Büyük Taarruz'un Mustafa Kemal tarafından bizzat idare edildiği ve harekatın başladığı o efsanevi tepe neresidir?",
+                options: ["Kocatepe - Afyon", "Kocatepe - Kütahya", "Duatepe - Afyon", "Duatepe - Kütahya"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "1683 II. Viyana Kuşatması'ndan beri süregelen Türk ordusunun geri çekilişi, Sakarya Meydan Muharebesi'nin kazanılmasıyla son bulmuş ve Türk ordusu taarruz konumuna geçmiştir.",
+                question: "1683 İkinci Viyana Kuşatması'ndan beri yaklaşık 238 yıl süren Türk ordusunun geri çekilişinin nihayet son bulduğu ve savunmadan taarruza geçildiği o tarihi savaş hangisidir?",
+                options: ["Sakarya Meydan Muharebesi", "Büyük Taarruz", "I. İnönü Muharebesi", "II. İnönü Muharebesi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Mustafa Kemal, 5 Ağustos 1921'de Başkomutanlık Kanunu ile TBMM'nin tüm yetkilerini 3 aylığına devralarak ordunun başına geçmiş ve Sakarya Muharebesi'ni yönetmiştir.",
+                question: "Kütahya-Eskişehir yenilgisi sonrası yaşanan krizde, kararların hızlı alınabilmesi için TBMM'nin tüm yasama ve yürütme yetkilerini 3 aylığına Mustafa Kemal'e devreden kanun hangisidir ve hangi savaş öncesi çıkarılmıştır?",
+                options: ["Başkomutanlık Kanunu - Sakarya Muharebesi Öncesi", "Başkomutanlık Kanunu - Büyük Taarruz Öncesi", "Hıyanet-i Vataniye Kanunu - Sakarya Muharebesi Öncesi", "Hıyanet-i Vataniye Kanunu - Büyük Taarruz Öncesi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Güney Cephesi'nde Fransızlar ve Ermenilerle yapılan şiddetli mücadeleler, Sakarya Zaferi'nin siyasi bir sonucu olan 1921 Ankara Antlaşması ile resmen kapanmıştır.",
+                question: "Milli Mücadele'de \"Güney Cephesi'nin\" resmen kapanmasını sağlayan, Hatay hariç bugünkü Suriye sınırımızın çizildiği diplomatik belge hangisidir ve kimlerle imzalanmıştır?",
+                options: ["Ankara Antlaşması - Fransızlar", "Ankara Antlaşması - İngilizler", "Gümrü Antlaşması - Fransızlar", "Gümrü Antlaşması - İngilizler"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Moskova Antlaşması'nın en acı tavizi olan Batum, Misak-ı Milli'den verilen ilk tavizdir ve bu antlaşma I. İnönü Muharebesi'nin ardından SSCB ile imzalanmıştır.",
+                question: "Misak-ı Milli'den verilen \"ilk taviz\" olan Batum'un Gürcistan'a (dolayısıyla Sovyetlere) bırakıldığı antlaşma hangisidir ve hangi savaşın diplomatik sonucudur?",
+                options: ["Moskova Antlaşması - I. İnönü Sonrası", "Moskova Antlaşması - Sakarya Sonrası", "Kars Antlaşması - I. İnönü Sonrası", "Kars Antlaşması - Sakarya Sonrası"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Gümrü Antlaşması, TBMM'nin uluslararası alanda imzaladığı ilk antlaşmadır ve bu metinde ilk defa \"Türkiye\" (veya Türkiye Devleti) kelimesi resmen kullanılmıştır.",
+                question: "Uluslararası bir diplomatik metinde (antlaşmada) \"Türkiye\" ibaresinin ilk kez resmen kullanıldığı belge hangisidir ve hangi cephedeki zaferin sonucudur?",
+                options: ["Gümrü Antlaşması - Doğu Cephesi", "Gümrü Antlaşması - Güney Cephesi", "Moskova Antlaşması - Doğu Cephesi", "Moskova Antlaşması - Güney Cephesi"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Milli Mücadele sırasında ilk kapanan cephe, Kâzım Karabekir komutasındaki 15. Kolordu'nun Ermenileri mağlup etmesiyle Doğu Cephesi olmuştur (Gümrü Antlaşması).",
+                question: "Türk Kurtuluş Savaşı'nda düşmandan tamamen temizlenerek \"resmen kapanan ilk cephe\" neresidir ve hangi antlaşma ile kapanmıştır?",
+                options: ["Doğu Cephesi - Gümrü Antlaşması", "Doğu Cephesi - Kars Antlaşması", "Güney Cephesi - Gümrü Antlaşması", "Güney Cephesi - Kars Antlaşması"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "Fransızlar, Sakarya Meydan Muharebesi'ni Türk ordusunun kazanmasının ardından Türklerin yenilmeyeceğini anlamış ve Süleyman Şah'ın türbesinin bulunduğu Caber Kalesi'nin Türk toprağı sayılmasını da içeren Ankara Antlaşması'nı imzalamışlardır.",
+                question: "Suriye sınırlarındaki Caber Kalesi'nin (Süleyman Şah Türbesi) Türk toprağı sayılmasını kabul eden ve Sakarya Zaferi sonrası imzalanan antlaşma hangisidir?",
+                options: ["Ankara Antlaşması - Fransa", "Ankara Antlaşması - İngiltere", "Lozan Antlaşması - Fransa", "Lozan Antlaşması - İngiltere"]
+            },
+            {
+                correctAnswer: "A",
+                meaning: "26 Ağustos sabahı topçu ateşiyle başlayan Büyük Taarruz, 30 Ağustos'ta Dumlupınar'da düşman ordusunun imha edilmesiyle (Başkomutanlık Meydan Muharebesi) kesin bir zafere dönüşmüştür.",
+                question: "26 Ağustos 1922 sabahı Kocatepe'den başlayan ve 30 Ağustos'ta düşman ana gövdesinin bizzat Başkomutan Mustafa Kemal tarafından kuşatılarak yok edildiği meydan savaşının diğer adı nedir?",
+                options: ["Dumlupınar Meydan Muharebesi", "Duatepe Meydan Muharebesi", "Aslıhanlar Çarpışması", "Gediz Muharebesi"]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        function shuffleArray(array) {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        function initQuiz() {
+            questions = shuffleArray(quizData);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            catCoverEl.addEventListener('click', () => catCoverEl.style.display = 'none');
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            // Doğru cevabı orijinal index üzerinden bul ("A" her zaman 0. index)
+            const correctText = currentQuestion.options[currentQuestion.correctAnswer.charCodeAt(0) - 65];
+            
+            // Şıkları karıştır (Orijinal veri değişmez, sadece ekrana basılırken karışır)
+            const shuffledOptions = shuffleArray(currentQuestion.options);
+            
+            optionsEl.innerHTML = '';
+            optionsEl.appendChild(catCoverEl);
+            catCoverEl.style.display = 'flex';
+
+            shuffledOptions.forEach(optionText => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = optionText;
+                button.onclick = () => selectAnswer(optionText, correctText, currentQuestion.meaning);
+                optionsEl.appendChild(button);
+            });
+            
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        function selectAnswer(selectedOption, correctOptionText, meaning) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correctOptionText) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selectedOption) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            const isCorrect = selectedOption === correctOptionText;
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+            }
+
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            feedbackTextEl.innerHTML = isCorrect ? 
+                `<strong>✅ Doğru Tespit!</strong><br><br>${meaning}` : 
+                `<strong>❌ Yanlış!</strong><br>Doğru Eşleşme: ${correctOptionText}<br><br>${meaning}`;
+            
+            nextBtn.style.display = 'block';
+        }
+
+        nextBtn.onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        };
+
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            finalScoreEl.textContent = `Puanınız: ${score} / ${questions.length}`;
+            
+            wordListEl.innerHTML = '<h3 style="margin-bottom:15px;">Tarihi Kesitler Genel Tekrar:</h3>';
+            quizData.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>${q.question}</strong><br><small style="color:var(--primary)">${q.meaning}</small>`;
+                wordListEl.appendChild(card);
+            });
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>

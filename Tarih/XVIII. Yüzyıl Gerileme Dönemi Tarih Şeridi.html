@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MEB-AGS Etkileşimli Zaman Çizelgesi</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+            --sultan: #483D8B;
+            --state: #0056b3;
+            --auto: #663399; /* Oto doldur butonu rengi */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+            padding-bottom: 40px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+
+        header::before {
+            content: "⏳";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .instruction {
+            text-align: center;
+            padding: 15px;
+            background: var(--light);
+            border-bottom: 2px solid var(--accent);
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.1rem;
+        }
+
+        /* Araç Çubuğu (Oto Doldur Butonu İçin) */
+        .toolbar {
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            background: white;
+        }
+
+        .auto-fill-btn {
+            background: linear-gradient(135deg, var(--auto) 0%, #9370DB 100%);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(102, 51, 153, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .auto-fill-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 15px rgba(102, 51, 153, 0.5);
+        }
+
+        /* Event Bank (Sticky) */
+        .event-bank-wrapper {
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            padding: 0 15px;
+            margin: 5px 0 15px 0;
+        }
+
+        .event-bank {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border: 3px solid var(--accent);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .event-btn {
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .event-btn:hover {
+            background: var(--light);
+            transform: translateY(-2px);
+        }
+
+        .event-btn.selected {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 10px rgba(139, 69, 19, 0.6);
+            transform: scale(1.05);
+        }
+
+        .event-btn.hidden {
+            display: none;
+        }
+
+        /* Timeline Layout */
+        .timeline-container {
+            position: relative;
+            padding: 20px 0;
+            margin: 20px 15px;
+        }
+
+        .timeline-line {
+            position: absolute;
+            width: 6px;
+            background: var(--primary);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+            border-radius: 3px;
+        }
+
+        .timeline-slot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+            width: 100%;
+        }
+
+        .timeline-slot:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .slot-year-container {
+            width: 50%;
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 40px;
+            position: relative;
+        }
+
+        .timeline-slot:nth-child(even) .slot-year-container {
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: 40px;
+        }
+
+        .slot-year-container::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 4px solid var(--accent);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            right: -10px;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-slot.completed .slot-year-container::after {
+            background: var(--success);
+            border-color: var(--success);
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        .timeline-slot:nth-child(even) .slot-year-container::after {
+            right: auto;
+            left: -10px;
+        }
+
+        .slot-year {
+            background: var(--primary);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 1.6rem;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .timeline-slot.completed .slot-year {
+            background: var(--success);
+        }
+
+        .slot-content-container {
+            width: 50%;
+            padding-left: 40px;
+        }
+
+        .timeline-slot:nth-child(even) .slot-content-container {
+            padding-left: 0;
+            padding-right: 40px;
+        }
+
+        .dropzone {
+            background: var(--light);
+            border: 2px dashed var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .dropzone:hover {
+            background: #e8e2d5;
+            transform: scale(1.02);
+        }
+
+        .dropzone-placeholder {
+            color: #888;
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        .dropzone.correct {
+            border: 2px solid var(--success);
+            background: #f8fff8;
+            cursor: default;
+            text-align: left;
+            align-items: flex-start;
+            box-shadow: 0 8px 15px rgba(46, 139, 87, 0.15);
+            transform: scale(1);
+        }
+
+        .dropzone.correct:hover {
+            transform: none;
+        }
+
+        .correct-title {
+            color: var(--success);
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badges-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .sultan-badge {
+            background: var(--sultan);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .state-badge {
+            background: var(--state);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border: 1px solid #004085;
+        }
+
+        .state-badge::before {
+            content: "🤝 Kiminle: ";
+            opacity: 0.9;
+            font-weight: normal;
+        }
+        
+        .war-badge::before {
+            content: "⚔️ Kiminle: ";
+        }
+        
+        .internal-badge {
+            background: #800000;
+            border-color: #4a0000;
+        }
+        
+        .internal-badge::before {
+            content: "📌 Türü: ";
+        }
+
+        .correct-desc {
+            font-size: 1rem;
+            color: var(--dark);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .cause-effect {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            width: 100%;
+        }
+
+        .cause-row {
+            margin-bottom: 8px;
+        }
+        
+        .cause-row:last-child {
+            margin-bottom: 0;
+            padding-top: 8px;
+            border-top: 1px dashed #ddd;
+        }
+
+        .cause-effect strong {
+            color: var(--primary);
+            display: inline-block;
+            min-width: 60px;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: var(--light);
+            margin: 0 15px;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, #3cb371 100%);
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .completion-modal {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+            background: white;
+            border-radius: 15px;
+            margin: 20px 15px;
+            border: 4px solid var(--gold);
+            animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .completion-modal h2 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(210, 105, 30, 0.4);
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(210, 105, 30, 0.6);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        .error-shake {
+            animation: shake 0.4s;
+            border-color: var(--danger) !important;
+            background: #fff0f0 !important;
+        }
+
+        @media (max-width: 768px) {
+            .timeline-line {
+                left: 30px;
+            }
+            .timeline-slot, .timeline-slot:nth-child(even) {
+                flex-direction: row;
+                align-items: stretch;
+                margin-bottom: 30px;
+            }
+            .slot-year-container, .timeline-slot:nth-child(even) .slot-year-container {
+                width: 80px;
+                padding: 0;
+                justify-content: flex-start;
+                align-items: flex-start;
+                padding-top: 20px;
+            }
+            .slot-year-container::after, .timeline-slot:nth-child(even) .slot-year-container::after {
+                left: -10px;
+                right: auto;
+                top: 40px;
+            }
+            .slot-year {
+                font-size: 1.2rem;
+                padding: 6px 12px;
+                margin-top: 15px;
+            }
+            .slot-content-container, .timeline-slot:nth-child(even) .slot-content-container {
+                width: calc(100% - 80px);
+                padding-left: 20px;
+                padding-right: 0;
+            }
+            .event-bank {
+                max-height: 150px;
+            }
+            .badges-container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🏛️ Tarih Şeridi: Sebep-Sonuç Ağı</h1>
+            <div class="subtitle">XVIII. Yüzyıl Gerileme Dönemi Olayları (1699-1798)</div>
+        </header>
+
+        <div class="instruction">
+            👆 Önce havuzdan bir olay seçin, ardından gerçekleştiği yıla tıklayın. Veya "Oto Doldur" butonu ile genel tekrar moduna geçin!
+        </div>
+
+        <div class="toolbar">
+            <button id="autoFillBtn" class="auto-fill-btn" onclick="autoFillTimeline()">⚡ Oto Doldur (Cevapları Gör)</button>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="event-bank-wrapper">
+            <div class="event-bank" id="eventBank">
+                </div>
+        </div>
+
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
+            <div id="timelineSlots">
+                </div>
+        </div>
+
+        <div class="completion-modal" id="completionModal">
+            <h2 id="modalTitle">🏆 Tam Kadro Tamamlandı!</h2>
+            <p id="modalDesc">Gerileme Dönemi'nin Karlofça'dan Napolyon'a kadar olan tüm siyasi olaylarını, padişahlarını ve Neden-Sonuç ilişkilerini başarıyla tamamladınız!</p>
+            <button class="restart-btn" onclick="location.reload()">Tekrar Çöz</button>
+        </div>
+    </div>
+
+    <script>
+        const timelineData = [
+            { 
+              id: 1, year: 1699, title: "Karlofça Antlaşması", sultan: "II. Mustafa", targetState: "Kutsal İttifak", isWar: false,
+              desc: "Osmanlı'nın Batı'da ilk kez büyük çapta toprak kaybettiği antlaşmadır.",
+              cause: "Kutsal İttifak (Avusturya, Venedik, Lehistan) devletlerine karşı alınan ağır yenilgiler.",
+              effect: "Gerileme Dönemi fiilen başladı, Osmanlı savunma psikolojisine girdi." 
+            },
+            { 
+              id: 2, year: 1700, title: "İstanbul Antlaşması", sultan: "II. Mustafa", targetState: "Rusya", isWar: false,
+              desc: "Karlofça'nın devamı niteliğinde Rusya ile ayrıca masaya oturulmuştur.",
+              cause: "Çar I. Petro'nun sıcak denizlere (Karadeniz'e) inme politikası.",
+              effect: "Azak Kalesi Ruslara verildi, Rusya İstanbul'da elçi bulundurma hakkı elde etti." 
+            },
+            { 
+              id: 3, year: 1703, title: "Edirne Olayı", sultan: "II. Mustafa ➔ III. Ahmet", targetState: "İç Siyaset", isWar: false,
+              desc: "Başkentte çıkan büyük bir yeniçeri ve halk ayaklanmasıdır.",
+              cause: "Şeyhülislam Feyzullah Efendi'nin aşırı güçlenmesi ve padişahın devleti sürekli Edirne'den yönetmesine duyulan tepki.",
+              effect: "II. Mustafa tahttan indirildi, yerine Lale Devri padişahı III. Ahmet çıktı." 
+            },
+            { 
+              id: 4, year: 1711, title: "Prut Antlaşması", sultan: "III. Ahmet", targetState: "Rusya", isWar: false,
+              desc: "Osmanlı'ya 'Karlofça ile kaybedilenleri geri alabiliriz' umudunu doğuran antlaşmadır.",
+              cause: "Poltova Savaşı'nda yenilen Demirbaş Şarl'ın (İsveç) Osmanlı'ya sığınması ve onu takip eden Rusların sınır ihlali yapması.",
+              effect: "Azak Kalesi Osmanlı'ya geri verilmiştir." 
+            },
+            { 
+              id: 5, year: 1715, title: "Petervaradin Savaşı", sultan: "III. Ahmet", targetState: "Avusturya", isWar: true,
+              desc: "Osmanlı Devleti'nin, Balkanlara egemen olmak isteyen Avusturya ile yaptığı savaştır.",
+              cause: "Osmanlı'nın Venedik'ten Mora'yı geri alması üzerine Karlofça'nın garantörü olan Avusturya'nın duruma müdahale etmesi.",
+              effect: "Osmanlı ağır bir yenilgi almış ve 1718 Pasarofça Antlaşması'na zemin hazırlanmıştır." 
+            },
+            { 
+              id: 6, year: 1718, title: "Pasarofça Antlaşması", sultan: "III. Ahmet", targetState: "Avusturya", isWar: false,
+              desc: "Osmanlı Devleti'nin ilk defa Batı'nın üstünlüğünü kabul ettiği antlaşmadır.",
+              cause: "Petervaradin Savaşı'nda Avusturya karşısında alınan ağır mağlubiyet.",
+              effect: "Batı'nın üstünlüğü kabul edilerek Avrupa tarzı yeniliklerin yapıldığı <strong>'Lale Devri'</strong>ne girilmiştir." 
+            },
+            { 
+              id: 7, year: 1724, title: "İstanbul (Mukasemaname)", sultan: "III. Ahmet", targetState: "Rusya", isWar: false,
+              desc: "Osmanlı Devleti ile Rusya arasındaki ilk dostluk (paylaşım) antlaşmasıdır.",
+              cause: "Safevi (İran) Devleti'ndeki taht kavgalarından yararlanmak isteyen Osmanlı ve Rusya'nın kendi aralarında çatışmak istememesi.",
+              effect: "İran'ın Kafkasya ve batı toprakları Osmanlı ile Rusya arasında resmen paylaşılmıştır." 
+            },
+            { 
+              id: 8, year: 1730, title: "Patrona Halil İsyanı", sultan: "III. Ahmet ➔ I. Mahmut", targetState: "İç Siyaset", isWar: false,
+              desc: "Lale Devri'ni kanlı bir şekilde bitiren yeniçeri ve esnaf isyandır.",
+              cause: "Lale Devri'ndeki israf, ekonomik sıkıntılar ve İran savaşlarında alınan yenilgilerin halkta yarattığı tepki.",
+              effect: "Sadrazam Nevşehirli Damat İbrahim Paşa idam edildi, III. Ahmet tahttan indirildi ve Lale Devri bitti."
+            },
+            { 
+              id: 9, year: 1732, title: "Ahmet Paşa Antlaşması", sultan: "I. Mahmut", targetState: "İran", isWar: false,
+              desc: "İran ile 1746'da imzalanacak olan II. Kasr-ı Şirin'e zemin hazırlayan ara antlaşmadır.",
+              cause: "İran'ın kaybedilen toprakları geri almak için Osmanlı'ya saldırması ve süregelen sınır çatışmaları.",
+              effect: "Kalıcı barış sağlanamamış, savaşlar bir süre daha devam etmiştir." 
+            },
+            { 
+              id: 10, year: 1739, title: "Belgrat Antlaşması", sultan: "I. Mahmut", targetState: "Rusya & Avusturya", isWar: false,
+              desc: "Osmanlı'nın 18. yüzyılda imzaladığı son kazançlı antlaşmadır.",
+              cause: "Rusya (Kırım'a inmek isteyen) ve Avusturya'nın (Balkanlara egemen olmak isteyen) Osmanlı'ya karşı ittifak yapması.",
+              effect: "Osmanlı her iki devlete karşı da galip gelmiş; Belgrat geri alınmış ve Karadeniz son kez 'Türk Gölü' sayılmıştır." 
+            },
+            { 
+              id: 11, year: 1740, title: "Daimi Kapitülasyonlar", sultan: "I. Mahmut", targetState: "Fransa", isWar: false,
+              desc: "Fransa'ya tanınan ekonomik ayrıcalıkların geçici olmaktan çıkarılıp daimi hâle getirilmesidir.",
+              cause: "Fransa'nın, 1739 Belgrat Antlaşması görüşmelerinde Osmanlı Devleti lehine arabuluculuk yapması.",
+              effect: "Fransa'nın Osmanlı ekonomisi üzerindeki sömürüsü ve etkisi kalıcılaşmıştır." 
+            },
+            { 
+              id: 12, year: 1746, title: "Kerden Ant. (II. Kasr-ı Şirin)", sultan: "I. Mahmut", targetState: "İran", isWar: false,
+              desc: "Osmanlı ile İran arasında uzun süren savaşlara nokta koyan antlaşmadır.",
+              cause: "Her iki devletin de yıllarca süren yıpratıcı savaşlardan yorulması.",
+              effect: "1639 Kasr-ı Şirin Antlaşması'ndaki maddeler aynen kabul edilerek doğu sınırı kesinleşmiştir." 
+            },
+            { 
+              id: 13, year: 1770, title: "Çeşme Baskını", sultan: "III. Mustafa", targetState: "Rusya", isWar: true,
+              desc: "Rus donanmasının İzmir Çeşme limanında demirli olan Osmanlı donanmasını yaktığı elim olaydır.",
+              cause: "1768-1774 savaşı sırasında Çar I. Petro'nun 'Akdeniz'e inme' ideali doğrultusunda Rus filosunun Osmanlı'yı denizden vurmak istemesi.",
+              effect: "Osmanlı donanması yok edilmiş, Küçük Kaynarca'daki ağır yenilginin önü açılmıştır." 
+            },
+            { 
+              id: 14, year: 1774, title: "Küçük Kaynarca Ant.", sultan: "I. Abdülhamit", targetState: "Rusya", isWar: false,
+              desc: "Gerileme Dönemi'nin şartları en ağır antlaşmasıdır.",
+              cause: "Çeşme Baskını ve kara savaşlarında alınan ağır mağlubiyetler.",
+              effect: "Kırım bağımsız oldu (Halkı tamamen Müslüman olan bir yer ilk kez kaybedildi). Kırım dini açıdan halifeye bağlandı (İlk kez siyasi güç). Rusya Panslavizm için konsolosluk açma hakkı aldı ve Osmanlı ilk defa savaş tazminatı ödedi." 
+            },
+            { 
+              id: 15, year: 1779, title: "Aynalıkavak Tenkihnamesi", sultan: "I. Abdülhamit", targetState: "Rusya", isWar: false,
+              desc: "Kırım'ın kaybedilme sürecindeki ikinci büyük aşamadır.",
+              cause: "Rusların, Küçük Kaynarca sonrası Kırım'ın içişlerine karışarak Rus yanlısı Şahin Giray'ı zorla han seçtirmesi.",
+              effect: "Osmanlı Devleti yeni bir savaşı göze alamayarak Şahin Giray'ın hanlığını resmen onaylamak zorunda kalmıştır." 
+            },
+            { 
+              id: 16, year: 1791, title: "Ziştovi Antlaşması", sultan: "III. Selim", targetState: "Avusturya", isWar: false,
+              desc: "Osmanlı ile Avusturya arasında yapılan son antlaşmadır. Avusturya savaşta kazandığı yerleri iade ederek çekilmiştir.",
+              cause: "1789 Fransız İhtilali'nin yaydığı milliyetçilik akımının, çok uluslu bir imparatorluk olan Avusturya'yı içten parçalama tehlikesi.",
+              effect: "Avusturya ile savaş durumu kalıcı olarak sona ermiştir." 
+            },
+            { 
+              id: 17, year: 1792, title: "Yaş Antlaşması", sultan: "III. Selim", targetState: "Rusya", isWar: false,
+              desc: "Osmanlı Devleti'nde Gerileme Dönemi'ni bitirip Dağılma Dönemi'ni başlatan antlaşmadır.",
+              cause: "Avusturya'nın savaştan (Ziştovi ile) çekilmesi üzerine Osmanlı'nın Rusya karşısında yalnız kalıp yenilmesi.",
+              effect: "Kırım'ın resmen Rusya'ya ait olduğu Osmanlı tarafından kabul edilmiştir." 
+            },
+            { 
+              id: 18, year: 1798, title: "Napolyon'un Mısır'ı İşgali", sultan: "III. Selim", targetState: "Fransa", isWar: true,
+              desc: "Daha önce Osmanlı dostu olan Fransa'nın sürpriz şekilde Osmanlı toprağı olan Mısır'a saldırmasıdır.",
+              cause: "Fransa'nın, ezeli rakibi İngiltere'nin Uzak Doğu sömürge yollarını kesmek istemesi.",
+              effect: "Osmanlı ilk defa Denge Politikası (İngiltere ve Rusya'dan yardım) izledi. Ruslar ilk kez Boğazlardan geçti. Nizam-ı Cedit ordusu (Cezzar Ahmet Paşa) Akka'da Fransa'yı yendi. El Ariş ve Paris antlaşmalarıyla Fransa Mısır'dan çıktı." 
+            }
+        ];
+
+        let selectedEvent = null;
+        let correctMatches = 0;
+
+        function shuffleArray(array) {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        function init() {
+            const eventBank = document.getElementById('eventBank');
+            const timelineSlots = document.getElementById('timelineSlots');
+            
+            const shuffledEvents = shuffleArray(timelineData);
+            
+            shuffledEvents.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = 'event-btn';
+                btn.textContent = item.title;
+                btn.dataset.id = item.id;
+                btn.dataset.year = item.year;
+                
+                btn.onclick = () => selectEvent(btn, item);
+                eventBank.appendChild(btn);
+            });
+
+            timelineData.sort((a,b) => a.year - b.year).forEach(item => {
+                const slotWrapper = document.createElement('div');
+                slotWrapper.className = 'timeline-slot';
+                slotWrapper.id = `slot-${item.year}`;
+                
+                const yearContainer = document.createElement('div');
+                yearContainer.className = 'slot-year-container';
+                const yearDiv = document.createElement('div');
+                yearDiv.className = 'slot-year';
+                yearDiv.textContent = item.year;
+                yearContainer.appendChild(yearDiv);
+
+                const contentContainer = document.createElement('div');
+                contentContainer.className = 'slot-content-container';
+                const dropzone = document.createElement('div');
+                dropzone.className = 'dropzone';
+                dropzone.dataset.year = item.year;
+                dropzone.innerHTML = `<span class="dropzone-placeholder">Bu yıla ait olayı eşleştirin...</span>`;
+                
+                dropzone.onclick = () => attemptMatch(dropzone, slotWrapper, item.year, item);
+                
+                contentContainer.appendChild(dropzone);
+                slotWrapper.appendChild(yearContainer);
+                slotWrapper.appendChild(contentContainer);
+                
+                timelineSlots.appendChild(slotWrapper);
+            });
+        }
+
+        function selectEvent(btnElement, itemData) {
+            document.querySelectorAll('.event-btn').forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            selectedEvent = { element: btnElement, data: itemData };
+        }
+
+        function attemptMatch(dropzoneElement, slotWrapper, slotYear, correctItemData) {
+            if (dropzoneElement.classList.contains('correct')) return;
+            if (!selectedEvent) {
+                alert("Lütfen önce yukarıdaki havuzdan bir olay seçin!");
+                return;
+            }
+
+            const isCorrect = selectedEvent.data.year === slotYear;
+
+            if (isCorrect) {
+                fillSlot(dropzoneElement, slotWrapper, correctItemData);
+                selectedEvent.element.classList.add('hidden');
+                selectedEvent = null; 
+                
+                correctMatches++;
+                updateProgress();
+
+            } else {
+                dropzoneElement.classList.remove('error-shake');
+                void dropzoneElement.offsetWidth; 
+                dropzoneElement.classList.add('error-shake');
+            }
+        }
+
+        // Slot Doldurma Fonksiyonu (Hem manuel hem oto-doldur için)
+        function fillSlot(dropzoneElement, slotWrapper, itemData) {
+            dropzoneElement.classList.add('correct');
+            slotWrapper.classList.add('completed');
+            
+            let badgeClass = "state-badge";
+            if(itemData.isWar) badgeClass = "state-badge war-badge";
+            if(itemData.targetState === "İç Siyaset") badgeClass = "state-badge internal-badge";
+            
+            dropzoneElement.innerHTML = `
+                <div class="correct-title">✅ ${itemData.title}</div>
+                <div class="badges-container">
+                    <span class="sultan-badge">👑 ${itemData.sultan}</span>
+                    <span class="${badgeClass}">${itemData.targetState}</span>
+                </div>
+                <div class="correct-desc">${itemData.desc}</div>
+                <div class="cause-effect">
+                    <div class="cause-row"><strong>Sebep:</strong> ${itemData.cause}</div>
+                    <div class="cause-row"><strong>Sonuç:</strong> ${itemData.effect}</div>
+                </div>
+            `;
+        }
+
+        // Oto Doldur Fonksiyonu
+        function autoFillTimeline() {
+            if (correctMatches === timelineData.length) return; // Zaten tamamlandıysa çık
+            
+            timelineData.forEach(item => {
+                const slotWrapper = document.getElementById(`slot-${item.year}`);
+                const dropzone = slotWrapper.querySelector('.dropzone');
+                
+                if (!dropzone.classList.contains('correct')) {
+                    fillSlot(dropzone, slotWrapper, item);
+                }
+            });
+            
+            correctMatches = timelineData.length;
+            document.getElementById('progressFill').style.width = '100%';
+            document.getElementById('eventBank').parentElement.style.display = 'none';
+            document.getElementById('autoFillBtn').style.display = 'none';
+            
+            setTimeout(() => {
+                const modal = document.getElementById('completionModal');
+                document.getElementById('modalTitle').innerHTML = "⚡ Tablo Otomatik Tamamlandı!";
+                document.getElementById('modalDesc').innerHTML = "Genel tekrar modundasınız. Tarih şeridini aşağıya kaydırarak tüm Neden-Sonuç zincirlerini sırasıyla okuyabilir ve çalışabilirsiniz.";
+                modal.style.display = 'block';
+            }, 600);
+        }
+
+        function updateProgress() {
+            const percentage = (correctMatches / timelineData.length) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+
+            if (correctMatches === timelineData.length) {
+                document.getElementById('autoFillBtn').style.display = 'none';
+                setTimeout(() => {
+                    document.getElementById('eventBank').parentElement.style.display = 'none';
+                    document.getElementById('completionModal').style.display = 'block';
+                }, 800);
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

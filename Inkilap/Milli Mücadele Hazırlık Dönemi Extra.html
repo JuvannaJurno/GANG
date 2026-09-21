@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MEB-AGS Atatürk İnkılapları</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "📜";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            text-align: left;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ Atatürk İnkılapları II</h1>
+            <div class="subtitle">Hukuk Alanı | Kadın Hakları | Toplumsal İnkılaplar</div>
+            <div class="subtitle" style="font-size:0.85rem; margin-top:5px;">(Eğitim Alanı Hariç)</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">📊 Puan: <span id="score">0</span></div>
+                <div>📌 Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">🐾 Şıkları görmek için bir sayıya (1-4) basın veya tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">➡️ Sonraki Soru (Boşluk)</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Konu Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()">🔄 Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 33 SORU (EĞİTİM HARİÇ) ====================
+        const quizData = [
+            // HUKUK ALANI (1-17)
+            { question: "1924 Anayasası ile ilgili aşağıda verilen bilgilerden hangisi doğrudur?", options: ["Türkiye Cumhuriyeti'nin en kısa süre yürürlükte kalan anayasasıdır.", "Savaş ortamında hazırlandığı için oldukça yetersizdir.", "Toplam 6 bölüm ve 105 maddeden oluşmaktadır.", "İlk kez güçler birliği ilkesini tamamen terk etmiştir."], correctAnswer: "C", meaning: "1924 Anayasası 6 bölüm ve 105 maddeden oluşmuştur. En uzun süre yürürlükte kalan anayasadır (1924-1961)." },
+{ question: "Mondros Ateşkes Antlaşması'ndan sonra İtilaf Devletleri tarafından işgal edilen 'ilk toprak parçası' aşağıdakilerden hangisidir?", options: ["Hatay", "Musul", "İzmir", "İstanbul"], correctAnswer: "B", meaning: "30 Ekim 1918'de Mondros imzalandıktan hemen sonra İngilizler ilk olarak Musul'a asker çıkarmıştır." },
+
+{ question: "Anadolu topraklarında gerçekleşen 'ilk işgal' ve 'ilk resmi işgal' eşleştirmesi hangisinde doğrudur?", options: ["Musul - İzmir", "Hatay - Musul", "Hatay - İzmir", "İzmir - İstanbul"], correctAnswer: "C", meaning: "Anadolu'da yapılan ilk işgal Hatay, ilk resmi işgal ise 15 Mayıs 1919'da İzmir'dir." },
+
+{ question: "Mustafa Kemal, I. Dünya Savaşı başladığı sırada hangi görevde bulunmaktaydı?", options: ["7. Ordu Komutanlığı", "Yıldırım Orduları Grup Komutanlığı", "Sofya Askeri Ateşeliği", "9. Ordu Müfettişliği"], correctAnswer: "C", meaning: "Mustafa Kemal, I. Dünya Savaşı başladığında Sofya'da askeri ateşe olarak görev yapmaktaydı." },
+
+{ question: "Mustafa Kemal'in I. Dünya Savaşı'nda görev aldığı cephelerin (Ç-K-S şifresiyle) kronolojik sırası hangisidir?", options: ["Çanakkale - Suriye - Kafkas", "Çanakkale - Kafkas - Suriye", "Kafkas - Çanakkale - Suriye", "Suriye - Çanakkale - Kafkas"], correctAnswer: "B", meaning: "Mustafa Kemal sırasıyla Çanakkale, Kafkas ve Suriye-Filistin cephelerinde görev almıştır." },
+
+{ question: "13 Kasım 1918 tarihinde İstanbul'a gelen Mustafa Kemal, İtilaf donanmasını görünce yaveri Cevat Abbas Bey'e hangi tarihi sözü söylemiştir?", options: ["Ya istiklal ya ölüm!", "Milletin azim ve kararı kurtaracaktır.", "Geldikleri gibi giderler.", "Ordular, ilk hedefiniz Akdeniz'dir!"], correctAnswer: "C", meaning: "Mustafa Kemal, İtilaf donanmasının İstanbul'a geldiğini görünce 'Geldikleri gibi giderler.' demiştir." },
+
+{ question: "Mustafa Kemal'in İstanbul'da halkı bilinçlendirmek için Fethi Okyar ile birlikte çıkardığı yayın organı hangisidir?", options: ["İrade-i Milliye", "Hakimiyet-i Milliye", "Minber Gazetesi", "Albayrak Gazetesi"], correctAnswer: "C", meaning: "Mustafa Kemal, İstanbul'da Fethi Okyar ile birlikte Minber Gazetesi'ni çıkarmıştır." },
+
+{ question: "Mustafa Kemal'in askeri eğitim ve disiplin eksikliklerini ele aldığı kitabın adı nedir?", options: ["Nutuk", "Geometri", "Zabit ve Kumandan ile Hasbihal", "Cumalı Ordugahı"], correctAnswer: "C", meaning: "Mustafa Kemal, askerlikteki eksiklikleri gidermek için Zabit ve Kumandan ile Hasbihal adlı kitabı yazmıştır." },
+
+{ question: "İstanbul Hükümeti'nin Mustafa Kemal'i 9. Ordu Müfettişi olarak Samsun'a göndermesindeki 'resmi' amaç hangisidir?", options: ["Milli mücadeleyi başlatmak", "Bölgede asayişi sağlamak ve silahları toplamak", "Temsil Heyeti'ni kurmak", "İngilizlerle iş birliği yapmak"], correctAnswer: "B", meaning: "Resmi görevi bölgede asayişi sağlamak ve halkın elindeki silahları toplamaktı. Mustafa Kemal bu yetkiyi milli mücadele için kullandı." },
+
+{ question: "Kurtuluş Savaşı'nın 'fiilen' başladığı tarih kabul edilen olay hangisidir?", options: ["Mondros'un imzalanması", "Amasya Genelgesi'nin yayınlanması", "Mustafa Kemal'in Samsun'a çıkışı", "TBMM'nin açılması"], correctAnswer: "C", meaning: "19 Mayıs 1919'da Mustafa Kemal'in Samsun'a çıkması Kurtuluş Savaşı'nı fiilen başlatan olaydır." },
+
+{ question: "Kurtuluş Savaşı'nın 'ilk yazılı belgesi' kabul edilen ve İstanbul Hükümeti ile ilk görüş ayrılığının yaşandığı rapor hangisidir?", options: ["Havza Genelgesi", "Samsun Raporu", "Amasya Genelgesi", "Amiral Bristol Raporu"], correctAnswer: "B", meaning: "22 Mayıs 1919'da İstanbul Hükümeti'ne gönderilen Samsun Raporu, milli mücadelenin ilk yazılı belgesidir." },
+
+{ question: "Milli bilinci uyandırmak amacıyla halka seslenen ilk belge olan Havza Genelgesi'nde aşağıdakilerden hangisi istenmemiştir?", options: ["Mitingler yapılması", "Protesto telgrafları çekilmesi", "Azınlıklara kötü davranılması", "Silahların teslim edilmemesi"], correctAnswer: "C", meaning: "Havza Genelgesi'nde azınlıklara kötü davranılmaması istenmiştir. Amacı Mondros'un 7. maddesine bahane vermemektir." },
+
+{ question: "Havza Genelgesi'nde azınlıklara kötü davranılmamasının istenmesindeki temel 'stratejik' neden nedir?", options: ["Azınlıkların desteğini almak", "Mondros'un 7. maddesinin uygulanmasına bahane vermemek", "Padişahın emrine uymak", "Avrupa kamuoyunu etkilemek"], correctAnswer: "B", meaning: "Azınlıklara yapılacak bir saldırı, İtilaf Devletlerine Mondros'un 7. maddesini bahane ederek işgal genişletme fırsatı verebilirdi." },
+
+{ question: "'Mukaddes İttifak' olarak adlandırılan ve Kurtuluş Savaşı'nın 'amacını, gerekçesini ve yöntemini' belirleyen belge hangisidir?", options: ["Erzurum Kongresi", "Havza Genelgesi", "Amasya Genelgesi", "Sivas Kongresi"], correctAnswer: "C", meaning: "Ali Fuat Paşa, Amasya Genelgesi'nin hazırlandığı buluşma için 'Mukaddes İttifak' tabirini kullanmıştır." },
+
+{ question: "Amasya Genelgesi'nde yer alan 'Milletin bağımsızlığını yine milletin azim ve kararı kurtaracaktır' maddesi ilk kez hangi kavramdan bahsetmektedir?", options: ["Manda ve Himaye", "Ulusal Egemenlik", "Bölgesel Kurtuluş", "Askeri Disiplin"], correctAnswer: "B", meaning: "Bu maddeyle ilk kez ulusal egemenlik (halkın kendi geleceğine karar vermesi) ilkesinden bahsedilmiştir." },
+
+{ question: "Mustafa Kemal hangi gelişmeden sonra resmi görevinden ve askerlikten istifa ederek 'Sine-i Millet'e dönmüştür?", options: ["Samsun'a çıkınca", "Amasya Genelgesi'nden sonra", "Erzurum Kongresi'nden sonra", "Sivas Kongresi'nden sonra"], correctAnswer: "B", meaning: "Amasya Genelgesi'nden sonra İstanbul Hükümeti tarafından geri çağrılan Mustafa Kemal, resmi görevinden ve askerlikten istifa ederek sine-i millete dönmüştür." },
+
+{ question: "Mustafa Kemal'i tutuklama emri almasına rağmen 'Ben ve kolordum emrinizdeyiz Paşam' diyerek sadakatini bildiren komutan kimdir?", options: ["Ali Fuat Paşa", "Rauf Orbay", "Kazım Karabekir", "Refet Bele"], correctAnswer: "C", meaning: "15. Kolordu Komutanı Kazım Karabekir, Mustafa Kemal'i tutuklama emrine rağmen ona destek vermiştir." },
+
+{ question: "Toplanış amacı bakımından 'bölgesel', aldığı kararlar bakımından 'ulusal' olan kongre hangisidir?", options: ["Sivas Kongresi", "Erzurum Kongresi", "Balıkesir Kongresi", "Alaşehir Kongresi"], correctAnswer: "B", meaning: "Erzurum Kongresi'ne sadece doğu illerinden delegeler katılmış ancak Mustafa Kemal'in etkisiyle alınan kararlar ulusal nitelikte olmuştur." },
+
+{ question: "Erzurum Kongresi'ne katılan illeri ifade eden 'BEST ONE' şifresindeki 'S' harfi hangi ili temsil eder?", options: ["Samsun", "Sakarya", "Sivas", "Sinop"], correctAnswer: "C", meaning: "BEST ONE şifresi Bitlis, Erzurum, Sivas, Trabzon, Van illerini temsil eder. Sivas da bu iller arasındadır." },
+
+{ question: "Manda ve Himaye fikri 'ilk kez' nerede reddedilmiştir?", options: ["Amasya Genelgesi", "Erzurum Kongresi", "Sivas Kongresi", "Amasya Görüşmeleri"], correctAnswer: "B", meaning: "Mustafa Kemal, Erzurum Kongresi'nde Rauf Orbay'ın manda himaye fikrini ikna ederek ilk kez reddettirmiştir." },
+
+{ question: "Batı Cephesi'nin kurulmasında etkili olan ancak Mustafa Kemal'in katılmadığı yerel kongreler hangileridir?", options: ["Erzurum ve Sivas", "Balıkesir ve Alaşehir", "Nazilli ve Afyon", "Pozantı ve Edirne"], correctAnswer: "B", meaning: "Balıkesir ve Alaşehir kongreleri Batı Cephesi'nin kurulmasını sağlamış ancak Mustafa Kemal bu kongrelere katılmamıştır." },
+
+{ question: "Celal Bayar'ın katıldığı ve Kuvayı Milliye'yi örgütlediği yerel kongre hangisidir?", options: ["Nazilli Kongresi", "Afyon Kongresi", "Balıkesir Kongresi", "Erzurum Kongresi"], correctAnswer: "A", meaning: "Nazilli Kongresi Muğla'da toplanmış ve Celal Bayar buraya katılmıştır." },
+
+{ question: "Kurtuluş Savaşı'nın toplanış, amaç ve kararlarıyla 'ilk ulusal' kongresi hangisidir?", options: ["Erzurum Kongresi", "Amasya Görüşmeleri", "Sivas Kongresi", "Alaşehir Kongresi"], correctAnswer: "C", meaning: "Sivas Kongresi, her ilden delegelerin katılması ve tüm ülkeyi ilgilendiren kararlar almasıyla ilk ulusal kongredir." },
+
+{ question: "Sivas Kongresi'nde Mustafa Kemal'e karşı 'başkanlık' yarışına giren ve muhalefet eden isim kimdir?", options: ["Kazım Karabekir", "Ali Fuat Paşa", "Rauf Orbay", "Refet Bele"], correctAnswer: "C", meaning: "Mustafa Kemal'in yakın arkadaşı Rauf Orbay, Sivas Kongresi'nde başkanlık için aday olarak ilk muhalefeti yapmıştır." },
+
+{ question: "Manda ve Himaye fikri nerede 'kesin ve bir daha gündeme gelmemek üzere' reddedilmiştir?", options: ["Erzurum Kongresi", "Sivas Kongresi", "Son Osmanlı Mebusan Meclisi", "Amasya Görüşmeleri"], correctAnswer: "B", meaning: "Sivas Kongresi'nde en çok tartışılan konu manda himaye olmuş ve Mustafa Kemal tarafından kesin olarak reddedilmiştir." },
+
+{ question: "Tüm milli cemiyetler hangi isim altında birleştirilerek tek çatı altında toplanmıştır?", options: ["Temsil Heyeti", "Müdafaa-i Hukuk Grubu", "Anadolu ve Rumeli Müdafaa-i Hukuk Cemiyeti", "Felah-ı Vatan Grubu"], correctAnswer: "C", meaning: "Sivas Kongresi'nde tüm milli cemiyetler 'Anadolu ve Rumeli Müdafaa-i Hukuk Cemiyeti' adı altında birleştirilmiştir." },
+
+{ question: "Temsil Heyeti'nin Sivas Kongresi'nde Ali Fuat Paşa'yı Batı Cephesi Komutanlığı'na ataması hangi yetkiyi kullandığının kanıtıdır?", options: ["Yasama", "Yürütme", "Yargı", "Diplomasi"], correctAnswer: "B", meaning: "Atama yapmak yürütme yetkisidir. Temsil Heyeti bu yetkiyi kullanarak hükümet gibi çalışmıştır." },
+
+{ question: "Sivas Kongresi sırasında halkı bilgilendirmek amacıyla çıkarılan gazete hangisidir?", options: ["Minber", "İrade-i Milliye", "Hakimiyet-i Milliye", "Tercüman-ı Hakikat"], correctAnswer: "B", meaning: "Sivas Kongresi'nde İrade-i Milliye Gazetesi çıkarılmıştır." },
+
+{ question: "Temsil Heyeti'nin İstanbul Hükümeti'ne karşı kazandığı 'ilk siyasi başarı' nedir?", options: ["Sivas Kongresi'nin toplanması", "Erzurum Kongresi'nin yapılması", "Damat Ferit Paşa Hükümeti'nin istifa etmesi", "Amasya Görüşmeleri'nin yapılması"], correctAnswer: "C", meaning: "Temsil Heyeti'nin güçlenmesi üzerine Damat Ferit Paşa Hükümeti istifa etmek zorunda kalmıştır." },
+
+{ question: "İstanbul Hükümeti'nin (Ali Rıza Paşa Hükümeti) Temsil Heyeti'nin varlığını 'hukuken' tanıdığı olay hangisidir?", options: ["Amasya Genelgesi", "Amasya Görüşmeleri", "Sivas Komutanlar Toplantısı", "Misak-ı Milli'nin kabulü"], correctAnswer: "B", meaning: "İki tarafın masaya oturması, birbirlerini siyasi olarak tanımaları anlamına gelir. Amasya Görüşmeleri'nde bu tanıma gerçekleşmiştir." },
+
+{ question: "Amasya Görüşmeleri'nde alınan kararlardan hangisi 'uygulanabilen tek karar' olmuştur?", options: ["Cemiyetlerin birleştirilmesi", "Barış konferansına temsilci gönderilmesi", "Mebusan Meclisi'nin toplanması", "Milli sınırların belirlenmesi"], correctAnswer: "C", meaning: "Amasya Görüşmeleri'nde alınan diğer kararlar uygulanmazken Mebusan Meclisi'nin toplanması kararı uygulanabilmiştir." },
+
+{ question: "Temsil Heyeti'nin merkez olarak Ankara'yı seçmesinin nedenleri arasında hangisi 'yoktur'?", options: ["Güvenli olması ve işgale uğramamış olması", "Demiryolu ve haberleşme ağının merkezinde olması", "Deniz yoluyla ulaşıma çok yakın olması", "20. Kolordu'nun burada bulunması"], correctAnswer: "C", meaning: "Ankara deniz kıyısında değildir. Stratejik nedenler arasında deniz yolu yakınlığı yer almaz." },
+
+{ question: "Mustafa Kemal, Son Osmanlı Mebusan Meclisi seçimlerinde hangi ilden milletvekili seçilmiştir?", options: ["Ankara", "İstanbul", "Erzurum", "Sivas"], correctAnswer: "C", meaning: "Mustafa Kemal, Erzurum'dan milletvekili seçilmiştir ancak tutuklama tehlikesi nedeniyle İstanbul'a gitmemiştir." },
+
+{ question: "Mebusan Meclisi'nde Mustafa Kemal'in istediği Müdafaa-i Hukuk Grubu yerine kurulan grup hangisidir?", options: ["Felah-ı Vatan", "İttihat ve Terakki", "Hürriyet ve İtilaf", "Anadolu Grubu"], correctAnswer: "A", meaning: "Mustafa Kemal'in istediği Müdafaa-i Hukuk Grubu kurulmamış, Rauf Orbay başkanlığında Felah-ı Vatan Grubu kurulmuştur." },
+
+{ question: "Misak-ı Milli kararları nerede kabul edilmiştir?", options: ["Erzurum Kongresi'nde", "Sivas Kongresi'nde", "Son Osmanlı Mebusan Meclisi'nde", "Birinci TBMM'de"], correctAnswer: "C", meaning: "28 Ocak 1920'de Son Osmanlı Mebusan Meclisi'nde Misak-ı Milli kararları oy birliğiyle kabul edilmiştir." },
+
+{ question: "Misak-ı Milli'ye göre hangi bölgelerde gerekirse 'halk oylamasına (referandum)' başvurulması kararlaştırılmıştır?", options: ["İzmir ve İstanbul", "Kars, Ardahan, Batum ve Batı Trakya", "Adana, Maraş ve Antep", "Ankara, Konya ve Kayseri"], correctAnswer: "B", meaning: "Kars, Ardahan, Batum ve Batı Trakya'nın statüsü için gerekirse halk oylaması yapılması kararlaştırılmıştır." },
+
+{ question: "Misak-ı Milli'de yer alan 'Azınlık hakları, komşu ülkelerdeki Türklerin hakları kadar olacaktır' maddesi hangi ilkeye dayanır?", options: ["Tam bağımsızlık", "Ulusal egemenlik", "Mütekabiliyet (Karşılıklılık)", "Manda ve himaye"], correctAnswer: "C", meaning: "Bu madde karşılıklılık (mütekabiliyet) ilkesine dayanır. Yunanistan, Bulgaristan gibi ülkeler Türk azınlığa ne kadar hak verirse biz de o kadar veririz denmiştir." },
+
+{ question: "Misak-ı Milli kararlarının kabul edilmesi üzerine İtilaf Devletleri'nin gösterdiği en sert tepki hangisidir?", options: ["Damat Ferit'i tekrar göreve getirmek", "İstanbul'u resmen işgal edip meclisi dağıtmak", "Yunan ordusuna saldırı emri vermek", "Boğazları trafiğe kapatmak"], correctAnswer: "B", meaning: "16 Mart 1920'de İtilaf Devletleri İstanbul'u resmen işgal ederek Mebusan Meclisi'ni dağıtmış ve milletvekillerini tutuklamıştır." },
+
+{ question: "Temsil Heyeti ile ilgili verilen kronoloji şifresine göre hangisi yanlıştır?", options: ["Amasya: Kurulma fikri/kararı alındı.", "Erzurum: Bölgesel olarak kuruldu.", "Sivas: Tüm yurdu temsil eder hale geldi.", "Amasya Görüşmeleri: İlk kez yürütme yetkisini kullandı."], correctAnswer: "D", meaning: "Temsil Heyeti yürütme yetkisini ilk kez Sivas Kongresi'nde Ali Fuat Paşa'yı Batı Cephesi Komutanlığı'na atayarak kullanmıştır." },
+
+{ question: "Mustafa Kemal'in askerlikten istifa ettiği yer ile tekrar askerliğe (Başkomutan olarak) döndüğü yer eşleştirmesi hangisinde doğrudur?", options: ["Amasya - Erzurum", "Erzurum - Sakarya", "Sivas - Büyük Taarruz", "İstanbul - Ankara"], correctAnswer: "B", meaning: "Mustafa Kemal askerlikten Erzurum'da istifa etmiş, tekrar Başkomutan olarak Sakarya Meydan Muharebesi'nde görev almıştır." },
+
+{ question: "Milli Mücadele döneminde 'Milli Sınırlar' ifadesi ilk kez hangi belgede yer almıştır?", options: ["Havza Genelgesi", "Amasya Genelgesi", "Erzurum Kongresi", "Amasya Görüşmeleri"], correctAnswer: "C", meaning: "Erzurum Kongresi'nde 'Milli sınırlar içinde vatan bir bütündür, bölünemez.' ifadesiyle milli sınırlar kavramı ilk kez kullanılmıştır." },
+            { question: "3 Aralık 1934 tarihli Kılık Kıyafet Kanunu'na göre, ibadethaneler dışında dinî giysilerle dolaşma yasağından muaf tutulan görevliler hangi seçenekte tam verilmiştir?", options: ["Sadece Diyanet İşleri Başkanı", "Diyanet İşleri Başkanı, Hahambaşı ve Patrik", "Tüm imamlar, papazlar ve hahamlar", "Sadece İstanbul Müftüsü ve Patrik"], correctAnswer: "B", meaning: "Diyanet İşleri Başkanı, Hahambaşı ve Patrik muaf tutulmuştur." }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        function shuffleArray(array) {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        function initQuiz() {
+            questions = shuffleArray(quizData);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            catCoverEl.addEventListener('click', () => catCoverEl.style.display = 'none');
+            
+            window.addEventListener('keydown', (e) => {
+                if (e.key >= '1' && e.key <= '4') {
+                    if (catCoverEl.style.display !== 'none') {
+                        catCoverEl.style.display = 'none';
+                        return;
+                    }
+                    const idx = parseInt(e.key) - 1;
+                    const btns = document.querySelectorAll('.option-btn');
+                    if (btns[idx] && !btns[idx].disabled) {
+                        btns[idx].click();
+                    }
+                }
+                if (e.code === 'Space' || e.key === ' ') {
+                    if (nextBtn.style.display !== 'none') {
+                        nextBtn.click();
+                        e.preventDefault();
+                    }
+                }
+            });
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            const correctText = currentQuestion.options[currentQuestion.correctAnswer.charCodeAt(0) - 65];
+            const shuffledOptions = shuffleArray(currentQuestion.options);
+            
+            optionsEl.innerHTML = '';
+            optionsEl.appendChild(catCoverEl);
+            catCoverEl.style.display = 'flex';
+
+            shuffledOptions.forEach(optionText => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = optionText;
+                button.onclick = () => selectAnswer(optionText, correctText, currentQuestion.meaning);
+                optionsEl.appendChild(button);
+            });
+            
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        function selectAnswer(selectedOption, correctOptionText, meaning) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correctOptionText) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selectedOption) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            const isCorrect = selectedOption === correctOptionText;
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+            }
+
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            feedbackTextEl.innerHTML = isCorrect ? 
+                `<strong>✅ Doğru!</strong><br><br>📖 ${meaning}` : 
+                `<strong>❌ Hatalı!</strong><br>🔍 Doğru cevap: ${correctOptionText}<br><br>📖 ${meaning}`;
+            
+            nextBtn.style.display = 'block';
+        }
+
+        nextBtn.onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        };
+
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            finalScoreEl.textContent = `📊 Puanınız: ${score} / ${questions.length}`;
+            
+            wordListEl.innerHTML = '<h3 style="margin-bottom:15px;">📚 Özet Bilgi Kartları:</h3>';
+            questions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>❓ ${q.question}</strong><br><small style="color:var(--primary);">📌 ${q.meaning}</small>`;
+                wordListEl.appendChild(card);
+            });
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>

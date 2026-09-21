@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Vatandaşlık Testi</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gold: #FFD700;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%); color: var(--dark); line-height: 1.6; padding: 15px; min-height: 100vh; }
+        
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow: hidden; }
+        
+        header { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; text-align: center; padding: 25px 20px; position: relative; }
+        header::before { content: "⚖️"; font-size: 3rem; position: absolute; top: 10px; left: 20px; opacity: 0.3; }
+        h1 { margin-bottom: 8px; font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.1rem; opacity: 0.9; }
+
+        /* --- NOTLAR KISMI CSS --- */
+        .notes-container { padding: 25px; animation: fadeIn 0.5s ease; }
+        .notes-title { color: var(--primary); margin-bottom: 15px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .notes-scroll-area { max-height: 55vh; overflow-y: auto; background: var(--light); border: 2px solid var(--accent); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        .notes-scroll-area::-webkit-scrollbar { width: 8px; }
+        .notes-scroll-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        .notes-scroll-area h3 { color: var(--dark); border-bottom: 2px solid var(--primary); padding-bottom: 5px; margin-top: 20px; margin-bottom: 10px; }
+        .notes-scroll-area ul { padding-left: 20px; margin-bottom: 15px; }
+        .notes-scroll-area li { margin-bottom: 8px; }
+
+        .table-responsive { overflow-x: auto; margin-bottom: 15px; border-radius: 8px; }
+        .notes-table { width: 100%; border-collapse: collapse; min-width: 600px; background: white; }
+        .notes-table th, .notes-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .notes-table th { background-color: var(--primary); color: white; }
+
+        .numbers-box { background-color: #E3F2FD; border-left: 5px solid #1976D2; padding: 15px; margin: 20px 0; border-radius: 5px; }
+        .numbers-box h3 { color: #1565C0 !important; border-bottom: 2px solid #90CAF9 !important; margin-top: 0 !important; }
+        .numbers-box li { background: white; margin-bottom: 8px; padding: 10px; border-radius: 6px; list-style: none; display: flex; align-items: center; }
+        .num-badge { background: #1976D2; color: white; font-weight: bold; padding: 4px 10px; border-radius: 4px; margin-right: 12px; min-width: 65px; text-align: center; }
+
+        .important-note { background-color: #FFF8E1; border-left: 5px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 5px; }
+        .scroll-msg { color: var(--danger); font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; text-align: center; }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        /* --- QUIZ CSS --- */
+        .progress-container { width: 100%; background-color: #e9ecef; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); width: 0%; transition: width 0.5s ease; }
+        .quiz-container { padding: 25px; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; background-color: var(--light); padding: 15px; border-radius: 10px; border: 2px solid var(--accent); }
+        .question-container { background: var(--light); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .options { display: grid; gap: 12px; position: relative; }
+        .cat-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(46, 125, 50, 0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px; z-index: 10; cursor: pointer; }
+        .cat-image { max-width: 200px; border-radius: 8px; margin-bottom: 10px; }
+        .option-btn { padding: 16px; border: 2px solid #ddd; border-radius: 10px; background: white; cursor: pointer; text-align: left; font-size: 1.1rem; transition: 0.3s; }
+        .option-btn.correct { background-color: var(--success); color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .feedback { padding: 20px; border-radius: 10px; margin-top: 20px; display: none; line-height: 1.6; }
+        .next-btn { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none; padding: 16px; border-radius: 10px; cursor: pointer; width: 100%; max-width: 250px; display: block; margin: 20px auto; font-weight: bold; }
+        .next-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .results-container { padding: 30px; text-align: center; display: none; }
+        .final-score { font-size: 3rem; color: var(--accent); font-weight: bold; margin: 20px 0; }
+        .word-card { border: 2px solid var(--accent); padding: 15px; margin-bottom: 15px; background: var(--light); text-align: left; border-radius: 10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ MEB-AGS Vatandaşlık</h1>
+            <div class="subtitle">Yargı Ünitesi (Eksiksiz Bilgi Paketi)</div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <h2 class="notes-title">📖 Yargı Ünitesi Ders Notları</h2>
+            <div class="notes-scroll-area" id="notesScrollArea">
+                <h3>1. Genel Yargı İlkeleri ve Güvenceler</h3>
+                <ul>
+                    <li><strong>Bağımsızlık:</strong> Hiçbir merci mahkemelere emir veremez. <strong>Yasama Meclisi'nde</strong> görülmekte olan bir dava hakkında görüşme yapılamaz.</li>
+                    <li><strong>Hâkimlik Teminatı:</strong> Hâkim ve savcılar azlolunamaz, kendileri istemedikçe <strong>65 yaşından</strong> önce emekli edilemezler.</li>
+                    <li><strong>Mali Haklar:</strong> Mahkeme veya kadro kapatılsa dahi hâkim/savcıların aylık ve özlük hakları kısıtlanamaz.</li>
+                    <li><strong>İdari Bağlılık:</strong> Hâkim ve savcılar idari yönden <strong>Adalet Bakanlığı'na</strong> bağlıdır; denetimleri <strong>Adalet Müfettişleri</strong> tarafından yapılır.</li>
+                </ul>
+
+                <h3>2. Yüksek Mahkemeler ve Üye Yapıları</h3>
+                <div class="table-responsive">
+                    <table class="notes-table">
+                        <thead>
+                            <tr>
+                                <th>Mahkeme</th>
+                                <th>Üye Sayısı / Seçim</th>
+                                <th>Başkanın Belirlenmesi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Anayasa Mah.</strong></td>
+                                <td>15 Üye (12 CB, 3 TBMM)</td>
+                                <td>Kendi içinden seçer (4 yıl).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Yargıtay</strong></td>
+                                <td>Tamamını <strong>HSK</strong> seçer.</td>
+                                <td>Kendi içinden seçer (4 yıl).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Danıştay</strong></td>
+                                <td>1/4 CB, 3/4 HSK</td>
+                                <td>Kendi içinden seçer (4 yıl).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Uyuşmazlık Mah.</strong></td>
+                                <td>6 Asıl, 6 Yedek + 1 Başkan</td>
+                                <td><strong>AYM</strong> kendi üyeleri arasından seçer.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>3. Anayasa Mahkemesi (AYM) Detayları</h3>
+                <ul>
+                    <li><strong>Görev Süresi:</strong> Üyeler <strong>12 yıl</strong> için seçilir (bir kez). Yaş sınırı 65'tir.</li>
+                    <li><strong>Bireysel Başvuru:</strong> <strong>2010</strong> yılında hukukumuza girdi. Konusu; anayasal hakların kamu gücüyle ihlalidir. <strong>Süresi 30 gündür.</strong></li>
+                    <li><strong>Karar Yeter Sayısı:</strong> Anayasa değişikliği iptali, Siyasi Parti kapatma ve Mali yardımdan yoksun bırakma için <strong>2/3 oy çokluğu</strong> şarttır.</li>
+                    <li><strong>Yüce Divan:</strong> Yargılayan AYM'dir; savcı <strong>Yargıtay Cumhuriyet Başsavcısı</strong>'dır.</li>
+                    <li><strong>Yüce Divan'da Yargılanmayanlar (KRİTİK):</strong> Milletvekilleri, MİT Başkanı, Emniyet Genel Müdürü, Jandarma ve Sahil Güvenlik Komutanları, MGK Genel Sekreteri.</li>
+                </ul>
+
+                <h3>4. HSK, Sayıştay ve Diğer Kurumlar</h3>
+                <ul>
+                    <li><strong>HSK (13 Üye):</strong> Başkanı <strong>Adalet Bakanı</strong>'dır. Bakan Yardımcısı doğal üyedir. 7 üyeyi TBMM, 4 üyeyi CB seçer. Sadece <strong>meslekten çıkarma</strong> kararına yargı yolu açıktır.</li>
+                    <li><strong>Sayıştay:</strong> TBMM adına mali denetim yapar. Üyelerini <strong>TBMM</strong> seçer. Siyasi partileri denetleyemez (AYM denetler). Kararlarına karşı <strong>15 gün</strong> içinde yeniden inceleme istenebilir; bu karar kesindir.</li>
+                    <li><strong>Askeri Yargı:</strong> 2017 değişikliği ile <strong>tamamen kaldırılmıştır.</strong></li>
+                    <li><strong>Vergi Uyuşmazlığı:</strong> Danıştay ve Sayıştay çelişirse <strong>Danıştay</strong> kararı esas alınır.</li>
+                </ul>
+
+                <div class="numbers-box">
+                    <h3>🔢 Sınav İçin Kritik Sayılar ve Süreler</h3>
+                    <ul>
+                        <li><span class="num-badge">12 Yıl</span> AYM, Yargıtay ve Danıştay üyelerinin görev süresi.</li>
+                        <li><span class="num-badge">4 Yıl</span> Mahkeme başkanlarının ve HSK üyelerinin görev süresi.</li>
+                        <li><span class="num-badge">45 Yaş</span> AYM üyesi olabilmek için gereken asgari yaş.</li>
+                        <li><span class="num-badge">30 Gün</span> HSK üye seçiminin tamamlanma süresi VE AYM bireysel başvuru süresi.</li>
+                        <li><span class="num-badge">4 Ay</span> AİHM'e (Avrupa İnsan Hakları Mahkemesi) başvuru süresi.</li>
+                        <li><span class="num-badge">15 Gün</span> Sayıştay kararına karşı yeniden inceleme başvuru süresi.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <p id="scrollMsg" class="scroll-msg">Testi başlatmak için notların sonuna kadar kaydırın 👇</p>
+                <button class="next-btn" id="startTestBtn" disabled>Notları Okudum, Testi Başlat</button>
+            </div>
+        </div>
+
+        <div id="quizSection" style="display: none;">
+            <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+            <div class="quiz-container">
+                <div class="stats">
+                    <div class="score">Puan: <span id="score">0</span></div>
+                    <div>İlerleme: <span id="progress">0</span>/<span id="totalQ">63</span></div>
+                </div>
+                <div class="question-container"><div class="question" id="question"></div></div>
+                <div class="options" id="options">
+                    <div class="cat-cover" id="catCover">
+                        <img src="https://cataas.com/cat" class="cat-image">
+                        <div class="cat-text" style="color:white">Cevapları görmek için tıklayın!</div>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback"><div id="feedbackText"></div></div>
+                <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+            </div>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        // Melih, 63 soruluk verin buraya aynen aktarıldı.
+        const QUIZ_DATA = [
+            { question: "Vergi ve benzeri mali konularda Danıştay ile Sayıştay arasında çıkan uyuşmazlıklarda hangi karar esas alınır?", options: ["Sayıştay kararı", "TBMM kararı", "Danıştay kararı", "Anayasa Mahkemesi kararı"], correctAnswer: 2, meaning: "Uyuşmazlık halinde Danıştay kararı esas alınır.", category: "Yargı" },
+            { question: "Mahkemelerin verdiği kararlara karşı yapılan itiraz, istinaf ve temyiz başvurularına ne ad verilir?", options: ["Olağanüstü başvuru", "Kanun yolu", "Yargısal denetim", "Bireysel başvuru"], correctAnswer: 1, meaning: "Bunlara kanun yolu denir.", category: "Yargı" },
+            { question: "Yüce Divanda savcılık görevini kim yapar?", options: ["Anayasa Mahkemesi Başkanı", "TBMM Başkanı", "HSK Başkanı", "Yargıtay Cumhuriyet Başsavcısı"], correctAnswer: 3, meaning: "Yargıtay Cumhuriyet Başsavcısı veya vekili yapar.", category: "Yargı" },
+            { question: "Aşağıdakilerden hangisi Yüce Divan'da yargılanmaz?", options: ["Cumhurbaşkanı", "Bakanlar", "MİT Başkanı", "Cumhurbaşkanı yardımcıları"], correctAnswer: 2, meaning: "MİT Başkanı Yüce Divan'da yargılanmaz.", category: "Yargı" },
+            { question: "Anayasa Mahkemesi kaç üyeden oluşur?", options: ["11", "13", "15", "17"], correctAnswer: 2, meaning: "15 üyeden oluşur.", category: "Yargı" },
+            { question: "Anayasa Mahkemesi üyelerinin seçimi ile ilgili aşağıdakilerden hangisi doğrudur?", options: ["Tüm üyeleri TBMM seçer", "12 üyeyi TBMM, 3 üyeyi Cumhurbaşkanı seçer", "3 üyeyi TBMM, 12 üyeyi Cumhurbaşkanı seçer", "Tüm üyeleri Cumhurbaşkanı seçer"], correctAnswer: 2, meaning: "3 üye TBMM, 12 üye CB tarafından seçilir.", category: "Yargı" },
+            { question: "Anayasa Mahkemesine üye seçilebilmek için asgari yaş şartı kaçtır?", options: ["40", "45", "50", "55"], correctAnswer: 1, meaning: "Asgari yaş 45'tir.", category: "Yargı" },
+            { question: "Anayasa Mahkemesi üyeleri kaç yıl için seçilir?", options: ["8 yıl", "10 yıl", "12 yıl", "Ömür boyu"], correctAnswer: 2, meaning: "12 yıl için seçilirler.", category: "Yargı" },
+            { question: "Aşağıdakilerden hangisinde Anayasa Mahkemesi toplantıya katılanların 2/3'ü ile karar verir?", options: ["Bireysel başvurular", "Norm denetimi başvuruları", "Anayasa değişikliğinin iptali", "Hak ihlali kararları"], correctAnswer: 2, meaning: "Anayasa değişikliği iptali için 2/3 çoğunluk şarttır.", category: "Yargı" },
+            { question: "Aşağıdakilerden hangisinde Anayasa Mahkemesi toplantıya katılanların 2/3'ü ile karar verir?", options: ["Bireysel başvurular", "Norm denetimi başvuruları", "Siyasi partilerin kapatılması davası", "Hak ihlali kararları"], correctAnswer: 2, meaning: "Parti kapatma için 2/3 çoğunluk şarttır.", category: "Yargı" },
+            { question: "Aşağıdakilerden hangisinde Anayasa Mahkemesi toplantıya katılanların 2/3'ü ile karar verir?", options: ["Bireysel başvurular", "Norm denetimi başvuruları", "Siyasi partilerin mali yardımdan yoksun bırakılması", "Hak ihlali kararları"], correctAnswer: 2, meaning: "Mali yardımdan yoksun bırakma için 2/3 çoğunluk şarttır.", category: "Yargı" },
+            { question: "Aşağıdakilerden hangisi Yüce Divan'da yargılanmaz?", options: ["Cumhurbaşkanı", "Bakanlar", "Milletvekilleri", "Cumhurbaşkanı yardımcıları"], correctAnswer: 2, meaning: "Milletvekilleri Yüce Divan'da yargılanmaz.", category: "Yargı" },
+            { question: "Aşağıdakilerden hangisi Yüce Divan'da yargılanmaz?", options: ["TBMM Başkanı", "MGK Genel Sekreteri", "HSK Başkanı", "Sayıştay Başkanı"], correctAnswer: 1, meaning: "MGK Genel Sekreteri yargılanmaz.", category: "Yargı" },
+            { question: "Aşağıdakilerden hangisi Yüce Divan'da yargılanmaz?", options: ["Yüksek mahkeme başkanları", "MİT Başkanı", "Bakanlar", "Genelkurmay Başkanı"], correctAnswer: 1, meaning: "MİT Başkanı yargılanmaz.", category: "Yargı" },
+            { question: "Aşağıdakilerden hangisi Yüce Divan'da yargılanmaz?", options: ["Cumhurbaşkanı", "Emniyet Genel Müdürü", "Cumhurbaşkanı yardımcıları", "TBMM Başkanı"], correctAnswer: 1, meaning: "Emniyet Genel Müdürü yargılanmaz.", category: "Yargı" },
+            { question: "Aşağıdakilerden hangisi Yüce Divan'da yargılanmaz?", options: ["HSK üyeleri", "Sahil Güvenlik Komutanı", "Sayıştay üyeleri", "Yargıtay Cumhuriyet Başsavcısı vekili"], correctAnswer: 1, meaning: "Sahil Güvenlik Komutanı yargılanmaz.", category: "Yargı" },
+            { question: "Aşağıdakilerden hangisi Yüce Divan'da yargılanmaz?", options: ["Jandarma Genel Komutanı", "Bakanlar", "Cumhurbaşkanı", "Yüksek mahkeme üyeleri"], correctAnswer: 0, meaning: "Jandarma Genel Komutanı yargılanmaz.", category: "Yargı" },
+            { question: "Aşağıdakilerden hangisi bireysel başvuru ile ilgili doğru bir bilgidir?", options: ["1982 Anayasası'nın ilk halinde vardır", "2010 Anayasa değişikliği ile gelmiştir", "TBMM bakar", "Doğrudan AİHM'e yapılır"], correctAnswer: 1, meaning: "2010 değişikliği ile hukukumuza girmiştir.", category: "Yargı" },
+            { question: "Bireysel başvuru yapılabilmesi için hangisi zorunludur?", options: ["TBMM onayı", "CB onayı", "Olağan kanun yollarının tüketilmiş olması", "Danıştay kararı"], correctAnswer: 2, meaning: "İç hukuk yolları tüketilmeden başvurulamaz.", category: "Yargı" },
+            { question: "Bireysel başvurunun konusu hangisi olabilir?", options: ["Her türlü işlem", "Anayasal hakların kamu gücüyle ihlali", "Parti kapatma", "Kanun teklifi"], correctAnswer: 1, meaning: "Konu anayasal hak ihlalleridir.", category: "Yargı" },
+            { question: "AYM'ye bireysel başvuru süresi kaç gündür?", options: ["15", "30", "60", "90"], correctAnswer: 1, meaning: "Süre 30 gündür.", category: "Yargı" },
+            { question: "AİHM'e bireysel başvuru süresi kaç aydır?", options: ["2", "3", "4", "6"], correctAnswer: 2, meaning: "AİHM süresi 4 aydır.", category: "Yargı" },
+            { question: "Yargıtay hangi mahkemeleri denetler?", options: ["İdare", "Vergi", "Adliye", "AYM"], correctAnswer: 2, meaning: "Adliye mahkemelerinin son inceleme merciidir.", category: "Yargı" },
+            { question: "Yargıtay üyelerini kim seçer?", options: ["CB", "TBMM", "HSK", "AYM"], correctAnswer: 2, meaning: "Üyelerin tamamını HSK seçer.", category: "Yargı" },
+            { question: "Yargıtay üyeleri kaç yıl için seçilir?", options: ["4", "6", "10", "12"], correctAnswer: 3, meaning: "12 yıl için seçilirler.", category: "Yargı" },
+            { question: "Yargıtay hangi kolun tepesindedir?", options: ["İdari", "Anayasa", "Adli", "Uyuşmazlık"], correctAnswer: 2, meaning: "Adli yargının en üst mahkemesidir.", category: "Yargı" },
+            { question: "Yargıtay Başkanı nasıl belirlenir?", options: ["CB atar", "TBMM seçer", "HSK belirler", "Kendi üyeleri içinden 4 yıl için seçilir"], correctAnswer: 3, meaning: "Başkan üyelerce kendi içlerinden seçilir.", category: "Yargı" },
+            { question: "Yargıtay ile ilgili hangisi doğrudur?", options: ["CB üye seçer", "Halk seçer", "CB üye seçmez", "TBMM seçer"], correctAnswer: 2, meaning: "Yargıtay'a CB üye seçmez.", category: "Yargı" },
+            { question: "Danıştay hangi mahkemeleri inceler?", options: ["Adliye", "İdare", "Sulh", "Ağır Ceza"], correctAnswer: 1, meaning: "İdare mahkemelerinin kararlarını inceler.", category: "Yargı" },
+            { question: "Danıştay hangi kolun tepesindedir?", options: ["Adli", "Anayasa", "İdari", "Uyuşmazlık"], correctAnswer: 2, meaning: "İdari yargının en üst mahkemesidir.", category: "Yargı" },
+            { question: "Danıştay üyeleri seçimi nasıldır?", options: ["Tamamı CB", "Tamamı HSK", "1/4 CB, 3/4 HSK", "3/4 CB, 1/4 HSK"], correctAnswer: 2, meaning: "1/4 CB, 3/4 HSK tarafından seçilir.", category: "Yargı" },
+            { question: "Danıştay üyeleri kaç yıl için seçilir?", options: ["6", "8", "10", "12"], correctAnswer: 3, meaning: "12 yıl için seçilirler.", category: "Yargı" },
+            { question: "Danıştay Başkanı nasıl belirlenir?", options: ["CB atar", "TBMM seçer", "Kendi üyeleri içinden 4 yıl için seçilir", "HSK belirler"], correctAnswer: 2, meaning: "Başkan üyelerce kendi içlerinden seçilir.", category: "Yargı" },
+            { question: "Uyuşmazlık Mahkemesi neyi çözer?", options: ["Ceza uyuşmazlığı", "Adli-İdari uyuşmazlık", "Yasama-Yürütme", "Anayasa"], correctAnswer: 1, meaning: "Adli ve idari yargı arasındaki uyuşmazlıkları çözer.", category: "Yargı" },
+            { question: "Uyuşmazlık Mahkemesi Başkanını kim seçer?", options: ["TBMM", "CB", "HSK", "AYM kendi üyeleri içinden"], correctAnswer: 3, meaning: "Başkan AYM tarafından seçilir.", category: "Yargı" },
+            { question: "Uyuşmazlık Mahkemesi yapısı nasıldır?", options: ["7 asıl", "6 asıl, 6 yedek, 1 başkan", "12 asıl", "10 asıl"], correctAnswer: 1, meaning: "6 asıl, 6 yedek üyeden ve AYM'den gelen bir başkandan oluşur.", category: "Yargı" },
+            { question: "Uyuşmazlık Mahkemesinin farkı nedir?", options: ["Başkanı CB seçer", "Başkanı Meclis seçer", "Başkanını kendi içinden seçemeyen tek yüksek mahkemedir", "Denetimi yoktur"], correctAnswer: 2, meaning: "Kendi başkanını seçemeyen tek mahkemedir.", category: "Yargı" },
+            { question: "Mahkemeler nasıl çalışır?", options: ["Yasama'ya bağlı", "Yürütme denetiminde", "Bağımsız", "CB talimatıyla"], correctAnswer: 2, meaning: "Yargı bağımsızdır.", category: "Yargı" },
+            { question: "Hâkimler neye göre karar verir?", options: ["Bakan kararına", "Anayasa ve vicdan", "Meclis çoğunluğu", "Kamuoyu baskısı"], correctAnswer: 1, meaning: "Anayasa ve vicdani kanaatlerine göre karar verirler.", category: "Yargı" },
+            { question: "Mahkemelere kim emir veremez?", options: ["Sadece yürütme", "Sadece yasama", "Hiçbir organ veya kişi", "Sadece CB"], correctAnswer: 2, meaning: "Bağımsızlık gereği kimse emir veremez.", category: "Yargı" },
+            { question: "Dava hakkında nerede görüşme yapılamaz?", options: ["Danıştayda", "AYM'de", "Yasama Meclisinde", "HSK'da"], correctAnswer: 2, meaning: "TBMM'de devam eden dava hakkında konuşulamaz.", category: "Yargı" },
+            { question: "Hâkimler için hangisi doğrudur?", options: ["Bakan görevden alabilir", "Azlolunamazlar", "TBMM sona erdirir", "CB görevden alır"], correctAnswer: 1, meaning: "Azlolunamazlar, güvenceleri vardır.", category: "Yargı" },
+            { question: "Hâkimler ne zamana kadar çalışır?", options: ["Bakanlık isterse", "TBMM isterse", "Kendileri istemedikçe 65 yaşından önce ayrılamazlar", "HSK kararıyla"], correctAnswer: 2, meaning: "Emeklilik yaşı 65'tir.", category: "Yargı" },
+            { question: "Kadro kapatılırsa hâkim ne olur?", options: ["Maaş kesilir", "Görev biter", "Özlük haklarından yoksun bırakılamazlar", "Kurum değiştirir"], correctAnswer: 2, meaning: "Hakları anayasal güvence altındadır.", category: "Yargı" },
+            { question: "Hâkimler nerede görev yapar?", options: ["Sadece adli", "Sadece idari", "Adli ve idari", "Sadece AYM"], correctAnswer: 2, meaning: "Adli ve idari yargıda görev alırlar.", category: "Yargı" },
+            { question: "Hâkim emeklilik yaşı kaçtır?", options: ["60", "63", "65", "67"], correctAnswer: 2, meaning: "Yaş sınırı 65'tir.", category: "Yargı" },
+            { question: "Hâkimler idari yönden nereye bağlıdır?", options: ["TBMM", "CB", "HSK", "Adalet Bakanlığı"], correctAnswer: 3, meaning: "İdari yönden Adalet Bakanlığına bağlıdırlar.", category: "Yargı" },
+            { question: "İdari denetimi kim yapar?", options: ["Meclis", "HSK", "Adalet Müfettişleri", "Danıştay"], correctAnswer: 2, meaning: "Müfettişler tarafından denetlenirler.", category: "Yargı" },
+            { question: "HSK kaç üyedir?", options: ["11", "13", "15", "17"], correctAnswer: 1, meaning: "13 üyeden oluşur.", category: "Yargı" },
+            { question: "HSK Başkanı kimdir?", options: ["Meclis Başkanı", "AYM Başkanı", "Adalet Bakanı", "CB"], correctAnswer: 2, meaning: "Başkan Adalet Bakanı'dır.", category: "Yargı" },
+            { question: "Adalet Bakanı yardımcısı HSK'da nedir?", options: ["Seçilmiş", "Geçici", "Doğal üye", "Başkan"], correctAnswer: 2, meaning: "Doğal üyedir.", category: "Yargı" },
+            { question: "HSK üye seçimi nasıldır?", options: ["Hepsi CB", "6 Meclis, 6 CB", "7 Meclis, 4 CB", "Halk seçer"], correctAnswer: 2, meaning: "7 TBMM, 4 CB seçer (2 doğal üye ile toplam 13).", category: "Yargı" },
+            { question: "HSK görev süresi ve seçim süresi nedir?", options: ["4 yıl - 7 gün", "4 yıl - 30 gün", "5 yıl - 15 gün", "5 yıl - 30 gün"], correctAnswer: 1, meaning: "4 yıl görev yaparlar, seçim 30 günde biter.", category: "Yargı" },
+            { question: "HSK kaç dairedir?", options: ["1", "2", "3", "4"], correctAnswer: 1, meaning: "2 daireden oluşur.", category: "Yargı" },
+            { question: "HSK'nın hangi kararına yargı yolu açıktır?", options: ["Hiçbiri", "Hepsi", "Meslekten çıkarma", "Disiplin"], correctAnswer: 2, meaning: "Sadece meslekten çıkarma yargı denetimine tabidir.", category: "Yargı" },
+            { question: "Adalet Bakanı HSK'da nedir?", options: ["Üye", "Başkan ve üye", "Onursal", "Gözlemci"], correctAnswer: 1, meaning: "Hem başkan hem de üye sıfatı taşır.", category: "Yargı" },
+            { question: "Sayıştay kimin adına denetim yapar?", options: ["Vali", "TBMM", "CB", "AYM"], correctAnswer: 1, meaning: "Meclis adına mali denetim yapar.", category: "Yargı" },
+            { question: "Sayıştay üyelerini kim seçer?", options: ["CB", "HSK", "TBMM", "Danıştay"], correctAnswer: 2, meaning: "Üyeleri Meclis seçer.", category: "Yargı" },
+            { question: "Sayıştay hangisini denetleyemez?", options: ["SGK", "Siyasi partiler", "Kamu kurumları", "KİT"], correctAnswer: 1, meaning: "Siyasi partileri denetleyemez (AYM denetler).", category: "Yargı" },
+            { question: "Sayıştay kararlarına karşı karar düzeltme istemi (tashihi karar) süresi, yazılı bildirim tarihinden itibaren kaç gündür?", "options": ["7", "15", "30", "60"], "correctAnswer": 1, "meaning": "Anayasa'ya göre Sayıştay kararlarına karşı karar düzeltme süresi 15 gündür.", "category": "Yargı" },
+            { question: "Sayıştay dairelerinin verdiği kararlara karşı, Sayıştay Temyiz Kuruluna yapılacak temyiz başvuru süresi kaç gündür?", "options": ["15", "30", "60", "90"], "correctAnswer": 2, "meaning": "Sayıştay Kanunu'na göre kararlara karşı temyiz süresi 60 gündür.", "category": "Yargı" },
+            { question: "Sayıştay kararı nedir?", options: ["Danıştaya gider", "Meclis onaylar", "Kesindir", "CB iptal eder"], correctAnswer: 2, meaning: "Sayıştay kararları kesindir.", category: "Yargı" },
+            { question: "Hâkim/Savcı denetimini kim yapar?", options: ["Bakanlık", "HSK", "Yargıtay", "Danıştay"], correctAnswer: 1, meaning: "HSK tarafından yapılır.", category: "Yargı" },
+            { question: "Askeri yargı ne oldu?", options: ["2017'de kalktı", "Sürüyor", "Savaşta var", "Yargıtaya bağlı"], correctAnswer: 0, meaning: "2017'de tamamen kaldırıldı.", category: "Yargı" }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0; this.score = 0; this.questions = [];
+                this.elements = {
+                    question: document.getElementById('question'), options: document.getElementById('options'),
+                    feedback: document.getElementById('feedback'), feedbackText: document.getElementById('feedbackText'),
+                    nextBtn: document.getElementById('nextBtn'), score: document.getElementById('score'),
+                    progress: document.getElementById('progress'), totalQ: document.getElementById('totalQ'),
+                    progressBar: document.getElementById('progressBar'), catCover: document.getElementById('catCover'),
+                    resultsContainer: document.getElementById('resultsContainer'), quizSection: document.getElementById('quizSection'),
+                    finalScore: document.getElementById('finalScore'), wordList: document.getElementById('wordList')
+                };
+                this.init();
+            }
+            init() {
+                this.questions = [...QUIZ_DATA].sort(() => Math.random() - 0.5);
+                this.elements.totalQ.textContent = this.questions.length;
+                this.elements.catCover.onclick = () => this.elements.catCover.style.display = 'none';
+                this.elements.nextBtn.onclick = () => this.nextQuestion();
+                this.showQuestion();
+            }
+            showQuestion() {
+                const q = this.questions[this.currentQuestionIndex];
+                this.elements.question.textContent = q.question;
+                this.elements.catCover.style.display = 'flex';
+                this.elements.options.innerHTML = '';
+                this.elements.options.appendChild(this.elements.catCover);
+                [...q.options].sort(() => Math.random() - 0.5).forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn'; btn.textContent = opt;
+                    btn.onclick = () => this.handleAnswer(opt, q);
+                    this.elements.options.appendChild(btn);
+                });
+                this.elements.feedback.style.display = 'none';
+                this.elements.nextBtn.style.display = 'none';
+                this.elements.progress.textContent = this.currentQuestionIndex + 1;
+                this.elements.progressBar.style.width = `${((this.currentQuestionIndex + 1) / this.questions.length) * 100}%`;
+            }
+            handleAnswer(sel, q) {
+                const cor = q.options[q.correctAnswer];
+                document.querySelectorAll('.option-btn').forEach(b => {
+                    b.disabled = true;
+                    if (b.textContent === cor) b.classList.add('correct');
+                    if (b.textContent === sel && sel !== cor) b.classList.add('incorrect');
+                });
+                const ok = sel === cor;
+                if (ok) this.score++; this.elements.score.textContent = this.score;
+                this.elements.feedback.style.display = 'block';
+                this.elements.feedback.className = `feedback ${ok ? 'correct-feedback' : 'incorrect-feedback'}`;
+                this.elements.feedback.style.borderLeftColor = ok ? 'var(--success)' : 'var(--danger)';
+                this.elements.feedback.style.backgroundColor = ok ? 'rgba(56,142,60,0.1)' : 'rgba(198,40,40,0.1)';
+                this.elements.feedbackText.innerHTML = ok ? `✅ Doğru!<br>${q.meaning}` : `❌ Yanlış!<br>Doğru Cevap: <strong>${cor}</strong><br>${q.meaning}`;
+                this.elements.nextBtn.style.display = 'block';
+            }
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) this.showQuestion();
+                else this.endQuiz();
+            }
+            endQuiz() {
+                this.elements.quizSection.style.display = 'none';
+                this.elements.resultsContainer.style.display = 'block';
+                const p = Math.round((this.score / this.questions.length) * 100);
+                this.elements.finalScore.textContent = `${this.score}/${this.questions.length} (%${p})`;
+                QUIZ_DATA.forEach(i => {
+                    const d = document.createElement('div'); d.className = 'word-card';
+                    d.innerHTML = `<strong>${i.question}</strong><p style="margin-top:5px; color:#555">${i.meaning}</p>`;
+                    this.elements.wordList.appendChild(d);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const scroll = document.getElementById('notesScrollArea');
+            const btn = document.getElementById('startTestBtn');
+            const msg = document.getElementById('scrollMsg');
+            scroll.onscroll = () => { if (scroll.scrollTop + scroll.clientHeight >= scroll.scrollHeight - 10) { btn.disabled = false; msg.style.display = 'none'; } };
+            if (scroll.scrollHeight <= scroll.clientHeight) { btn.disabled = false; msg.style.display = 'none'; }
+            btn.onclick = () => {
+                document.getElementById('notesContainer').style.display = 'none';
+                document.getElementById('quizSection').style.display = 'block';
+                new QuizManager();
+            };
+        });
+    </script>
+</body>
+</html>

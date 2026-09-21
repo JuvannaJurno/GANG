@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGS Hazırlık: 1739 Sayılı Kanun (51-59)</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        
+        body { background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%); color: var(--dark); padding: 15px; min-height: 100vh; }
+        
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow: hidden; }
+        
+        header { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; text-align: center; padding: 25px 20px; }
+        h1 { font-size: 1.6rem; margin-bottom: 5px; }
+        .subtitle { font-size: 1rem; opacity: 0.9; }
+
+        .notes-container { padding: 25px; }
+        .notes-scroll-area { max-height: 45vh; overflow-y: auto; background: var(--light); border: 2px solid var(--accent); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .notes-scroll-area h3 { color: var(--dark); border-bottom: 2px solid var(--primary); margin-top: 15px; padding-bottom: 5px; font-size: 1.1rem; }
+        .notes-scroll-area ul { padding-left: 20px; margin: 10px 0; }
+        .notes-scroll-area li { margin-bottom: 8px; font-size: 0.95rem; }
+
+        .scroll-msg { color: var(--danger); font-size: 0.9rem; margin-bottom: 10px; font-weight: bold; text-align: center; }
+        
+        .progress-container { width: 100%; background-color: #e9ecef; height: 10px; }
+        .progress-bar { height: 100%; background: var(--gold); width: 0%; transition: width 0.3s; background-color: #FFD700; }
+        
+        .quiz-container { padding: 25px; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; }
+        
+        .question-container { background: var(--light); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--primary); font-size: 1.1rem; }
+        
+        .options { display: grid; gap: 10px; position: relative; }
+        .cat-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px; z-index: 5; cursor: pointer; color: white; }
+        .cat-image { max-width: 120px; border-radius: 8px; margin-bottom: 10px; }
+        
+        .option-btn { padding: 15px; border: 2px solid #ddd; border-radius: 10px; background: white; cursor: pointer; text-align: left; font-size: 1rem; transition: 0.2s; }
+        .option-btn.correct { background: var(--success) !important; color: white; border-color: var(--success); }
+        .option-btn.incorrect { background: var(--danger) !important; color: white; border-color: var(--danger); }
+        
+        .feedback { padding: 15px; border-radius: 10px; margin-top: 20px; display: none; background: #fff3cd; border: 1px solid #ffeeba; font-size: 0.95rem; }
+        .next-btn { background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 20px; }
+        .next-btn:disabled { background: #ccc; }
+
+        .results-container { padding: 30px; text-align: center; display: none; }
+        .word-card { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 8px; text-align: left; background: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ Kurumlar, Araçlar ve Denetim</h1>
+            <div class="subtitle">Madde 51 - 59 (Karma Soru Seti)</div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <div class="notes-scroll-area" id="notesScrollArea">
+                <h3>Madde 51: Bina ve Tesisler</h3>
+                <ul>
+                    <li>MEB, okul binalarını çevrenin ihtiyaçlarına ve eğitim programına (atölye vb.) göre planlar.</li>
+                    <li>Arsa ve inşaat için devlet kaynakları yanında <b>vatandaş yardımları</b> teşvik edilir.</li>
+                    <li>Taşınmaz özelleştirmeleri <b>4046 Sayılı Kanun</b> çerçevesinde yapılır.</li>
+                    <li>Gelirler Hazine üzerinden MEB bütçesine <b>yapım ve onarım</b> için ödenek kaydedilir.</li>
+                </ul>
+                <h3>Madde 52-55: Eğitim Araç ve Gereçleri</h3>
+                <ul>
+                    <li>Kapsam: Ders kitapları, kaynak materyaller, yardımcı yayınlar ve teknik donanım (akıllı tahta vb.).</li>
+                    <li>MEB; standartlaştırma, telif hakları ve <b>ders kitabı fiyatlarını</b> tespit etmekle görevlidir.</li>
+                    <li>Temin yolları: Üretme, hazırlatma veya özel sektörden seçme/tavsiye etme.</li>
+                    <li>Kitap inceleme süreçlerinde görev alanlara ücret ödenir; özel sektörden inceleme ücreti alınır.</li>
+                </ul>
+                <h3>Madde 56-59: Görev, Yetki ve Denetim</h3>
+                <ul>
+                    <li>Devlet adına denetimden birinci derecede <b>MEB</b> sorumludur.</li>
+                    <li><b>Askeri okullar dışında</b> kanuna aykırı eğitim faaliyeti yapılamaz.</li>
+                    <li>Okul açma ve derece belirleme MEB iznine bağlıdır.</li>
+                    <li>Askeri okulların derece ve müfredatı <b>MSB ve MEB</b> birlikte düzenler.</li>
+                    <li>Denklik iptali esasları <b>Cumhurbaşkanınca</b> çıkarılacak yönetmelikle belirlenir.</li>
+                    <li>Yurt dışı eğitim MEB sorumluluğundadır; <b>askeri öğrenciler</b> bu kapsam dışındadır.</li>
+                </ul>
+            </div>
+            <p id="scrollMsg" class="scroll-msg">Lütfen notları sonuna kadar kaydırın!</p>
+            <button class="next-btn" id="startTestBtn" disabled>Karma Testi Başlat</button>
+        </div>
+
+        <div id="quizSection" style="display: none;">
+            <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+            <div class="quiz-container">
+                <div class="stats">
+                    <div>Puan: <span id="score">0</span></div>
+                    <div>Soru: <span id="progress">0</span> / <span id="totalQs"></span></div>
+                </div>
+                <div class="question-container"><div id="question"></div></div>
+                <div class="options" id="options">
+                    <div class="cat-cover" id="catCover">
+                        <img src="https://cataas.com/cat/says/Soru Karıştırıldı!" class="cat-image">
+                        <span>Cevapları görmek için kediye tıkla!</span>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback"></div>
+                <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+            </div>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <h2>Sınav Tamamlandı!</h2>
+            <div id="finalScore" style="font-size: 2rem; margin: 20px 0;"></div>
+            <div id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()">Tekrar Çöz (Sorular Karışır)</button>
+        </div>
+    </div>
+
+    <script>
+        const RAW_DATA = [
+            { q: "Eğitim kurumlarına ait bina ve tesislerin planlanması, yapımı ve donatımı konularındaki genel yetki ve sorumluluk hangi makama aittir?", a: ["Çevre Şehircilik Bakanlığı", "Millî Eğitim Bakanlığı", "Valilik YİKOB", "Belediyeler"], c: 1, f: "Madde 51: Bina ve tesislerin her türlü planlama ve donatım yetkisi MEB'e aittir." },
+            { q: "Okul yapımı süreçlerinde devlet kaynaklarına ek olarak hangisinin teşvik edilmesi ve etkin şekilde değerlendirilmesi kanunen öngörülür?", a: ["Yabancı vakıf fonları", "Vatandaşların yardımları", "Kantin kira gelirleri", "Siyasi parti yardımları"], c: 1, f: "Madde 51: Vatandaş yardımlarının teşvik edilmesi ve etkin değerlendirilmesi esastır." },
+            { q: "MEB'e tahsis edilmiş Hazine taşınmazlarının özelleştirme süreçlerinde hangi kanun hükümleri esas alınır?", a: ["Devlet İhale Kanunu", "Kamu İhale Kanunu", "4046 Sayılı Özelleştirme Kanunu", "657 Sayılı Kanun"], c: 2, f: "Madde 51: Özelleştirme işlemleri 4046 sayılı kanun çerçevesinde yürütülür." },
+            { q: "Özelleştirilen eğitim taşınmazlarından elde edilen gelirler Hazine’ye aktarıldıktan sonra MEB bütçesine hangi amaçla ödenek kaydedilir?", a: ["Maaş zamları", "Eğitim kurumlarının yapımı ve onarımı", "Yurt dışı gezileri", "Sendika destekleri"], c: 1, f: "Madde 51: Gelirler sadece eğitim kurumlarının yapımı ve onarımı için kullanılır." },
+            { q: "Özelleştirme gelirlerinden elde edilen sermaye ödeneklerinin kullanımı aşağıdakilerden hangisiyle ilişkilendirilerek planlanır?", a: ["Akademik başarılar", "Yıllık yatırım programları", "İl nüfusları", "Bölge kalkınma ajansları"], c: 1, f: "Madde 51: Ödenekler yıllık yatırım programları dahilinde harcanır." },
+            { q: "Eğitim araç ve gereçlerinin (kitap, materyal vb.) temel varlık sebebi (amacı) nedir?", a: ["Dijitalleşme", "Eğitimde verimliliği artırarak öğretim sürecini desteklemek", "Kağıt tasarrufu", "Fiziksel farkları kapatmak"], c: 1, f: "Madde 52: Temel amaç eğitimde verimliliği artırmaktır." },
+            { q: "Ders kitaplarını tamamlayıcı nitelikte olan ve konuların daha iyi anlaşılmasını sağlayan materyallere ne ad verilir?", a: ["Teknik cihaz", "Kaynak ve yardımcı eğitim materyalleri", "Dijital uygulama", "Redaksiyon eki"], c: 1, f: "Madde 52: Kitapları tamamlayan unsurlara kaynak ve yardımcı materyal denir." },
+            { q: "Akıllı tahta, laboratuvar malzemesi ve posterler metinde hangi genel başlık altında sınıflandırılmıştır?", a: ["Sabit tesis", "Diğer eğitim araç ve gereçleri", "Teknolojik altyapı", "Görsel materyaller"], c: 1, f: "Madde 52: Kitap dışındaki teknik ve basılı unsurlar bu sınıfa girer." },
+            { q: "Eğitim materyalleri bireylerde hangi gelişim alanlarını tam olarak desteklemelidir?", a: ["Sadece zihinsel", "Zihinsel, sosyal ve duygusal gelişim", "Sadece mesleki", "Kültürel ve dini"], c: 1, f: "Madde 52: Bireyin zihinsel, sosyal ve duygusal gelişimini gözetmelidir." },
+            { q: "Millî Eğitim Bakanlığı'nın materyaller üzerindeki 'standartlaştırma' görevi neyi amaçlar?", a: ["Marka birliği", "Eğitimde kalite ve uygulama birliğini sağlamayı", "Özel sektörü engellemeyi", "Maliyetleri sıfırlamayı"], c: 1, f: "Madde 53: Standartlaştırma kalite ve uygulama birliği içindir." },
+            { q: "MEB, eğitim araç ve gereçlerini ilgililerin yararlanmasına hangi yöntemle sunabilir?", a: ["Sadece satışla", "Paralı veya parasız olarak", "Yalnızca kiralama", "Sadece ücretsiz"], c: 1, f: "Madde 53: Şartlara göre paralı veya parasız sunulabilir." },
+            { q: "Aşağıdakilerden hangisi MEB'in eğitim araçlarını sağlama yöntemlerinden biri değildir?", a: ["Kendi imkânlarıyla üretme", "Kişilere hazırlatma", "Özel sektörden seçme/tavsiye etme", "Uluslararası izinsiz kopyalama"], c: 3, f: "Madde 54: Telif hakları gereği izinsiz kopyalama bir yöntem değildir." },
+            { q: "Ders kitaplarının incelenmesi ve redaksiyonu süreçlerinde görev alanlara yapılacak ödemelerle ilgili hangisi doğrudur?", a: ["Ücretsizdir", "Kanun çerçevesinde ücret ödenir", "Sadece birinciye ödül verilir", "Okul birliği öder"], c: 1, f: "Madde 55: Görev alanlara yasal çerçevede ücret ödemesi yapılır." },
+            { q: "Özel sektörün materyallerinin MEB tarafından incelenmesi karşılığında yayınevlerinden ne alınır?", a: ["Telif devri", "İnceleme ve değerlendirme ücreti", "Kitap bağışı", "Maddi inşaat payı"], c: 1, f: "Madde 55: İnceleme hizmeti karşılığı ücret tahsil edilir." },
+            { q: "Eğitim hizmetinin Devlet adına yürütülmesinden ve denetlenmesinden birinci derecede sorumlu kurum hangisidir?", a: ["Cumhurbaşkanlığı", "Millî Eğitim Bakanlığı", "Denetleme Kurulu", "TBMM"], c: 1, f: "Madde 56: Ana sorumlu MEB'dir." },
+            { q: "Millî Eğitim Temel Kanunu'na aykırı eğitim faaliyeti yapılamaz hükmünün tek istisnası hangisidir?", a: ["Vakıf üniversitesi", "Askeri okullar", "Dil kursları", "Uluslararası kolejler"], c: 1, f: "Madde 57: Askeri okullar özel yapıları gereği istisnadır." },
+            { q: "Bir ilköğretim veya lisenin açılması ve derecelendirilmesi kimin iznine bağlıdır?", a: ["İçişleri Bakanlığı", "Millî Eğitim Bakanlığı", "Sanayi Bakanlığı", "Valilikler"], c: 1, f: "Madde 58: Her türlü okul MEB izniyle açılır." },
+            { q: "Askeri okulların dereceleri ve müfredatları hangi iki makam tarafından birlikte düzenlenir?", a: ["MEB - Genelkurmay", "Millî Eğitim Bakanlığı - Millî Savunma Bakanlığı", "Cumhurbaşkanlığı - MSB", "İçişleri - MEB"], c: 1, f: "Madde 58: MSB ve MEB birlikte düzenler." },
+            { q: "Farklı bakanlıklarca açılan okulların program ve yönetmelikleri yürürlüğe girmeden önce kimin onayından geçmelidir?", a: ["İlgili bakan", "Millî Eğitim Bakanlığının onayı", "Danıştay", "YÖK"], c: 1, f: "Madde 58: Programlar MEB onayına tabidir." },
+            { q: "Başka bakanlıklara bağlı okulların denetim yetkisi yasal olarak kime verilmiştir?", a: ["Millî Eğitim Bakanlığına", "Cumhurbaşkanlığına", "Sadece bağlı bakanlığa", "Valiliklere"], c: 0, f: "Madde 58: Tüm okullar MEB denetimi altındadır." },
+            { q: "Nitelik bakımından uygun olmayan kurumların denkliğinin iptal edilmesi esasları aşağıdakilerden hangisiyle düzenlenir?", a: ["Genelge", "Cumhurbaşkanınca çıkarılacak yönetmelikle", "Mahkeme kararı", "Bakanlık tebliği"], c: 1, f: "Madde 58: Denklik iptali esasları Cumhurbaşkanı yönetmeliği ile belirlenir." },
+            { q: "Yurt dışı eğitim hizmetlerini düzenleme sorumluluğu kime aittir?", a: ["Dışişleri Bakanlığı", "Millî Eğitim Bakanlığı", "YÖK", "TİKA"], c: 1, f: "Madde 59: Yurt dışı eğitim koordinasyonu MEB'dedir." },
+            { q: "Yurt dışı eğitim düzenlemelerinde MEB sorumluluğu dışında kalan ve kendi makamlarına bağlı olan grup hangisidir?", a: ["Öğretmenler", "Askeri öğrenciler", "Bursiyerler", "Memur çocukları"], c: 1, f: "Madde 59: Askeri öğrenciler kapsam dışıdır." },
+            { q: "Eğitim binaları planlanırken aşağıdakilerden hangisi öncelikle gözetilir?", a: ["Bina estetiği", "Çevrenin ihtiyaçları ve eğitim programı özellikleri", "Arsa maliyeti", "Belediye sınırları"], c: 1, f: "Madde 51: Çevre ihtiyacı ve teknik program özellikleri esastır." },
+            { q: "Özelleştirilen taşınmaz geliri Hazine'ye gittikten sonra MEB'e geri dönerken neye göre harcanır?", a: ["Sadece satıldığı ilde", "Yıllık yatırım programlarına göre", "Personel primleri için", "Sadece dijital yayın için"], c: 1, f: "Madde 51: Yatırım programları doğrultusunda harcanır." },
+            { q: "Ders kitaplarının temel özelliği nedir?", a: ["Sadece öğretmene hitap etmesi", "Müfredata uygun ve temel beceri kazandırması", "Her yıl güncellenmesi", "Ücretsiz olması"], c: 1, f: "Madde 52: Müfredat uyumu ve beceri kazandırma temeldir." },
+            { q: "MEB'in ders kitabı fiyatlarını tespit etme görevi neye hizmet eder?", a: ["Yayınevi kârına", "Eğitimin erişilebilirliği ve maliyet kontrolüne", "Kağıt tasarrufuna", "Sayfa sınırlamasına"], c: 1, f: "Madde 53: Eğitimin maliyet kontrolü ve erişilebilirliği içindir." },
+            { q: "Aşağıdakilerden hangisi eğitim araç-gereci kapsamında MEB'in 'standartlaştırma' yapabileceği unsurlardan biridir?", a: ["Okul formaları", "Akıllı tahta ve laboratuvar malzemeleri", "Servis güzergahları", "Kantin yiyecekleri"], c: 1, f: "Madde 53: Teknik donanım ve materyaller standartlaştırılır." },
+            { q: "Özel okulların derece ve programlarını belirleme yetkisi kime aittir?", a: ["Okul kurucusuna", "Millî Eğitim Bakanlığına", "Yerel Belediye", "Okul Aile Birliği"], c: 1, f: "Madde 58: Derece ve program yetkisi MEB'dedir." },
+            { q: "Millî Eğitim Bakanlığı'nın 'denklik iptali' yetkisi hangi durumda kullanılır?", a: ["Okulda disiplin suçu işlendiğinde", "Eğitim ortamı veya niteliği uygun bulunmadığında", "Okulun mevcudu azaldığında", "Öğretmen sayısı yetersizse"], c: 1, f: "Madde 58: Eğitim niteliği ve ortamı kanuna aykırı ise iptal edilir." },
+            { q: "Mesleki eğitim veren bir lisenin atölye ihtiyacının planlanması hangi madde kapsamında MEB'in yükümlülüğüdür?", a: ["Madde 51", "Madde 53", "Madde 55", "Madde 59"], c: 0, f: "Madde 51: Eğitim programının özelliklerine göre bina planlamasını kapsar." },
+            { q: "Hazine taşınmazlarının MEB adına tahsisinin kaldırılması yetkisi hangi bakanlığa aittir?", a: ["Milli Eğitim Bakanlığı", "Maliye Bakanlığı", "İçişleri Bakanlığı", "Adalet Bakanlığı"], c: 1, f: "Madde 51: Tahsis kaldırma veya satış kararı Maliye Bakanlığı'na aittir." },
+            { q: "MEB tarafından hazırlatılan kitaplarda 'telif haklarını tespit etme' yetkisi hangi maddede düzenlenmiştir?", a: ["Madde 51", "Madde 53", "Madde 56", "Madde 58"], c: 1, f: "Madde 53: Telif hakları ve fiyat tespiti bu maddede yer alır." },
+            { q: "Askeri okulların genel eğitim-öğretim seviyelerinin belirlenmesinde hangi kurumla iş birliği esastır?", a: ["YÖK", "Millî Eğitim Bakanlığı", "İçişleri Bakanlığı", "TSE"], c: 1, f: "Madde 58: Genel eğitim standartları için MEB ile iş birliği yapılır." },
+            { q: "Yurt dışına öğrenim için gönderilen askeri olmayan vatandaşların tüm koordinasyonu hangi kurumdadır?", a: ["Dışişleri", "Millî Eğitim Bakanlığı", "Büyükelçilikler", "Vakıflar"], c: 1, f: "Madde 59: MEB yurt dışı eğitim hizmetlerini düzenlemekle sorumludur." }
+        ];
+
+        // Soruları Karıştırma Fonksiyonu (Fisher-Yates Shuffle)
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        const QUIZ_DATA = shuffle([...RAW_DATA]); // Soruları Karıştır
+        let index = 0, score = 0;
+
+        const els = {
+            notes: document.getElementById('notesContainer'),
+            quiz: document.getElementById('quizSection'),
+            q: document.getElementById('question'),
+            opts: document.getElementById('options'),
+            fb: document.getElementById('feedback'),
+            next: document.getElementById('nextBtn'),
+            scr: document.getElementById('score'),
+            prog: document.getElementById('progress'),
+            total: document.getElementById('totalQs'),
+            pb: document.getElementById('progressBar'),
+            res: document.getElementById('resultsContainer'),
+            fScr: document.getElementById('finalScore'),
+            wLst: document.getElementById('wordList'),
+            scroll: document.getElementById('notesScrollArea'),
+            start: document.getElementById('startTestBtn'),
+            msg: document.getElementById('scrollMsg'),
+            cat: document.getElementById('catCover')
+        };
+
+        els.total.textContent = QUIZ_DATA.length;
+        els.scroll.onscroll = () => {
+            if (els.scroll.scrollTop + els.scroll.clientHeight >= els.scroll.scrollHeight - 10) {
+                els.start.disabled = false; els.msg.style.display = 'none';
+            }
+        };
+
+        els.start.onclick = () => { els.notes.style.display = 'none'; els.quiz.style.display = 'block'; showQ(); };
+
+        function showQ() {
+            const data = QUIZ_DATA[index];
+            els.q.textContent = data.q; // Sayı kaldırıldı
+            els.cat.style.display = 'flex';
+            els.fb.style.display = 'none';
+            els.next.style.display = 'none';
+            els.prog.textContent = index + 1;
+            els.pb.style.width = `${((index + 1) / QUIZ_DATA.length) * 100}%`;
+            
+            els.opts.querySelectorAll('.option-btn').forEach(b => b.remove());
+
+            data.a.forEach((txt, i) => {
+                const b = document.createElement('button');
+                b.className = 'option-btn'; b.textContent = txt;
+                b.onclick = () => {
+                    if (els.cat.style.display !== 'none') return;
+                    els.opts.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+                    if (i === data.c) { 
+                        b.classList.add('correct'); 
+                        score++; 
+                        els.scr.textContent = score; 
+                        els.fb.style.color = "green";
+                        els.fb.innerHTML = `<b>Doğru!</b><br>${data.f}`; 
+                    }
+                    else { 
+                        b.classList.add('incorrect'); 
+                        els.opts.querySelectorAll('.option-btn')[data.c].classList.add('correct'); 
+                        els.fb.style.color = "red";
+                        els.fb.innerHTML = `<b>Yanlış!</b><br>${data.f}`; 
+                    }
+                    els.fb.style.display = 'block'; els.next.style.display = 'block';
+                };
+                els.opts.appendChild(b);
+            });
+        }
+
+        els.cat.onclick = () => els.cat.style.display = 'none';
+        els.next.onclick = () => { index++; if (index < QUIZ_DATA.length) showQ(); else end(); };
+
+        function end() {
+            els.quiz.style.display = 'none'; els.res.style.display = 'block';
+            els.fScr.textContent = `Toplam Puan: ${score} / ${QUIZ_DATA.length}`;
+            QUIZ_DATA.forEach((d, i) => {
+                const card = document.createElement('div'); card.className = 'word-card';
+                card.innerHTML = `<b>Soru: ${d.q}</b><br><span style="color:green">Cevap: ${d.a[d.c]}</span><br><small>${d.f}</small>`;
+                els.wLst.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

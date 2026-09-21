@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGS Hazırlık: Eğitim Kademeleri (Amaç ve Kapsam)</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gray: #e0e0e0;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { 
+            background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%); 
+            color: var(--dark); 
+            line-height: 1.6; 
+            padding: 20px; 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container { 
+            width: 100%;
+            max-width: 800px; 
+            background: white; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: var(--gray);
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-header {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #d84315;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--light);
+            border-left: 5px solid var(--primary);
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background-color: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            background-color: var(--light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .option-btn.correct {
+            background-color: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .option-btn.wrong {
+            background-color: var(--danger);
+            border-color: var(--danger);
+            color: white;
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        .next-btn {
+            display: none;
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .next-btn:hover {
+            background-color: var(--dark);
+        }
+
+        .result-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .result-screen h2 {
+            font-size: 2em;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .result-screen p {
+            font-size: 1.3em;
+            margin-bottom: 25px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="quiz-container">
+    <h1>Eğitim Kademeleri Testi</h1>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress"></div>
+    </div>
+
+    <div id="question-screen">
+        <div class="question-header" id="q-type"></div>
+        <div class="question-text" id="q-text"></div>
+        
+        <div class="options-grid" id="options-container">
+            <button class="option-btn" onclick="checkAnswer(0)">Okul öncesi</button>
+            <button class="option-btn" onclick="checkAnswer(1)">İlköğretim</button>
+            <button class="option-btn" onclick="checkAnswer(2)">Ortaöğretim</button>
+            <button class="option-btn" onclick="checkAnswer(3)">Yükseköğretim</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Sıradaki Soru</button>
+    </div>
+
+    <div class="result-screen" id="result-screen">
+        <h2>Alan Genişletmesi Tamamlandı!</h2>
+        <p id="final-score"></p>
+        <button class="next-btn" style="display: block;" onclick="location.reload()">Shinzo wo Sasageyo! (Tekrar Başla)</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { type: "KAPSAM", quote: "\"Mecburi ilköğrenim çağına gelmemiş çocukların eğitimini kapsar. Bu eğitim isteğe bağlıdır.\"", answer: 0 },
+        { type: "AMAÇ", quote: "\"Çocukların beden, zihin ve duygu gelişmesini ve iyi alışkanlıklar kazanmasını sağlamak\"", answer: 0 },
+        { type: "KAPSAM", quote: "\"Mecburi ilköğretim çağı, 6-14 yaş grubundaki çocukları kapsar.\"", answer: 1 },
+        { type: "AMAÇ", quote: "\"Her Türk çocuğuna iyi bir vatandaş olmak için gerekli temel bilgi, beceri, davranış ve alışkanlıkları kazandırmak; onu millî ahlak anlayışına uygun olarak yetiştirmek\"", answer: 1 },
+        { type: "AMAÇ", quote: "\"Şartları elverişsiz çevrelerden ve ailelerden gelen çocuklar için ortak bir yetişme ortamı yaratmak\"", answer: 0 },
+        { type: "KAPSAM", quote: "\"İlköğretimi tamamlayan öğrencilerin dört yıllık zorunlu eğitimine devam ettiği, genel, mesleki ve teknik eğitim kurumları ile mesleki eğitim merkezlerini kapsar.\"", answer: 2 },
+        { type: "AMAÇ", quote: "\"Her Türk çocuğunu ilgi, istidat ve kabiliyetleri yönünden yetiştirerek hayata ve üst öğrenime hazırlamak\"", answer: 1 },
+        { type: "AMAÇ", quote: "\"Ortaöğretim Seviyesinde Ortak Genel Kültür Vermek\"", answer: 2 },
+        { type: "KAPSAM", quote: "\"Orta öğretime dayalı en az iki yıllık yükseköğrenim veren eğitim kurumlarının tümünü kapsar.\"", answer: 3 },
+        { type: "AMAÇ", quote: "\"Öğrencileri Yükseköğretime, Mesleğe veya Hayata Hazırlamak\"", answer: 2 },
+        { type: "AMAÇ", quote: "\"Bilimsel, Teknik ve Kültürel Sorunları Çözmek İçin Araştırma Yapmak\"", answer: 3 },
+        { type: "AMAÇ", quote: "\"Çocukların Türkçeyi doğru ve güzel konuşmalarını sağlamak\"", answer: 0 },
+        { type: "AMAÇ", quote: "\"Toplumun Bilimsel Bilgilerle Aydınlatılması ve Yaygın Eğitim\"", answer: 3 }
+    ];
+
+    // Soruları karıştır
+    questions.sort(() => Math.random() - 0.5);
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    const totalUniqueQuestions = questions.length; // Final skoru için orijinal soru sayısını tutuyoruz
+
+    const qTypeEl = document.getElementById('q-type');
+    const qTextEl = document.getElementById('q-text');
+    const buttons = document.querySelectorAll('.option-btn');
+    const feedbackEl = document.getElementById('feedback');
+    const nextBtn = document.getElementById('next-btn');
+    const progressEl = document.getElementById('progress');
+
+    function loadQuestion() {
+        const q = questions[currentQuestionIndex];
+        qTypeEl.innerText = `[${q.type}]`;
+        qTextEl.innerText = q.quote;
+        
+        buttons.forEach(btn => {
+            btn.className = 'option-btn';
+            btn.disabled = false;
+        });
+        
+        feedbackEl.className = 'feedback';
+        nextBtn.style.display = 'none';
+        
+        progressEl.style.width = `${(currentQuestionIndex / questions.length) * 100}%`;
+    }
+
+    function checkAnswer(selectedIndex) {
+        const q = questions[currentQuestionIndex];
+        const isCorrect = selectedIndex === q.answer;
+
+        buttons.forEach((btn, index) => {
+            btn.disabled = true;
+            if (index === q.answer) {
+                btn.classList.add('correct');
+            } else if (index === selectedIndex && !isCorrect) {
+                btn.classList.add('wrong');
+            }
+        });
+
+        if (isCorrect) {
+            // Sadece soru ilk defa sorulduğunda doğru bilinirse skora ekle
+            if (!q.failed) {
+                score++;
+            }
+            feedbackEl.innerText = "✅ Doğru!";
+            feedbackEl.style.backgroundColor = "#E8F5E9";
+            feedbackEl.style.color = "#2E7D32";
+        } else {
+            // Soru yanlış bilindi, sona ekle ve başarısız olarak işaretle
+            q.failed = true;
+            questions.push({...q}); // Objenin kopyasını sona ekliyoruz
+            
+            feedbackEl.innerText = "❌ Yanlış! Bu soru daha sonra tekrar karşına çıkacak.";
+            feedbackEl.style.backgroundColor = "#FFEBEE";
+            feedbackEl.style.color = "#C62828";
+        }
+
+        feedbackEl.classList.add('show');
+        nextBtn.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('question-screen').style.display = 'none';
+        const resultScreen = document.getElementById('result-screen');
+        resultScreen.style.display = 'block';
+        progressEl.style.width = '100%';
+        
+        const percentage = Math.round((score / totalUniqueQuestions) * 100);
+        document.getElementById('final-score').innerHTML = `
+            İlk denemede doğru bilinen: <strong>${score} / ${totalUniqueQuestions}</strong><br>
+            İlk Deneme Başarı Oranı: <strong>%${percentage}</strong><br>
+            <br><span style="font-size: 0.9em; color: #555;">(Tüm soruları doğru cevaplayarak testi bitirdin!)</span>
+        `;
+    }
+
+    // İlk soruyu yükle
+    loadQuestion();
+</script>
+
+</body>
+</html>

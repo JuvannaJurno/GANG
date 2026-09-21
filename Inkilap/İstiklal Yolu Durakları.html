@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KPSS Tarih - İstiklal Yolu Aktivitesi</title>
+    <style>
+        :root {
+            --ana-renk: #1a1a1a;
+            --vurgu: #d90429;
+            --mavi: #0077b6;
+            --bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 { color: var(--ana-renk); text-align: center; margin-bottom: 5px; font-size: 1.3rem; }
+        
+        /* Bilgi Notçukları Kısmı */
+        .notlar-alani {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 450px;
+            margin-bottom: 20px;
+        }
+
+        .not-kart {
+            flex: 1;
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-top: 4px solid var(--vurgu);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .not-kart strong { color: var(--vurgu); display: block; margin-bottom: 5px; }
+
+        /* Sıralama Aktivitesi */
+        .aktivite-kutusu {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .talimat {
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .durak-listesi {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .durak {
+            background-color: #f1f3f5;
+            margin-bottom: 8px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            color: var(--ana-renk);
+            border: 1px solid #dee2e6;
+            transition: all 0.2s;
+            touch-action: none; /* Mobilde kaydırmayı engellemek için */
+        }
+
+        .durak:active { cursor: grabbing; background-color: #e9ecef; }
+        .durak.dragging { opacity: 0.5; border: 2px dashed var(--mavi); }
+
+        .sira-no {
+            background: var(--mavi);
+            color: white;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: 15px;
+            font-size: 0.75rem;
+        }
+
+        .kontrol-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--ana-renk);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        .sonuc {
+            margin-top: 10px;
+            text-align: center;
+            font-weight: bold;
+            min-height: 24px;
+        }
+
+        .dogru { color: #2b9348; }
+        .yanlis { color: var(--vurgu); }
+    </style>
+</head>
+<body>
+
+    <h2>İstiklal Yolu Durakları</h2>
+    
+    <div class="notlar-alani">
+        <div class="not-kart">
+            <strong>Şerife Bacı</strong>
+            1921 kışında cephane ıslanmasın diye battaniyesini mermilere sarmış, bebeğiyle birlikte donarak şehit olmuştur.
+        </div>
+        <div class="not-kart">
+            <strong>K. Hamdi Bey</strong>
+            "Akbaş Baskını" ile İngiliz mühimmatını Anadolu'ya kaçırmış, lojistik desteğin efsane ismi olmuştur.
+        </div>
+    </div>
+
+    <div class="aktivite-kutusu">
+        <div class="talimat">Şehirleri <b>İnebolu'dan Ankara'ya</b> doğru sıraya dizin (Sürükle-Bırak)</div>
+        
+        <ul class="durak-listesi" id="sortable-list">
+            </ul>
+
+        <button class="kontrol-btn" onclick="kontrolEt()">Sıralamayı Kontrol Et</button>
+        <div id="sonuc-mesaji" class="sonuc"></div>
+    </div>
+
+    <script>
+        const dogruSira = ["İnebolu", "Küre", "Kastamonu", "Ilgaz", "Çankırı", "Kalecik", "Ankara"];
+        
+        // Listeyi karıştırıp ekrana basma
+        function listeyiBas() {
+            const listeHtml = document.getElementById('sortable-list');
+            const karisik = [...dogruSira].sort(() => Math.random() - 0.5);
+            
+            listeHtml.innerHTML = karisik.map((sehir, index) => `
+                <li class="durak" draggable="true" data-name="${sehir}">
+                    <div class="sira-no">${index + 1}</div>
+                    ${sehir}
+                </li>
+            `).join('');
+
+            initDraggable();
+        }
+
+        function initDraggable() {
+            const list = document.getElementById('sortable-list');
+            let dragItem = null;
+
+            list.addEventListener('dragstart', (e) => {
+                dragItem = e.target;
+                e.target.classList.add('dragging');
+            });
+
+            list.addEventListener('dragend', (e) => {
+                e.target.classList.remove('dragging');
+                numaralariGuncelle();
+            });
+
+            list.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(list, e.clientY);
+                if (afterElement == null) {
+                    list.appendChild(dragItem);
+                } else {
+                    list.insertBefore(dragItem, afterElement);
+                }
+            });
+
+            // Mobil Touch Desteği
+            list.addEventListener('touchstart', (e) => {
+                dragItem = e.target.closest('.durak');
+                dragItem.classList.add('dragging');
+            }, {passive: true});
+
+            list.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const afterElement = getDragAfterElement(list, touch.clientY);
+                if (afterElement == null) {
+                    list.appendChild(dragItem);
+                } else {
+                    list.insertBefore(dragItem, afterElement);
+                }
+            }, {passive: false});
+
+            list.addEventListener('touchend', () => {
+                dragItem.classList.remove('dragging');
+                numaralariGuncelle();
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.durak:not(.dragging)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function numaralariGuncelle() {
+            document.querySelectorAll('.sira-no').forEach((el, i) => {
+                el.innerText = i + 1;
+            });
+        }
+
+        function kontrolEt() {
+            const mevcutSira = [...document.querySelectorAll('.durak')].map(el => el.getAttribute('data-name'));
+            const mesaj = document.getElementById('sonuc-mesaji');
+            
+            const hepsiDogru = mevcutSira.every((val, index) => val === dogruSira[index]);
+
+            if (hepsiDogru) {
+                mesaj.innerHTML = "✅ Harika! İnebolu'dan Ankara'ya tam isabet!";
+                mesaj.className = "sonuc dogru";
+            } else {
+                mesaj.innerHTML = "❌ Sıralama hatalı, tekrar dene.";
+                mesaj.className = "sonuc yanlis";
+            }
+        }
+
+        window.onload = listeyiBas;
+    </script>
+</body>
+</html>

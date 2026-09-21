@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Vatandaşlık - Yargı & Bütçe Süreçleri</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gold: #FFD700;
+            --flow-bg: #E8F5E9;
+            --flow-border: #81C784;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%); color: var(--dark); line-height: 1.6; padding: 15px; min-height: 100vh; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow: hidden; }
+        header { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; text-align: center; padding: 25px 20px; position: relative; }
+        header::before { content: "⚖️"; font-size: 3rem; position: absolute; top: 10px; left: 20px; opacity: 0.3; }
+        h1 { margin-bottom: 8px; font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.1rem; opacity: 0.9; }
+
+        /* NOTLAR KISMI */
+        .notes-container { padding: 25px; animation: fadeIn 0.5s ease; }
+        .notes-title { color: var(--primary); margin-bottom: 15px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .notes-scroll-area { max-height: 55vh; overflow-y: auto; background: var(--light); border: 2px solid var(--accent); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        .notes-scroll-area::-webkit-scrollbar { width: 8px; }
+        .notes-scroll-area::-webkit-scrollbar-track { background: #e9ecef; border-radius: 10px; }
+        .notes-scroll-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        .notes-scroll-area h3 { color: var(--dark); border-bottom: 2px solid var(--primary); padding-bottom: 5px; margin-top: 20px; margin-bottom: 10px; }
+        .notes-scroll-area h3:first-child { margin-top: 0; }
+        .notes-scroll-area ul { padding-left: 20px; margin-bottom: 15px; }
+        .notes-scroll-area li { margin-bottom: 8px; }
+        
+        .table-responsive { overflow-x: auto; margin-bottom: 25px; border-radius: 8px; }
+        .notes-table { width: 100%; border-collapse: collapse; min-width: 600px; background: white; }
+        .notes-table th, .notes-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        .notes-table th { background-color: var(--primary); color: white; font-size: 1.05rem; }
+        .notes-table tr:nth-child(even) { background-color: #f8fcf8; }
+        .notes-table tr:hover { background-color: #e8f5e9; }
+
+        .numbers-box { background-color: #E3F2FD; border-left: 5px solid #1976D2; padding: 15px; margin-top: 25px; margin-bottom: 15px; border-radius: 5px; }
+        .numbers-box h3 { color: #1565C0 !important; border-bottom: 2px solid #90CAF9 !important; margin-top: 0 !important; }
+        .numbers-box ul { list-style-type: none !important; padding-left: 0 !important; }
+        .numbers-box li { background: white; margin-bottom: 8px !important; padding: 10px 15px !important; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid #1976D2; display: flex; align-items: center; }
+        .num-badge { background: #1976D2; color: white; font-weight: bold; padding: 4px 10px; border-radius: 4px; margin-right: 12px; font-size: 1.1rem; min-width: 60px; text-align: center; }
+
+        .important-note { background-color: #FFF8E1; border-left: 5px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 5px; font-size: 0.95rem; }
+
+        .start-quiz-wrapper { text-align: center; padding: 10px 0; }
+        .scroll-msg { color: var(--danger); font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; }
+        .next-btn { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border: none; padding: 16px 32px; border-radius: 10px; font-size: 1.2rem; cursor: pointer; display: block; margin: 25px auto 0; transition: all 0.3s ease; font-weight: 600; width: 100%; max-width: 350px; }
+        .next-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(46, 125, 50, 0.3); }
+        .next-btn:disabled { background: #cccccc; color: #666666; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* ETKİNLİK KISMI (ŞEMALAR) */
+        .activity-container { padding: 25px; display: none; animation: fadeIn 0.5s ease; }
+        .activity-header { text-align: center; margin-bottom: 20px; }
+        .activity-header h2 { color: var(--primary); font-size: 1.6rem; margin-bottom: 5px; }
+        .activity-header p { color: #555; font-size: 1rem; }
+        
+        .word-bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 25px; padding: 15px; background: #E3F2FD; border-radius: 10px; border: 2px dashed #90CAF9; }
+        .word-item { background: white; border: 2px solid #1976D2; color: #1565C0; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); user-select: none; }
+        .word-item:hover { background: #1976D2; color: white; transform: scale(1.05); }
+        .word-item.selected { background: var(--gold); border-color: #F57F17; color: #333; transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .word-item.used { opacity: 0; pointer-events: none; transform: scale(0); }
+
+        .flowcharts-wrapper { display: flex; flex-direction: column; gap: 30px; }
+        .flowchart { background: var(--flow-bg); border: 2px solid var(--flow-border); border-radius: 15px; padding: 20px; position: relative; }
+        .flowchart h3 { text-align: center; color: var(--dark); border-bottom: 2px dashed var(--flow-border); padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase; font-size: 1.2rem; }
+        
+        .flow-step { text-align: center; margin-bottom: 15px; position: relative; }
+        .flow-step::after { content: "↓"; display: block; font-size: 1.5rem; color: var(--primary); margin-top: 5px; font-weight: bold; }
+        .flow-step:last-child::after { display: none; }
+        .flow-box { display: inline-block; background: white; border: 2px solid var(--primary); padding: 10px 20px; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 2; position: relative; }
+        
+        .dropzone { display: inline-block; min-width: 150px; min-height: 40px; background: #FFF9C4; border: 2px dashed #FBC02D; border-radius: 6px; padding: 8px 15px; margin: 5px; color: #757575; font-style: italic; cursor: pointer; transition: all 0.3s; vertical-align: middle; }
+        .dropzone:hover { background: #FFF59D; }
+        .dropzone.active { background: #FFF176; border-color: #F57F17; transform: scale(1.05); box-shadow: 0 0 10px rgba(245, 127, 23, 0.5); }
+        .dropzone.filled { background: var(--success); border: 2px solid #2E7D32; color: white; font-weight: bold; font-style: normal; cursor: default; transform: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .dropzone.error { background: var(--danger); border-color: #B71C1C; color: white; animation: shake 0.5s; }
+        
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } }
+
+        /* TEST KISMI */
+        .progress-container { width: 100%; background-color: #e9ecef; border-radius: 10px; margin: 15px 0; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); width: 0%; transition: width 0.5s ease; border-radius: 10px; }
+        .quiz-container { padding: 25px; display: none; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 1.1rem; background-color: var(--light); padding: 15px; border-radius: 10px; border: 2px solid var(--accent); }
+        .score { color: var(--primary); font-weight: bold; font-size: 1.2rem; }
+        .question-container { background: var(--light); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .question { font-size: 1.3rem; margin-bottom: 10px; color: var(--dark); line-height: 1.5; font-weight: 600; }
+        .options { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; position: relative; }
+        .option-btn { padding: 16px 20px; border: 2px solid #ddd; border-radius: 10px; background-color: white; color: var(--dark); font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; text-align: left; font-weight: 500;}
+        .option-btn:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .option-btn.correct { background-color: var(--success); color: white; border-color: var(--success); }
+        .option-btn.incorrect { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .feedback { padding: 20px; border-radius: 10px; margin-top: 20px; display: none; font-size: 1.1rem; line-height: 1.6; animation: fadeIn 0.5s ease; }
+        .correct-feedback { background-color: rgba(56, 142, 60, 0.1); border-left: 5px solid var(--success); }
+        .incorrect-feedback { background-color: rgba(198, 40, 40, 0.1); border-left: 5px solid var(--danger); }
+        .results-container { padding: 30px; text-align: center; display: none; }
+        .results-title { color: var(--primary); margin-bottom: 20px; font-size: 2rem; }
+        .final-score { font-size: 3rem; color: var(--accent); margin: 20px 0; font-weight: bold; }
+        .word-list { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 30px; text-align: left; }
+        .word-card { border: 2px solid var(--accent); border-radius: 12px; padding: 20px; background: var(--light); }
+        .word { font-weight: bold; font-size: 1.2rem; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ MEB-AGS Vatandaşlık</h1>
+            <div class="subtitle">Yargı & Bütçe Süreçleri</div>
+        </header>
+
+        <div class="notes-container" id="notesContainer">
+            <h2 class="notes-title">📖 Yargı & Bütçe Ders Notları</h2>
+            
+            <div class="notes-scroll-area" id="notesScrollArea">
+                
+                <h3>1. Genel Yargı İlkeleri ve Hâkimlik Teminatı</h3>
+                <ul>
+                    <li><strong>Bağımsızlık:</strong> Hiçbir merci mahkemelere emir veremez. <strong>Yasama Meclisi'nde</strong> görülmekte olan bir dava hakkında görüşme yapılamaz.</li>
+                    <li><strong>Hâkimlik Teminatı:</strong> Hâkim ve savcılar azlolunamaz, kendileri istemedikçe <strong>65 yaşından</strong> önce emekli edilemezler.</li>
+                    <li><strong>Mali Haklar:</strong> Mahkeme veya kadro kapatılsa dahi hâkim/savcıların aylık ve özlük hakları kısıtlanamaz.</li>
+                    <li><strong>İdari Bağlılık:</strong> Hâkim ve savcılar idari yönden <strong>Adalet Bakanlığı'na</strong> bağlıdır; denetimleri <strong>Adalet Müfettişleri</strong> tarafından yapılır.</li>
+                </ul>
+
+                <h3>2. Yüksek Mahkemeler ve Üye Yapıları</h3>
+                <div class="table-responsive">
+                    <table class="notes-table">
+                        <thead style="background-color: #1976D2;">
+                            <tr><th>Mahkeme</th><th>Üye Sayısı / Seçim</th><th>Başkanın Belirlenmesi</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Anayasa Mahkemesi</strong></td><td>15 Üye (12 CB, 3 TBMM)</td><td>Kendi içinden seçer (4 yıl).</td></tr>
+                            <tr><td><strong>Yargıtay</strong></td><td>Tamamını <strong>HSK</strong> seçer.</td><td>Kendi içinden seçer (4 yıl).</td></tr>
+                            <tr><td><strong>Danıştay</strong></td><td>1/4 CB, 3/4 HSK</td><td>Kendi içinden seçer (4 yıl).</td></tr>
+                            <tr><td><strong>Uyuşmazlık Mah.</strong></td><td>6 Asıl, 6 Yedek + 1 Başkan</td><td><strong>AYM</strong> kendi üyeleri arasından seçer.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>3. Anayasa Mahkemesi (AYM) Görev, Süre ve Nitelikler</h3>
+                <ul>
+                    <li><strong>Nitelikler:</strong> Üye seçilebilmek için <strong>45 yaşını</strong> doldurmuş olmak ve <strong>20 yıl</strong> fiilen hizmet (avukat, öğretim üyesi vb.) yapmış olmak gerekir.</li>
+                    <li><strong>Görev Süresi:</strong> Üyeler <strong>12 yıl</strong> için seçilir (bir kişi iki kez seçilemez). Yaş haddi 65'tir.</li>
+                    <li><strong>Çalışma Düzeni:</strong> İki bölüm ve Genel Kurul halinde çalışır. Bireysel başvurulara bölümler bakar.</li>
+                    <li><strong>Bireysel Başvuru:</strong> <strong>2010</strong> yılında gelmiştir. Konusu anayasal hakların ihlalidir. Olağan kanun yolları tüketilmelidir. Başvuru süresi <strong>30 gündür.</strong></li>
+                    <li><strong>Nitelikli Çoğunluk:</strong> Anayasa değişikliği iptali, parti kapatma ve mali yardımdan yoksun bırakma kararları <strong>2/3 oy çokluğu</strong> ile alınır.</li>
+                </ul>
+
+                <h3>4. Yüce Divan Yargılaması</h3>
+                <ul>
+                    <li>Yüce Divan sıfatıyla yargılamayı AYM yapar. Savcı ise <strong>Yargıtay Cumhuriyet Başsavcısı'dır.</strong> (Başsavcıyı 5 aday arasından Cumhurbaşkanı 4 yıllığına seçer).</li>
+                    <li><strong>Yüce Divan'da Yargılanmayanlar (KRİTİK):</strong> Milletvekilleri, MİT Başkanı, Emniyet Genel Müdürü, Jandarma ve Sahil Güvenlik Komutanları, MGK Genel Sekreteri.</li>
+                </ul>
+
+                <h3>5. HSK, Sayıştay ve Diğer Yargı Notları</h3>
+                <ul>
+                    <li><strong>HSK (13 Üye):</strong> Başkanı <strong>Adalet Bakanı</strong>'dır. Bakan Yardımcısı doğal üyedir. Kalan 11 üyenin 7'sini TBMM, 4'ünü CB seçer. Üyeler 4 yıl için seçilir ve <strong>tekrar seçilebilirler</strong>. Sadece <strong>meslekten çıkarma</strong> kararına yargı yolu açıktır.</li>
+                    <li><strong>Sayıştay:</strong> TBMM adına mali denetim yapar, <strong>mahalli idareleri de</strong> denetler. Siyasi partileri denetleyemez (AYM yapar). Üyeleri TBMM seçer. Kararına karşı <strong>15 gün</strong> içinde itiraz edilebilir.</li>
+                    <li>Vergi uyuşmazlığında Danıştay ile Sayıştay çelişirse <strong>Danıştay</strong> kararı esastır.</li>
+                    <li>Askeri Yargı, 2017 değişikliği ile <strong>tamamen kaldırılmıştır.</strong></li>
+                </ul>
+
+                <div class="important-note">
+                    <h3 style="color: #FFC107; margin-bottom: 10px;">7. Bütçe Kanunu Detayları ve AYM Denetimi</h3>
+                    <p>Bütçe süreci yürütmenin (CB) başlayıp yasamanın (TBMM) onayladığı ve AYM'nin denetlediği karmaşık bir süreçtir:</p>
+                    <ul style="margin-top: 10px;">
+                        <li>Cumhurbaşkanı bütçe teklifini mali yıl başından <strong>75 gün önce</strong> TBMM'ye sunar.</li>
+                        <li>Bütçe teklifi Meclis'te <strong>55 gün</strong> Komisyonda + <strong>20 gün</strong> Genel Kurulda görüşülür.</li>
+                        <li>Bütçe süresinde çıkmazsa <strong>"Geçici Bütçe"</strong> çıkarılır.</li>
+                        <li>Geçici bütçe de çıkmazsa bir önceki yılın bütçesi <strong>"yeniden değerleme oranı"</strong> ile artırılarak uygulanır.</li>
+                        <li>Bütçe kanunlarına karşı AYM'ye şekil bakımından iptal davası açma süresi <strong>10 gündür</strong> (Genel kanunlarda bu süre 60 gündür).</li>
+                    </ul>
+                </div>
+
+                <div class="numbers-box">
+                    <h3>🔢 Sınavda Çıkacak Kritik Süreler ve Sayılar</h3>
+                    <ul>
+                        <li><span class="num-badge">12 Yıl</span> AYM, Yargıtay ve Danıştay üyelerinin görev süresi.</li>
+                        <li><span class="num-badge">20 Yıl</span> AYM üyesi olmak için aranan asgari çalışma süresi.</li>
+                        <li><span class="num-badge">45 Yaş</span> AYM üyesi olabilmek için gereken asgari yaş.</li>
+                        <li><span class="num-badge">10 Gün</span> Bütçe kanununa şekil bakımından iptal davası açma süresi.</li>
+                        <li><span class="num-badge">30 Gün</span> AYM'ye bireysel başvuru süresi.</li>
+                        <li><span class="num-badge">15 Gün</span> Sayıştay kararına itiraz (yeniden inceleme) süresi.</li>
+                        <li><span class="num-badge">7 / 15 Gün</span> Milletvekilliği düşmesine iptal davası açma (7 gün) ve AYM'nin karara bağlama (15 gün) süresi.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <p id="scrollMsg" class="scroll-msg">Etkinliğe geçmek için notları sonuna kadar okuyun 👇</p>
+                <button class="next-btn" id="goActivityBtn" disabled>Notları Okudum, Şemalara Geç</button>
+            </div>
+        </div>
+
+        <div class="activity-container" id="activityContainer">
+            <div class="activity-header">
+                <h2>🧩 Bütçe ve Yargı Şeması Etkinliği</h2>
+                <p>Kelime havuzundan doğru süreyi veya kavramı seçip ilgili boşluğa yerleştirin.</p>
+            </div>
+
+            <div class="word-bank" id="wordBank">
+                <div class="word-item" data-val="75_gun">75 Gün Önce</div>
+                <div class="word-item" data-val="55_gun">55 Gün</div>
+                <div class="word-item" data-val="20_gun">20 Gün</div>
+                <div class="word-item" data-val="gecici_butce">Geçici Bütçe</div>
+                <div class="word-item" data-val="yeniden_degerleme">Yeniden Değerleme Oranı</div>
+                <div class="word-item" data-val="10_gun">10 Gün</div>
+                <div class="word-item" data-val="12_yil">12 Yıl</div>
+                <div class="word-item" data-val="45_yas">45 Yaş</div>
+            </div>
+
+            <div class="flowcharts-wrapper">
+                <div class="flowchart">
+                    <h3>💰 Bütçe Kanunu Belirleme Sırası</h3>
+                    <div class="flow-step">
+                        <div class="flow-box">CB teklifi mali yıl başından <br><span class="dropzone" data-answer="75_gun">Boşluk 1</span> TBMM'ye sunar.</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-box">Teklif Komisyonda <span class="dropzone" data-answer="55_gun">Boşluk 2</span> görüşülür.</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-box">Teklif Genel Kurulda <span class="dropzone" data-answer="20_gun">Boşluk 3</span> görüşülür.</div>
+                    </div>
+                    <div class="split-flow" style="margin-top:20px; align-items: flex-start;">
+                        <div class="split-branch">
+                            <div class="flow-box" style="margin-bottom:10px;"><b>Süresinde Çıkmazsa</b></div>
+                            <span class="dropzone" data-answer="gecici_butce">Boşluk 4</span>
+                        </div>
+                        <div class="split-branch">
+                            <div class="flow-box" style="margin-bottom:10px;"><b>O da Çıkmazsa (Eski Bütçe)</b></div>
+                            <span class="dropzone" data-answer="yeniden_degerleme">Boşluk 5</span> ile artırılır.
+                        </div>
+                    </div>
+                    <div class="flow-step" style="margin-top:20px;">
+                        <div class="flow-box">Kabul edilirse AYM'ye şekil davası <span class="dropzone" data-answer="10_gun">Boşluk 6</span> içinde açılır.</div>
+                    </div>
+                </div>
+
+                <div class="flowchart">
+                    <h3>⚖️ AYM Üyelik Şartları</h3>
+                    <div class="flow-step">
+                        <div class="flow-box">Üye seçilmek için en az <span class="dropzone" data-answer="45_yas">Boşluk 7</span>'ı doldurmak şarttır.</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-box">Seçilen üye <span class="dropzone" data-answer="12_yil">Boşluk 8</span> görev yapar.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="start-quiz-wrapper">
+                <button class="next-btn" id="startTestBtn" disabled>Şemaları Tamamladım, Teste Geç</button>
+            </div>
+        </div>
+
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer" style="display: none;">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options"></div>
+            
+            <div class="feedback" id="feedback"><div id="feedbackText"></div></div>
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Yargı ve Bütçe Testi Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. AŞAMA: NOTLAR -> ETKİNLİK GEÇİŞİ
+        const notesScrollArea = document.getElementById('notesScrollArea');
+        const goActivityBtn = document.getElementById('goActivityBtn');
+        const scrollMsg = document.getElementById('scrollMsg');
+
+        notesScrollArea.addEventListener('scroll', () => {
+            if (notesScrollArea.scrollTop + notesScrollArea.clientHeight >= notesScrollArea.scrollHeight - 10) {
+                goActivityBtn.disabled = false;
+                scrollMsg.style.display = 'none';
+            }
+        });
+
+        if (notesScrollArea.scrollHeight <= notesScrollArea.clientHeight) {
+            goActivityBtn.disabled = false;
+            scrollMsg.style.display = 'none';
+        }
+
+        goActivityBtn.addEventListener('click', () => {
+            document.getElementById('notesContainer').style.display = 'none';
+            document.getElementById('activityContainer').style.display = 'block';
+        });
+
+        // 2. AŞAMA: ŞEMA ETKİNLİĞİ MANTIĞI
+        let selectedWordBtn = null;
+        let correctPlacements = 0;
+        const totalPlacements = 8;
+        
+        const wordBtns = document.querySelectorAll('.word-item');
+        const dropzones = document.querySelectorAll('.dropzone');
+        const startTestBtn = document.getElementById('startTestBtn');
+
+        wordBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.classList.contains('used')) return;
+                wordBtns.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedWordBtn = btn;
+            });
+        });
+
+        dropzones.forEach(zone => {
+            zone.addEventListener('click', () => {
+                if (zone.classList.contains('filled')) return;
+                if (!selectedWordBtn) {
+                    zone.classList.add('error');
+                    setTimeout(() => zone.classList.remove('error'), 500);
+                    return;
+                }
+
+                if (zone.getAttribute('data-answer') === selectedWordBtn.getAttribute('data-val')) {
+                    zone.textContent = selectedWordBtn.textContent;
+                    zone.classList.add('filled');
+                    selectedWordBtn.classList.remove('selected');
+                    selectedWordBtn.classList.add('used');
+                    selectedWordBtn = null;
+                    correctPlacements++;
+
+                    if (correctPlacements === totalPlacements) {
+                        startTestBtn.disabled = false;
+                        startTestBtn.textContent = "Harika! Şimdi Testi Başlat";
+                        startTestBtn.style.animation = "pulse 1.5s infinite";
+                    }
+                } else {
+                    zone.classList.add('error');
+                    setTimeout(() => zone.classList.remove('error'), 500);
+                }
+            });
+        });
+
+        // ETKİNLİK -> TEST GEÇİŞİ
+        startTestBtn.addEventListener('click', () => {
+            document.getElementById('activityContainer').style.display = 'none';
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('quizContainer').style.display = 'block';
+            new QuizManager();
+        });
+
+        // 3. AŞAMA: TEST MANTIĞI (Tüm Notları Kapsayan Tam 32 Soru)
+        const QUIZ_DATA = [
+            { question: "Hâkim ve savcılar anayasal güvence kapsamında kendileri istemedikçe kaç yaşından önce emekli edilemezler?", options: ["60 Yaş", "63 Yaş", "65 Yaş", "67 Yaş"], correctAnswer: 2, meaning: "Hâkimlik teminatı gereği yaş sınırı 65'tir." },
+            { question: "Hâkim ve savcılar idari görevleri (yönetimsel işlemler) yönünden nereye bağlıdır?", options: ["Hakimler ve Savcılar Kurulu (HSK)", "Adalet Bakanlığı", "Cumhurbaşkanlığı", "Yargıtay"], correctAnswer: 1, meaning: "Hâkim ve savcılar idari yönden Adalet Bakanlığına bağlıdır." },
+            { question: "Hâkim ve savcıların idari denetimini kim yapar?", options: ["HSK Müfettişleri", "Danıştay Üyeleri", "Adalet Müfettişleri", "Cumhurbaşkanlığı Denetçileri"], correctAnswer: 2, meaning: "İdari yönden Adalet Bakanlığına bağlı oldukları için idari denetim Adalet Müfettişlerince yapılır." },
+            { question: "Görülmekte olan bir dava hakkında nerede hiçbir şekilde görüşme yapılamaz ve soru sorulamaz?", options: ["Basın toplantılarında", "Bakanlar Kurulunda", "Yasama Meclisinde (TBMM)", "Hakimler ve Savcılar Kurulunda"], correctAnswer: 2, meaning: "Yargı bağımsızlığı gereği TBMM'de görülmekte olan bir dava hakkında görüşme yapılamaz." },
+            { question: "Anayasa Mahkemesi (AYM) kaç üyeden oluşur ve üyeleri kimler seçer?", options: ["15 Üye (12 CB, 3 TBMM)", "15 Üye (Tamamını TBMM)", "13 Üye (7 CB, 6 TBMM)", "11 Üye (Tamamını CB)"], correctAnswer: 0, meaning: "AYM 15 üyeden oluşur. 12'sini Cumhurbaşkanı, 3'ünü TBMM seçer." },
+            { question: "Yargıtay üyelerinin tamamını aşağıdakilerden hangisi seçer?", options: ["Cumhurbaşkanı", "TBMM", "Hakimler ve Savcılar Kurulu (HSK)", "Adalet Bakanlığı"], correctAnswer: 2, meaning: "Yargıtay üyelerinin tamamını HSK seçer." },
+            { question: "Danıştay üyelerinin seçimi hangi oranda ve kimler tarafından yapılır?", options: ["Tamamı HSK tarafından", "1/2 CB, 1/2 HSK", "1/4 CB, 3/4 HSK", "3/4 CB, 1/4 HSK"], correctAnswer: 2, meaning: "Danıştay üyelerinin 1/4'ünü Cumhurbaşkanı, 3/4'ünü HSK seçer." },
+            { question: "Kendi başkanını kendi üyeleri içinden seçemeyen ve başkanını Anayasa Mahkemesi'nin belirlediği yüksek mahkeme hangisidir?", options: ["Yargıtay", "Danıştay", "Uyuşmazlık Mahkemesi", "Sayıştay"], correctAnswer: 2, meaning: "Uyuşmazlık Mahkemesi başkanı AYM kendi üyeleri arasından seçer." },
+            { question: "Anayasa Mahkemesi, Yargıtay ve Danıştay üyelerinin görev süresi kaç yıldır?", options: ["4 Yıl", "6 Yıl", "10 Yıl", "12 Yıl"], correctAnswer: 3, meaning: "Yüksek mahkeme üyeleri 12 yıllığına seçilir (bir kez seçilebilirler)." },
+            { question: "Anayasa Mahkemesi (AYM) üyesi seçilebilmek için kaç yaşını doldurmuş olmak ve en az kaç yıl fiilen hizmet yapmış olmak gerekir?", options: ["40 yaş - 15 yıl", "45 yaş - 20 yıl", "50 yaş - 25 yıl", "65 yaş - 10 yıl"], correctAnswer: 1, meaning: "AYM üyesi olmak için asgari yaş 45, hizmet süresi şartı 20 yıldır." },
+            { question: "Anayasa Mahkemesi'ne (AYM) \"bireysel başvuru\" hakkı hangi yıl anayasamıza girmiştir ve başvuru süresi kaç gündür?", options: ["2001 - 60 Gün", "2010 - 30 Gün", "2017 - 15 Gün", "1982 - Süresiz"], correctAnswer: 1, meaning: "Bireysel başvuru 2010 değişikliği ile gelmiş olup, olağan yollar tüketildikten sonra 30 gün içinde yapılır." },
+            { question: "Anayasa Mahkemesi aşağıdaki konulardan hangisinde karar alırken 2/3 oranında \"nitelikli çoğunluk\" arar?", options: ["Sadece parti kapatma davalarında", "Bireysel başvurularda", "Anayasa değişikliği iptali, parti kapatma ve mali yardımdan yoksun bırakma", "Yüce Divan kararlarında"], correctAnswer: 2, meaning: "Bu üç hayati kararda (iptal, kapatma, mali ceza) AYM 2/3 nitelikli çoğunluk arar." },
+            { question: "Yüce Divan yargılamasını AYM yapar. Peki, Yüce Divan'da savcılık görevini hangi makam üstlenir?", options: ["Adalet Bakanı", "HSK Başkanı", "Yargıtay Cumhuriyet Başsavcısı", "Danıştay Başsavcısı"], correctAnswer: 2, meaning: "Yüce Divanda savcı, Yargıtay Cumhuriyet Başsavcısı (veya vekili)'dir." },
+            { question: "Aşağıdakilerden hangisi Yüce Divan'da YARGILANMAYAN kişilerden biridir?", options: ["Cumhurbaşkanı", "Bakanlar", "Milletvekilleri", "Genelkurmay Başkanı"], correctAnswer: 2, meaning: "Milletvekilleri (bakan olmayanlar), MİT Başkanı, Emniyet Gn. Md. gibi isimler Yüce Divan'da yargılanmaz." },
+            { question: "Yargıtay Cumhuriyet Başsavcısını aşağıdakilerden hangisi, kaç yıllığına seçer?", options: ["HSK - 4 Yıl", "Cumhurbaşkanı - 4 Yıl", "TBMM - 12 Yıl", "Adalet Bakanı - 6 Yıl"], correctAnswer: 1, meaning: "Yargıtay genel kurulunun gösterdiği adaylar arasından CB tarafından 4 yıllığına seçilir." },
+            { question: "Hakimler ve Savcılar Kurulu (HSK) kaç üyeden oluşur ve başkanı kimdir?", options: ["11 Üye - TBMM Başkanı", "13 Üye - Adalet Bakanı", "15 Üye - Cumhurbaşkanı", "21 Üye - Yargıtay Başkanı"], correctAnswer: 1, meaning: "HSK 13 üyeden oluşur ve başkanı Adalet Bakanıdır." },
+            { question: "HSK üyelerinin görev süresi kaç yıldır ve süresi biten üye tekrar seçilebilir mi?", options: ["4 Yıl - Tekrar Seçilebilir", "4 Yıl - Seçilemez", "12 Yıl - Seçilemez", "6 Yıl - Tekrar Seçilebilir"], correctAnswer: 0, meaning: "HSK üyeleri 4 yıllığına seçilir ve süreleri bitince yeniden seçilebilirler." },
+            { question: "HSK'nın hangi kararına karşı yargı yolu açıktır (itiraz edilebilir)?", options: ["Tüm kararlarına", "Yer değiştirme cezalarına", "Meslekten çıkarma kararlarına", "Hiçbir kararına"], correctAnswer: 2, meaning: "HSK'nın sadece \"meslekten çıkarma\" kararına yargı yolu açıktır." },
+            { question: "Sayıştay kimin adına mali denetim yapar ve mahalli idareleri (belediyeleri) denetleme yetkisi var mıdır?", options: ["Cumhurbaşkanı adına - Hayır", "TBMM adına - Evet", "Danıştay adına - Evet", "Maliye Bakanlığı adına - Hayır"], correctAnswer: 1, meaning: "Sayıştay, TBMM adına denetim yapar ve mahalli idareleri de denetler." },
+            { question: "Sayıştay kararlarına karşı kaç gün içinde \"yeniden inceleme\" başvurusu yapılabilir?", options: ["7 Gün", "10 Gün", "15 Gün", "30 Gün"], correctAnswer: 2, meaning: "Sayıştay kararlarına 15 gün içinde itiraz edilebilir, sonrasındaki karar kesindir." },
+            { question: "Vergi ve benzeri mali konularda Danıştay ile Sayıştay kararları arasında çelişki olursa hangi mahkemenin kararı esas alınır?", options: ["Sayıştay", "Danıştay", "Uyuşmazlık Mahkemesi", "Anayasa Mahkemesi"], correctAnswer: 1, meaning: "İki kurum çelişirse Danıştay kararı üstün tutulur." },
+            { question: "Askeri yargı (Askeri Yargıtay vb.) anayasamızdan ne zaman tamamen kaldırılmıştır?", options: ["2001", "2010", "2017", "Hala devam etmektedir"], correctAnswer: 2, meaning: "2017 Anayasa değişikliği ile disiplin mahkemeleri hariç askeri yargı tamamen kaldırılmıştır." },
+            { question: "Milletvekilliğinin meclis kararıyla düşürülmesi (istifa, devamsızlık) hallerinde iptal istemiyle AYM'ye başvuru süresi ve AYM'nin karar süresi nedir?", options: ["3 Gün - 10 Gün", "7 Gün - 15 Gün", "10 Gün - 30 Gün", "15 Gün - 60 Gün"], correctAnswer: 1, meaning: "Vekil 7 gün içinde iptal davası açar, AYM 15 gün içinde kesin kararını verir." },
+            { question: "Merkezi Yönetim Bütçe Kanunu teklifi mali yıl başından en az kaç gün önce TBMM'ye sunulur?", options: ["30 Gün", "55 Gün", "75 Gün", "90 Gün"], correctAnswer: 2, meaning: "Bütçe teklifini Cumhurbaşkanı 75 gün önce TBMM'ye sunar." },
+            { question: "Bütçe kanunu teklifi TBMM Komisyonunda ve Genel Kurulda sırasıyla kaçar gün görüşülür?", options: ["30 Gün - 30 Gün", "45 Gün - 30 Gün", "55 Gün - 20 Gün", "60 Gün - 15 Gün"], correctAnswer: 2, meaning: "Teklif, 55 gün Plan ve Bütçe Komisyonunda, 20 gün ise Genel Kurulda görüşülür (Toplam 75 gün)." },
+            { question: "Bütçe kanunu süresi içerisinde Meclisten geçip yasalaşamazsa hangi bütçe çıkarılır?", options: ["Milli Güvenlik Bütçesi", "Acil Durum Bütçesi", "Geçici Bütçe", "Cumhurbaşkanlığı Bütçesi"], correctAnswer: 2, meaning: "Bütçe kanunu çıkmazsa geçici bütçe kanunu çıkarılır." },
+            { question: "Eğer \"Geçici Bütçe\" de çıkarılamazsa devletin mali işleyişi nasıl devam eder?", options: ["TBMM tatil edilir.", "Cumhurbaşkanı bütçeyi kararname ile tek başına belirler.", "Bir önceki yılın bütçesi 'yeniden değerleme oranı' ile artırılarak uygulanır.", "Maliye Bakanlığı yeni bir teklif sunana kadar harcama yapılamaz."], correctAnswer: 2, meaning: "Anayasa'ya göre, hiçbir bütçe çıkmazsa yeni bütçe kabul edilene kadar geçen yılın bütçesi yeniden değerleme oranına göre artırılarak uygulanır." },
+            { question: "Genel kanunlara şekil bakımından iptal davası açma süresi 60 gün iken, BÜTÇE KANUNLARINA şekil bakımından iptal davası açma süresi kaç gündür?", options: ["7 Gün", "10 Gün", "15 Gün", "30 Gün"], correctAnswer: 1, meaning: "Bütçe kanunlarının şekil yönünden denetimi için iptal davası açma süresi istisnai olarak 10 gündür." },
+            { question: "Uyuşmazlık Mahkemesi hangi iki yargı kolu arasındaki görev ve hüküm uyuşmazlıklarını kesin olarak çözer?", options: ["Adli Yargı - Askeri Yargı", "Adli Yargı - İdari Yargı", "İdari Yargı - Anayasa Yargısı", "Sayıştay - Danıştay"], correctAnswer: 1, meaning: "Uyuşmazlık mahkemesi sadece adli ve idari yargı makamları arasındaki uyuşmazlıklara bakar." },
+            { question: "Aşağıdakilerden hangisi HSK'nın (Hakimler ve Savcılar Kurulu) \"Doğal\" üyesidir?", options: ["Adalet Bakanı Yardımcısı", "Yargıtay Başkanı", "Cumhurbaşkanı Yardımcısı", "TBMM Başkanı"], correctAnswer: 0, meaning: "Adalet Bakanı kurulun başkanıdır, Adalet Bakanlığı İlgili Bakan Yardımcısı ise kurulun doğal üyesidir." },
+            { question: "Anayasa Mahkemesi kaç bölüm halinde çalışır?", options: ["Sadece Genel Kurul", "İki Bölüm ve Genel Kurul", "Üç Bölüm", "Dört Daire"], correctAnswer: 1, meaning: "AYM iki bölüm ve bir Genel Kurul halinde çalışır." },
+            { question: "Siyasi partilerin mali denetimini Anayasa Mahkemesi (AYM) gerçekleştirir. AYM bu denetimi yaparken hangi kurumdan yardım alır?", options: ["Danıştay", "Yargıtay", "Sayıştay", "Maliye Bakanlığı"], correctAnswer: 2, meaning: "AYM siyasi parti denetimini Sayıştay'dan yardım alarak yapar." }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                // Soruları mantıksal sıralamasında tutmak için karıştırmıyoruz.
+                this.questions = [...QUIZ_DATA];
+                this.init();
+            }
+            
+            init() {
+                document.getElementById('total').textContent = this.questions.length;
+                document.getElementById('nextBtn').addEventListener('click', () => this.nextQuestion());
+                this.showCurrentQuestion();
+            }
+            
+            showCurrentQuestion() {
+                const q = this.questions[this.currentQuestionIndex];
+                document.getElementById('question').textContent = `${this.currentQuestionIndex + 1}. ${q.question}`;
+                
+                const optionsDiv = document.getElementById('options');
+                optionsDiv.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn fade-in';
+                    btn.textContent = opt;
+                    btn.addEventListener('click', () => this.handleAnswer(idx, q));
+                    optionsDiv.appendChild(btn);
+                });
+                
+                document.getElementById('feedback').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('progress').textContent = this.currentQuestionIndex + 1;
+                document.getElementById('progressBar').style.width = `${((this.currentQuestionIndex + 1) / this.questions.length) * 100}%`;
+            }
+            
+            handleAnswer(selected, q) {
+                const btns = document.querySelectorAll('.option-btn');
+                btns.forEach((b, i) => {
+                    b.disabled = true;
+                    if (i === q.correctAnswer) b.classList.add('correct');
+                    else if (i === selected) b.classList.add('incorrect');
+                });
+                
+                if (selected === q.correctAnswer) {
+                    this.score++;
+                    document.getElementById('score').textContent = this.score;
+                    this.showFeedback(true, q);
+                } else {
+                    this.showFeedback(false, q);
+                }
+                document.getElementById('nextBtn').style.display = 'block';
+            }
+            
+            showFeedback(isCorrect, q) {
+                const fb = document.getElementById('feedback');
+                fb.style.display = 'block';
+                fb.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+                document.getElementById('feedbackText').innerHTML = 
+                    isCorrect ? `✅ Doğru!<br><br>${q.meaning}` : `❌ Yanlış! Doğru cevap: <strong>${q.options[q.correctAnswer]}</strong><br><br>${q.meaning}`;
+            }
+            
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.questions.length) this.showCurrentQuestion();
+                else this.endQuiz();
+            }
+            
+            endQuiz() {
+                document.getElementById('quizContainer').style.display = 'none';
+                document.getElementById('resultsContainer').style.display = 'block';
+                const p = Math.round((this.score / this.questions.length) * 100);
+                document.getElementById('finalScore').textContent = `${this.score}/${this.questions.length} (${p}%)`;
+                
+                let msg = p >= 90 ? "Kusursuz! Yargı ve Bütçe konularını yalamış yutmuşsunuz." : p >= 70 ? "Çok iyi! Detaylara epey hakimsiniz." : "Süreler ve mahkeme yapılarına biraz daha çalışmalısınız.";
+                document.getElementById('resultMessage').textContent = msg;
+                
+                const wl = document.getElementById('wordList');
+                this.questions.forEach((q, i) => {
+                    wl.innerHTML += `<div class="word-card fade-in"><div class="word">${i+1}. ${q.question}</div><div style="color:var(--success); font-weight:bold; margin-bottom:5px;">Cevap: ${q.options[q.correctAnswer]}</div><div class="meaning">${q.meaning}</div></div>`;
+                });
+            }
+        }
+    </script>
+</body>
+</html>

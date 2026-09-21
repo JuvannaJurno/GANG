@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEB-AGS Vatandaşlık Testi</title>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --success: #388E3C;
+            --danger: #C62828;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --accent: #4CAF50;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "⚖️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(46, 125, 50, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-cover:hover {
+            background-color: rgba(46, 125, 50, 0.85);
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(56, 142, 60, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(198, 40, 40, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 125, 50, 0.3);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .word {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        .meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .category {
+            display: inline-block;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .category-siyasi { background: #2E7D32; }
+        .category-vatandaslik { background: #4CAF50; }
+        .category-genel { background: #1B5E20; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option-btn {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .cat-image {
+                max-width: 150px;
+                max-height: 120px;
+            }
+            
+            .cat-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ MEB-AGS Vatandaşlık</h1>
+            <div class="subtitle">Temel Hak ve Ödevler II - Siyasi Hak ve Ödevler</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>İlerleme: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Cevapları görmek için tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Test Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="word-list" id="wordList"></div>
+            
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        // 📝 Vatandaşlık - Temel Hak ve Ödevler II - Siyasi Hak ve Ödevler Soruları 📝
+        const QUIZ_DATA = [
+            {
+                question: "Siyasi Hak ve Ödevler bağlamında, 'Türk devletine vatandaşlık bağı ile bağlı olan herkes Türktür.' ifadesi aşağıdakilerden hangisini tanımlar?",
+                options: ["Seçme hakkını", "Türk vatandaşlığının tanımını", "Vatandaşlıktan çıkarılma şartlarını", "Yabancıların haklarını"],
+                correctAnswer: 1,
+                meaning: "Anayasa'nın 66. maddesi: 'Türk Devletine vatandaşlık bağı ile bağlı olan herkes Türktür.' Bu ifade Türk vatandaşlığının tanımını yapar.",
+                category: "Vatandaşlık"
+            },
+            {
+                question: "Türk vatandaşlığının kazanılması ile ilgili aşağıdakilerden hangisi doğrudur?",
+                options: ["Sadece Türk babanın çocuğu Türk vatandaşı olur.", "Sadece Türk annenin çocuğu Türk vatandaşı olur.", "Türk babanın veya Türk annenin çocuğu Türk vatandaşıdır.", "Türk vatandaşlığı sadece doğumla kazanılamaz."],
+                correctAnswer: 2,
+                meaning: "Vatandaşlık Kanunu'na göre, Türk baba veya Türk anneden doğan çocuk, Türk vatandaşı sayılır. Bu, soy bağı (nesep) yoluyla vatandaşlık kazanmadır.",
+                category: "Vatandaşlık"
+            },
+            {
+                question: "Vatandaşlıktan çıkarma kararını verme yetkisi kime aittir?",
+                options: ["Danıştay", "TBMM", "İçişleri Bakanı", "Cumhurbaşkanı"],
+                correctAnswer: 3,
+                meaning: "Vatandaşlıktan çıkarma kararı, Cumhurbaşkanı kararı ile verilir. Bu yetki 2017 Anayasa değişikliği ile Bakanlar Kurulu'ndan Cumhurbaşkanı'na devredilmiştir.",
+                category: "Vatandaşlık"
+            },
+            {
+                question: "Vatandaşlıktan çıkarılan bir kişi, bu karara itirazını nereye yapabilir?",
+                options: ["Anayasa Mahkemesi'ne", "Yargıtay'a", "Danıştay'a", "İdare Mahkemesi'ne"],
+                correctAnswer: 2,
+                meaning: "Vatandaşlıktan çıkarma kararlarına karşı yargı yolu açıktır ve itiraz Danıştay'a yapılır.",
+                category: "Vatandaşlık"
+            },
+            {
+                question: "Türkiye Cumhuriyeti vatandaşlığına giriş ve çıkış iznini veren merci aşağıdakilerden hangisidir?",
+                options: ["Cumhurbaşkanlığı", "İçişleri Bakanlığı", "Dışişleri Bakanlığı", "Nüfus ve Vatandaşlık İşleri Genel Müdürlüğü"],
+                correctAnswer: 2,
+                meaning: "Vatandaşlık Kanunu'na göre, vatandaşlığa giriş ve çıkış izni, Dışişleri Bakanlığı'nın görüşü alınarak verilir.",
+                category: "Vatandaşlık"
+            },
+            {
+                question: "Seçme hakkı (oy kullanma) bakımından aşağıdaki gruplardan hangisinin oy kullanması yasaktır?",
+                options: ["Tutuklular", "Subaylar", "Silahaltındaki er ve erbaşlar", "Çifte vatandaşlar"],
+                correctAnswer: 2,
+                meaning: "Silahaltındaki er ve erbaşlar, askerlik hizmetlerini yaparken oy kullanamazlar. Subaylar ise oy kullanabilir.",
+                category: "Siyasi"
+            },
+            {
+                question: "Aşağıdakilerden hangisi seçimlerde oy kullanamaz?",
+                options: ["Askeri öğrenciler", "Taksirli suçlardan hükümlüler", "Tutuklular", "Çifte vatandaşlar"],
+                correctAnswer: 0,
+                meaning: "Askeri öğrenciler, askeri okullarda öğrenim görürken oy kullanamazlar. Taksirli suçlardan hükümlüler ise oy kullanabilir.",
+                category: "Siyasi"
+            },
+            {
+                question: "Hangi suç türünden dolayı ceza infaz kurumunda bulunan hükümlüler oy kullanamaz?",
+                options: ["Taksirli suçlar hariç tüm suçlardan hükümlüler", "Sadece taksirli suçlardan hükümlüler", "Sadece siyasi suçlardan hükümlüler", "Tüm hükümlüler oy kullanabilir."],
+                correctAnswer: 0,
+                meaning: "Taksirli suçlar hariç, bir suçtan dolayı hüküm giymiş olanlar ceza infaz kurumlarında bulundukları sürece oy kullanamazlar.",
+                category: "Siyasi"
+            },
+            {
+                question: "Aşağıdakilerden hangisinin seçimlerde oy kullanmasında bir engel yoktur?",
+                options: ["Subaylar", "Askeri öğrenciler", "Taksirli suçlar hariç hükümlüler", "Silahaltındaki erbaşlar"],
+                correctAnswer: 0,
+                meaning: "Subaylar, askeri personel olmalarına rağmen oy kullanma hakkına sahiptir. Diğer seçeneklerdeki grupların oy kullanması yasaktır.",
+                category: "Siyasi"
+            },
+            {
+                question: "Yurt dışında yaşayan vatandaşların sınır kapılarında oy kullanma hakkını ilk kez elde ettiği yıl aşağıdakilerden hangisidir?",
+                options: ["1983", "1995", "2008", "2010"],
+                correctAnswer: 1,
+                meaning: "Yurt dışındaki vatandaşlar, 1995 yılında yapılan düzenleme ile sınır kapılarında oy kullanma hakkını elde etmişlerdir.",
+                category: "Siyasi"
+            },
+            {
+                question: "Yurt dışındaki vatandaşların, bulundukları ülkedeki temsilciliklerde oy kullanma hakkını elde ettiği yıl aşağıdakilerden hangisidir?",
+                options: ["1983", "1995", "2008", "2017"],
+                correctAnswer: 2,
+                meaning: "Yurt dışındaki vatandaşlar, 2008 yılında yapılan düzenleme ile bulundukları ülkedeki temsilciliklerde oy kullanma hakkını elde etmişlerdir.",
+                category: "Siyasi"
+            },
+            {
+                question: "Seçimlerin ertelenebilmesi için tek şart aşağıdakilerden hangisidir?",
+                options: ["Ekonomik kriz", "Doğal afet", "Savaş hali", "Salgın hastalık"],
+                correctAnswer: 2,
+                meaning: "Anayasa'nın 78. maddesine göre, seçimler ancak savaş sebebiyle ertelenebilir. Bu durumda erteleme kararı TBMM üye tam sayısının beşte üç çoğunluğu ile alınır.",
+                category: "Siyasi"
+            },
+            {
+                question: "Seçim kanunlarında yapılan bir değişiklik, ne kadar süre içinde yapılan seçimlerde uygulanamaz?",
+                options: ["6 ay", "1 yıl", "2 yıl", "Hemen uygulanır."],
+                correctAnswer: 1,
+                meaning: "Seçim kanunlarında yapılan değişiklikler, yürürlüğe girdikleri tarihten itibaren bir yıl içinde yapılacak seçimlerde uygulanamaz.",
+                category: "Siyasi"
+            },
+            {
+                question: "Türkiye'de genel seçimlerde kullanılan seçim sistemi aşağıdakilerden hangisidir?",
+                options: ["Dar bölge çoğunluk sistemi", "Basit çoğunluk sistemi", "D'Hondt sistemi (Nispi temsil)", "Tercihli oy sistemi"],
+                correctAnswer: 2,
+                meaning: "Türkiye'de TBMM genel seçimlerinde, liste usulü çoğunluk sistemi değil, D'Hondt sistemi (nispi temsil) uygulanmaktadır.",
+                category: "Siyasi"
+            },
+            {
+                question: "TBMM genel seçimlerinde geçerli olan ülke barajı yüzde kaçtır?",
+                options: ["%5", "%7", "%10", "%3"],
+                correctAnswer: 1,
+                meaning: "TBMM genel seçimlerinde geçerli olan ülke barajı %7'dir. Bu barajı geçemeyen partiler milletvekili çıkaramaz.",
+                category: "Siyasi"
+            },
+            {
+                question: "Siyasi partilerin kuruluşu ile ilgili aşağıdakilerden hangisi doğrudur?",
+                options: ["İzin alarak kurulurlar.", "Kayıt yaptırarak kurulurlar.", "İzin almadan kurulurlar.", "Bakanlar Kurulu kararı ile kurulurlar."],
+                correctAnswer: 2,
+                meaning: "Siyasi partiler, izin almadan kurulurlar. Kuruluşları kayıt esasına dayanır, izin esasına değil.",
+                category: "Siyasi"
+            },
+            {
+                question: "Bir siyasi parti en az kaç kişi ile kurulabilir?",
+                options: ["15", "30", "50", "100"],
+                correctAnswer: 1,
+                meaning: "Bir siyasi parti en az 30 Türk vatandaşı tarafından kurulabilir.",
+                category: "Siyasi"
+            },
+            {
+                question: "Siyasi partiler için aşağıdakilerden hangisi yasaktır?",
+                options: ["Yurt dışında teşkilatlanmak", "Ticari faaliyette bulunmak", "Kongre düzenlemek", "Gençlik kolları oluşturmak"],
+                correctAnswer: 1,
+                meaning: "Siyasi partiler ticari faaliyette bulunamazlar. Gelirleri bağışlar, üyelik aidatları ve devlet yardımından oluşur.",
+                category: "Siyasi"
+            },
+            {
+                question: "Siyasi partilerin yurt dışında teşkilatlanması ile ilgili ne söylenebilir?",
+                options: ["Kesinlikle yasaktır.", "İzin almak şartıyla mümkündür.", "Yasak değildir, teşkilatlanabilirler.", "Sadece Avrupa ülkelerinde mümkündür."],
+                correctAnswer: 2,
+                meaning: "Siyasi partiler yurt dışında teşkilatlanabilirler, ancak yabancı devletlerden maddi yardım alamazlar.",
+                category: "Siyasi"
+            },
+            {
+                question: "Bir siyasi partinin devlet yardımı alabilmesi için, bir önceki seçimde ülke genelinde en az yüzde kaç oy almış olması gerekir?",
+                options: ["%1", "%3", "%7", "%10"],
+                correctAnswer: 1,
+                meaning: "Siyasi partilere devlet yardımı yapılabilmesi için, partinin bir önceki genel seçimde ülke genelinde en az %3 oranında oy almış olması gerekir.",
+                category: "Siyasi"
+            },
+            {
+                question: "Siyasi partilerin yabancı uyruklulardan mali yardım alması durumunda ne olur?",
+                options: ["Sadece para cezası alır.", "Kapatılma sebebidir.", "Yardım iade edilir, başka bir yaptırım uygulanmaz.", "Bir sonraki seçimde devlet yardımı alamaz."],
+                correctAnswer: 1,
+                meaning: "Siyasi partilerin yabancı devletlerden, uluslararası kuruluşlardan veya yabancı uyruklu kişilerden mali yardım alması, partinin kapatılma sebebidir.",
+                category: "Siyasi"
+            },
+            {
+                question: "Kapatılan bir siyasi partinin kurucuları ve üyeleri, ne kadar süre başka bir partide kurucu veya üye olamaz?",
+                options: ["1 yıl", "3 yıl", "5 yıl", "10 yıl"],
+                correctAnswer: 2,
+                meaning: "Kapatılan bir siyasi partinin kurucuları, yöneticileri ve üyeleri, 5 yıl süreyle başka bir siyasi partide kurucu, yönetici veya üye olamazlar.",
+                category: "Siyasi"
+            },
+            {
+                question: "Siyasi partilerin kapatılması kararını TBMM'de almak için gereken çoğunluk aşağıdakilerden hangisidir?",
+                options: ["Salt çoğunluk (1/2)", "Nitelikli çoğunluk (3/5)", "Beşte üç çoğunluk (3/5)", "Üçte iki çoğunluk (2/3)"],
+                correctAnswer: 3,
+                meaning: "Siyasi partilerin kapatılması için gereken TBMM kararı, üye tam sayısının üçte iki çoğunluğu (2/3) ile alınır.",
+                category: "Siyasi"
+            },
+            {
+                question: "Siyasi parti kapatma davasını açma yetkisi kime aittir?",
+                options: ["Adalet Bakanlığı'na", "Yargıtay Cumhuriyet Başsavcısı'na", "Anayasa Mahkemesi Başkanı'na", "TBMM Başkanı'na"],
+                correctAnswer: 1,
+                meaning: "Siyasi parti kapatma davasını açma yetkisi, Yargıtay Cumhuriyet Başsavcısı'na aittir.",
+                category: "Siyasi"
+            },
+            {
+                question: "Bir siyasi partinin kapatılmasına karar verme yetkisi hangi yargı organındadır?",
+                options: ["Yargıtay", "Danıştay", "Anayasa Mahkemesi", "Uyuşmazlık Mahkemesi"],
+                correctAnswer: 2,
+                meaning: "Siyasi partilerin kapatılmasına ilişkin davalara bakma ve karar verme yetkisi, Anayasa Mahkemesi'ne aittir.",
+                category: "Siyasi"
+            },
+            {
+    		question: "Siyasi partilere yapılan devlet yardımının denetimini hangi kurum yapar?",
+    		options: ["Sayıştay", "Anayasa Mahkemesi", "Yargıtay", "Maliye Bakanlığı"],
+    		correctAnswer: 1,
+    		meaning: "Siyasi partilere yapılan devlet yardımının denetimi Anayasa Mahkemesi tarafından yapılır. Anayasa'nın 69. maddesine göre, siyasi partilerin gelir ve giderleri ile seçim harcamaları Anayasa Mahkemesi'nin denetimine tabidir.",
+    		category: "Siyasi"
+            },
+            {
+                question: "Siyasi partilere yapılan devlet yardımının denetimini hangi kurum yapar?",
+                options: ["Sayıştay", "Anayasa Mahkemesi", "Yargıtay", "Maliye Bakanlığı"],
+                correctAnswer: 0,
+                meaning: "Siyasi partilere yapılan devlet yardımının denetimi, Sayıştay tarafından yapılır.",
+                category: "Siyasi"
+            },
+            {
+                question: "Aşağıdaki meslek gruplarından hangisi siyasi parti üyesi olamaz?",
+                options: ["Esnaf", "İşçi", "Hâkim ve Savcı", "Serbest avukat"],
+                correctAnswer: 2,
+                meaning: "Hâkimler ve savcılar, tarafsızlıklarını korumak için siyasi parti üyesi olamazlar.",
+                category: "Siyasi"
+            },
+            {
+                question: "'Yüksek yargı organı mensupları' ile ilgili aşağıdakilerden hangisi doğrudur?",
+                options: ["Siyasi parti üyesi olabilirler.", "Siyasi parti üyesi olamazlar.", "Sadece partiye üye olabilir, yönetici olamazlar.", "Emekli olduktan sonra üye olabilirler."],
+                correctAnswer: 1,
+                meaning: "Yüksek yargı organı mensupları (Anayasa Mahkemesi, Yargıtay, Danıştay, Uyuşmazlık Mahkemesi üyeleri) siyasi parti üyesi olamazlar.",
+                category: "Siyasi"
+            },
+            {
+                question: "Memurların siyasi parti üyeliği ile ilgili durum nedir?",
+                options: ["Üye olabilirler, ancak yönetici olamazlar.", "Üye olamazlar.", "Sadece sendika üyesi olabilirler.", "İzin almak şartıyla üye olabilirler."],
+                correctAnswer: 1,
+                meaning: "Memurlar, tarafsızlıklarını korumak için siyasi parti üyesi olamazlar.",
+                category: "Siyasi"
+            },
+            {
+                question: "'İşçi olmayan kamu görevlileri' siyasi parti üyesi olabilir mi?",
+                options: ["Evet, olabilirler.", "Hayır, olamazlar.", "Sadece belirli partilere üye olabilirler.", "Yarı zamanlı çalışıyorlarsa olabilirler."],
+                correctAnswer: 1,
+                meaning: "İşçi olmayan kamu görevlileri (memurlar) siyasi parti üyesi olamazlar. Sadece sendika üyesi olabilirler.",
+                category: "Siyasi"
+            },
+            {
+                question: "Türk Silahlı Kuvvetleri mensupları siyasi parti üyesi olabilir mi?",
+                options: ["Evet", "Hayır", "Sadece subaylar olamaz, astsubaylar olabilir.", "Sadece emekliler olabilir."],
+                correctAnswer: 1,
+                meaning: "Türk Silahlı Kuvvetleri mensupları (subay, astsubay, erbaş, er) siyasi parti üyesi olamazlar.",
+                category: "Siyasi"
+            },
+            {
+                question: "Aşağıdaki öğrenci gruplarından hangisi siyasi parti üyesi olamaz?",
+                options: ["Üniversite öğrencileri", "Yükseköğretim (üniversite) öğrencileri", "Yükseköğretim öncesi öğrenciler", "Yüksek lisans öğrencileri"],
+                correctAnswer: 2,
+                meaning: "Yükseköğretim öncesi öğrenciler (ilkokul, ortaokul, lise öğrencileri) siyasi parti üyesi olamazlar. Üniversite öğrencileri ise üye olabilirler.",
+                category: "Siyasi"
+            },
+            {
+                question: "Memurlar, mal bildirimini hangi yıllarda yapmakla yükümlüdür?",
+                options: ["Sonu 0 ve 2 ile biten yıllarda", "Sonu 5 ve 0 ile biten yıllarda", "Her yıl", "Sadece göreve başlarken"],
+                correctAnswer: 1,
+                meaning: "Memurlar, sonu 5 ve 0 ile biten yıllarda mal bildiriminde bulunmak zorundadırlar.",
+                category: "Siyasi"
+            },
+            {
+                question: "'Vatan hizmeti' aşağıdaki hak ve ödev kategorilerinden hangisine girer?",
+                options: ["Kişisel Haklar", "Sosyal Haklar", "Siyasi Hak ve Ödevler", "Ekonomik Haklar"],
+                correctAnswer: 2,
+                meaning: "Vatan hizmeti (askerlik) bir yükümlülük olarak siyasi hak ve ödevler kapsamında değerlendirilir.",
+                category: "Siyasi"
+            },
+            {
+                question: "'Vergi ödevi' aşağıdaki hak ve ödev kategorilerinden hangisine girer?",
+                options: ["Sosyal ve Ekonomik Haklar", "Kişisel Haklar", "Siyasi Hak ve Ödevler", "Kültürel Haklar"],
+                correctAnswer: 2,
+                meaning: "Vergi ödevi, vatandaşlık bağının bir gereği olarak siyasi hak ve ödevler kapsamında yer alır.",
+                category: "Siyasi"
+            },
+            {
+                question: "Türkiye'de ikamet eden yabancılar, dilekçe hakkını hangi esasla kullanabilir?",
+                options: ["Hiç kullanamazlar.", "Doğrudan ve koşulsuz kullanabilirler.", "Karşılıklılık esasıyla kullanabilirler.", "Sadece İçişleri Bakanlığı'na dilekçe verebilirler."],
+                correctAnswer: 2,
+                meaning: "Türkiye'de ikamet eden yabancılar, karşılıklılık esasına göre dilekçe hakkını kullanabilirler. Yani kendi ülkeleri Türk vatandaşlarına bu hakkı tanıyorsa, Türkiye'deki yabancılar da bu hakkı kullanabilir.",
+                category: "Siyasi"
+            },
+            {
+                question: "Kamu Denetçiliği Kurumu (Ombudsmanlık) hangi yılda kurulmuştur?",
+                options: ["1982", "2001", "2010", "2017"],
+                correctAnswer: 2,
+                meaning: "Kamu Denetçiliği Kurumu (KDK), 2010 yılında yapılan Anayasa değişikliği ile kurulmuş ve 2012 yılında faaliyete geçmiştir.",
+                category: "Siyasi"
+            },
+            {
+                question: "Kamu Denetçiliği Kurumu, idari olarak kime bağlıdır?",
+                options: ["Cumhurbaşkanlığı'na", "Başbakanlığa (2018 öncesi)", "TBMM Başkanlığı'na", "Adalet Bakanlığı'na"],
+                correctAnswer: 2,
+                meaning: "Kamu Denetçiliği Kurumu, idari ve mali açıdan TBMM Başkanlığı'na bağlıdır.",
+                category: "Siyasi"
+            },
+            {
+                question: "Kamu Başdenetçisi kim tarafından ve ne kadar süre için seçilir?",
+                options: ["Cumhurbaşkanı tarafından, 5 yıl için", "TBMM Genel Kurulu tarafından gizli oyla, 4 yıl için", "Bakanlar Kurulu tarafından, 4 yıl için", "Anayasa Mahkemesi tarafından, 7 yıl için"],
+                correctAnswer: 1,
+                meaning: "Kamu Başdenetçisi, TBMM Genel Kurulu tarafından gizli oyla seçilir ve görev süresi 4 yıldır.",
+                category: "Siyasi"
+            }
+        ];
+
+        class QuizManager {
+            constructor() {
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.questions = [];
+                this.masteredWords = [];
+                
+                // DOM Elements
+                this.elements = {
+                    question: document.getElementById('question'),
+                    options: document.getElementById('options'),
+                    feedback: document.getElementById('feedback'),
+                    feedbackText: document.getElementById('feedbackText'),
+                    nextBtn: document.getElementById('nextBtn'),
+                    score: document.getElementById('score'),
+                    progress: document.getElementById('progress'),
+                    total: document.getElementById('total'),
+                    progressBar: document.getElementById('progressBar'),
+                    quizContainer: document.getElementById('quizContainer'),
+                    resultsContainer: document.getElementById('resultsContainer'),
+                    finalScore: document.getElementById('finalScore'),
+                    resultMessage: document.getElementById('resultMessage'),
+                    wordList: document.getElementById('wordList'),
+                    catCover: document.getElementById('catCover')
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.shuffleQuestions();
+                this.elements.total.textContent = this.questions.length;
+                this.setupEventListeners();
+                this.showCurrentQuestion();
+            }
+            
+            shuffleQuestions() {
+                this.questions = [...QUIZ_DATA];
+                for (let i = this.questions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [this.questions[i], this.questions[j]] = [this.questions[j], this.questions[i]];
+                }
+            }
+            
+            setupEventListeners() {
+                this.elements.catCover.addEventListener('click', () => this.removeCatCover());
+                this.elements.nextBtn.addEventListener('click', () => this.nextQuestion());
+            }
+            
+            removeCatCover() {
+                this.elements.catCover.style.display = 'none';
+            }
+            
+            showCurrentQuestion() {
+                const question = this.questions[this.currentQuestionIndex];
+                
+                // Soruyu göster
+                this.elements.question.textContent = question.question;
+                
+                // Kedi kapağını sıfırla
+                this.elements.catCover.style.display = 'flex';
+                
+                // Seçenekleri karıştır ve göster
+                this.displayOptions(question);
+                
+                // UI'ı sıfırla
+                this.resetQuestionUI();
+                
+                // İlerlemeyi güncelle
+                this.updateProgress();
+            }
+            
+            displayOptions(question) {
+                // Önceki seçenekleri temizle
+                this.elements.options.innerHTML = '';
+                
+                // Kedi kapağını ekle
+                this.elements.options.appendChild(this.elements.catCover);
+                
+                // Seçenekleri karıştır
+                const shuffledOptions = this.shuffleArray([...question.options]);
+                
+                // Her seçenek için buton oluştur
+                shuffledOptions.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'option-btn fade-in';
+                    button.textContent = option;
+                    button.addEventListener('click', () => this.handleAnswer(option, question));
+                    this.elements.options.appendChild(button);
+                });
+            }
+            
+            resetQuestionUI() {
+                this.elements.feedback.style.display = 'none';
+                this.elements.nextBtn.style.display = 'none';
+                this.elements.progress.textContent = this.currentQuestionIndex + 1;
+            }
+            
+            updateProgress() {
+                const progressPercent = ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
+                this.elements.progressBar.style.width = `${progressPercent}%`;
+            }
+            
+            handleAnswer(selectedOption, question) {
+                const buttons = document.querySelectorAll('.option-btn');
+                const correctOption = question.options[question.correctAnswer];
+                
+                // Tüm butonları devre dışı bırak
+                buttons.forEach(button => {
+                    button.disabled = true;
+                    
+                    // Doğru cevabı işaretle
+                    if (button.textContent === correctOption) {
+                        button.classList.add('correct');
+                    }
+                    
+                    // Yanlış seçileni işaretle
+                    if (button.textContent === selectedOption && button.textContent !== correctOption) {
+                        button.classList.add('incorrect');
+                    }
+                });
+                
+                // Puanı güncelle
+                const isCorrect = selectedOption === correctOption;
+                if (isCorrect) {
+                    this.score++;
+                    this.elements.score.textContent = this.score;
+                    
+                    // Öğrenilen kelimelere ekle
+                    this.addToMasteredWords(question);
+                }
+                
+                // Geri bildirimi göster
+                this.showFeedback(isCorrect, question, correctOption);
+                
+                // Sonraki butonunu göster
+                this.elements.nextBtn.style.display = 'block';
+            }
+            
+            addToMasteredWords(question) {
+                const alreadyExists = this.masteredWords.some(w => w.question === question.question);
+                if (!alreadyExists) {
+                    this.masteredWords.push(question);
+                }
+            }
+            
+            showFeedback(isCorrect, question, correctOption) {
+                this.elements.feedback.style.display = 'block';
+                this.elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+                
+                let feedbackHTML = '';
+                if (isCorrect) {
+                    feedbackHTML = `✅ Doğru!<br><br>${question.meaning}`;
+                } else {
+                    feedbackHTML = `❌ Yanlış!<br>Doğru cevap: <strong>${correctOption}</strong><br><br>${question.meaning}`;
+                }
+                
+                this.elements.feedbackText.innerHTML = feedbackHTML;
+            }
+            
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                
+                if (this.currentQuestionIndex < this.questions.length) {
+                    this.showCurrentQuestion();
+                } else {
+                    this.endQuiz();
+                }
+            }
+            
+            endQuiz() {
+                this.elements.quizContainer.style.display = 'none';
+                this.elements.resultsContainer.style.display = 'block';
+                
+                const percentage = Math.round((this.score / this.questions.length) * 100);
+                this.elements.finalScore.textContent = `${this.score}/${this.questions.length} (${percentage}%)`;
+                
+                this.showResultMessage(percentage);
+                this.displayAllWords();
+            }
+            
+            showResultMessage(percentage) {
+                let message = "";
+                if (percentage >= 90) {
+                    message = "Mükemmel! Siyasi Hak ve Ödevler konusunu çok iyi biliyorsunuz! 🏆";
+                } else if (percentage >= 70) {
+                    message = "Çok iyi! Temel bilgilere hakimsiniz. 👍";
+                } else if (percentage >= 50) {
+                    message = "Güzel! Bilginizi geliştirmeye devam edin. 💪";
+                } else {
+                    message = "Öğrenmeye devam! Konuyu tekrar etmeniz faydalı olacaktır. 📚";
+                }
+                
+                this.elements.resultMessage.textContent = message;
+            }
+            
+            displayAllWords() {
+                this.elements.wordList.innerHTML = '<h3 style="color: var(--primary); margin-bottom: 20px;">Öğrenilen Tüm Bilgiler</h3>';
+                
+                QUIZ_DATA.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'word-card fade-in';
+                    card.innerHTML = `
+                        <div class="word">${item.question}</div>
+                        <div class="meaning">${item.meaning}</div>
+                        <div class="category ${this.getCategoryClass(item.category)}">${item.category === "Siyasi" ? "Siyasi Hak ve Ödevler" : "Vatandaşlık"}</div>
+                    `;
+                    this.elements.wordList.appendChild(card);
+                });
+            }
+            
+            getCategoryClass(category) {
+                const classMap = {
+                    'Siyasi': 'category-siyasi',
+                    'Vatandaşlık': 'category-vatandaslik'
+                };
+                return classMap[category] || 'category-genel';
+            }
+            
+            shuffleArray(array) {
+                const newArray = [...array];
+                for (let i = newArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                }
+                return newArray;
+            }
+        }
+
+        // Uygulamayı başlat
+        document.addEventListener('DOMContentLoaded', () => {
+            new QuizManager();
+        });
+    </script>
+</body>
+</html>

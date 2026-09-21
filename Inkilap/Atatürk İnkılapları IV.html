@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MEB-AGS Atatürk İnkılapları - Ekonomi & Sosyal Alan</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F5F5DC;
+            --dark: #2F4F4F;
+            --accent: #D2691E;
+            --gold: #FFD700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "📜";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--accent);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(139, 69, 19, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .cat-text {
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            text-align: left;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📈 Atatürk İnkılapları IV</h1>
+            <div class="subtitle">Ekonomi, Bankacılık, Sanayi | Sağlık & Sosyal | Ulaşım & Nüfus</div>
+            <div class="subtitle" style="font-size:0.85rem; margin-top:5px;">(İzmir İktisat Kongresi – Devletçilik – Modernleşme)</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">📊 Puan: <span id="score">0</span></div>
+                <div>📌 Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">🐾 Şıkları görmek için bir sayıya (1-4) basın veya tıklayın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">➡️ Sonraki Soru (Boşluk)</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Konu Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()">🔄 Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        // ========== ATATÜRK İNKILAPLARI IV - EKONOMİ, SAĞLIK, ULAŞIM, NÜFUS ==========
+        const quizData = [
+            // İzmir İktisat Kongresi ve ekonomi politikaları (1-9)
+            { question: "Türkiye İktisat Kongresi (İzmir İktisat Kongresi), uluslararası arenada hangi önemli diplomatik görüşmelerin kesintiye uğradığı bir sırada toplanmıştır?", options: ["Mudanya Mütarekesi", "Paris Barış Konferansı", "Lozan Görüşmeleri", "Londra Konferansı"], correctAnswer: "C", meaning: "İzmir İktisat Kongresi (17 Şubat-4 Mart 1923), Lozan Barış Görüşmelerinin kesintiye uğradığı bir dönemde toplanmıştır." },
+            { question: "İzmir İktisat Kongresi'ne sanayici, tüccar, çiftçi ve işçi gibi farklı gruplardan 1135 delegenin katılması, kongrede hangi esasın uygulandığını gösterir?", options: ["Nüfusa Dayalı Temsil", "Siyasi Parti Temsili", "Mesleki Temsil", "Bölgesel Temsil"], correctAnswer: "C", meaning: "Kongreye katılım 'Mesleki Temsil' esasına göre sağlanmıştır; her meslek grubu kendi temsilcilerini seçmiştir." },
+            { question: "17 Şubat – 4 Mart 1923 tarihleri arasında toplanan İzmir İktisat Kongresi'nin başkanlığını hangi önemli isim yapmıştır?", options: ["Kâzım Karabekir", "Mustafa Kemal Atatürk", "İsmet İnönü", "Celal Bayar"], correctAnswer: "A", meaning: "Kongre başkanlığını Kâzım Karabekir Paşa yapmıştır; Mustafa Kemal ise kongreyi açış konuşması yapmıştır." },
+            { question: "İzmir İktisat Kongresi'nde ekonomik kalkınmanın kendi çabamızla gerçekleşmesi gerektiği öngörülerek kabul edilen tarihi kararların genel adı nedir?", options: ["Teşvik-i Sanayi Kanunu", "Misak-ı Millî", "Kabotaj Kanunu", "Misak-ı İktisadi Kararları"], correctAnswer: "D", meaning: "Ekonomik bağımsızlık için Misak-ı İktisadi (Ekonomi Andı) kabul edilmiştir; yabancı sermayeye karşı millî ekonomi vurgusu yapılmıştır." },
+            { question: "Misak-ı İktisadi kararlarına göre, sanayi tesisleri (endüstri kolları) kurulurken öncelikle aşağıdakilerden hangisine dikkat edilmesi kararlaştırılmıştır?", options: ["Yabancı yatırımcıların ortaklığına", "Ham maddesinin yurt içinde olmasına", "Sadece devlet eliyle kurulmasına", "Yurt dışına ihraç edilme zorunluluğuna"], correctAnswer: "B", meaning: "Ham maddesi yurt içinde olan endüstri kolları kurulacak, dışa bağımlılık azaltılacaktır." },
+            { question: "İzmir İktisat Kongresi'nde işçi haklarını iyileştirmek amacıyla aşağıdaki haklardan hangisinin verilmesi kararlaştırılmıştır?", options: ["Sadece ücretsiz sağlık hizmeti", "Yönetimde söz sahibi olma", "Sendika kurma ve grev hakkı", "Zorunlu mesleki eğitim"], correctAnswer: "C", meaning: "Kongre kararları işçilere sendika kurma ve grev hakkı tanınmasını öngörmüştür." },
+            { question: "İzmir İktisat Kongresi kararlarına göre, tarımsal üretimde hedeflenen temel yapısal dönüşüm aşağıdakilerden hangisidir?", options: ["Tarımın tamamen devletleştirilmesi", "Köylü işletmelerinden (küçük işletmelerden) büyük üretim ünitelerine geçilmesi", "Sadece ihracata yönelik ürünlerin ekilmesi", "Tarımda makineleşmenin yasaklanması"], correctAnswer: "B", meaning: "Küçük işletmelerden büyük üretim ünitelerine geçiş hedeflenmiş, modern tarım teşvik edilmiştir." },
+            { question: "Atatürk'ün 'Siyasal, askerî zaferler ne kadar büyük olurlarsa olsunlar... meydana gelen zaferler devamlı olmaz, az zamanda söner.' sözündeki boşluğu dolduracak, zaferlerin kalıcılığını sağlayan unsur hangisidir?", options: ["Nüfus artışıyla desteklenmezlerse", "Güçlü müttefikler bulunmazsa", "Ekonomik zaferlerle taçlandırılmazlarsa", "Eğitim reformu yapılmazsa"], correctAnswer: "C", meaning: "Atatürk, askerî zaferlerin ekonomik zaferlerle desteklenmesi gerektiğini vurgulamıştır. Ekonomik bağımsızlık olmadan siyasî bağımsızlık kalıcı olmaz." },
+            { question: "Mustafa Kemal Atatürk; 'Kılıçla fütuhat yapanlar, sabanla fütuhat yapanlara neticede mevkilerini terk etmeye mahkûmdur.' sözünde 'saban' kelimesi ile neyin gücüne vurgu yapmıştır?", options: ["Askeri teknolojinin", "Diplomasinin", "Tarımsal ve ekonomik üretimin", "Hukuk sisteminin"], correctAnswer: "C", meaning: "Saban, tarımı ve ekonomik üretimi temsil eder; kalıcı başarı üretim ve ekonomik kalkınma ile sağlanır." },
+            // Tarım politikaları (10-17)
+            { question: "Cumhuriyet döneminde çiftçiyi rahatlatmak, üretimin devamlılığını sağlamak ve çiftçiyi teşvik etmek amacıyla 1925 yılında kaldırılan vergi aşağıdakilerden hangisidir?", options: ["Çiftbozan Vergisi", "Aşar (Öşür) Vergisi", "Ağıl Vergisi", "Ağnam Vergisi"], correctAnswer: "B", meaning: "1925'te Aşar vergisi kaldırılmış, böylece ürünün onda biri oranında alınan vergi ortadan kalkmış, köylü rahatlatılmıştır." },
+            { question: "Türk çiftçisine modern tarım usullerinin uygulamalı olarak öğretilmesi amacıyla 1925 yılında açılan kurum aşağıdakilerden hangisidir?", options: ["Ziraat Bankası", "Yüksek Ziraat Enstitüsü", "Atatürk Orman Çiftliği", "Tarım Kredi Kooperatifleri"], correctAnswer: "C", meaning: "Atatürk Orman Çiftliği (1925), modern tarım yöntemlerini göstermek, örnek bir tarım işletmesi olarak açılmıştır." },
+            { question: "Çiftçinin nitelikli tohum ve gübre ihtiyacını karşılamak amacıyla 1925 yılında 'İlk Tohum ve Gübre Islah İstasyonu' hangi ilimizde açılmıştır?", options: ["Ankara", "İzmir", "Konya", "Eskişehir"], correctAnswer: "D", meaning: "İlk Tohum ve Gübre Islah İstasyonu Eskişehir'de açılmış, tarımsal verimlilik hedeflenmiştir." },
+            { question: "1929 yılında çiftçiyi topraklandırmak için alınan 'Toprak Reformu' kararının başarısız olmasında yeterli sulama, makine ve sermaye eksikliğinin yanı sıra hangi küresel olay etkili olmuştur?", options: ["İkinci Dünya Savaşı", "1929 Dünya Ekonomik Krizi", "Milletler Cemiyeti'nin kurulması", "Soğuk Savaş'ın başlaması"], correctAnswer: "B", meaning: "1929 Dünya Ekonomik Krizi (Büyük Buhran) reformun başarısız olmasında temel nedenlerdendir; devlet bütçesi daralmıştır." },
+            { question: "Cumhuriyetin ilk yıllarında tarımsal gelişmenin bilimsel yöntemlerle sağlanması amacıyla 1933 yılında kurulan akademik kurum aşağıdakilerden hangisidir?", options: ["Ziraat Kombinaları", "Toprak Mahsulleri Ofisi", "Yüksek Ziraat Enstitüsü", "Hıfzıssıhha Enstitüsü"], correctAnswer: "C", meaning: "1933 yılında Yüksek Ziraat Enstitüsü kurulmuş, modern tarım biliminin temelleri atılmıştır." },
+            { question: "Çiftçilerin dayanışmasını artırmak ve kredi ihtiyaçlarını karşılamak için 1936'da kurulan Tarım Kredi Kooperatiflerinin ilki nerede faaliyete geçmiştir?", options: ["Ankara - Polatlı", "Mersin - Silifke (Tekir/Atayurt)", "İzmir - Ödemiş", "Adana - Çukurova"], correctAnswer: "B", meaning: "İlk kooperatif Mersin Silifke'ye bağlı Tekir beldesinde (Atayurt) kurulmuştur." },
+            { question: "Tarım aletleri, makineleri ve ilaçlarının satın alınarak halka tanıtılması ve tarımda makineleşmenin teşviki amacıyla 1925'te kurulan kurum hangisidir?", options: ["Ziraat Bankası", "Toprak Mahsulleri Ofisi", "Ziraat Kombinaları", "İller Bankası"], correctAnswer: "C", meaning: "1925'te Ziraat Kombinaları kurulmuş, modern tarım aletleri halka ulaştırılmıştır." },
+            { question: "Tarımsal ürün piyasasını düzenlemek, üreticiyi korumak ve stoklama işlemlerini yürütmek amacıyla 1938 yılında açılan kurum aşağıdakilerden hangisidir?", options: ["Yüksek Ziraat Enstitüsü", "Tarım Kredi Kooperatifleri", "Devlet Üretme Çiftlikleri", "Toprak Mahsulleri Ofisi"], correctAnswer: "D", meaning: "Ürün piyasasını düzenleme, fiyat istikrarı sağlama görevi Toprak Mahsulleri Ofisi'ne verilmiştir." },
+            // Bankacılık ve finans (18-28)
+            { question: "1924 yılında kurulan, Türkiye Cumhuriyeti'nin ilk özel bankası olma özelliğini taşıyan ve İtibar-ı Millî Bankası ile birleşen banka hangisidir?", options: ["Merkez Bankası", "İş Bankası", "Halkbank", "Ziraat Bankası"], correctAnswer: "B", meaning: "İş Bankası (1924) ilk özel bankadır; milli sermaye ile kurulmuş, İtibar-ı Millî ile birleşmiştir." },
+            { question: "Türkiye'nin ilk özel bankası olan İş Bankası'nın ilk genel müdürü olarak görev yapan devlet adamı kimdir?", options: ["Celal Bayar", "İsmet İnönü", "Ali Fethi Okyar", "Rauf Orbay"], correctAnswer: "A", meaning: "İş Bankası'nın ilk genel müdürü Celal Bayar'dır; daha sonra Cumhurbaşkanı olmuştur." },
+            { question: "Ülkede sigortacılık faaliyetlerinin millileştirilmesi amacıyla 1925 yılında kurulan ilk millî sigorta kuruluşu aşağıdakilerden hangisidir?", options: ["Güneş Sigorta", "Millî Reasürans", "Anadolu Sigorta", "Ziraat Sigorta"], correctAnswer: "C", meaning: "İlk millî sigorta kuruluşu Anadolu Sigorta'dır (1925)." },
+            { question: "Tüm Türk kara sularının millileştirilmesini sağlayarak denizcilikte tam bağımsızlık adımının atıldığı gelişme hangisidir?", options: ["Montrö Boğazlar Sözleşmesi", "Kabotaj Kanunu'nun kabulü (1926)", "Denizbank'ın kurulması", "Teşvik-i Sanayi Kanunu"], correctAnswer: "B", meaning: "Kabotaj Kanunu (1926) ile Türk kara sularında taşımacılık hakkı Türk gemilerine verilmiş, yabancı gemilere kapatılmıştır." },
+            { question: "İstanbul Menkul Kıymetler Borsası'nın (İMKB) temelini oluşturan ve 1929'da kabul edilen yasa aşağıdakilerden hangisidir?", options: ["Türk Parasını Koruma Kanunu", "Menkul Kıymetler ve Borsalar Kanunu", "Sanayi ve Ticaret Odaları Yasası", "Koruyucu Gümrük Yasası"], correctAnswer: "B", meaning: "Menkul Kıymetler ve Borsalar Kanunu (1929) İMKB'nin temelini oluşturmuştur." },
+            { question: "1929 Dünya Ekonomik Krizi'ne karşı bir tedbir olarak çıkarılan ve millî para politikasının benimsendiğinin en önemli kanıtı olan kanun hangisidir?", options: ["Teşvik-i Sanayi Kanunu", "Gümrük Tarife Kanunu", "Türk Parasını Koruma Kanunu", "Kabotaj Kanunu"], correctAnswer: "C", meaning: "1930'da çıkarılan Türk Parasını Koruma Kanunu millî para politikasının temelidir; döviz kaçakçılığını önlemiş, kambiyo denetimi getirmiştir." },
+            { question: "Yerli sanayiyi yabancı rekabetine karşı korumak ve 1929 Dünya Mali Krizi'nin etkilerini azaltmak amacıyla gümrük vergilerinin yükseltilmesini sağlayan yasa hangisidir?", options: ["Koruyucu Gümrük Yasası", "Teşvik-i Sanayi Kanunu", "Aşar Kanunu", "İktisadi Müdafaa Kanunu"], correctAnswer: "A", meaning: "1929'da Koruyucu Gümrük Yasası kabul edilmiş, yerli sanayi korunmuştur." },
+            { question: "1930 yılında ulusal para politikasını izlemek ve para (banknot) basma imtiyazını Osmanlı Bankası'ndan devralmak amacıyla kurulan banka hangisidir?", options: ["İş Bankası", "Merkez Bankası", "İller Bankası", "Ziraat Bankası"], correctAnswer: "B", meaning: "Türkiye Cumhuriyet Merkez Bankası (1930) para basma yetkisini Osmanlı Bankası'ndan devralmıştır." },
+            { question: "1933 yılında esnaf ve küçük sanatkara kredi sağlamak amacıyla kurulan, ancak resmi olarak 1938'de faaliyete geçen kamu bankası aşağıdakilerden hangisidir?", options: ["Sümerbank", "Etibank", "Halkbank", "Vakıflar Bankası"], correctAnswer: "C", meaning: "Halkbank 1933'te kurulmuş, 1938'de faaliyete geçerek esnafa kredi desteği sağlamıştır." },
+            { question: "1933 yılında yerel yönetimlerin (belediyelerin) imar faaliyetlerine finansman desteği sağlamak amacıyla 'Belediyeler Bankası' adıyla kurulan ve günümüzde de faaliyet gösteren banka hangisidir?", options: ["İller Bankası (İlbank)", "Halkbank", "Emlak Eytam Bankası", "Ziraat Bankası"], correctAnswer: "A", meaning: "İller Bankası (İlbank) 'Belediyeler Bankası' adıyla 1933'te kurulmuştur." },
+            { question: "Denizcilikle uğraşan müteşebbislere kredi imkânı sağlamak ve Türk denizciliğini geliştirmek amacıyla 1937 yılında kurulan banka aşağıdakilerden hangisidir?", options: ["İş Bankası", "Sanayi ve Maadin Bankası", "Denizbank", "Sümerbank"], correctAnswer: "C", meaning: "1937'de Denizbank kurulmuş, denizcilik sektörünü desteklemiştir." },
+            // Sanayi ve devletçilik (29-40)
+            { question: "Cumhuriyet döneminde liberalizmin etkileri çerçevesinde sanayiyi desteklemek amacıyla 1925 yılında açılan devlet bankası aşağıdakilerden hangisidir?", options: ["İş Bankası", "Sanayi ve Maadin Bankası", "Emlak ve Eytam Bankası", "Ziraat Bankası"], correctAnswer: "B", meaning: "Sanayi ve Maadin Bankası, liberalizmin etkileriyle 1925'te kurulmuş, özel sektöre sanayi kredisi vermiştir." },
+            { question: "1926 yılında kurulan ve gayrimenkul ipoteği karşılığında borç para vererek halka destek olmayı amaçlayan kamu bankası hangisidir?", options: ["Sümerbank", "İller Bankası", "Emlak ve Eytam Bankası", "Halkbank"], correctAnswer: "C", meaning: "Emlak ve Eytam Bankası gayrimenkul ipoteği karşılığında borç veren kamu bankasıdır." },
+            { question: "Yeni Türk Devleti'nde özel sektörün canlandırılması ve girişimcilerin sanayi alanına çekilmesi amacıyla 28 Mayıs 1927'de kabul edilen yasa aşağıdakilerden hangisidir?", options: ["Kabotaj Kanunu", "Teşvik-i Sanayi Kanunu", "Türk Parasını Koruma Kanunu", "Genel Hıfzıssıhha Kanunu"], correctAnswer: "B", meaning: "1927'de özel sektörü canlandırmak için Teşvik-i Sanayi Kanunu çıkarılmış; vergi muafiyeti, arazi tahsisi gibi teşvikler sağlanmıştır." },
+            { question: "1933 yılında liberal ekonomi modelinden vazgeçilerek 'Devletçilik' uygulamasına geçilmesinin temel nedeni aşağıdakilerden hangisidir?", options: ["Liberalizmin beklenen faydayı sağlayamaması", "Yabancı devletlerin baskısı", "Tarımsal üretimin tamamen durması", "Siyasi partilerin anlaşmazlığı"], correctAnswer: "A", meaning: "Liberalizmin beklenen faydayı sağlayamaması üzerine 1933'te Devletçilik uygulamasına geçilmiş, devlet öncülüğünde sanayileşme benimsenmiştir." },
+            { question: "1933 yılında hazırlanan ve 1934'te uygulamaya konulan I. Beş Yıllık Sanayi Planı'nın hazırlık ve uygulama aşamalarında teknik/mali yönden hangi ülkeden yararlanılmıştır?", options: ["İngiltere", "Fransa", "ABD", "Rusya"], correctAnswer: "D", meaning: "Plan hazırlanırken Sovyet Rusya'dan destek alınmış; özellikle ağır sanayi alanında işbirliği yapılmıştır." },
+            { question: "I. Beş Yıllık Sanayi Planı'nın finansmanını sağlamak amacıyla 1933 yılında 'Sanayi ve Maadin Bankası'nın yerine kurulan banka hangisidir?", options: ["Sümerbank", "Etibank", "Denizbank", "Merkez Bankası"], correctAnswer: "A", meaning: "Sümerbank, Sanayi ve Maadin Bankasının yerine kurularak planın finansmanını sağlamış, devletçi sanayileşmenin lokomotifi olmuştur." },
+            { question: "Ülkedeki yer altı kaynaklarının araştırılıp madenlerin kalite tespitinin yapılması amacıyla 1935 yılında kurulan enstitü hangisidir?", options: ["Yüksek Ziraat Enstitüsü", "Maden Tetkik ve Arama Enstitüsü (MTA)", "Türk Standartları Enstitüsü", "Hıfzıssıhha Enstitüsü"], correctAnswer: "B", meaning: "Madenlerin tespiti için 1935'te MTA kurulmuş, yer altı kaynakları araştırılmıştır." },
+            { question: "1935 yılında Maden Tetkik ve Arama Enstitüsünün (MTA) bulduğu madenleri işletmek ve finanse etmek amacıyla açılan banka aşağıdakilerden hangisidir?", options: ["Sümerbank", "İş Bankası", "Etibank", "Ziraat Bankası"], correctAnswer: "C", meaning: "Etibank, MTA'nın bulduğu madenleri işletmek için açılmış, enerji ve maden sektöründe faaliyet göstermiştir." },
+            { question: "1936 yılında hizmete giren ve Türkiye Cumhuriyeti'nin ilk barajı olma özelliğini taşıyan baraj hangisidir?", options: ["Keban Barajı", "Atatürk Barajı", "Hirfanlı Barajı", "Çubuk Barajı"], correctAnswer: "D", meaning: "Çubuk Barajı (Ankara), 1936'da açılan ilk barajdır. Aynı yıl Elektrik İşleri Etüt İdaresi de kurulmuştur." },
+            { question: "1938 yılında hazırlanan II. Beş Yıllık Sanayi Planı'nın başarılı bir şekilde uygulanamamasının temel nedeni aşağıdakilerden hangisidir?", options: ["1929 Dünya Ekonomik Krizi", "İkinci Dünya Savaşı'nın çıkması", "Nüfus yetersizliği", "Rejim karşıtı isyanlar"], correctAnswer: "B", meaning: "II. Beş Yıllık Sanayi Planı (1938), İkinci Dünya Savaşı sebebiyle uygulanamamış, kaynaklar savunma sanayine yönlendirilmiştir." },
+            { question: "Aşağıdakilerden hangisi 1927 tarihli Teşvik-i Sanayi Kanunu kapsamında özel sektöre sağlanan kolaylıklardan biri değildir?", options: ["Ucuz arazi ve bina tahsis etme", "Ulaşım ve depolama imkânları sağlama", "Belli bir süre vergiden muaf tutma", "Özel sektöre koşulsuz sınırsız nakit para hibe etme"], correctAnswer: "D", meaning: "Nakit hibe verilmemiş; arazi, vergi muafiyeti ve ulaşım kolaylıkları sağlanmıştır." },
+            { question: "Teşvik-i Sanayi Kanunu'nun sanayileşmede istenilen sonucu verememesinin en önemli nedenleri aşağıdakilerden hangileridir?", options: ["Hammadde eksikliği ve dış borçlar", "Ulaşım ağının hiç olmaması ve iklim şartları", "Özel sektörün sermaye yetersizliği ve teknik bilgi/eleman eksikliği", "Tarımsal üretimin çok kârlı olması"], correctAnswer: "C", meaning: "Sermaye, teknik bilgi ve eleman yetersizliği yasanın başarısız olma nedenleridir; bu yüzden devletçiliğe geçilmiştir." },
+            // Sağlık ve Sosyal (41-48)
+            { question: "Türkiye'de sağlık hizmetlerini tek çatı altında toplamak amacıyla 3 Mayıs 1920'de TBMM tarafından kurulan bakanlık aşağıdakilerden hangisidir?", options: ["Sıhhiye Nazırlığı (Sağlık Bakanlığı)", "Maarif Vekaleti", "Şeriye ve Evkaf Vekaleti", "Nafıa Vekaleti"], correctAnswer: "A", meaning: "3 Mayıs 1920'de Sağlık Bakanlığı / Sıhhiye Nazırlığı kurulmuştur." },
+            { question: "Mustafa Kemal Atatürk'ün 'Devlet olma savındaki siyasal kuruluşların en birinci görevi, halkının sağlığı ve sağlamlığıdır.' sözü hangi alanla ilgili çalışmalara verilen önemi gösterir?", options: ["Eğitim", "Ekonomi", "Ordu", "Sağlık ve Sosyal Hizmetler"], correctAnswer: "D", meaning: "Atatürk bu sözle devletin sağlık ve sosyal alandaki görevini vurgulamış, sağlık hizmetlerine öncelik verilmiştir." },
+            { question: "Zararlı alışkanlıklarla mücadele etmek amacıyla 1920 yılında kurulan kurum aşağıdakilerden hangisidir?", options: ["Yeşilay", "Kızılay", "Çocuk Esirgeme Kurumu", "Türk Ocakları"], correctAnswer: "A", meaning: "1920'de Yeşilay kurulmuş, alkol ve uyuşturucu bağımlılığıyla mücadele etmiştir." },
+            { question: "Kimsesiz ve yardıma muhtaç çocukları korumak amacıyla 1921 yılında faaliyetlerine başlayan sosyal kurum hangisidir?", options: ["Darülaceze", "Darüşşafaka", "Çocuk Esirgeme Kurumu", "Türk Eğitim Vakfı"], correctAnswer: "C", meaning: "1921'de Çocuk Esirgeme Kurumu (bugün Çocuk Hizmetleri Genel Müdürlüğü) açılmıştır." },
+            { question: "Osmanlı Devleti'nden devralınan 'Hilal-i Ahmer' cemiyeti, 1923 yılında Cumhuriyet döneminde hangi adı almıştır?", options: ["Yeşilay", "Kızılay", "Verem Savaş Derneği", "AFAD"], correctAnswer: "B", meaning: "Hilal-i Ahmer (Kızılay), 1923'te 'Türkiye Kızılay Cemiyeti' adını almıştır." },
+            { question: "Cumhuriyet'in ilk yıllarında özellikle 'ince hastalık' olarak bilinen veremle (tüberküloz) mücadele etmek amacıyla nerede önemli bir Sanatoryum açılmıştır?", options: ["Uludağ", "Palandöken", "Göztepe", "Heybeliada"], correctAnswer: "D", meaning: "Veremle mücadele için Heybeliada Sanatoryumu (1924) açılmıştır." },
+            { question: "Cumhuriyet döneminde halk sağlığını koruyucu tedbirler almak ve bulaşıcı hastalıklarla mücadele etmek amacıyla çıkarılan kanun ve kurulan kurum hangisidir?", options: ["Genel Hıfzıssıhha Kanunu / Ankara Hıfzıssıhha Enstitüsü", "Teşkilat-ı Esasiye / Darülfünun", "Medeni Kanun / Adli Tıp Kurumu", "İskan Kanunu / Göç İdaresi"], correctAnswer: "A", meaning: "1930'da Genel Hıfzıssıhha Kanunu kabul edilmiş, 1928'de Ankara Hıfzıssıhha Enstitüsü açılmıştır." },
+            // Nüfus Politikaları (49-54)
+            { question: "Atatürk döneminde ülke nüfusunu artırmak amacıyla 1929 yılında fazla çocuk sahibi olan ailelere hangi vergiden muafiyet getirilmiştir?", options: ["Aşar vergisi", "Emlak vergisi", "Yol vergisi", "Ağnam vergisi"], correctAnswer: "C", meaning: "1929'da fazla çocuk sahibi olan aileler yol vergisinden muaf tutulmuştur." },
+            { question: "1931 yılında devlet tarafından vergi muafiyeti getirilerek desteklenen aileler en az kaç çocuklu olmak zorundaydı?", options: ["3", "4", "5", "6"], correctAnswer: "D", meaning: "1931'de altı ya da daha fazla çocuklu ailelere vergi muafiyeti getirilmiştir." },
+            { question: "1932 yılında nüfus artışını istenen seviyeye çıkarmak, anne ve bebek ölüm oranlarını düşürmek amacıyla aşağıdakilerden hangisi kurulmuştur?", options: ["Nüfus Komisyonu", "Sağlık Bakanlığı", "Kadın Hakları Cemiyeti", "İstatistik Enstitüsü"], correctAnswer: "A", meaning: "Alınması gerekli önlemleri araştırmak üzere 1932'de Nüfus Komisyonu kurulmuştur." },
+            { question: "Ülke nüfusunu dışarıdan gelen insanlarla desteklemek amacıyla 1934 yılında Türkiye'ye gelecek olan göçmenlere hangi alanda bir kolaylık sağlanmıştır?", options: ["Askerlikten muafiyet", "Gümrük muafiyeti", "Seçimlerde çift oy hakkı", "Ücretsiz konut tahsisi"], correctAnswer: "B", meaning: "1934'te göçleri teşvik amacıyla göçmenlere gümrük muafiyeti getirilmiştir." },
+            { question: "Nüfusu artırma politikaları doğrultusunda 1936 yılında çok çocuklu ailelere verilen teşvik aşağıdakilerden hangisidir?", options: ["Yurt dışı eğitim bursu", "Ücretsiz traktör verilmesi", "Hazineye ait topraklardan tarla bağışlanması", "Devlet memurluğuna sınavsız giriş hakkı"], correctAnswer: "C", meaning: "1936'da çok çocuklu ailelere, hazineye ait topraklardan tarla bağışlanmıştır." },
+            { question: "1936 yılında nüfus artışını garanti altına almak amacıyla aşağıdakilerden hangisi yasaklanmıştır?", options: ["Doğum kontrolünü sağlayan ilaç ve araçların kullanılması", "Yurt dışına göç edilmesi", "Köyden kente göç edilmesi", "Özel hastanelerin doğum yaptırması"], correctAnswer: "A", meaning: "1936'da doğum kontrolünü sağlayan ilaç ve araçların kullanılması yasaklanmış, nüfus artışı teşvik edilmiştir." },
+            // Ulaşım ve Bayındırlık (55-58)
+            { question: "Ülkemizin 'ilk kamu işletmesi' olma unvanına sahip olan ve 1924 yılında kurulan kurum aşağıdakilerden hangisidir?", options: ["Devlet Demiryolları Genel Müdürlüğü", "Tayyare Cemiyeti", "Devlet Deniz Yolları Genel Müdürlüğü", "Posta Telgraf Teşkilatı (PTT)"], correctAnswer: "A", meaning: "1924'te kurulan Devlet Demiryolları Genel Müdürlüğü ülkemizin ilk kamu işletmesidir." },
+            { question: "Demir yollarının yabancı şirketlerin elinden alınarak millileştirilmesi, 'ulusallaştırılmasına başlanması' süreci hangi yıl başlamıştır?", options: ["1920", "1924", "1928", "1933"], correctAnswer: "C", meaning: "Demir yollarının ulusallaştırılmasına 1928'de başlanmış, yabancı şirketler satın alınmıştır." },
+            { question: "Türk sivil ve askeri havacılığının temellerini atmak üzere 1925 yılında kurulan havacılık kurumu hangisidir?", options: ["Türk Hava Yolları", "Tayyare Cemiyeti", "Hava Yolları Devlet İşletme İdaresi", "Türk Havacılık ve Uzay Sanayii (TUSAŞ)"], correctAnswer: "B", meaning: "1925'te Tayyare Cemiyeti (Türk Hava Kurumu'nun öncülü) kurulmuştur." },
+            { question: "Türkiye'de ilk 'Uçak ve Motor Fabrikası' 1926 yılında hangi ilimizde kurulmuştur?", options: ["Eskişehir", "Ankara", "Kayseri", "Konya"], correctAnswer: "C", meaning: "1926'da Kayseri Uçak ve Motor Fabrikası kurulmuş, havacılık sanayinin temeli atılmıştır." },
+            { question: "1932 yılında Türkiye'nin 'ilk sivil havacılık okulunu' açan ve havacılık tarihimize damga vuran isim kimdir?", options: ["Vecihi Hürkuş", "Nuri Demirağ", "Abdurrahman Türkkuşu", "Sabiha Gökçen"], correctAnswer: "A", meaning: "1932'de Vecihi Hürkuş ilk sivil havacılık okulunu (Vecihi Sivil Tayyare Mektebi) açmıştır." }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        function shuffleArray(array) {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        function initQuiz() {
+            questions = shuffleArray(quizData);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            catCoverEl.addEventListener('click', () => catCoverEl.style.display = 'none');
+            window.addEventListener('keydown', (e) => {
+                if (e.key >= '1' && e.key <= '4') {
+                    if (catCoverEl.style.display !== 'none') {
+                        catCoverEl.style.display = 'none';
+                        return;
+                    }
+                    const idx = parseInt(e.key) - 1;
+                    const btns = document.querySelectorAll('.option-btn');
+                    if (btns[idx] && !btns[idx].disabled) {
+                        btns[idx].click();
+                    }
+                }
+                if (e.code === 'Space' || e.key === ' ') {
+                    if (nextBtn.style.display !== 'none') {
+                        nextBtn.click();
+                        e.preventDefault();
+                    }
+                }
+            });
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            const correctText = currentQuestion.options[currentQuestion.correctAnswer.charCodeAt(0) - 65];
+            const shuffledOptions = shuffleArray(currentQuestion.options);
+            optionsEl.innerHTML = '';
+            optionsEl.appendChild(catCoverEl);
+            catCoverEl.style.display = 'flex';
+            shuffledOptions.forEach(optionText => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = optionText;
+                button.onclick = () => selectAnswer(optionText, correctText, currentQuestion.meaning);
+                optionsEl.appendChild(button);
+            });
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        function selectAnswer(selectedOption, correctOptionText, meaning) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correctOptionText) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selectedOption) {
+                    btn.classList.add('incorrect');
+                }
+            });
+            const isCorrect = selectedOption === correctOptionText;
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+            }
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            feedbackTextEl.innerHTML = isCorrect ?
+                `<strong>✅ Doğru!</strong><br><br>📖 ${meaning}` :
+                `<strong>❌ Hatalı!</strong><br>🔍 Doğru cevap: ${correctOptionText}<br><br>📖 ${meaning}`;
+            nextBtn.style.display = 'block';
+        }
+
+        nextBtn.onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        };
+
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            finalScoreEl.textContent = `📊 Puanınız: ${score} / ${questions.length}`;
+            wordListEl.innerHTML = '<h3 style="margin-bottom:15px;">📚 Özet Bilgi Kartları:</h3>';
+            questions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>❓ ${q.question}</strong><br><small style="color:var(--primary);">📌 ${q.meaning}</small>`;
+                wordListEl.appendChild(card);
+            });
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>
