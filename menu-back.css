@@ -1,0 +1,31 @@
+/* Leave room above each activity for the persistent menu link. */
+body {
+  padding-top: max(76px, calc(64px + env(safe-area-inset-top, 0px))) !important;
+}
+a.ags-menu-back {
+  all: initial;
+  box-sizing: border-box;
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top, 0px));
+  left: max(12px, env(safe-area-inset-left, 0px));
+  z-index: 2147483647;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  max-width: calc(100vw - 24px);
+  padding: 10px 16px;
+  border: 1px solid #476b5b;
+  border-radius: 12px;
+  background: #142d29;
+  color: #fff;
+  box-shadow: 0 3px 12px #0003;
+  font: 600 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+a.ags-menu-back:hover { background: #254d3d; color: #fff; }
+a.ags-menu-back:focus-visible { outline: 3px solid #e7aa57; outline-offset: 3px; }
+@media print { a.ags-menu-back { display: none; } }
