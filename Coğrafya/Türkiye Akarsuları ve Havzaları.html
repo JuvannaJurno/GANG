@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türkiye Akarsuları ve Havzaları</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                grid-template-columns: 1.2fr 1fr;
+                align-items: start;
+            }
+        }
+
+        header {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 10px 0;
+            margin-bottom: 10px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        /* Navigasyon / Sekmeler */
+        .tabs {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 10px;
+        }
+
+        .tab-btn {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #475569;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .tab-btn.cta {
+            background: #f59e0b;
+            color: white;
+            border-color: #f59e0b;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Görünürlük Kontrolü */
+        .section-content {
+            display: none;
+            grid-column: 1 / -1;
+        }
+
+        .section-content.active {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 992px) {
+            #matchSection.active {
+                grid-template-columns: 1.2fr 1fr;
+            }
+        }
+
+        /* Harita ve Lejant */
+        .map-section {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 20px;
+        }
+
+        .basin-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .color-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .map-container {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .map-img {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            cursor: zoom-in;
+            transition: transform 0.2s;
+        }
+        
+        .map-img:hover {
+            transform: scale(1.02);
+        }
+
+        .map-citation {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 8px;
+            text-align: center;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        /* Liste Bölümü */
+        .list-section {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .basin-group {
+            margin-bottom: 24px;
+        }
+
+        .basin-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+        }
+
+        .basin-title .color-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .river-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        @media (min-width: 480px) {
+            .river-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .river-row {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 6px 10px;
+        }
+
+        .river-initial {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #0f172a;
+            width: 36px;
+            height: 36px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .river-slot {
+            flex-grow: 1;
+            background: #ffffff;
+            border: 2px dashed #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 10px;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            font-weight: 600;
+            user-select: none;
+            transition: all 0.2s;
+        }
+
+        .river-slot:hover {
+            border-color: #3b82f6;
+            background-color: #f0fdf4;
+        }
+
+        .river-slot.filled { border-style: solid; color: #0f172a; }
+        .river-slot.correct { border-color: #22c55e; background-color: #f0fdf4; color: #15803d; }
+        .river-slot.incorrect { border-color: #ef4444; background-color: #fef2f2; color: #b91c1c; }
+
+        /* Alt Çekmece (Drawer) */
+        .backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+            opacity: 0; visibility: hidden; transition: 0.3s; z-index: 999;
+        }
+        .backdrop.active { opacity: 1; visibility: visible; }
+
+        .drawer {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff;
+            border-radius: 24px 24px 0 0; transform: translateY(100%);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000;
+            padding: 24px; box-shadow: 0 -10px 25px rgba(0,0,0,0.1); max-height: 70vh;
+        }
+        .drawer.active { transform: translateY(0); }
+
+        .drawer-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .drawer-title { font-size: 1.2rem; font-weight: 700; color: #0f172a; }
+        .drawer-close { background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; }
+
+        .options-container { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+        .option-btn {
+            background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px;
+            padding: 14px; font-weight: 600; cursor: pointer; text-align: left; transition: 0.2s;
+        }
+        .option-btn:hover { background: #e0f2fe; border-color: #0284c7; color: #0369a1; }
+
+        /* Resim Büyütme Modalı */
+        .img-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(5px);
+        }
+        
+        .img-modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 12px;
+            animation: zoomIn 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        @keyframes zoomIn {
+            from {transform: scale(0.8); opacity: 0;}
+            to {transform: scale(1); opacity: 1;}
+        }
+        
+        .close-img-modal {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: #ffffff;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-img-modal:hover {
+            background: #ef4444;
+        }
+
+        /* Quiz Modu */
+        .quiz-container {
+            background: #fff; padding: 30px; border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto;
+        }
+        .question-card { margin-bottom: 24px; display: none; }
+        .question-card.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .quiz-header { font-size: 0.9rem; color: #64748b; font-weight: 600; margin-bottom: 12px; }
+        .question-text { font-size: 1.2rem; font-weight: 700; color: #1e293b; margin-bottom: 20px; line-height: 1.5; }
+        
+        .quiz-option {
+            display: block; width: 100%; text-align: left; background: #f8fafc;
+            border: 2px solid #e2e8f0; padding: 12px 16px; margin-bottom: 10px;
+            border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s;
+            font-size: 1rem;
+        }
+        .quiz-option:hover { border-color: #94a3b8; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; color: #15803d; pointer-events: none; }
+        .quiz-option.wrong { background: #fee2e2; border-color: #ef4444; color: #b91c1c; pointer-events: none; }
+        
+        .quiz-feedback { margin-top: 16px; padding: 12px; border-radius: 8px; font-weight: 600; display: none; line-height: 1.5; }
+        .quiz-feedback.success { background: #dcfce7; color: #15803d; display: block; }
+        .quiz-feedback.error { background: #fee2e2; color: #b91c1c; display: block; }
+        
+        .next-btn {
+            background: #0f172a; color: white; border: none; padding: 12px 24px;
+            border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 16px; display: none;
+            font-size: 1rem;
+        }
+        .next-btn:hover { background: #1e293b; }
+        .quiz-result { text-align: center; display: none; }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#cografya" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <div class="container">
+        <header>
+            <h1>Türkiye Akarsuları ve Havzaları</h1>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('match')">Havza Eşleştirme</button>
+            <button class="tab-btn cta" onclick="switchTab('quiz')">Maceraya Başla (Detaylı Test)</button>
+        </div>
+
+        <div id="matchSection" class="section-content active">
+            <div class="map-section">
+                <div class="basin-legend">
+                    <div class="legend-item"><span class="color-dot" style="background-color: #6B892F"></span> Karadeniz</div>
+                    <div class="legend-item"><span class="color-dot" style="background-color: #B26845"></span> Marmara</div>
+                    <div class="legend-item"><span class="color-dot" style="background-color: #B9A98F"></span> Ege</div>
+                    <div class="legend-item"><span class="color-dot" style="background-color: #A48AA3"></span> Akdeniz</div>
+                    <div class="legend-item"><span class="color-dot" style="background-color: #79A8AE"></span> Basra</div>
+                    <div class="legend-item"><span class="color-dot" style="background-color: #AE9E6A"></span> Hazar K.</div>
+                </div>
+                <div class="map-container">
+                    <img src="https://i.imgur.com/bRDaYXl.jpeg" alt="Türkiye Akarsu Havzaları Haritası" class="map-img" id="mainMapImg">
+                    <div class="map-citation">👆 Haritayı büyütmek için üzerine tıklayın</div>
+                </div>
+            </div>
+
+            <div class="list-section" id="basinListContainer">
+                </div>
+        </div>
+
+        <div id="quizSection" class="section-content">
+            <div class="quiz-container">
+                <div id="quizContent"></div>
+                <div class="quiz-result" id="quizResult">
+                    <h2 style="font-size: 2rem; margin-bottom: 10px;">Test Tamamlandı!</h2>
+                    <p id="scoreText" style="font-size: 1.2rem; font-weight: 600; color: #475569; margin-bottom: 20px;"></p>
+                    <button class="tab-btn active" onclick="restartQuiz()">Tekrar Çöz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="backdrop" id="backdrop" onclick="closeDrawer()"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <span class="drawer-title" id="drawerTitle">Akarsu Seçin</span>
+            <button class="drawer-close" onclick="closeDrawer()">&times;</button>
+        </div>
+        <div class="options-container" id="optionsContainer"></div>
+    </div>
+
+    <div id="imgModal" class="img-modal">
+        <span class="close-img-modal" id="closeImgModal">&times;</span>
+        <img class="img-modal-content" id="zoomedImage">
+    </div>
+
+    <script>
+        // --- 1. HARİTA BÜYÜTME (MODAL) MANTIĞI ---
+        const mapImg = document.getElementById("mainMapImg");
+        const modal = document.getElementById("imgModal");
+        const modalImg = document.getElementById("zoomedImage");
+        const closeBtn = document.getElementById("closeImgModal");
+
+        mapImg.onclick = function(){
+            modal.style.display = "block";
+            modalImg.src = this.src;
+        }
+
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        modal.onclick = function(e) {
+            if(e.target !== modalImg) {
+                modal.style.display = "none";
+            }
+        }
+
+        // --- 2. HAVZA EŞLEŞTİRME VERİLERİ VE MANTIĞI ---
+        const basins = [
+            { id: 'karadeniz', name: 'Karadeniz Havzası', color: '#6B892F', rivers: [
+                { initial: 'Ç.', name: 'Çoruh' }, { initial: 'Y.', name: 'Yeşilırmak' },
+                { initial: 'K.', name: 'Kızılırmak' }, { initial: 'B.', name: 'Bartın' },
+                { initial: 'Y.', name: 'Yenice' }, { initial: 'S.', name: 'Sakarya' }
+            ]},
+            { id: 'marmara', name: 'Marmara Havzası', color: '#B26845', rivers: [
+                { initial: 'S.', name: 'Susurluk' }
+            ]},
+            { id: 'ege', name: 'Ege Havzası', color: '#B9A98F', rivers: [
+                { initial: 'M.', name: 'Meriç' }, { initial: 'B.', name: 'Bakırçay' },
+                { initial: 'G.', name: 'Gediz' }, { initial: 'K.', name: 'Küçük Menderes' },
+                { initial: 'B.', name: 'Büyük Menderes' }
+            ]},
+            { id: 'akdeniz', name: 'Akdeniz Havzası', color: '#A48AA3', rivers: [
+                { initial: 'D.', name: 'Dalaman' }, { initial: 'A.', name: 'Aksu' },
+                { initial: 'K.', name: 'Köprüçay' }, { initial: 'M.', name: 'Manavgat' },
+                { initial: 'G.', name: 'Göksu' }, { initial: 'S.', name: 'Seyhan' },
+                { initial: 'C.', name: 'Ceyhan' }, { initial: 'A.', name: 'Asi' }
+            ]},
+            { id: 'basra', name: 'Basra Havzası', color: '#79A8AE', rivers: [
+                { initial: 'F.', name: 'Fırat' }, { initial: 'D.', name: 'Dicle' }, { initial: 'Z.', name: 'Zap' }
+            ]},
+            { id: 'hazar', name: 'Hazar K. Havzası', color: '#AE9E6A', rivers: [
+                { initial: 'A.', name: 'Aras' }, { initial: 'K.', name: 'Kura' }
+            ]}
+        ];
+
+        let allRiverNames = [];
+        basins.forEach(b => b.rivers.forEach(r => {
+            r.id = b.id + '_' + r.name.toLowerCase().replace(/\s/g, '');
+            allRiverNames.push(r.name);
+        }));
+
+        let activeSlot = null;
+
+        function initBasins() {
+            const container = document.getElementById('basinListContainer');
+            container.innerHTML = '';
+
+            basins.forEach(basin => {
+                const group = document.createElement('div');
+                group.className = 'basin-group';
+                
+                const title = document.createElement('div');
+                title.className = 'basin-title';
+                title.innerHTML = `<span class="color-indicator" style="background-color: ${basin.color}"></span> ${basin.name}`;
+                group.appendChild(title);
+
+                const grid = document.createElement('div');
+                grid.className = 'river-grid';
+
+                basin.rivers.forEach(river => {
+                    const row = document.createElement('div');
+                    row.className = 'river-row';
+                    row.innerHTML = `
+                        <div class="river-initial">${river.initial}</div>
+                        <div class="river-slot" id="slot-${river.id}" onclick="openDrawer('${river.id}', '${river.name}', '${river.initial}')">
+                            <span>Tahmin Et...</span>
+                            <span>▼</span>
+                        </div>
+                    `;
+                    grid.appendChild(row);
+                });
+
+                group.appendChild(grid);
+                container.appendChild(group);
+            });
+        }
+
+        function openDrawer(slotId, correctName, initial) {
+            activeSlot = { id: slotId, correct: correctName };
+            document.getElementById('drawerTitle').innerText = `"${initial}" ile başlayan akarsuyu seçin`;
+            
+            const distractors = allRiverNames.filter(n => n !== correctName && n.startsWith(initial[0]));
+            let fallbackDistractors = allRiverNames.filter(n => n !== correctName && !n.startsWith(initial[0]));
+            
+            let selectedDistractors = [...distractors].sort(() => 0.5 - Math.random()).slice(0, 3);
+            while(selectedDistractors.length < 3) {
+                selectedDistractors.push(fallbackDistractors.pop());
+            }
+
+            const options = [correctName, ...selectedDistractors].sort(() => 0.5 - Math.random());
+            
+            const optsContainer = document.getElementById('optionsContainer');
+            optsContainer.innerHTML = '';
+            
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => selectOption(opt);
+                optsContainer.appendChild(btn);
+            });
+
+            document.getElementById('backdrop').classList.add('active');
+            document.getElementById('drawer').classList.add('active');
+        }
+
+        function closeDrawer() {
+            document.getElementById('backdrop').classList.remove('active');
+            document.getElementById('drawer').classList.remove('active');
+            activeSlot = null;
+        }
+
+        function selectOption(selected) {
+            if (!activeSlot) return;
+            const slotEl = document.getElementById(`slot-${activeSlot.id}`);
+            
+            slotEl.children[0].innerText = selected;
+            slotEl.classList.add('filled');
+            
+            if (selected === activeSlot.correct) {
+                slotEl.className = 'river-slot filled correct';
+                slotEl.children[1].innerText = '✓';
+            } else {
+                slotEl.className = 'river-slot filled incorrect';
+                slotEl.children[1].innerText = '✗';
+            }
+            closeDrawer();
+        }
+
+        // --- 3. KAPSAMLI AGS / KPSS QUİZ MANTIĞI (30 SORU) ---
+        const quizQuestions = [
+            {
+                q: "Türkiye akarsularının akış hızının, aşındırma gücünün ve hidroelektrik potansiyelinin fazla olmasının temel sebebi nedir?",
+                opts: ["Boylarının kısa olması", "Kaynaklarını yüksek dağlık sahalardan almaları", "Debilerinin (su miktarının) az olması", "Açık havza özelliği göstermeleri", "Yağış rejiminin düzensiz olması"],
+                ans: 1,
+                exp: "Türkiye ortalama yükseltisi fazla ve dağlık bir ülkedir. Akarsular kaynaklarını yüksek dağlık sahalardan aldıkları için yatak eğimleri, akış hızları, aşındırma güçleri ve hidroelektrik potansiyelleri fazladır."
+            },
+            {
+                q: "Türkiye akarsu vadilerinin büyük bir bölümünün 'V' (çentik) şeklinde olmasının ve akarsularımızın denge profilinden uzak olmasının başlıca nedeni nedir?",
+                opts: ["İklimin kurak ve yarı kurak olması", "Bitki örtüsünün cılız olması", "Türkiye'nin jeolojik olarak genç oluşumlu bir ülke olması", "Akarsu havzalarının genellikle açık olması", "Boylarının kısa olması"],
+                ans: 2,
+                exp: "Türkiye jeolojik olarak genç oluşumlu bir ülke olduğu için akarsular henüz aşındırmalarını tamamlamamıştır. Yatak eğimleri fazla olduğu için vadiler 'V' profilindedir ve denge profilinden uzaktırlar."
+            },
+            {
+                q: "Türkiye'deki akarsuların genel olarak debilerinin (taşıdıkları su miktarının) az olmasının temel sebebi aşağıdakilerden hangisidir?",
+                opts: ["Boylarının kısa olması", "Kurak iklim şartları", "Havzalarının dar olması", "Yatak eğimlerinin fazla olması", "Yer altı sularıyla beslenmeleri"],
+                ans: 1,
+                exp: "Türkiye genelinde yarı kurak iklim şartları hakimdir. Yağış miktarının az olması ve şiddetli buharlaşma nedeniyle akarsuların debileri (akım miktarları) genellikle azdır."
+            },
+            {
+                q: "Akarsularımızın rejimlerinin genellikle düzensiz olmasının temel nedeni nedir?",
+                opts: ["Yer şekillerinin engebeli olması", "İklim özellikleri (Yağış rejiminin düzensizliği)", "Bitki örtüsünün tahrip edilmesi", "Akarsu boylarının kısa olması", "Açık havza özelliği göstermeleri"],
+                ans: 1,
+                exp: "Bir akarsuyun rejimini belirleyen en önemli faktör iklimdir (yağış rejimidir). Türkiye'de yağış rejimi genel olarak düzensiz olduğu için akarsu rejimleri de düzensizdir."
+            },
+            {
+                q: "Türkiye akarsularının büyük bölümünün ulaşım ve taşımacılığa uygun olmamasının en önemli nedenleri hangi seçenekte bir arada verilmiştir?",
+                opts: ["Açık havza olmaları - Debilerinin az olması", "Engebeli yatak eğimi - Su miktarının (debinin) yetersiz olması", "Boylarının kısa olması - Rejimlerinin düzenli olması", "Kirlilik oranlarının yüksek olması - Açık havza olmaları", "Vadi profillerinin U şeklinde olması - Kurak iklim"],
+                ans: 1,
+                exp: "Akarsularda ulaşım yapılabilmesi için yatak eğiminin az (denge profiline ulaşmış) ve su miktarının yıl boyu yeterli olması gerekir. Türkiye akarsuları engebeli araziden akar ve su miktarları azdır."
+            },
+            {
+                q: "Özellikle Marmara ve Ege bölgesindeki bazı akarsularımızda (örneğin Ergene, Susurluk) kirlilik oranının çok fazla olmasının temel sebebi nedir?",
+                opts: ["Beşerî faktörlerin (sanayi ve yoğun nüfus) etkili olması", "Akarsu debilerinin kışın artması", "Kapalı havza özelliği göstermeleri", "Akarsu boylarının kısa olması", "Yatak eğimlerinin az olması"],
+                ans: 0,
+                exp: "Akarsulardaki kirlilik artışının temel sebebi endüstriyel atıklar, evsel atıklar ve tarımsal ilaçlamalar gibi beşerî (insan kaynaklı) faktörlerdir."
+            },
+            {
+                q: "Türkiye'deki akarsuların boylarının genel olarak kısa olmasında aşağıdakilerden hangisi etkili <u>değildir</u>?",
+                opts: ["İklimin yarı kurak olması", "Yer şekillerinin engebeli ve dağların kıyıya paralel uzanması", "Bitki örtüsünün gür ormanlardan oluşması", "Türkiye'nin bir yarımada ülkesi olması"],
+                ans: 2,
+                exp: "Boyların kısa olmasının temel sebepleri; iklimin kuraklığı, dağların uzanış yönü (yer şekilleri) ve ülkemizin denizlerle çevrili bir yarımada olmasıdır. Bitki örtüsünün gür olması bir sebep değildir."
+            },
+            {
+                q: "Türkiye'deki akarsu havzalarının genellikle 'açık havza' (sularını denize ulaştıran) özelliği göstermesinin temel sebebi nedir?",
+                opts: ["Yatak eğimlerinin fazla olması", "Türkiye'nin üç tarafının denizlerle çevrili bir yarımada olması", "Akarsu boylarının kısa olması", "Debilerinin düşük olması", "İklimin kurak olması"],
+                ans: 1,
+                exp: "Denize dökülen akarsular açık havzalıdır. Ülkemizin üç tarafı denizlerle çevrili bir yarımada ülkesi olması, akarsuların kısa mesafede denize ulaşmasını ve açık havza olmasını sağlar."
+            },
+            {
+                q: "Kızılırmak nehrinin taşıdığı alüvyonlarla Karadeniz'e döküldüğü yerde oluşturduğu delta ovası aşağıdakilerden hangisidir?",
+                opts: ["Çarşamba Ovası", "Çukurova", "Bafra Ovası", "Silifke Ovası", "Dikili Ovası"],
+                ans: 2,
+                exp: "Kızılırmak'ın Karadeniz'e döküldüğü yerde Bafra Delta Ovası oluşmuştur. (Yeşilırmak ise Çarşamba Ovası'nı oluşturur)."
+            },
+            {
+                q: "Yeşilırmak nehrinin Karadeniz kıyısında taşıdığı malzemeleri biriktirmesiyle oluşturduğu delta ovası hangisidir?",
+                opts: ["Bafra Ovası", "Çarşamba Ovası", "Çukurova", "Menemen Ovası", "Balat Ovası"],
+                ans: 1,
+                exp: "Yeşilırmak'ın taşıdığı alüvyonların deniz kıyısında birikmesiyle Karadeniz'de Çarşamba Delta Ovası oluşmaktadır."
+            },
+            {
+                q: "Seyhan ve Ceyhan nehirlerinin sularını İskenderun Körfezi civarında Akdeniz'e boşalttığı alanda oluşan, Türkiye'nin en büyük delta ovası hangisidir?",
+                opts: ["Silifke Ovası", "Çarşamba Ovası", "Bafra Ovası", "Çukurova", "Amik Ovası"],
+                ans: 3,
+                exp: "Seyhan ve Ceyhan nehirlerinin taşıdığı alivyonlar, Akdeniz kıyısında Türkiye'nin en büyük deltası olan Çukurova'yı oluşturmuştur."
+            },
+            {
+                q: "Ege Bölgesi'ndeki akarsulardan Gediz Nehri sularını aşağıdaki körfezlerden hangisine boşaltmaktadır?",
+                opts: ["Çandarlı Körfezi", "Kuşadası Körfezi", "İzmir Körfezi", "Güllük Körfezi", "Saros Körfezi"],
+                ans: 2,
+                exp: "Gediz Nehri sularını İzmir Körfezi'ne dökerek burada Menemen Deltasını oluşturur. Bakırçay Çandarlı'ya, B. Menderes ise Balat civarına dökülür."
+            },
+            {
+                q: "Sınırlarımız içerisinde doğup, yine sınırlarımız içerisinde denize dökülen (tamamı ülke sınırlarında olan) en uzun akarsuyumuz hangisidir?",
+                opts: ["Fırat", "Kızılırmak", "Sakarya", "Yeşilırmak", "Çoruh"],
+                ans: 1,
+                exp: "Kızılırmak, kaynağını Sivas'tan alıp Karadeniz'e dökülen ve sınırları bütünüyle Türkiye'de olan en uzun akarsuyumuzdur."
+            },
+            {
+                q: "Aşağıdakilerden hangisi Kızılırmak'ın önemli kollarından biri <u>değildir</u>?",
+                opts: ["Devrez", "Gökırmak", "Delice", "Murat"],
+                ans: 3,
+                exp: "Devrez, Gökırmak ve Delice nehirleri Kızılırmak'ın önemli kollarıdır. Murat Nehri ise Fırat'ın en büyük koludur."
+            },
+            {
+                q: "Karasu ve Murat nehirlerinin birleşmesiyle oluşan, Türkiye'nin en büyük su toplama havzasına ve en yüksek akım değerlerine sahip akarsuyu hangisidir?",
+                opts: ["Fırat", "Dicle", "Kızılırmak", "Seyhan", "Çoruh"],
+                ans: 0,
+                exp: "Fırat Irmağı; Karasu ve Murat kollarının birleşmesiyle oluşur, en büyük su toplama havzasına sahiptir ve sularını sınırları aşarak Basra Körfezi'ne boşaltır."
+            },
+            {
+                q: "Türkiye'nin <u>en büyük</u> ve <u>en küçük</u> açık havzaları sırasıyla hangi seçenekte doğru verilmiştir?",
+                opts: ["Akdeniz Havzası - Ege Havzası", "Karadeniz Havzası - Marmara Havzası", "Basra Havzası - Karadeniz Havzası", "Marmara Havzası - Karadeniz Havzası"],
+                ans: 1,
+                exp: "Türkiye'nin en büyük açık havzası Karadeniz Havzası, en küçük açık havzası ise Marmara Havzası'dır."
+            },
+            {
+                q: "Marmara Havzası'nda yer alan ve çevresindeki yoğun sanayi tesisleri/nüfus nedeniyle Türkiye'nin en kirli akarsuyu olarak bilinen nehir aşağıdakilerden hangisidir?",
+                opts: ["Meriç", "Ergene", "Susurluk", "Gediz", "Sakarya"],
+                ans: 1,
+                exp: "Ergene Nehri, Trakya bölgesindeki yoğun sanayileşme ve beşerî faktörler nedeniyle Türkiye'nin en kirli akarsularının başında gelmektedir."
+            },
+            {
+                q: "Toplam boyu itibariyle Türkiye'nin en uzun akarsuyu olmasına rağmen, sularını sınırlarımız dışındaki Basra Körfezi'ne boşaltan nehir hangisidir?",
+                opts: ["Dicle", "Kızılırmak", "Fırat", "Aras", "Kura"],
+                ans: 2,
+                exp: "Fırat, Türkiye'den doğan nehirler içinde toplam boyu en uzun olandır, ancak sınırları aşarak yurt dışına (Basra Körfezine) dökülür."
+            },
+            {
+                q: "Ege Bölgesi'nde tektonik hareketlerle oluşan horst ve graben sistemleri sonucunda akarsular çoğunlukla hangi yönde akmaktadır?",
+                opts: ["Kuzey - Güney", "Doğu - Batı", "Kuzeydoğu - Güneybatı", "Kuzeybatı - Güneydoğu"],
+                ans: 1,
+                exp: "Ege'de dağlar denize dik (doğu-batı yönlü) uzandığı için çöken alanlara (grabenlere) yerleşen akarsular da doğu-batı yönünde akış gösterirler."
+            },
+            {
+                q: "Aşağıdakilerden hangisi Karadeniz Bölgesi'nde heyelanların sık görülmesinin nedenleri arasında <u>yer almaz</u>?",
+                opts: ["Eğimin fazla olması", "Killi toprak yapısı", "Yağış miktarının fazla olması", "Akarsu rejimlerinin farklılık göstermesi"],
+                ans: 3,
+                exp: "Heyelanın temel sebepleri eğim, yağış ve killi topraktır. Akarsu rejimlerinin heyelan oluşumuyla doğrudan bir ilgisi yoktur."
+            },
+            {
+                q: "Volkanik faaliyetler sonucu yüzeye çıkan lavlardan oluşan arazilerin, akarsular tarafından derin şekilde aşındırılmasıyla meydana gelen lav platosuna örnek hangisidir?",
+                opts: ["Çatalca-Kocaeli Platosu", "Obruk Platosu", "Erzurum-Kars Platosu", "Taşeli Platosu", "Haymana Platosu"],
+                ans: 2,
+                exp: "Erzurum-Kars Platosu, volkanik lavların kalın bir örtü oluşturduğu ve daha sonra akarsular tarafından yarıldığı tipik bir lav platosudur."
+            },
+            {
+                q: "Dağların dik yamaçlarından akarsuların taşıdığı kolüvyon toprakların (birikinti yelpazesi) vadilerin önünü kapatmasıyla oluşan 'Alüvyal set gölüne' örnek hangisidir?",
+                opts: ["Tuz Gölü", "Mogan Gölü", "Nemrut Gölü", "Büyükçekmece Gölü", "Salda Gölü"],
+                ans: 1,
+                exp: "Mogan Gölü ve Eymir Gölü, akarsuların taşıdığı alüvyonların/kolüvyonların vadi önlerini kapatmasıyla oluşan alüvyal set gölleridir."
+            },
+            {
+                q: "Sınırlarımızı aşarak Hazar Gölü'ne (denize değil, kapalı bir havzaya) döküldüğü için 'Kapalı Havza' özelliği gösteren nehrimiz hangisidir?",
+                opts: ["Çoruh", "Fırat", "Aras", "Meriç", "Asi"],
+                ans: 2,
+                exp: "Aras ve Kura nehirleri sularını okyanuslara bağlantısı olmayan Hazar Gölü'ne döktükleri için kapalı havza kabul edilirler."
+            },
+            {
+                q: "Aşağıdaki akarsulardan hangisi ve onun kolu, Türkiye ile Ermenistan arasındaki doğal sınır çizgisini belirlemektedir?",
+                opts: ["Meriç Nehri", "Aras Nehri ve Arpaçay", "Dicle ve Zap Suyu", "Fırat ve Murat", "Asi Nehri"],
+                ans: 1,
+                exp: "Aras Nehri ve onun önemli bir kolu olan Arpaçay, doğuda Türkiye ile Ermenistan arasında doğal bir sınır oluşturmaktadır."
+            },
+            {
+                q: "Aşağıdaki akarsulardan hangisi Anadolu'nun iç kısımlarından kaynağını alarak kuzey veya güneydeki yüksek sıradağları yaran (aşan) akarsulardan biri <u>değildir</u>?",
+                opts: ["Kızılırmak", "Fırat Irmağı", "Seyhan Nehri", "Dalaman Çayı", "Sakarya Irmağı"],
+                ans: 3,
+                exp: "Kızılırmak, Fırat, Seyhan ve Sakarya iç kesimlerden doğup dağları aşarken; Dalaman Çayı Yeşilgöl Dağlarından doğar ve iç kısımlardan gelip sıradağları aşan bir profil çizmez."
+            },
+            {
+                q: "Sınırlarımız içinde doğup, komşumuz Gürcistan'ın Batum şehrinden Karadeniz'e dökülen açık havzalı akarsuyumuz hangisidir?",
+                opts: ["Kura", "Aras", "Çoruh", "Yeşilırmak", "Fırat"],
+                ans: 2,
+                exp: "Çoruh Nehri, Doğu Karadeniz'den doğar ve sınırı geçerek Gürcistan (Batum) üzerinden Karadeniz'e dökülür."
+            },
+            {
+                q: "Akdeniz kıyılarında Anamur Burnu ile Karataş Burnu arasındaki bölgede denize dökülen ve Silifke deltasını oluşturan akarsuyumuz hangisidir?",
+                opts: ["Göksu Nehri", "Manavgat Çayı", "Aksu", "Köprüçay", "Dalaman Çayı"],
+                ans: 0,
+                exp: "Göksu Nehri, Orta Toroslardan kaynağını alıp Anamur ile Karataş burunları arasında Akdeniz'e dökülür."
+            },
+            {
+                q: "İlkbahar mevsiminde havaların ısınmasıyla karların erimesi sonucu, debisi (su miktarı) belirgin şekilde artan akarsularımıza aşağıdakilerden hangisi örnek <u>verilemez</u>?",
+                opts: ["Çoruh", "Kızılırmak", "Fırat", "Gediz", "Sakarya"],
+                ans: 3,
+                exp: "Gediz Nehri Ege bölgesindedir ve genellikle kış aylarında düşen yağmur sularıyla debisi artar. Karasal iklim bölgelerindeki akarsular (Çoruh, Kızılırmak, Fırat, Dicle, vb.) ise ilkbaharda kar erimesiyle taşar."
+            },
+            {
+                q: "Sularını ağırlıklı olarak yer altı sularından (karstik kaynaklardan) beslediği için akımları yaz aylarında bile çok fazla düşmeyen Aksu, Köprüçay ve Manavgat gibi akarsularımız hangi bölgemizde yer alır?",
+                opts: ["Marmara Bölgesi", "Karadeniz Bölgesi", "Akdeniz Bölgesi", "Ege Bölgesi", "İç Anadolu Bölgesi"],
+                ans: 2,
+                exp: "Akdeniz Bölgesi'nde (özellikle Antalya Bölümünde) karstik araziler yaygındır. Aksu, Köprüçay ve Manavgat karstik kaynaklarla beslendikleri için yazın kurumazlar."
+            },
+            {
+                q: "Kış aylarında artan yağmur sularıyla beslendikleri için akımları en yüksek seviyeye ulaşan Meriç, Gediz, Bakırçay, K. Menderes ve B. Menderes gibi akarsularımız ağırlıklı olarak hangi bölgelerimizdedir?",
+                opts: ["Doğu Anadolu ve Güneydoğu", "Ege ve Marmara", "Karadeniz ve İç Anadolu", "Sadece Akdeniz"],
+                ans: 1,
+                exp: "Ege ve Marmara bölgelerinde kışlar ılık ve yağmurlu geçer. Bu nedenle bu yöredeki akarsular kış yağmurlarıyla en yüksek debiye ulaşırlar."
+            }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+
+        function renderQuiz() {
+            const container = document.getElementById('quizContent');
+            container.innerHTML = '';
+            
+            quizQuestions.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = `question-card ${index === 0 ? 'active' : ''}`;
+                card.id = `q-${index}`;
+                
+                let html = `
+                    <div class="quiz-header">Soru ${index + 1} / ${quizQuestions.length}</div>
+                    <div class="question-text">${item.q}</div>
+                    <div class="options-wrapper">
+                `;
+                
+                item.opts.forEach((opt, optIdx) => {
+                    html += `<button class="quiz-option" onclick="checkAnswer(${index}, ${optIdx}, this)">${String.fromCharCode(65+optIdx)}) ${opt}</button>`;
+                });
+                
+                html += `
+                    </div>
+                    <div class="quiz-feedback" id="feedback-${index}"></div>
+                    <button class="next-btn" id="next-${index}" onclick="nextQuestion(${index})">${index === quizQuestions.length - 1 ? 'Sonuçları Gör' : 'Sıradaki Soru ➔'}</button>
+                `;
+                card.innerHTML = html;
+                container.appendChild(card);
+            });
+        }
+
+        function checkAnswer(qIdx, optIdx, btn) {
+            const question = quizQuestions[qIdx];
+            const card = document.getElementById(`q-${qIdx}`);
+            const buttons = card.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById(`feedback-${qIdx}`);
+            const nextBtn = document.getElementById(`next-${qIdx}`);
+            
+            buttons.forEach(b => b.style.pointerEvents = 'none');
+            
+            if (optIdx === question.ans) {
+                btn.classList.add('correct');
+                feedback.className = 'quiz-feedback success';
+                feedback.innerHTML = `<strong>Doğru!</strong> ${question.exp}`;
+                score++;
+            } else {
+                btn.classList.add('wrong');
+                buttons[question.ans].classList.add('correct');
+                feedback.className = 'quiz-feedback error';
+                feedback.innerHTML = `<strong>Yanlış!</strong> ${question.exp}`;
+            }
+            
+            nextBtn.style.display = 'inline-block';
+        }
+
+        function nextQuestion(currentIdx) {
+            document.getElementById(`q-${currentIdx}`).classList.remove('active');
+            if (currentIdx + 1 < quizQuestions.length) {
+                document.getElementById(`q-${currentIdx + 1}`).classList.add('active');
+            } else {
+                document.getElementById('quizContent').style.display = 'none';
+                const result = document.getElementById('quizResult');
+                result.style.display = 'block';
+                document.getElementById('scoreText').innerText = `${quizQuestions.length} soruda ${score} doğru yaptınız.`;
+            }
+        }
+
+        function restartQuiz() {
+            currentQ = 0;
+            score = 0;
+            document.getElementById('quizResult').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'block';
+            renderQuiz();
+        }
+
+        // --- SEKME KONTROLÜ ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+            
+            if(tabId === 'match') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('matchSection').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('quizSection').classList.add('active');
+            }
+        }
+
+        // Başlangıç Yüklemeleri
+        window.onload = () => {
+            initBasins();
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>

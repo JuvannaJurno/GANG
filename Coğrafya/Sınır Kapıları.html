@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türkiye Coğrafyası Sınav Hazırlık - Sınır Kapıları ve Bölgeler</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .option-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .option-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+        .correct { background-color: #10b981 !important; color: white; border-color: #059669 !important; }
+        .wrong { background-color: #ef4444 !important; color: white; border-color: #dc2626 !important; }
+        .explanation-box { display: none; }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+<a class="ags-menu-back" href="../index.html#cografya" aria-label="Ana menüye dön">← Menüye dön</a>
+
+<div class="max-w-3xl mx-auto px-4 py-8">
+    <header class="text-center mb-10">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Coğrafya Sınav Merkezi</h1>
+        <p class="text-gray-600">Sınır Kapıları ve Özel Coğrafya Soruları</p>
+        <div class="mt-4 flex justify-center gap-3">
+            <button onclick="openStudyNotes()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 text-sm">
+                <span>📋 Tüm Notları Gör</span>
+            </button>
+            <button onclick="startQuiz()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 text-sm">
+                <span>🔄 Testi Sıfırla</span>
+            </button>
+        </div>
+    </header>
+
+    <div id="quiz-area" class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+        <!-- Quiz içeriği JS ile buraya gelecek -->
+    </div>
+</div>
+
+<!-- Notlar Modalı -->
+<div id="notes-modal" class="modal fixed inset-0 bg-black/60 z-50 items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col shadow-2xl">
+        <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+            <h2 class="text-xl font-bold text-gray-800">Çalışma Notları</h2>
+            <button onclick="closeStudyNotes()" class="text-gray-500 hover:text-gray-700 font-bold text-2xl">&times;</button>
+        </div>
+        <div id="notes-content" class="p-6 overflow-y-auto text-sm text-gray-700 leading-relaxed space-y-4">
+            <!-- Notlar buraya gelecek -->
+        </div>
+        <div class="p-4 border-t bg-gray-50 flex justify-end gap-3">
+            <button onclick="copyNotes()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 active:scale-95 transition-transform">
+                Metni Kopyala
+            </button>
+            <button onclick="closeStudyNotes()" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-300">
+                Kapat
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Tüm sınır kapıları, özellikleri ve demiryolu bilgileri
+const gates = [
+    { n: "Kapıkule", c: "Bulgaristan", r: "Türkiye'nin en işlek ve demiryolu bağlantısı olan kapısıdır. Van Gölü'nden geçen transit trenler Avrupa'ya bu kapıdan geçer.", railway: true },
+    { n: "Hamzabeyli", c: "Bulgaristan", railway: false },
+    { n: "Dereköy-Aziziye", c: "Bulgaristan", railway: false },
+    { n: "İpsala", c: "Yunanistan", r: "Yunanistan'a açılan en önemli karayolu kapımızdır.", railway: false },
+    { n: "Karaağaç-Pazarkule", c: "Yunanistan", railway: false },
+    { n: "Uzunköprü", c: "Yunanistan", railway: true },
+    { n: "Türkgözü", c: "Gürcistan", railway: false },
+    { n: "Sarp", c: "Gürcistan", r: "Karadeniz'in en aktif kapısıdır; kimlikle geçiş mümkündür.", railway: false },
+    { n: "Aktaş", c: "Gürcistan", railway: false },
+    { n: "Posof", c: "Gürcistan", railway: false },
+    { n: "Canbaz", c: "Gürcistan", r: "Bakü-Tiflis-Kars hattı üzerindeki demiryolu kapısıdır.", railway: true },
+    { n: "Akyaka", c: "Ermenistan", railway: true },
+    { n: "Alican", c: "Ermenistan", railway: false },
+    { n: "Dilucu", c: "Nahçıvan", r: "Azerbaycan'a açılan tek kara bağlantımızdır.", railway: false },
+    { n: "Umut", c: "Nahçıvan", railway: false },
+    { n: "Kapıköy", c: "İran", railway: true },
+    { n: "Esendere", c: "İran", railway: false },
+    { n: "Gürbulak", c: "İran", r: "Tarihi İpek Yolu üzerinde, İran ile en büyük transit ticaret kapımızdır.", railway: false },
+    { n: "Habur", c: "Irak", r: "Ortadoğu'ya açılan en işlek ikinci kapımızdır; ticari hacmi çok yüksektir.", railway: false },
+    { n: "Üzümlü", c: "Irak", railway: false },
+    { n: "Derecik", c: "Irak", railway: false },
+    { n: "Mürşitpınar", c: "Suriye", railway: false },
+    { n: "Öncüpınar", c: "Suriye", railway: false },
+    { n: "Ceylanpınar", c: "Suriye", railway: false },
+    { n: "Cilvegözü", c: "Suriye", railway: false },
+    { n: "Yayladağ", c: "Suriye", railway: false },
+    { n: "Karkamış", c: "Suriye", railway: false },
+    { n: "Akçakale", c: "Suriye", railway: false },
+    { n: "Çobanbey", c: "Suriye", railway: true },
+    { n: "Islahiye", c: "Suriye", railway: true },
+    { n: "Nusaybin", c: "Suriye", railway: true },
+    { n: "Bab-ı Zeytin Dalı", c: "Suriye", r: "Suriye sınırında en son açılan lojistik amaçlı kapılardandır.", railway: false }
+];
+
+const countries = ["Bulgaristan", "Yunanistan", "Gürcistan", "Ermenistan", "Nahçıvan", "İran", "Irak", "Suriye"];
+
+let questions = [];
+let currentIndex = 0;
+let score = 0;
+
+function buildQuestions() {
+    questions = [];
+    
+    // 1. Sınır Kapıları Döngüsü (Ülke, Özellik ve Demiryolu Soruları)
+    gates.forEach(g => {
+        // Ülke Sorusu
+        let countryOptions = countries.filter(c => c !== g.c);
+        let selectedCountryOptions = shuffle(countryOptions).slice(0, 3);
+        selectedCountryOptions.push(g.c);
+
+        questions.push({
+            q: `"${g.n}" sınır kapısı hangi ülkeye açılmaktadır?`,
+            o: selectedCountryOptions,
+            a: g.c,
+            r: g.r ? g.r : `${g.n} sınır kapısı ${g.c} sınırımızda yer almaktadır.`
+        });
+
+        // Özellik Sorusu
+        if (g.r) {
+            let gateOptions = gates.map(gate => gate.n).filter(name => name !== g.n);
+            let selectedGateOptions = shuffle(gateOptions).slice(0, 3);
+            selectedGateOptions.push(g.n);
+
+            questions.push({
+                q: `Aşağıdaki sınır kapılarından hangisi "${g.r}" özelliğine sahiptir?`,
+                o: selectedGateOptions,
+                a: g.n,
+                r: `Bu özellik ${g.n} sınır kapısına aittir (${g.c} sınırındadır).`
+            });
+        }
+
+        // Demiryolu Sorusu (Sadece demiryolu olan kapılar için oluşturulur)
+        if (g.railway) {
+            let nonRailwayGates = gates.filter(gate => !gate.railway).map(gate => gate.n);
+            let optionsForRailway = shuffle(nonRailwayGates).slice(0, 3);
+            optionsForRailway.push(g.n);
+
+            questions.push({
+                q: `Aşağıdaki sınır kapılarımızdan hangisinde demiryolu bağlantısı bulunmaktadır?`,
+                o: optionsForRailway,
+                a: g.n,
+                r: `${g.n} sınır kapısı, ülkemizde demiryolu ağına sahip olan sınır kapılarımızdandır.`
+            });
+        }
+    });
+
+    // 2. Özel Eklemeler: Van Gölü Transit Tren Sorusu
+    questions.push({
+        q: "Van Gölü'nden feribotlarla geçen ve Türkiye'yi transit olarak kateden trenler, batıda Avrupa'ya hangi sınır kapımızdan çıkış yapmaktadır?",
+        o: ["Kapıkule", "İpsala", "Hamzabeyli", "Uzunköprü"],
+        a: "Kapıkule",
+        r: "Van Gölü üzerinden gelen transit tren hatları, Bulgaristan sınırımızdaki Kapıkule sınır kapısı üzerinden Avrupa'ya bağlanır."
+    });
+
+    // 3. Görsellerden Eklenen Sorular
+    questions.push({
+        q: "I. Hakkâri<br>II. Hatay<br>III. Şanlıurfa<br>IV. Mardin<br><br>Yukarıda verilen illerden hangilerinin Suriye ile sınırı yoktur?",
+        o: ["Yalnız I", "I ve II", "I ve III", "II ve IV", "III ve IV"],
+        a: "Yalnız I",
+        r: "Türkiye'nin en uzun sınır komşusu Suriye'dir. Hatay, Şanlıurfa ve Mardin'in Suriye ile sınırı varken; Hakkâri'nin Irak ve İran ile sınırı vardır, Suriye'ye sınırı yoktur."
+    });
+
+    questions.push({
+        q: "I. Türkiye'nin en güney ucunda yer almaktadır.<br>II. Türkiye'nin en doğu ucunda yer almaktadır.<br><br>Yukarıda verilen bilgilere göre bu bölgeler sırasıyla hangi seçenekte doğru olarak verilmiştir?",
+        o: ["Topraktutan Köyü - Dil Yöresi", "Eşme Köyü - İnceburun", "Dil Yöresi - Topraktutan Köyü", "Topraktutan Köyü - Avlaka Burnu"],
+        a: "Topraktutan Köyü - Dil Yöresi",
+        r: "Türkiye'nin en güney ucu Hatay ilindeki Topraktutan Köyü; en doğu ucu ise Iğdır ilindeki Dil Yöresi'dir."
+    });
+
+    questions.push({
+        q: "Düzey 1 adı verilen bölge sınıflandırmasında aşağıdakilerden hangisi adı ile bir bölge bulunmamaktadır?",
+        o: ["Orta Karadeniz", "Doğu Marmara", "Kuzeydoğu Anadolu", "Akdeniz", "İstanbul"],
+        a: "Orta Karadeniz",
+        r: "İstatistiki Bölge Birimleri Sınıflandırması (Düzey 1) kapsamında İstanbul, Doğu Marmara, Kuzeydoğu Anadolu ve Akdeniz gibi ana bölgeler yer alırken, 'Orta Karadeniz' bu düzeyde bir bölge adı değildir (Düzey 2 altındadır)."
+    });
+
+    questions = shuffle(questions);
+}
+
+function shuffle(array) {
+    let a = [...new Set(array)];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function startQuiz() {
+    currentIndex = 0;
+    score = 0;
+    buildQuestions();
+    showQuestion();
+}
+
+function showQuestion() {
+    const area = document.getElementById('quiz-area');
+    if (currentIndex >= questions.length) {
+        area.innerHTML = `
+            <div class="text-center">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Tebrikler!</h2>
+                <p class="text-lg text-gray-600 mb-6">Testi tamamladınız.</p>
+                <div class="text-5xl font-black text-indigo-600 mb-6">${score} / ${questions.length}</div>
+                <button onclick="startQuiz()" class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700">Yeniden Başla</button>
+            </div>
+        `;
+        return;
+    }
+
+    const current = questions[currentIndex];
+    area.innerHTML = `
+        <div class="flex justify-between items-center mb-6">
+            <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Soru ${currentIndex + 1} / ${questions.length}</span>
+            <span class="text-sm font-medium text-gray-500">Başarı: %${currentIndex === 0 ? 0 : Math.round((score/currentIndex)*100)}</span>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mb-6 leading-snug">${current.q}</h3>
+        <div class="grid grid-cols-1 gap-3 mb-6">
+            ${shuffle(current.o).map(opt => `
+                <button onclick="handleAnswer(this, '${opt}')" class="option-btn text-left p-4 border-2 border-gray-100 rounded-xl hover:border-indigo-300 hover:bg-indigo-50 font-medium text-gray-700">
+                    ${opt}
+                </button>
+            `).join('')}
+        </div>
+        <div id="explanation" class="explanation-box p-4 bg-blue-50 border border-blue-100 rounded-xl text-blue-800 text-sm italic">
+            <strong>Bilgi Notu:</strong> ${current.r}
+        </div>
+        <div class="mt-6 flex justify-end">
+            <button id="next-btn" onclick="nextQuestion()" class="hidden bg-gray-800 text-white px-6 py-2 rounded-lg font-bold hover:bg-gray-900">Sıradaki Soru &rarr;</button>
+        </div>
+    `;
+}
+
+function handleAnswer(btn, selected) {
+    const current = questions[currentIndex];
+    const buttons = document.querySelectorAll('.option-btn');
+    const exp = document.getElementById('explanation');
+    const nextBtn = document.getElementById('next-btn');
+
+    buttons.forEach(b => b.disabled = true);
+    
+    if (selected === current.a) {
+        btn.classList.add('correct');
+        score++;
+    } else {
+        btn.classList.add('wrong');
+        buttons.forEach(b => {
+            if(b.innerText.trim() === current.a) b.classList.add('correct');
+        });
+    }
+
+    exp.style.display = 'block';
+    nextBtn.classList.remove('hidden');
+}
+
+function nextQuestion() {
+    currentIndex++;
+    showQuestion();
+}
+
+// Modal ve Not İşlemleri
+function openStudyNotes() {
+    const modal = document.getElementById('notes-modal');
+    const content = document.getElementById('notes-content');
+    
+    let groupedGates = {};
+    gates.forEach(g => {
+        if(!groupedGates[g.c]) groupedGates[g.c] = [];
+        groupedGates[g.c].push(g);
+    });
+
+    let html = `<section><h3 class="font-bold text-red-600 border-b pb-1 mb-4">🚪 Türkiye'nin Sınır Kapıları ve Demiryolları</h3>`;
+    
+    for (const country in groupedGates) {
+        html += `<div class="mb-4"><h4 class="font-bold text-gray-800 bg-gray-100 px-2 py-1 rounded">🇹🇷 - ${country} Sınırı</h4><ul class="list-disc pl-5 mt-2">`;
+        groupedGates[country].forEach(g => {
+            let features = [];
+            if (g.r) features.push(g.r);
+            if (g.railway) features.push("<span class='text-indigo-600 font-semibold'>🚂 Demiryolu Bağlantısı Var</span>");
+            
+            if (features.length > 0) {
+                html += `<li><strong>${g.n}:</strong> <span class="text-gray-600">${features.join(' | ')}</span></li>`;
+            } else {
+                html += `<li><strong>${g.n}</strong></li>`;
+            }
+        });
+        html += `</ul></div>`;
+    }
+    
+    html += `
+        <div class="mt-6 pt-4 border-t">
+            <h4 class="font-bold text-gray-800 mb-2">📌 Ekstra Bilgiler</h4>
+            <ul class="list-disc pl-5 text-gray-600">
+                <li>Suriye'ye sınırı olan illerimiz arasında <strong>Hakkâri yoktur.</strong></li>
+                <li>Türkiye'nin en güney ucu <strong>Topraktutan Köyü (Hatay)</strong>, en doğu ucu <strong>Dil Yöresi (Iğdır)</strong>'dir.</li>
+                <li><strong>Orta Karadeniz</strong> Düzey 1 sınıflandırmasında yer alan bir bölge adı değildir.</li>
+            </ul>
+        </div>
+    </section>`;
+    
+    content.innerHTML = html;
+    modal.classList.add('active');
+}
+
+function closeStudyNotes() {
+    document.getElementById('notes-modal').classList.remove('active');
+}
+
+function copyNotes() {
+    const content = document.getElementById('notes-content').innerText;
+    navigator.clipboard.writeText(content).then(() => {
+        alert("Notlar başarıyla kopyalandı!");
+    });
+}
+
+// Başlat
+startQuiz();
+</script>
+</body>
+</html>

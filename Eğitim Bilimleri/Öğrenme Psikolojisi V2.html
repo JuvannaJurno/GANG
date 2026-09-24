@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Öğrenme Psikolojisi - Kapsamlı AGS Notları (Tam ve Zenginleştirilmiş Sürüm)</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --warning-bg: #fff8e1;
+            --warning-border: #ffc107;
+            --example-bg: #e8f4f8;
+            --example-border: #81d4fa;
+            --table-header-bg: #f0f0f0;
+            --important-bg: #fce4ec;
+            --important-border: #e91e63;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        .header-container {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-top: 10px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            border-bottom: 3px solid var(--secondary-color);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        .header-container p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card h2 {
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+            margin-top: 0;
+            margin-bottom: 12px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+        
+        .card h3 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            font-style: italic;
+            color: #555;
+            background-color: #f9f9f9;
+            padding: 12px;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .warning-box {
+            background-color: var(--warning-bg);
+            border-left: 4px solid var(--warning-border);
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        .warning-box strong {
+            color: #bfa000;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .important-box {
+            background-color: var(--important-bg);
+            border-left: 4px solid var(--important-border);
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+        
+        .important-box strong {
+            color: #c2185b;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .example-box {
+            background-color: var(--example-bg);
+            border-left: 4px solid var(--example-border);
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        ul, .custom-list {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        li strong {
+            color: var(--primary-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: var(--table-header-bg);
+            color: var(--primary-color);
+        }
+
+        /* Sekme Menüsü (Tab) Stilleri */
+        .tab-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background-color: #e0e0e0;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            background-color: #d5d5d5;
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background-color: var(--secondary-color);
+            color: white;
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Sekme İçerik Alanı Stilleri */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobil Optimizasyon */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+                font-size: 15px;
+            }
+            .card {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .card h2 {
+                font-size: 1.3rem;
+            }
+            .card h3 {
+                font-size: 1.1rem;
+            }
+            table {
+                font-size: 0.85rem;
+            }
+            .tab-btn { flex-grow: 1; text-align: center; font-size: 0.9rem; padding: 10px; }
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <div class="header-container">
+        <h1>Öğrenme Psikolojisi</h1>
+        <p>Eksiksiz AGS Hızlı Tekrar Notları (Zenginleştirilmiş Tam Sürüm)</p>
+    </div>
+
+    <div class="tab-menu">
+        <button class="tab-btn active" onclick="openTab(event, 'temel')">Temel Kavramlar & Faktörler</button>
+        <button class="tab-btn" onclick="openTab(event, 'davranisci')">Davranışçı Kuramlar</button>
+        <button class="tab-btn" onclick="openTab(event, 'bilissel')">Bilişsel & Sosyal Kuramlar</button>
+    </div>
+
+    <div id="temel" class="tab-content" style="display: block;">
+        
+        <div class="card">
+            <h2>Öğrenme Psikolojisi ile İlgili Temel Kavramlar</h2>
+            <div class="description">
+                Öğrenme: Tekrar ya da yaşantı sonucu organizmanın davranışlarında meydana gelen oldukça kalıcı izli davranış değişikliğidir.
+            </div>
+            <ul>
+                <li><strong>Öğrenme Şartları:</strong> 1. Tekrar ya da yaşantı sonucu olmalı, 2. Davranışta değişiklik olmalı, 3. Kalıcı olmalı.</li>
+                <li><strong>Öğrenme Olmayan Durumlar:</strong> Büyüme ve olgunlaşma, doğuştan getirilen davranışlar, geçici davranışlar (alkol, narkoz, hastalık, yorgunluk etkisi) ve alışma (duyusal uyum) öğrenme değildir. <em>Not: Olgunlaşma öğrenme için ön koşuldur ama tek başına yetmez.</em></li>
+                <li><strong>Davranış vs Davranım:</strong> Davranış sürecin bütünüdür (Örn: Su içmek). Davranım ise davranışları oluşturan en küçük yapılardır (Örn: Bardağı tutmak, ağza götürmek).</li>
+            </ul>
+            
+            <div class="important-box">
+                <strong>‼️ KRİTİK UYARI (Her Şey Bir Davranıştır)</strong>
+                Organizmanın davranışı olmayan bir etkinliği yoktur. Bu bağlamda "Aşağıdakilerden hangisi bir davranıştır?" sorusunun cevabı her zaman <strong>"Hepsi"</strong> olur. Soruda mutlaka bir niteleme olmalıdır: "Hangisi doğuştan getirilen bir davranıştır?", "Hangisi öğrenme ürünüdür?" gibi. Yazı yazmak, konuşmak, yürümek, hayal kurmak, düşünmek, nefes almak, rüya görmek... HEPSi birer davranıştır.
+            </div>
+            
+            <h3>Doğuştan Getirilen Davranışlar</h3>
+            <ul>
+                <li><strong>Refleks:</strong> Doğuştan getirilen, basit, uyarıcısı belli olan ve ertelenebilen ancak engellenemeyen ani tepkilerdir. Türe özgü değildir, tüm canlılarda görülebilir (Nefes alma, göz kırpma, hapşırma, öksürme).</li>
+                <li><strong>İçgüdü:</strong> Türe özgü, karmaşık, uyarıcısı belli olmayan ve engellenemeyen davranış örüntüleridir. (Örümceğin ağ yapması, arının altıgen petek yapması, kuşların yuva yapması, göçmen kuşların göç etmesi).</li>
+                <li><strong>Basımlama (Damgalama):</strong> Kritik dönemde görülen, yavruların ilk hareketli nesneyi izlemesi gibi harekete dayalı içgüdüsel bir durumdur (Konrad Lorenz'in kaz yavruları deneyi).</li>
+                <li><strong>Homeostatik Denge:</strong> Vücut ısısı, kan şekeri, tuz dengesi, kan basıncı, oksijen ve su dengesi gibi iç dengenin bilinçsizce korunmasıdır.</li>
+            </ul>
+            
+            <h3>Refleks ve İçgüdü Karşılaştırması</h3>
+            <table>
+                <thead>
+                    <tr><th>Özellik</th><th>Refleks</th><th>İçgüdü</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Uyarıcı</td><td>Bellidir</td><td>Belli değildir</td></tr>
+                    <tr><td>Karmaşıklık</td><td>Basittir</td><td>Karmaşıktır</td></tr>
+                    <tr><td>Türe Özgüllük</td><td>Türe özgü değildir (her canlıda var)</td><td>Türe özgüdür (sadece hayvanlarda)</td></tr>
+                    <tr><td>Ertelenebilme / Engellenebilme</td><td>Kısa süre ertelenebilir, engellenemez</td><td>Ertelenemez ve engellenemez</td></tr>
+                </tbody>
+            </table>
+            
+            <div class="warning-box">
+                <strong>Bünyamin Hoca Uyarıyor!</strong>
+                İnsanlarda içgüdü yoktur, "içgüdüsel davranış" vardır. Annelik bir içgüdü değil, içgüdüsel bir davranıştır. Ayrıca, limon yiyen herkesin ağzı sulanır (refleks/öğrenme değil), ancak limon <em>gören</em> herkesin ağzı sulanmaz (kişiden kişiye değiştiği için öğrenmedir).
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Öğrenmeyi Etkileyen Faktörler</h2>
+            <h3>1. Öğrenenden Kaynaklanan Faktörler</h3>
+            <ul>
+                <li><strong>Türe Özgü Hazır Oluş:</strong> Organizmanın bir davranışı yapabilecek biyolojik donanıma sahip olmasıdır. Sorularda insan ile hayvan (leylek uçarken kedinin uçamaması) veya iki farklı hayvan türü karşılaştırılır. İnsanlar arasında türe özgü hazır oluş farkı aranmaz (bu, insanlarda türe özgü hazır oluş olmadığı anlamına gelmez, iki insan karşılaştırılırken bu açıdan fark gözetilmediği anlamına gelir).</li>
+                <li><strong>Genel Uyarılmışlık Hali:</strong> Çevreden gelen uyarıcıları alma derecesidir. Öğrenme ile arasında "çan eğrisi" ilişkisi vardır; optimal (orta) düzey en idealidir. Aşırı kaygı/stres de, aşırı rahatlık/yorgunluk da öğrenmeyi olumsuz etkiler.
+                    <ul>
+                        <li>Uyarılmışlık düzeyini etkileyen faktörler: Açlık, susuzluk, uykusuzluk, yorgunluk, ortamın aşırı sıcak/soğuk olması, ışığın geliş açısı, oturulan yerin çok rahat ya da rahatsız edici olması, korku, kaygı, stres.</li>
+                    </ul>
+                </li>
+                <li><strong>Transfer (Aktarma):</strong> Eski yaşantıların yeni öğrenmeleri etkilemesidir.
+                    <ul>
+                        <li><em>Olumlu Transfer:</em> Öğrenmeyi kolaylaştırmasıdır. (İleriye Etkin: Bağlama çalanın gitarı kolay öğrenmesi, basketbol oynayanın voleybolu kolay öğrenmesi, İspanyolca bilenin Portekizceyi kolay öğrenmesi. Geriye Etkin: Gitar öğrenenin bağlamada ustalaşması, voleybol oynayanın basketbolu daha iyi oynaması, Portekizce öğrenenin İspanyolcasının akıcılaşması).</li>
+                        <li><em>Olumsuz Transfer:</em> Eski bilginin yeni öğrenmeyi (özellikle psikomotor becerileri) zorlaştırmasıdır. (Örn: Q klavyeye geçen F klavye kullanıcısının zorlanması, düz vites alışkanlığı olanın otomatik vitesli araçta zorlanması). Alışkanlıklar olumsuz transfere yol açar.</li>
+                    </ul>
+                </li>
+                <li><strong>Ket Vurma:</strong> Zihinseldir, unutma durumu söz konusudur.
+                    <ul>
+                        <li><em>İleriye Ket Vurma:</em> Eski bilginin yeni bilgiyi unutturmasıdır. (Örn: Evlenen kadının eski soyadını söylemesi, yeni yılın ilk günlerinde eski yılın yazılması, bankamatik şifresini değiştiren kişinin eski şifreyi girmesi).</li>
+                        <li><em>Geriye Ket Vurma:</em> Yeni bilginin eski bilgiyi unutturmasıdır.</li>
+                    </ul>
+                </li>
+            </ul>
+            <h3>2. Öğretim Yönteminden ve Malzemeden Kaynaklanan Faktörler</h3>
+            <ul>
+                <li><strong>Zaman ve Yapı:</strong> Aralıklı öğrenme (günde 3 saat), toplu öğrenmeye (sınavdan bir gece önce sabahlamak) göre daha kalıcıdır. Konu uzun ve karmaşıksa parçalara bölerek, kısaysa bütün halinde öğrenilmelidir. Belirtilmemişse en ideali: Bütün-Parça-Bütün. <strong>Konu psikomotor ağırlıklıysa basitten karmaşığa (parçadan bütüne) öğrenme tercih edilir.</strong></li>
+                <li><strong>Malzeme Faktörleri:</strong> 
+                    <ul>
+                        <li><em>Telaffuz Edilebilirlik:</em> Açıklık ilkesidir, her şeyin ön koşuludur. Öğretmenin anlaşılır bir dil kullanmasıdır.</li>
+                        <li><em>Algısal Ayırt Edilebilirlik:</em> Önemli yerlerin altını çizme, renklendirme, ses tonu vurgusu veya konunun hayatiliğini belirtmektir.</li>
+                        <li><em>Anlamsal Çağrışım:</em> Konunun öğrencide uyandırdığı <strong>öznel</strong> çağrışımlardır (Zihin haritaları).</li>
+                        <li><em>Kavramsal Gruplama:</em> Konunun <strong>nesnel</strong> sınıflandırılmasıdır (Kavram haritaları, şemalar, tablolar).</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="davranisci" class="tab-content">
+        
+        <div class="card">
+            <h2>Davranışçı Kuramların Genel Özellikleri</h2>
+            <ul>
+                <li>Organizmayı bir <strong>"kara kutu"</strong> olarak görürler. İçsel süreçler (duygu, düşünce) gözlenemediği için reddedilir; sadece gözlenebilen Uyarıcı-Tepki (U-T) bağı incelenir.</li>
+                <li>Zihin doğuştan <strong>"boş bir levha" (Tabula Rasa)</strong> gibidir, her şey çevrenin etkisiyle (yaşantıyla) sonradan öğrenilir.</li>
+                <li>Hayvan ve insan öğrenmesi benzerdir, bu yüzden hayvan deneyleri genellenebilir (bu yüzden "organizma" kelimesini kullanırlar). Süreçten çok ürüne (sonuca) odaklanırlar.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Klasik Koşullanma (Tepkisel Şartlanma - Pavlov)</h2>
+            <div class="description">
+                Organizma pasiftir, süreç U-T bağına dayanır. Duyuşsal ve refleksif davranışlar (korku, kaygı, sevgi) öğrenilir. Pekiştireç davranıştan ÖNCE verilir.
+            </div>
+            
+            <h3>Temporal (Zamana) Koşullanma</h3>
+            <div class="example-box">
+                <strong>📌 Özel Durum:</strong> Pavlov'un deneyinde köpeğe her 10 saniyede bir et verilirse, bir süre sonra et verilmese bile köpek 10 saniyede bir salya salgılar. Bu, köpeğin zamana koşullanmasıdır (temporal koşullanma). Örnek: Tavukların her sabah saat 06.00'da yemek yedikleri yere toplanması.
+            </div>
+            
+            <div class="example-box">
+                <strong>Süreç Örneği: Diş Hekimi Korkusu</strong><br>
+                Tedaviden önce diş hekimi çocuk için <strong>Nötr Uyarıcı</strong>'dır. Tedavi sırasındaki ağrı <strong>Koşulsuz Uyarıcı</strong>, çocuğun ağrıdan dolayı ağlaması <strong>Koşulsuz Tepki</strong>'dir. Yaşantıdan sonra, çocuk diş hekimini görünce korkarsa, diş hekimi <strong>Koşullu Uyarıcı</strong>, korkma eylemi ise <strong>Koşullu Tepki</strong> olur.
+            </div>
+            <ul>
+                <li><strong>Bitişiklik:</strong> Nötr uyarıcının ardından koşulsuz uyarıcı gelmesidir. Pavlov'a göre bu süre maksimum 0.5-30 saniye olmalıdır. (Garcia bu süre kuralına karşı çıkar).</li>
+                <li><strong>Habercilik (Yordayıcılık):</strong> <em>Olumlu Habercilik:</em> Olayın başlayacağını haber verir (Zil sesi etin geleceğini, hakem düdüğü maçın başlayacağını bildirir). <em>Olumsuz Habercilik:</em> Olayın biteceğini haber verir (Ders zilinin çalması dersin bittiğini haber verir). İçeriğin iyi/kötü olması değil, başlama/bitiş bildirmesi önemlidir.</li>
+                <li><strong>Sönme ve Geri Gelme:</strong> Koşulsuz uyarıcı (et) verilmediğinde koşullu tepkinin (salya) yavaş yavaş azalarak kaybolması sönmedir. Aradan süre geçince tepkinin aniden tekrar belirmesi kendiliğinden geri gelmedir.</li>
+                <li><strong>Uyarıcı Genellemesi:</strong> Organizmanın koşullandığı uyarıcıya fiziksel olarak benzeyen farklı uyarıcılara da aynı tepkiyi vermesidir (Beyaz tavşandan korkan çocuğun beyaz kürkten de korkması).</li>
+                <li><strong>Üst Düzey Koşullanma:</strong> Organizmanın ardı ardına, aşama aşama birden fazla uyarıcıya koşullanmasıdır (Önce köpeğe, sonra sahibine koşullanmak).</li>
+                <li><strong>Birleşik Koşullanma:</strong> Organizmaya AYNI ANDA birden fazla nötr uyarıcının sunulup, hepsine birden koşullanılmasıdır (Köpek saldırırken aynı anda parktan ve pamuk şekerciden korkmak).</li>
+                <li><strong>Duyusal Ön Koşullanma:</strong> Koşullanma gerçekleşmeden <em>önce</em> birlikte görülen uyarıcılardan birine koşullanıldığında, diğerine de koşullanılmış gibi ("Düşmanımın dostu düşmanımdır") tepki vermektir.</li>
+                <li><strong>Garcia Etkisi (Olumsuz Tat Koşullanması):</strong> Bitişiklik olmadan (araya saatler girse bile) zehirlenmeyi veya karın ağrısını yenen yemeğe bağlamaktır. Sadece tat değil, çağrışım boyutu da vardır ("Bana her şey seni hatırlatıyor" - Kötü yolculuk sonrası gemi kaptanından da korkmak).</li>
+                <li><strong>Gölgeleme:</strong> Aynı anda sunulan uyarıcılardan baskın olanın seçilip diğerinin gölgede kalmasıdır. "Denize düşen yılana sarılır" mantığıdır. (Köpekten ve denizden korkan çocuğun köpek kovalayınca denize atlaması). <strong>Uyarıcılar AYNI ANDA ortamdadır.</strong></li>
+                <li><strong>Engelleme:</strong> Önceki bir uyarıcıya olan koşullanmanın, ortama sonradan giren yeni uyarıcıya karşı hisleri engellemesidir. "Gelen gideni aratır" mantığıdır. (Çok sevilen öğretmenin yerine gelen yeni öğretmeni sevememek). <strong>Uyarıcılardan biri GİDER, diğeri GELİR (ardıl).</strong></li>
+            </ul>
+            
+            <div class="warning-box">
+                <strong>Bünyamin Hoca Uyarıyor! (Gölgeleme vs Engelleme)</strong>
+                <strong>Gölgeleme:</strong> Uyarıcılar aynı anda ortamdadır. Organizma baskın olanı seçer.<br>
+                <strong>Engelleme:</strong> Uyarıcılar ardı ardına gelir. İlk uyarıcıya olan his, ikinciye karşı engel oluşturur.
+            </div>
+            
+            <h3>Klasik Koşullanmayı Yok Etme Yöntemleri</h3>
+            <ul>
+                <li><strong>Sistematik Duyarsızlaştırma:</strong> Olumsuz duyguların <strong>aşama aşama</strong> yok edilmesidir. (Köpek korkusunu yavaş yavaş oyuncak köpekle, sonra uzaktan severek yenmek).</li>
+                <li><strong>Karşı Karşıya Getirme (Maruz Bırakma/Taşırma):</strong> Korku duyulan şeyle <strong>birdenbire</strong> ve uzun süre yüzleştirilmektir. ("Korkularınla yüzleşmelisin" mantığı).</li>
+                <li><strong>Karşıt Koşullanma:</strong> Organizmanın hislerinin tam zıt yönde değişmesidir. ("En büyük aşklar nefretle başlar" - Matematikten nefret eden öğrencinin öğretmenin iyi tavrıyla matematiği sevmesi).</li>
+                <li><strong>İtici Uyarıcıya Koşullanma:</strong> Sevilen ama zararlı olan alışkanlığı nefret edilen bir şeyle eşleştirmektir (Tırnak yiyen çocuğun tırnağına acı oje sürmek).</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Edimsel Koşullanma (Operant Şartlanma - Skinner)</h2>
+            <div class="description">
+                Edimsel davranışların, davranış sonrası elde edilen sonuçlara (ödül/ceza) göre şekillenmesidir. Organizma aktiftir ve pekiştireç davranıştan SONRA verilir. Psikomotor beceriler üzerinde etkilidir.
+            </div>
+            
+            <h3>Klasik Koşullanma ile Edimsel Koşullanma Karşılaştırması</h3>
+            <table>
+                <thead><tr><th>Özellik</th><th>Klasik Koşullanma</th><th>Edimsel Koşullanma</th></tr></thead>
+                <tbody>
+                    <tr><td>Organizma</td><td>Pasif</td><td>Aktif</td></tr>
+                    <tr><td>Pekiştireç Zamanı</td><td>Davranıştan ÖNCE</td><td>Davranıştan SONRA</td></tr>
+                    <tr><td>İlişki Türü</td><td>U-T (Önce uyarıcı, sonra tepki)</td><td>T-U (Önce tepki, sonra uyarıcı)</td></tr>
+                    <tr><td>Öğrenme Türü</td><td>Duyuşsal (korku, sevgi, kaygı)</td><td>Psikomotor (beceriler)</td></tr>
+                    <tr><td>Sönme Şekli</td><td>Azalarak kaybolur</td><td>Önce artar (patlama), sonra söner</td></tr>
+                </tbody>
+            </table>
+            
+            <ul>
+                <li><strong>Kademeli Yaklaştırma (Biçimlendirme):</strong> Organizmaya olmayan YENİ bir beceri kazandırılırken, davranışın basitten karmaşığa basamaklandırılması ve HER adımın pekiştirilmesidir (Örn: Çizgi çizen çocuğa aferin, harf yazana aferin, hece yazana aferin...).</li>
+                <li><strong>Zincirleme:</strong> Aşamalılık gerektiren, bir adımın diğerinin ön koşulu olduğu davranışların sırayla yapılmasıdır. (Örn: Bankamatikten para çekerken kartı takmadan şifre girememek).</li>
+                <li><strong>Sönme Patlaması:</strong> Klasik koşullanmanın aksine, edimsel koşullanmada pekiştirilmeyen davranış hemen sönmez; önce kısa bir süre şiddeti artar (Patlama), sonra sönme sürecine girer (Ağlayarak oyuncak isteyen çocuğu görmezden gelince daha şiddetli ağlaması).</li>
+                <li><strong>Davranışın Topoğrafyası:</strong> Pekiştirilmeyen davranışın şekil değiştirerek farklılaşmasıdır (Öğretmeni söz vermeyince öğrencinin sıraya vurması, ayağa kalkması). <strong>Sönme patlaması şiddet artışı, topoğrafya ise şekil/farklılaşmadır.</strong></li>
+                <li><strong>Ayırt Etme ve Davranışta Kontrast:</strong> Davranışın pekiştirildiği ortamda (ayırt edici uyarıcı) yapılıp, pekiştirilmediği ortamda yapılmaması "Ayırt Etme"dir. Bir ortamda baskılanan (azalan) davranışın, diğer serbest ortamda eskisinden çok daha fazla artması "Kontrast"tır (Evde ağlamayan çocuğun okulda aşırı ağlaması).</li>
+                <li><strong>Batıl İnanç ve Batıl Davranış:</strong> Tesadüfi pekiştirme sonucu oluşur. Tesadüfen gerçekleşen durumun uğur getirdiğini düşünmek <strong>Batıl İnanç (Klasik Koşullanma - Düşünce boyutu)</strong>; o nesneyi/davranışı sürekli kullanmak <strong>Batıl Davranış (Edimsel Koşullanma - Eylem boyutu)</strong>dur. (Siyah ceketin uğurlu geldiğini düşünüp her iş görüşmesine onunla gitmek).</li>
+                <li><strong>Kaçma ve Kaçınma:</strong> Tehdit edici unsur ortamdayken oradan uzaklaşmak <strong>Kaçma (Klasik)</strong>'dır. Tehdit unsuru ihtimalini düşünüp o ortama hiç girmemek <strong>Kaçınma (Edimsel)</strong>'dır. (Köpeğin olduğu yola baştan girmemek).</li>
+                <li><strong>Öğrenilmiş Çaresizlik ve Kendini Gerçekleştiren Kehanet:</strong> Başarısızlıklar sonrası durumu kabullenip "ne yaparsam yapayım olmayacak" diye pes etmek Çaresizliktir. <strong>Organizmanın başarısız olacağını düşündüğü davranışı en az bir kere denemiş olması gerekir.</strong> Olumlu veya olumsuz düşüncelerin/beklentilerin bir süre sonra gerçeğe dönüşmesi ("Aklıma gelen başıma geldi") Kehanettir.</li>
+            </ul>
+            
+            <div class="warning-box">
+                <strong>Bünyamin Hoca Uyarıyor! (Çok Karışanlar)</strong>
+                <table>
+                    <tr><th>Tepki Genellemesi</th><th>Öğrenmenin Genellenmesi</th></tr>
+                    <tr><td>Aynı (veya tek) uyarıcıya <strong>farklı/benzer tepkiler</strong> verilmesidir. (Edimsel)</td>
+                        <td>Farklı/benzer uyarıcılara (ortamlara) <strong>aynı tepkinin</strong> verilmesidir. (Edimsel)</td>
+                    </tr>
+                    <tr><td colspan="2"><strong>Örnek:</strong> Sinema yorumu beğenilen kişinin müzik, spor ve siyaset yorumu da yapması (Tepki Genellemesi).<br>Yatağını topladığı için aferin alan çocuğun, aferin alabilmek için yatağını her yerde (ev, misafirlik, otel) toplaması (Öğrenmenin Genellenmesi).</td></tr>
+                </table>
+                <br>
+                <table>
+                    <tr><th>Premack İlkesi (Büyükanne Kuralı)</th><th>Koşullu Anlaşma</th></tr>
+                    <tr><td>Otorite (anne, baba vb.) şarttır. Kesinlikle önce sevilmeyen iş, sonra sevilen iş yapılır. ("Ispanağını bitirirsen baklava yiyebilirsin"). Daha katı ve disiplinlidir.</td>
+                        <td>Otorite zorunlu değildir, kişi kendiyle de yapabilir. İş sırası fark etmez. ("Sınavı kazanırsam tatile gideceğim"). Daha esnektir.</td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3>Pekiştireçler ve Ceza</h3>
+            <ul>
+                <li><strong>Olumlu / Olumsuz Pekiştireç:</strong> Ortama girdiğinde haz veren şeyler (Övgü, para, çikolata) olumludur. Ortamdan çıkıldığında rahatlatan şeyler (Gürültü, ağrı, azar) olumsuzdur.</li>
+                <li><strong>Birincil / İkincil:</strong> Fizyolojik ve hayati olanlar (Yemek, su, acı) birincildir. Sosyal, etkinlik, sembolik (not, yıldız) ve nesnel olanlar ikincildir.
+                    <ul>
+                        <li><strong>İkincil Olumlu Pekiştireçler 4'e ayrılır:</strong>
+                            <ul>
+                                <li><em>Sosyal:</em> Gülümseme, okşama, alkış, aferin, takdir.</li>
+                                <li><em>Faaliyetsel (Etkinlik):</em> Spor yapmak, kitap okumak, alışveriş yapmak.</li>
+                                <li><em>Sembolik:</em> Puan, jeton, kupon, kart, yıldız, not, marka.</li>
+                                <li><em>Nesnel:</em> Oyuncak, kalem, kitap, kıyafet.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Olumsuz Pekiştirme:</strong> Organizmayı rahatsız eden olumsuz pekiştirecin ortamdan çekilip organizmanın "oh be" diyerek rahatlamasıdır (Üşüyen kişinin palto giymesi, gürültü gelince pencereyi kapatmak). Sonucu OLUMLUDUR.</li>
+                <li><strong>1. ve 2. Tür Ceza:</strong> Ortama olumsuz (kötü) uyarıcının eklenmesi 1. Tür (Tokat atmak). Ortamdaki olumlu (iyi) uyarıcının çekilip alınması 2. Tür Cezadır (Çocuğun elindeki oyuncağı/şekeri almak). <em>Skinner'e göre ceza doğruyu öğretmez, sadece davranışı bastırır.</em></li>
+                <li><strong>Simgesel Ödülle Pekiştirme:</strong> Sembolik pekiştireçlerin (yıldız, puan, jeton) kullanıldığı pekiştirme yöntemidir. <strong>Öğretmenin yıldız vermesi EYLEMdir = simgesel ödülle pekiştirme. Yıldızın kendisi UYARICIdır = sembolik pekiştireç.</strong></li>
+                <li><strong>Cezaya Alternatif Yöntemler:</strong> Ortamı değiştirme (kopya çekenin yerini değiştirme), Ara verme / Time Out (5 dk mola odası), Bıktırma, Sabırla bekleme (ergenlikte), Görmezden gelme (En etkilisi).</li>
+            </ul>
+
+            <h3>Pekiştirme Tarifeleri</h3>
+            <ul>
+                <li><strong>Sürekli Pekiştirme:</strong> Yeni davranış kazandırılırken kullanılır. Her doğru tepki pekiştirilir (İlk okumayı öğrenen çocuğa her defasında aferin demek). Sönmeye karşı en dirençsizdir.</li>
+                <li><strong>Sabit Aralıklı:</strong> Pekiştirecin zamanı bellidir (Her ayın 15'inde maaş, 4 yılda bir Şubat'ın 29 çekmesi). "Pekiştirme sonrası ara/durgunluk" yaşanır.</li>
+                <li><strong>Değişken Aralıklı:</strong> Zaman sürprizdir (Habersiz müfettiş denetimi, pop quiz).</li>
+                <li><strong>Sabit Oranlı:</strong> Pekiştireç için gereken davranış sayısı bellidir (4 alana 2 bedava, 6 gömlek ütüleyene 10 TL). Bunda da durgunluk görülür.</li>
+                <li><strong>Değişken Oranlı:</strong> Kaçıncı davranışta pekiştireç geleceği belli değildir (Kumar, piyango, cips paketlerinden bedava çıkması). <strong>Sönmeye karşı EN dirençli tarifedir.</strong></li>
+                <li><strong>Artan/Azalan Oranlı:</strong> Davranış sayısının sabit artması (5 soru, 10 soru, 15 soru çözdükçe ödül) veya azalmasıdır.</li>
+                <li><strong>Katışık (Birleşik):</strong> En az iki tarifenin ÖN ŞART olarak birlikte sunulmasıdır (Hem 1 haftada getireceksin HEM 2 ödev yapacaksın).</li>
+                <li><strong>Eş Zamanlı:</strong> Aynı anda iki bağımsız tarifenin işlemesidir.</li>
+                <li><strong>Sınırlı Bekletmeli:</strong> "Bu soruyu 15 saniyede cevaplarsan kazanırsın" gibi sürenin kaçırılmaması gereken durumlardır.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Bitişiklik Kuramları (Watson ve Guthrie)</h2>
+            <div class="description">
+                Pekiştireci reddederler, sadece U-T bitişikliğinin (öğrenmede eşleşmenin) yeterli olduğunu savunurlar. İkisinin ortak noktası, ödül ve cezanın öğrenme sürecinde etkili olmadığını savunmalarıdır. Aynı kuramı temsil etseler de öğrenme sürecinde zıt görüşlere sahiptirler.
+            </div>
+            
+            <h3>1. John B. Watson'ın Temel Görüşleri</h3>
+            <ul>
+                <li><strong>Davranışçıların Babası:</strong> Kalıtımsal süreçlerin öğrenme üzerinde etkili olmadığını, çevresel değişkenlerin organizmaya istenilen şekli vermede asıl güç olduğunu savunur.</li>
+                <li><strong>Tekrar İlkesi:</strong> Öğrenme, ödül veya ceza olmadan sadece <strong>tekrar</strong> ile ortaya çıkar (Örn: Bisiklet veya araba kullanmayı tekrarla öğrenmek).</li>
+                <li><strong>En Son ve En Sık İlkesi:</strong> Organizma bir uyarıcıya karşı en son ve en sık hangi tepkiyi verdiyse hep onu tekrarlar. (Örn: Kilitli bir kapı için denenen 10 anahtardan 8.si kapıyı açarsa, sonraki seferde doğrudan 8. anahtar denenir).</li>
+                <li><strong>Duyguların Öğrenilmesi:</strong> Tüm duygular (özellikle korku) klasik koşullanma yoluyla çevreden öğrenilir. Öğrenilmiş korkular, <strong>sistematik duyarsızlaştırma</strong> yöntemiyle aşama aşama yok edilebilir.</li>
+            </ul>
+
+            <h3>2. Edwin R. Guthrie'nin Temel Görüşleri</h3>
+            <ul>
+                <li><strong>Tek Deneme İlkesi:</strong> Öğrenmek için ödüle, cezaya veya tekrara ihtiyaç yoktur. Uyarıcıya karşı bir defa doğru tepki gösterildiğinde öğrenme anında gerçekleşir. Tekrar sadece öğrenilmiş davranışın pekişmesini ve pürüzsüzleşmesini (ustalaşmayı) sağlar.</li>
+                <li><strong>Sonunculuk İlkesi:</strong> Watson'a benzer ancak <strong>başında tekrar olmaması</strong> ile ayrılır. Birey problemi tek denemeyle çözerse, o durumu öğrendiği için hep aynı yöntemi kullanır. (Örn: Kilitli kapıyı sırtıyla tekte itip açan kişi, hep sırtıyla itmeye çalışır).</li>
+                <li><strong>Cezaya Bakış Açısı:</strong> İlla ceza verilecekse, fiziksel rahatsızlık vermeyen (II. Tip Ceza) ve bireyi <strong>alternatif istendik bir davranışa</strong> yönlendiren bir ceza olmalıdır. (Örn: Bilgisayar oynayan çocuğun bilgisayarını alıp, boş vaktinde kitap okumasını sağlamak).</li>
+            </ul>
+
+            <div class="example-box">
+                <strong>Guthrie'ye Göre Alışkanlıkları Yok Etme (BEZ)</strong><br>
+                1. <strong>Bıktırma (Yorma):</strong> Bireyin yaptığı istenmeyen davranışın, bıkıp yorulana kadar ona zorla yaptırılmasıdır (Kibritle oynayan çocuğa kutularca kibrit yaktırmak).<br>
+                2. <strong>Eşik (Alıştırma):</strong> İstenmeyen tepkiyi yaratan uyarıcının dozunun yavaş yavaş artırılarak (hissettirmeden) verilmesi veya azaltılmasıdır. <strong>(Var olanı yok etmede veya YENİ bir alışkanlık kazandırmada kullanılır. Örn: Tuzu yavaşça azaltmak veya yumurta yemeyene azar azar yedirmek).</strong><br>
+                3. <strong>Zıt Tepki (Çatışan Uyarıcılar):</strong> İstenmeyen tepki yaratan uyarıcı ile daha güçlü sevilen bir uyarıcının aynı anda sunulmasıdır. "Arkadaş hatırına çiğ tavuk yenir." (Yoğurt sevmeyen çocuğa çilekli yoğurt yedirmek).
+            </div>
+            
+            <div class="warning-box">
+                <strong>Bünyamin Hoca Uyarıyor! (Eşik - Sistematik Duyarsızlaştırma - Kademeli Yaklaştırma)</strong>
+                <ul>
+                    <li><strong>Eşik Yöntemi (Guthrie):</strong> <strong>Alışkanlıklarla</strong> ilgilenir. Var olanı yok etmek veya yeni alışkanlık kazandırmak için kullanılır. (Tuzu azaltmak, yumurta yedirmek).</li>
+                    <li><strong>Sistematik Duyarsızlaştırma (Watson):</strong> <strong>Duygularla</strong> ilgilenir. Korku, kaygı gibi olumsuz duyguları aşama aşama yok eder. (Köpek korkusu).</li>
+                    <li><strong>Kademeli Yaklaştırma (Skinner):</strong> <strong>Olmayan YENİ bir beceriyi</strong> kazandırmak için kullanılır ve her basamak pekiştirilir. (Yazı yazmayı öğretmek).</li>
+                </ul>
+            </div>
+
+            <h3>Karşılaştırma Tablosu: Watson vs. Guthrie</h3>
+            <table>
+                <thead>
+                    <tr><th>Özellik</th><th>J.B. Watson</th><th>E.R. Guthrie</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Temel Öğrenme Prensibi</strong></td><td>Tekrar İlkesi</td><td>Tek Deneme İlkesi</td></tr>
+                    <tr><td><strong>Tekrarın İşlevi</strong></td><td>Öğrenmeyi bizzat gerçekleştirir.</td><td>Öğrenmeyi değil, ustalaşmayı sağlar.</td></tr>
+                    <tr><td><strong>Ödül / Ceza Kullanımı</strong></td><td>Öğrenmede etkisizdir.</td><td>Etkisizdir (İstendik davranışa yönlendirmelidir).</td></tr>
+                    <tr><td><strong>Temel Yasası</strong></td><td>En Son ve En Sık İlkesi</td><td>Sonunculuk İlkesi</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>Bağlaşımcılık Kuramı (Thorndike)</h2>
+            <div class="description">
+                Öğrenme tesadüfen, deneme-yanılma (seçme ve bağlama) ile basitten karmaşığa ilerler. Zihinsel süreç değil, motor eylemler ve sonuçları aktiftir. Thorndike'ı çalışırken en çok dikkat edilmesi gereken nokta, araştırmalarının ilerleyen yıllarında <strong>Etki</strong> ve <strong>Tekrar</strong> kanunlarında kendi görüşlerini güncellemiş (değiştirmiş) olmasıdır.
+            </div>
+            
+            <h3>Temel Yasalar ve Görüş Değişiklikleri</h3>
+            <ul>
+                <li><strong>1. Etki (Sonuç) Kanunu:</strong> Edimsel koşullanmanın temelini atan bu kanundur.
+                    <ul>
+                        <li><em>İlk Görüşü:</em> Davranış ödüllendirilirse (haz verirse) sıklığı artar. Davranış cezalandırılırsa (acı verirse) sıklığı azalır.</li>
+                        <li><em>Güncellenen Görüşü:</em> Ödül davranışı artırmaya devam eder. Ancak <strong>ceza, davranışı zayıflatmada veya yok etmede etkili değildir</strong> (sadece geçici bastırır).</li>
+                    </ul>
+                    <div class="important-box">
+                        <strong>Eğitime Yansıması:</strong> Ceza davranış üzerinde kalıcı bir azalma yaratmadığı için, eğitim sürecinde çocuklarda davranış değişikliği yaratmak için cezayı kullanmamak gerekir.
+                    </div>
+                </li>
+                <li><strong>2. Hazırbulunuşluk Kanunu:</strong> Kişinin öğrenmeye hazır olması (ilgi, istek, motivasyon, ön öğrenme, olgunlaşma) durumudur. Üç senaryosu vardır:
+                    <ul>
+                        <li>Kişi hazırsa ve yapması desteklenirse <strong>mutluluk</strong> duyar.</li>
+                        <li>Kişi hazırsa ancak yapması engellenirse <strong>kızgınlık/mutsuzluk</strong> duyar.</li>
+                        <li>Kişi hazır değilse ve yapmaya zorlanırsa yine <strong>kızgınlık/mutsuzluk</strong> duyar. (Örn: Üniversiteyi kazanan çocuğa ailesinin istediği bölüm için baskı yapması yasaya aykırıdır, 3. duruma örnektir).</li>
+                    </ul>
+                </li>
+                <li><strong>3. Tekrar Kanunu:</strong> Uyarıcı-Tepki bağının tekrarlarla nasıl etkilendiğini açıklar.
+                    <ul>
+                        <li><em>İlk Görüşü:</em> Tekrar etmek bağı güçlendirir (Kullanılma Yasası), tekrar etmemek zayıflatır (Kullanılmama Yasası).</li>
+                        <li><em>Güncellenen Görüşü:</em> Sadece tekrar yapmak veya yapmamak bağın gücünde büyük bir değişim yaratmaz. Önemli olan tekrardan ziyade <strong>geri bildirimdir (dönüt)</strong>.
+                            <br><em>Örn: Bir soruyu yanlış çözdükten sonra hatanın nerede olduğunu öğrenmeden defalarca çözmek işe yaramaz.</em>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>İkincil Yasalar</h3>
+            <ul>
+                <li><strong>Tepki Çeşitliliği:</strong> Problemi çözmek için denenen çok sayıdaki farklı yollardır (Lavabo tıkanınca önce açıcı dökmek, sonra tel sokmak, sonra pompa kullanmak). <strong>Süreçtir, sonuç Deneme-Yanılmadır.</strong></li>
+                <li><strong>Tepki Analojisi:</strong> Fiziksel mekan benzerliğine dayanır. Kişinin kendi mutfağında başkasının mutfağından daha rahat yemek yapması, öğrencilerin kendi sınıflarında sınava girince rahatlamasıdır.</li>
+                <li><strong>Ait Olma:</strong> Uyarıcı-Tepki bağının mantıklı çağrışım yapmasıdır. (Kan-Kırmızı mantıklıyken, Kar-Kırmızı mantıksızdır).</li>
+                <li><strong>Çağrışımsal Geçiş:</strong> Klasik koşullanmadaki üst düzey koşullanmaya benzer. (Örn: Reklamlarda ünlüleri oynatarak onlara duyulan sevginin yavaş yavaş ürüne geçirilmesi).</li>
+                <li><strong>Çağrışımsal Zıtlık:</strong> Tek yönlü kurulan bağın tersine çevrilmesinin zorluğudur (Z'den A'ya alfabeyi sayarken zorlanmak).</li>
+                <li><strong>Etkinin Yayılması:</strong> Bireye bir tepkiyi kazandırmak için ödül verildiğinde, hedeflenen tepkinin yanındaki diğer (olumlu veya olumsuz) davranışların da tesadüfen pekişmesidir. ("Kaş yapayım derken göz çıkarmak").
+                    <ul>
+                        <li><em>Olumlu Yan Etki:</em> Çocuğun elini yıkadığı için ödül alırken o esnada ellerini havluyla kurulamayı da öğrenmesi.</li>
+                        <li><em>Olumsuz Yan Etki:</em> Hızlı el yıkaması için ödül vaat edilen çocuğun acele ederken her yeri ıslatması veya o esnada yere attığı havlunun (istenmeyen davranış) da farkında olmadan ödüllendirilmesi.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="bilissel" class="tab-content">
+        
+        <div class="card">
+            <h2>Sosyal Öğrenme Kuramı (Bandura)</h2>
+            <div class="description">
+                Bandura zihinsel süreçlere önem vererek davranışçılardan ayrılır. Öğrenen kişi gözlemcidir. Öğrenmek için pekiştireç şart değildir, ancak performansa dökmek için gerekir.
+            </div>
+            <ul>
+                <li><strong>Dolaylı Süreçler:</strong> <em>Dolaylı Pekiştirme:</em> Ödül alanı görüp heveslenmek. <em>Dolaylı Ceza:</em> Ceza alanı görüp vazgeçmek. <em>Dolaylı Güdü:</em> Başkasının başardığını görüp "ben de yaparım" diye istek duymak (İçsel). <em>Dolaylı Duygu:</em> Timsah görmeden belgeselden izleyerek timsahtan korkmaktır.</li>
+            </ul>
+            <h3>Öğrenme Süreci Aşamaları</h3>
+            <ul>
+                <li><strong>Dikkat:</strong> Modelin çekiciliğine, statüsüne, benzerliğine göre davranışı izleme.</li>
+                <li><strong>Hatırda Tutma:</strong> İzlenenleri görsel ve sözel olarak uzun süreli belleğe kodlama.</li>
+                <li><strong>Uygulama (Davranışı Üretme):</strong> Zihindeki kodlara uygun davranışı yapma ve modelin hareketine benzeyene kadar düzeltme.</li>
+                <li><strong>Güdülenme:</strong> Ödül beklentisiyle öğrenilenin eyleme/performansa dönüşmesi.</li>
+            </ul>
+            <h3>Temel İlkeler</h3>
+            <ul>
+                <li><strong>Öz Yeterlik:</strong> Bireyin gelecekteki zorlukların üstesinden gelebileceğine olan inancıdır (Potansiyeline inanma). 
+                    <ul><li><em>Yüksek Öz Yeterlik:</em> Karmaşık olaylarla baş edebilme, problemlerin üstesinden gelme, çalışmalarında sabırlı olma.</li>
+                    <li><em>Düşük Öz Yeterlik:</em> Olaylarla baş edememe, umutsuzluk, ilk denemede başarısız olunca pes etme.</li></ul>
+                </li>
+                <li><strong>Öz Düzenleme:</strong> Hayatını, çalışma saatlerini, çevresini kendi standartlarına göre ayarlama ve kontrol etme gücüdür.</li>
+                <li><strong>Öz Yargılama:</strong> Öz eleştiri yapabilme, eksi ve artılarını kendine dürüstçe itiraf edebilmedir.</li>
+                <li><strong>Karşılıklı Belirleyicilik:</strong> Birey, Çevre ve Davranış sürekli birbirini şekillendirir. (Disiplinsiz bir kızın iyi bir sınıfa gidip düzelmesi, ama sınıfın da biraz ondan etkilenip bozulması).</li>
+                <li><strong>Sembolleştirme Kapasitesi:</strong> Olayları zihinde sembolik olarak (düşünce/dil) tutabilme yetisidir. İkiz kardeşlerde bile bu kapasite farklıdır.</li>
+                <li><strong>Öngörü Kapasitesi:</strong> Geçmiş ve sembolleri kullanarak geleceğe dair plan, senaryo ve hazırlık yapabilmedir.</li>
+                <li><strong>Dolaylı Öğrenme Kapasitesi:</strong> Başkalarının deneyimlerinden ders çıkararak öğrenme hızını katlayabilmedir.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Amaçlı Davranışçılık (İşaret Gestalt / Beklenti Kuramı) - Tolman</h2>
+            <div class="description">
+                İçe bakışı reddeder ama davranışı sadece küçük hareketlerle (U-T) değil, bütüncü, amaca ve niyete yönelik eylemlerle açıklar.
+            </div>
+            <ul>
+                <li><strong>Zihinsel Deneme Yanılma:</strong> Fiziksel harekete geçmeden önce, yol ayrımında durup olasılıkları zihinde tartıp seçmektir.</li>
+                <li><strong>En Az Çaba İlkesi:</strong> Organizmanın problemi çözerken her zaman en kısa, en az enerji gerektiren yolu seçmesidir.</li>
+                <li><strong>Bilişsel Harita / Yer Öğrenme:</strong> Çevrenin organize edilmiş zihinsel bilgisidir. Bir şehre ilk defa gitmesek bile eczane, postane nerdedir tahminde bulunmamız, zihnimizin navigasyonudur.</li>
+                <li><strong>Bilişsel Senaryo:</strong> Düğünde, cenazede nasıl davranılacağını önceden bilmektir.</li>
+                <li><strong>Örtük (Gizil) Öğrenme:</strong> Ödül beklentisi olmadan, dikkat etmeden farkında olmadan edinilen bilgilerdir (Serviste uyurken gidilen yolun tabelalarını aslında zihne yazmak).</li>
+                <li><strong>Kateksis Etkisi:</strong> Dürtülerin belli nesnelerle eşleştirilmesidir. (Özelden özele akıl yürütmeye benzer). Adanalı birinin açlığını "kebap" ile eşleştirmesi <em>Olumlu Kateksis</em>; bir Müslümanın açlığını domuz etiyle GİDERMEMESİ <em>Olumsuz Kateksis</em>tir.</li>
+                <li><strong>Eş Değer İnançlar:</strong> Aracı amaç haline getirmektir. (Sevgi arayan çocuğun yüksek notla bunu sağlaması; birinin parayı her şey yapması).</li>
+                <li><strong>Alan Beklentileri:</strong> Klasik koşullanmadaki olumlu habercilik gibidir. Zili duyunca birinin geldiğini, düğmeye basınca ışığın yanacağını beklemektir.</li>
+                <li><strong>Alan Biliş Yolları:</strong> Kişisel problem çözme tarzıdır (Ayakkabıcıyla kimisi kavga eder, kimisi tatlı dille sorunu çözer). Tolman buna güvenilmez der.</li>
+                <li><strong>Dürtü Ayrımları:</strong> Susayanın su içmesi, uykusu gelenin uyumasıdır (Biyolojik durumu tespit etme).</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Gestalt Kuramı (Bütüncül Algı ve Bilişsel Yaklaşım)</h2>
+            <div class="description">
+                "Bütün, parçaların toplamından farklı ve büyüktür." Organizma olayları tek tek ögeler olarak değil, organize bir bütün olarak algılar. Gestalt, bilişsel kuramların temelini oluşturan, zihinsel süreçlere odaklanan bir yaklaşımdır.
+            </div>
+            
+            <h3>Koffka: Coğrafi ve Psikolojik Çevre</h3>
+            <ul>
+                <li><strong>Coğrafi (Fiziksel) Çevre:</strong> Nesnel, herkes için aynı olan dış dünyadır.</li>
+                <li><strong>Psikolojik (Davranışsal) Çevre:</strong> Bireyin o çevreyi nasıl algıladığıdır. Davranışı belirleyen fiziksel gerçeklik değil, kişinin o anki algısıdır (Karanlıkta yerdeki ipi yılan sanıp kaçan kişinin davranışı coğrafi çevreye göre değil, psikolojik çevreye göre şekillenmiştir).</li>
+            </ul>
+
+            <h3>Pragnanz (Örgütleme) Yasaları</h3>
+            <p>Gestalt'a göre zihin, çevreden gelen uyarıcıları karmaşık bir şekilde değil, anlamlı bütünler (örgütler) halinde algılama eğilimindedir.</p>
+            <ul>
+                <li><strong>Algıda Seçicilik:</strong> Karnı aç olanın lokanta tabelasını, memurun zam haberini algılamasıdır.</li>
+                <li><strong>Algıda Değişmezlik:</strong> Pencere açılsa da şeklinin kare olarak bilinmesi, uçak havadayken küçük görünse de büyük olduğunun bilinmesidir (Renk, boyut, şekil değişmezliği).</li>
+                <li><strong>Algıda Tamamlama (Zeigarnik Etkisi):</strong> Eksik harfleri bütün okuma, yarım kalan işleri/şarkıları unutmamaktır (Zeigarnik etkisi sadece bellek/motivasyonla ilgilidir).</li>
+                <li><strong>Algıda Yakınlık:</strong> Birbirine fiziksel/zamansal olarak yakın olanların (T.C. kimlik no gruplamak, ritim, yan yana noktalar) grup olarak algılanmasıdır.</li>
+                <li><strong>Şekil - Zemin İlişkisi:</strong> Dikkat çeken şey "Şekil", arkada kalan "Zemin"dir. Baktığın açıya göre yer değiştirebilir. <strong>Örneğin; sınıfta ders dinleyen öğrencilerin (ders=şekil, sınıf=zemin), dışarıdan gelen yüksek sesten dolayı dikkatlerinin dağılması durumunda yüksek ses 'şekil', ders ise 'zemin' konumuna geçer.</strong></li>
+                <li><strong>Algıda Benzerlik:</strong> Renk, form olarak benzeyen takım formalarının, harflerin (sütun vs satır dizilimi) aynı grupta algılanmasıdır.</li>
+                <li><strong>Algıda Süreklilik (Devamlılık):</strong> Zikzak çizgilerin birbiri ardına kesintisiz devam ediyormuş gibi düz bir akış olarak algılanmasıdır. <strong>Aynı zamanda olumsuz aktarmanın (eski alışkanlıkların devam etme eğilimi) Gestalt kuramındaki karşılığıdır.</strong></li>
+            </ul>
+            <h3>Köhler ve Wertheimer</h3>
+            <ul>
+                <li><strong>İçgörüsel Öğrenme (Kavrayarak - Köhler):</strong> Problemin unsurları (hazırlık) incelenir, bir süre düşünülür (kuluçka) ve çözüm <em>aniden</em> (aha!) hatasızca ortaya çıkar. Yeni durumlara kolay transfer edilir.
+                    <div class="warning-box"><strong>Not:</strong> Deneme-yanılma, bekleme ve aniden çözüm varsa içgörü; uyarıcıları inceleme, karşılaştırma ve ilişki kurma varsa kavrayarak öğrenme denir.</div>
+                </li>
+                <li><strong>Üretici Düşünme (Bilişsel Yaklaşım - Wertheimer):</strong> Problemin doğasını ve mantığını içten kavrayarak çözmektir (A Tipi). Sadece kuralı/formülü ezberleyip uygulamak (Dikdörtgen alanında ezbere gitmek) B Tipidir. Dışsal pekiştireç yerine içsel başarı duygusu önemlidir. (Wertheimer aynı zamanda Gestalt kuramının kurucusudur ve bilişsel süreçleri merkeze alır).</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Bilgiyi İşleme Modeli</h2>
+            <div class="description">
+                Gagne, Miller ve Driscoll tarafından savunulur. Bilgi nasıl alınır, organize edilir, depolanır ve hatırlanır sorularına yanıt arar.
+            </div>
+            <ul>
+                <li><strong>Duyusal Kayıt (DK):</strong> Bilginin saniyenin çok küçük bir bölümünde girdiği, kapasitesi sınırsız ama süresi çok kısa olan ilk depodur. Dikkat çekici uyaranlar sayesinde <em>seçici algı</em> ile KSB'ye geçer. Geçmeyen anında silinir. 
+                <br><strong>Dikkati etkileyen etmenler:</strong> Fiziksel uyarıcılar, aykırı uyarıcılar, duygusal uyarıcılar ve emir verici uyarıcılar.</li>
+                <li><strong>Kısa Süreli Bellek (İşleyen/Çalışan Bellek):</strong> Kapasitesi 7±2 birim ile sınırlıdır (Örn: Tel no'sunu 355-710-5 diye 3 birime bölmek). Zihinsel tekrar yapılmazsa bilgi 20 saniyede uçar. Ya tepki üreticiye gider ya da USB'ye kodlanır.</li>
+                <li><strong>Uzun Süreli Bellek (Depo - USB):</strong> Bilginin sonsuza dek saklandığı yerdir. Unutma yoktur, sadece bilgiyi çağırmada başarısızlık vardır.
+                    <ul>
+                        <li><strong>Açık (Deklaratif/Bildirilebilir) Bellek:</strong> Bilinçli olarak hatırlanabilen bellektir.
+                            <ul>
+                                <li><em>Anısal (Episodik):</em> Mezuniyet, evlilik, maç anıları (Film şeridi gibidir, olağandışı şeyler daha iyi hatırlanır).</li>
+                                <li><em>Anlamsal (Semantik):</em> Kurallar, kavramlar, olgular (Su 100 derecede kaynar).</li>
+                            </ul>
+                        </li>
+                        <li><strong>Örtük (Deklaratif Olmayan) Bellek:</strong> Bilinç dışı, otomatik olarak hatırlanan bellektir.
+                            <ul>
+                                <li><em>İşlemsel (Prosedürel):</em> "Nasıl yapılır?" bilgisidir. Öğrenmesi uzun sürer ama kalıcılığı (bisiklet sürmek gibi) çok güçlüdür.</li>
+                            </ul>
+                        </li>
+                        <li><em>Duyuşsal Bellek:</em> Duygu ve değerlerle ilgili anıları içerir.</li>
+                    </ul>
+                </li>
+                <li><strong>Yürütücü Biliş (Üst Biliş / Metacognition):</strong> Bireyin kendi öğrenme yollarının farkında olması, kendi bilişsel süreçlerini kontrol edebilmesi ve yönlendirebilmesidir ("Ben en iyi yazarak öğrenirim" diyebilmesi).</li>
+            </ul>
+            
+            <h3>Bellek Destekleyici İpuçları (Kodlamalar)</h3>
+            <ul>
+                <li><strong>Yerleşim (Loci):</strong> Bilgiyi çevredeki fiziksel mekanlara, binanın katlarına zihinsel olarak yerleştirmektir.</li>
+                <li><strong>Akronim (Kelime):</strong> Baş harflerden kelime üretmektir (Örn: PİDDE - Pekiştireç, ipucu, dönüt...).</li>
+                <li><strong>Akrostiş (Cümle):</strong> Baş harflerden şiir/cümle yazmaktır (Arap Tayları Daima Önden Koşar -> Alma, Tepkide bulunma...).</li>
+                <li><strong>Anahtar Sözcük:</strong> Yabancı dildeki okunuşu, ana dildeki komik/benzer kelimeyle birleştirmektir (Carta = Letter -> Cart/Kart ile bağdaştırmak).</li>
+                <li><strong>Askı Sözcük:</strong> 1-Ter, 2-İpi, 3-Güç diyerek numaraları somut nesnelerle (Cumhurbaşkanları sıralaması gibi) kafiyeli ezberlemektir.</li>
+                <li><strong>Eklemleme (Genişletme):</strong> Mevcut ya da yeni bilgilerin anlamlılığını artırmak için bireyin yeni bilgilerle eski bilgileri zihninde ilişkilendirmesidir.</li>
+                <li><strong>Örgütleme (Gruplama):</strong> Öğrenilecek bilgilerin ortak özelliklerine göre sınıflandırılarak (kavram haritaları, tablolar) zihne yerleştirilmesidir.</li>
+                <li><strong>Zincirleme Bağ Yöntemi:</strong> Öğrenilecek kelimelerin ya da kavramların sırasıyla birbiriyle ilişkilendirilerek (genelde abartılı veya komik bir hikaye/zincir oluşturularak) ezberlenmesidir.</li>
+            </ul>
+
+            <h3>Unutmanın Nedenleri (Geri Getirmenin Engelleri)</h3>
+            <ul>
+                <li><strong>Bozulma (Sönme):</strong> Uzun süre kullanılmayan, tekrar edilmeyen bilgilerin bellek izlerinin zayıflayarak kaybolmasıdır.</li>
+                <li><strong>Ket Vurma (Bozucu Etki):</strong> İleriye veya geriye ket vurma şeklinde, eski veya yeni bilgilerin birbirini unutturması ve karıştırmasıdır.</li>
+                <li><strong>Yanlış Yerleştirme (Kodlama Hatası):</strong> Bilginin uzun süreli belleğe baştan yanlış veya eksik kaydedilmesidir (Ayşen'i Ayşe kodlayıp yıllar sonra yanlış söylemek).</li>
+                <li><strong>Bilgiyi Değiştirme:</strong> Kısa süreli bellekte işlem yaparken yeni bilginin eskisinin üstüne yazılması veya anlamının bozulmasıdır.</li>
+                <li><strong>Güdüsel Unutma (Bastırma):</strong> Bireye acı, üzüntü veya utanç veren travmatik anıların bilinçdışına itilerek kasıtlı şekilde unutulmasıdır.</li>
+                <li><strong>Organik Nedenler (Amnezi):</strong> Kaza, travma, yaşlılık, uyuşturucu veya hastalıklara bağlı olarak beynin fiziksel zarar görmesi sonucu yaşanan unutmadır. <strong>Uykuda unutma azdır çünkü geriye ket vurma olmaz.</strong></li>
+            </ul>
+            
+            <h3>Problem Çözme ve Yaratıcı Düşünmeyi Engelleyen Faktörler</h3>
+            <ul>
+                <li><strong>İşleve Takılma:</strong> Nesneleri sadece bilinen temel işlevleriyle düşünmek (Tornavida yoksa bıçakla vida sıkmayı akıl edememek).</li>
+                <li><strong>Zihinsel Kurgu (Kurulum):</strong> Problemleri hep alıştığı, eski yöntemlerle çözmeye çalışmak (Yeni ve kısa bir yol varken inatla uzun yoldan gitmek).</li>
+                <li><strong>Kültürel Engel:</strong> Bireyin içinde yaşadığı toplumun tabuları, kuralları ve değer yargılarının yaratıcılığı kısıtlaması.</li>
+                <li><strong>Duygusal Engel:</strong> Korku, kaygı, hata yapma endişesi, utanma gibi duyguların yaratıcılığı bloke etmesi.</li>
+                <li><strong>Algısal Engel:</strong> Problemin önemli noktalarını (şekil-zemin, eksik bilgi) yanlış veya eksik algılamaktan kaynaklanan engeller.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Öğrenme Psikolojisinde Kritik Kavramlar ve Etkiler Sözlüğü</h2>
+            <div class="description">
+                ÖSYM'nin sınavlarda çeldirici veya doğrudan soru kökü olarak kullanabileceği önemli psikolojik etkiler.
+            </div>
+            <ul>
+                <li><strong>Halo Etkisi:</strong> Bir kişinin olumlu bir özelliğine bakarak diğer tüm özelliklerinin de olumlu olduğunu varsaymak (Çok yakışıklı birinin aynı zamanda çok zeki olduğunu düşünmek).</li>
+                <li><strong>Horn Etkisi:</strong> Bir kişinin olumsuz bir özelliğine bakarak diğer tüm özelliklerinin de olumsuz olduğunu varsaymak (Halo etkisinin tam tersi).</li>
+                <li><strong>Plasebo Etkisi:</strong> Etkisi olmayan (boş) bir ilacın veya tedavinin, kişinin iyileşeceğine dair inancı sayesinde gerçekten olumlu fiziksel/psikolojik sonuç vermesi.</li>
+                <li><strong>Nosebo Etkisi:</strong> Kişinin olumsuz beklentileri veya korkuları nedeniyle, zararsız bir durumun fiziksel olarak kötü hissettirmesi (Plasebonun tersi - prospektüs okuyup yan etkileri yaşamak).</li>
+                <li><strong>Donma Etkisi (Freezing Effect):</strong> Organizmanın yoğun korku, tehdit veya kaygı anında tepkisiz, hareketsiz kalmasıdır.</li>
+                <li><strong>Argümantasyon (Dayanaklandırma):</strong> Bir iddiayı kanıtlar, veriler ve mantıksal gerekçeler sunarak destekleme, savunma veya çürütme sürecidir.</li>
+                <li><strong>Temel Atıf Hatası:</strong> Başkalarının hatalarını ve başarısızlıklarını onların kişilik özelliklerine (tembel, yeteneksiz), kendi hatalarımızı ise durumsal faktörlere (şanssızlık, sorular çok zordu) bağlama eğilimi.</li>
+                <li><strong>Özel Transfer:</strong> Eski öğrenilen spesifik ve özel bir kuralın, yeni ve benzer bir durumda aynen uygulanması.</li>
+                <li><strong>Algısal Kurulum (Beklenti):</strong> Kişinin geçmiş yaşantıları, ön yargıları ve beklentileri nedeniyle olayları veya nesneleri belli bir şekilde algılama eğilimidir.</li>
+                <li><strong>Ambivalans Düşünce (Duygu):</strong> Aynı kişiye veya duruma karşı aynı anda hem olumlu hem de olumsuz, zıt duyguları/düşünceleri bir arada yaşamak (sevgi ve nefretin bir arada olması).</li>
+                <li><strong>Von Restorff Etkisi (İzolasyon Etkisi):</strong> Ortamdaki veya listedeki uyarıcılardan diğerlerine göre farklı, ilginç, zıt veya aykırı olanın (farklı renkli yazılan kelime vb.) daha kolay hatırlanmasıdır.</li>
+                <li><strong>Cyrano Etkisi:</strong> Kişinin kendi düşünce ve hislerini doğrudan değil de bir başkası (aracı) üzerinden ifade etmesidir.</li>
+                <li><strong>Pryor Etkisi (Hayvanı Vurma / Don't Shoot the Dog):</strong> Karen Pryor'un edimsel koşullanmaya dayalı yöntemidir. İstenmeyen davranışları cezalandırmak yerine, olumlu pekiştirme (clicker) ile istendik davranışları şekillendirme yaklaşımıdır.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            
+            // Tüm içerikleri gizle
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Tüm butonlardan "active" sınıfını kaldır
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Tıklanan sekmeyi göster ve butona "active" sınıfı ekle
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+
+</body>
+</html>

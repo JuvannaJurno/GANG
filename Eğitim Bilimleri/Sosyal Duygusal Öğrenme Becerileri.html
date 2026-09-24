@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sosyal Duygusal Öğrenme Quiz</title>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text: #1F2937;
+            --success: #10B981;
+            --error: #EF4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        #quiz-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        #question-box {
+            margin-bottom: 24px;
+        }
+
+        #skill-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 15px;
+            background-color: #EEF2FF;
+            border-radius: 8px;
+            color: var(--primary-hover);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 12px;
+            background-color: var(--card-bg);
+            color: var(--text);
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:hover:not(:disabled), .btn:active:not(:disabled) {
+            border-color: var(--primary);
+            background-color: #F9FAFB;
+        }
+
+        .btn.correct {
+            background-color: var(--success) !important;
+            color: white !important;
+            border-color: var(--success) !important;
+        }
+
+        .btn.wrong {
+            background-color: var(--error) !important;
+            color: white !important;
+            border-color: var(--error) !important;
+        }
+
+        #progress {
+            font-size: 0.9rem;
+            color: #6B7280;
+            margin-bottom: 15px;
+        }
+
+        #result-screen {
+            display: none;
+        }
+
+        #summary-container {
+            text-align: left;
+            margin-top: 20px;
+            max-height: 350px;
+            overflow-y: auto;
+            border-top: 2px solid #E5E7EB;
+            padding-top: 15px;
+        }
+
+        .summary-item {
+            margin-bottom: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #F9FAFB;
+            border-left: 5px solid #ccc;
+            font-size: 0.95rem;
+        }
+
+        .summary-item.correct {
+            border-left-color: var(--success);
+            background-color: #ECFDF5;
+        }
+
+        .summary-item.wrong {
+            border-left-color: var(--error);
+            background-color: #FEF2F2;
+        }
+
+        .summary-skill {
+            font-weight: bold;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .summary-detail {
+            color: #4B5563;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        #restart-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            margin-top: 20px;
+        }
+
+        #restart-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Scrollbar stilleri */
+        #summary-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        #summary-container::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 4px;
+        }
+        #summary-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1; 
+            border-radius: 4px;
+        }
+        #summary-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8; 
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+
+<div id="quiz-container">
+    <div id="quiz-screen">
+        <h1>Hangi Beceri Alanı?</h1>
+        <div id="progress">Soru: <span id="current-q">1</span> / <span id="total-q">9</span></div>
+        
+        <div id="question-box">
+            <p>Aşağıdaki beceri hangi ana kategoriye aittir?</p>
+            <div id="skill-name">Beceri Yükleniyor...</div>
+        </div>
+
+        <div id="options">
+            </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Quiz Tamamlandı!</h1>
+        <p>Skorunuz:</p>
+        <h2 id="final-score" style="font-size: 2.5rem; color: var(--primary); margin: 10px 0;">0 / 9</h2>
+        <p id="feedback-msg"></p>
+        
+        <div id="summary-container">
+            </div>
+
+        <button id="restart-btn" class="btn" onclick="startQuiz()">Yeniden Başla</button>
+    </div>
+</div>
+
+<script>
+    const data = [
+        { skill: "Kendini Tanıma (Öz Farkındalık)", category: "Benlik Becerileri" },
+        { skill: "Kendini Düzenleme (Öz Düzenleme)", category: "Benlik Becerileri" },
+        { skill: "Kendine Uyarlama (Öz Yansıtma)", category: "Benlik Becerileri" },
+        { skill: "İletişim", category: "Sosyal Yaşam Becerileri" },
+        { skill: "İş Birliği", category: "Sosyal Yaşam Becerileri" },
+        { skill: "Sosyal Farkındalık", category: "Sosyal Yaşam Becerileri" },
+        { skill: "Uyum", category: "Ortak / Birleşik Beceriler" },
+        { skill: "Sorumlu Karar Verme", category: "Ortak / Birleşik Beceriler" },
+        { skill: "Esneklik", category: "Ortak / Birleşik Beceriler" }
+    ];
+
+    const mainCategories = ["Benlik Becerileri", "Sosyal Yaşam Becerileri", "Ortak / Birleşik Beceriler"];
+    
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let userResults = []; // Kullanıcının cevaplarını tutacağımız dizi
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function startQuiz() {
+        currentQuestions = shuffleArray([...data]);
+        currentQuestionIndex = 0;
+        score = 0;
+        userResults = []; // Önceki sonuçları sıfırla
+        
+        document.getElementById('quiz-screen').style.display = 'block';
+        document.getElementById('result-screen').style.display = 'none';
+        document.getElementById('total-q').innerText = currentQuestions.length;
+        
+        loadQuestion();
+    }
+
+    function generateOptions() {
+        return shuffleArray([...mainCategories]);
+    }
+
+    function loadQuestion() {
+        const q = currentQuestions[currentQuestionIndex];
+        
+        document.getElementById('current-q').innerText = currentQuestionIndex + 1;
+        document.getElementById('skill-name').innerText = q.skill;
+        
+        const optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = '';
+        
+        const options = generateOptions();
+        
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(btn, opt, q.category, q.skill);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(btn, selected, correct, skillName) {
+        // Tıklamaları geçici olarak devre dışı bırak
+        const allBtns = document.querySelectorAll('#options .btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        const isCorrect = (selected === correct);
+
+        // Kullanıcının cevabını kaydet
+        userResults.push({
+            skill: skillName,
+            correctCategory: correct,
+            selectedCategory: selected,
+            isCorrect: isCorrect
+        });
+
+        if (isCorrect) {
+            btn.classList.add('correct');
+            score++;
+        } else {
+            btn.classList.add('wrong');
+            // Doğru cevabı yeşil yap
+            allBtns.forEach(b => {
+                if (b.innerText === correct) b.classList.add('correct');
+            });
+        }
+
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < currentQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }, 1200);
+    }
+
+    function showResults() {
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+        document.getElementById('final-score').innerText = `${score} / ${currentQuestions.length}`;
+        
+        const feedback = document.getElementById('feedback-msg');
+        if (score === currentQuestions.length) {
+            feedback.innerText = "Harika! Tüm becerileri kusursuz biliyorsun.";
+        } else if (score >= currentQuestions.length - 3) {
+            feedback.innerText = "Gayet iyi! Temel kavramlara hakimsin.";
+        } else {
+            feedback.innerText = "Becerileri tekrar gözden geçirmende fayda var.";
+        }
+
+        // Özet listesini oluştur
+        const summaryContainer = document.getElementById('summary-container');
+        summaryContainer.innerHTML = '<h3 style="font-size:1.1rem; color:var(--text); margin-top:0; margin-bottom:15px;">Cevap Özeti:</h3>';
+        
+        userResults.forEach(res => {
+            const div = document.createElement('div');
+            div.className = `summary-item ${res.isCorrect ? 'correct' : 'wrong'}`;
+            
+            // Eğer yanlışsa kırmızı renkte kullanıcının cevabını göster, doğruysa sadece doğru kategoriyi göster
+            let answerHTML = res.isCorrect 
+                ? `Kategori: <strong>${res.correctCategory}</strong>`
+                : `Doğru Kategori: <strong>${res.correctCategory}</strong><br>
+                   Senin Cevabın: <span style="color: var(--error); font-weight: 500;">${res.selectedCategory}</span>`;
+
+            div.innerHTML = `
+                <div class="summary-skill">${res.skill}</div>
+                <div class="summary-detail">${answerHTML}</div>
+            `;
+            summaryContainer.appendChild(div);
+        });
+    }
+
+    // Oyunu başlat
+    startQuiz();
+</script>
+
+</body>
+</html>

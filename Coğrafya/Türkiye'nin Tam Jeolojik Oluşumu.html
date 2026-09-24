@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türkiye'nin Tam Jeolojik Oluşumu Animasyonu</title>
+    <style>
+        :root {
+            --sky: #87CEEB;
+            --land: #8B4513;
+            --masif: #5c3a21;
+            --water: rgba(70, 130, 180, 0.85);
+            --mountain: #696969;
+            --snow: #ffffff;
+            --delta: #2E8B57;
+            --lava: #FF4500;
+            --bg-dark: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 {
+            color: var(--bg-dark);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        
+        p.subtitle {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        /* Sahne */
+        #stage {
+            width: 100%;
+            max-width: 800px;
+            height: 350px;
+            background-color: var(--sky);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+            border: 4px solid var(--bg-dark);
+        }
+
+        /* Zeminler */
+        .ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--land);
+            transition: all 1.5s ease;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+
+        /* 1. Zaman Detayları */
+        .coal { opacity: 0; transition: opacity 1s; }
+        
+        /* 2. Zaman Detayları */
+        .water-layer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 0;
+            background-color: var(--water);
+            transition: all 2s ease-in-out;
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .sediment { opacity: 0; color: #d2b48c; font-size: 2rem; transition: opacity 2s, transform 3s; transform: translateY(-50px); }
+
+        /* 3. Zaman Detayları */
+        .mountains-container {
+            position: absolute;
+            bottom: 40px;
+            width: 100%;
+            height: 200px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 2;
+        }
+        
+        .mountain {
+            width: 0; height: 0;
+            border-left: 0 solid transparent;
+            border-right: 0 solid transparent;
+            border-bottom: 0 solid var(--mountain);
+            transition: all 2s ease-in-out;
+            position: relative;
+        }
+
+        .snow-cap {
+            position: absolute;
+            top: 0; left: -30px;
+            width: 0; height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-bottom: 40px solid var(--snow);
+            opacity: 0;
+            transition: opacity 1.5s;
+            z-index: 3;
+        }
+
+        .volcano {
+            position: absolute;
+            bottom: 40px; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 0 solid transparent;
+            border-right: 0 solid transparent;
+            border-bottom: 0 solid #4a3424;
+            transition: all 1.5s ease;
+            z-index: 1;
+        }
+
+        .eruption {
+            position: absolute;
+            top: -20px; left: -10px;
+            width: 20px; height: 20px;
+            background-color: var(--lava);
+            border-radius: 50%;
+            opacity: 0;
+            box-shadow: 0 0 20px 10px var(--lava);
+            transition: opacity 0.5s, transform 1s;
+        }
+
+        .fault-lines {
+            position: absolute;
+            bottom: 0; width: 100%; height: 100%;
+            opacity: 0;
+            background-image: linear-gradient(45deg, transparent 48%, red 49%, red 51%, transparent 52%);
+            background-size: 50px 50px;
+            transition: opacity 0.5s;
+        }
+
+        .minerals {
+            position: absolute;
+            bottom: 10px; width: 100%;
+            display: flex; justify-content: space-around;
+            opacity: 0; font-size: 1.5rem; transition: opacity 1s;
+        }
+
+        /* 4. Zaman Detayları */
+        .bosphorus {
+            position: absolute;
+            bottom: 40px; left: 20%;
+            width: 0; height: 100px;
+            background-color: var(--water);
+            transition: all 1.5s;
+            z-index: 4;
+        }
+        
+        .cyprus {
+            position: absolute;
+            bottom: 0; right: 20%;
+            width: 80px; height: 40px;
+            background-color: var(--land);
+            border-radius: 20px 20px 0 0;
+            opacity: 0;
+            transition: all 2s ease-in-out;
+            z-index: 6;
+        }
+
+        .delta {
+            position: absolute;
+            bottom: 40px;
+            width: 60px; height: 30px;
+            background-color: var(--delta);
+            border-radius: 30px 30px 0 0;
+            opacity: 0;
+            transition: all 1.5s;
+            z-index: 3;
+        }
+
+        /* Açıklama Kutusu */
+        #info-box {
+            width: 100%; max-width: 800px;
+            min-height: 120px;
+            background: white; padding: 20px;
+            border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px; font-size: 1rem; color: #333;
+            border-left: 5px solid var(--bg-dark);
+            box-sizing: border-box;
+        }
+        #info-box ul { margin: 10px 0 0 0; padding-left: 20px; }
+        #info-box li { margin-bottom: 5px; }
+
+        /* Butonlar */
+        .controls {
+            display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: 800px;
+        }
+        button {
+            padding: 12px 20px; border: none; background-color: var(--bg-dark);
+            color: white; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold;
+            transition: background 0.3s, transform 0.1s;
+        }
+        button:hover { background-color: #1a252f; transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
+
+        /* Deprem Titremesi */
+        @keyframes shake {
+            0% { transform: translate(2px, 2px) }
+            20% { transform: translate(-2px, -2px) }
+            40% { transform: translate(-2px, 2px) }
+            60% { transform: translate(2px, -2px) }
+            80% { transform: translate(2px, 2px) }
+            100% { transform: translate(-2px, -2px) }
+        }
+        .shaking { animation: shake 0.3s infinite; }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#cografya" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <h2>Türkiye'nin Tam Jeolojik Oluşumu</h2>
+    <p class="subtitle">Her dönemin üstüne tıklayarak tüm olayları çizgi film gibi izleyin.</p>
+    
+    <div id="stage">
+        <div class="ground" id="ground">
+            <span class="coal">⚫ Kömür</span>
+            <div class="fault-lines" id="faults"></div>
+            <div class="minerals" id="minerals"><span>💎 Bor</span><span>🛢️ Petrol</span><span>🧂 Tuz</span></div>
+        </div>
+
+        <div class="water-layer" id="water">
+            <span class="sediment" id="sediment">🪨 Tortullanma (Birikim) 🪨</span>
+        </div>
+
+        <div class="mountains-container">
+            <div class="mountain" id="mountain-left" style="left: 10%;">
+                <div class="snow-cap" id="snow1"></div>
+            </div>
+            <div class="mountain" id="mountain-right" style="right: 10%;">
+                <div class="snow-cap" id="snow2"></div>
+            </div>
+        </div>
+        
+        <div class="volcano" id="volcano">
+            <div class="eruption" id="eruption"></div>
+        </div>
+
+        <div class="bosphorus" id="bosphorus"></div>
+        <div class="delta" id="delta1" style="left: 35%;"></div>
+        <div class="delta" id="delta2" style="right: 35%;"></div>
+        <div class="cyprus" id="cyprus"></div>
+    </div>
+
+    <div id="info-box">
+        Jeolojik zamanlardaki tüm detayları görmek için aşağıdaki butonlara sırasıyla tıklayın.
+    </div>
+
+    <div class="controls">
+        <button onclick="playEra(1)">1. Zaman (Paleozoik)</button>
+        <button onclick="playEra(2)">2. Zaman (Mezozoik)</button>
+        <button onclick="playEra(3)">3. Zaman (Tersiyer)</button>
+        <button onclick="playEra(4)">4. Zaman (Kuvaterner)</button>
+        <button onclick="resetStage()" style="background-color: #c0392b;">Hepsini Sıfırla</button>
+    </div>
+
+    <script>
+        // DOM Elementleri
+        const stage = document.getElementById('stage');
+        const ground = document.getElementById('ground');
+        const coal = document.querySelector('.coal');
+        const water = document.getElementById('water');
+        const sediment = document.getElementById('sediment');
+        const mLeft = document.getElementById('mountain-left');
+        const mRight = document.getElementById('mountain-right');
+        const volcano = document.getElementById('volcano');
+        const eruption = document.getElementById('eruption');
+        const faults = document.getElementById('faults');
+        const minerals = document.getElementById('minerals');
+        const bosphorus = document.getElementById('bosphorus');
+        const cyprus = document.getElementById('cyprus');
+        const delta1 = document.getElementById('delta1');
+        const delta2 = document.getElementById('delta2');
+        const snow1 = document.getElementById('snow1');
+        const snow2 = document.getElementById('snow2');
+        const info = document.getElementById('info-box');
+
+        function resetStage() {
+            // Zemin
+            ground.style.height = '40px';
+            ground.style.backgroundColor = 'var(--land)';
+            coal.style.opacity = '0';
+            faults.style.opacity = '0';
+            minerals.style.opacity = '0';
+            // Su
+            water.style.height = '0';
+            sediment.style.opacity = '0';
+            sediment.style.transform = 'translateY(-50px)';
+            // Dağlar ve Volkan
+            mLeft.style.borderLeft = '0 solid transparent'; mLeft.style.borderRight = '0 solid transparent'; mLeft.style.borderBottom = '0 solid var(--mountain)';
+            mRight.style.borderLeft = '0 solid transparent'; mRight.style.borderRight = '0 solid transparent'; mRight.style.borderBottom = '0 solid var(--mountain)';
+            volcano.style.borderLeft = '0 solid transparent'; volcano.style.borderRight = '0 solid transparent'; volcano.style.borderBottom = '0 solid #4a3424';
+            eruption.style.opacity = '0'; eruption.style.transform = 'scale(1)';
+            // 4. Zaman Öğeleri
+            bosphorus.style.width = '0';
+            cyprus.style.opacity = '0'; cyprus.style.transform = 'translateX(0)';
+            delta1.style.opacity = '0'; delta2.style.opacity = '0';
+            snow1.style.opacity = '0'; snow2.style.opacity = '0';
+            
+            stage.classList.remove('shaking');
+            info.innerHTML = "Sıfırlandı. Jeolojik zamanlardaki tüm detayları görmek için aşağıdaki butonlara sırasıyla tıklayın.";
+        }
+
+        function playEra(era) {
+            resetStage();
+            
+            setTimeout(() => {
+                if (era === 1) {
+                    ground.style.height = '70px';
+                    ground.style.backgroundColor = 'var(--masif)';
+                    setTimeout(() => coal.style.opacity = '1', 800);
+                    
+                    info.innerHTML = `<strong>1. Jeolojik Zaman (Paleozoik):</strong> 
+                    <ul>
+                        <li><strong>Masifler Oluştu:</strong> Koyu renkli zemin, deprem riskinin az olduğu Yıldız Dağları, Kırşehir, Menteşe, Bitlis gibi sert çekirdekleri temsil eder.</li>
+                        <li><strong>Taş Kömürü:</strong> Zonguldak ve çevresindeki ormanlar fosilleşerek kömür yataklarını (⚫) oluşturdu.</li>
+                    </ul>`;
+                } 
+                else if (era === 2) {
+                    ground.style.height = '40px';
+                    water.style.height = '250px';
+                    setTimeout(() => {
+                        sediment.style.opacity = '1';
+                        sediment.style.transform = 'translateY(100px)';
+                    }, 1000);
+
+                    info.innerHTML = `<strong>2. Jeolojik Zaman (Mezozoik): Durgunluk Dönemi</strong> 
+                    <ul>
+                        <li><strong>Tetis Denizi:</strong> Sular yükselerek Anadolu'yu tamamen kapladı.</li>
+                        <li><strong>Tortullanma (Birikim):</strong> Deniz dibinde dış kuvvetlerin taşıdığı malzemeler (🪨) birikerek gelecekteki dağların malzemesini oluşturdu.</li>
+                    </ul>`;
+                } 
+                else if (era === 3) {
+                    // Dağlar çıkıyor
+                    ground.style.height = '60px';
+                    mLeft.style.borderLeft = '80px solid transparent'; mLeft.style.borderRight = '80px solid transparent'; mLeft.style.borderBottom = '160px solid var(--mountain)';
+                    mRight.style.borderLeft = '90px solid transparent'; mRight.style.borderRight = '90px solid transparent'; mRight.style.borderBottom = '180px solid var(--mountain)';
+                    
+                    // Volkan çıkıyor
+                    volcano.style.borderLeft = '60px solid transparent'; volcano.style.borderRight = '60px solid transparent'; volcano.style.borderBottom = '120px solid #4a3424';
+                    
+                    // Deprem ve Madenler
+                    setTimeout(() => {
+                        stage.classList.add('shaking');
+                        faults.style.opacity = '0.7'; // KAF, DAF, BAF
+                        setTimeout(() => stage.classList.remove('shaking'), 1500);
+                        
+                        // Volkan patlaması
+                        eruption.style.opacity = '1';
+                        eruption.style.transform = 'scale(3) translateY(-10px)';
+                        
+                        // Madenler beliriyor
+                        minerals.style.opacity = '1';
+                    }, 1200);
+
+                    info.innerHTML = `<strong>3. Jeolojik Zaman (Tersiyer): Türkiye Şekilleniyor!</strong> 
+                    <ul>
+                        <li><strong>Orojenez:</strong> Alp-Himalaya kıvrım sistemi olan Kuzey Anadolu ve Toros dağları (gri üçgenler) denizden yükseldi.</li>
+                        <li><strong>Fay Hatları ve Depremler:</strong> Sıkışma sonucu KAF, DAF ve BAF (kırmızı çizgiler) kırıldı.</li>
+                        <li><strong>Volkanizma:</strong> İç ve Doğu Anadolu'da yanardağlar patladı.</li>
+                        <li><strong>Madenler:</strong> Linyit, petrol, bor ve tuz yatakları oluştu.</li>
+                    </ul>`;
+                } 
+                else if (era === 4) {
+                    // Dağlar hazırda dursun
+                    ground.style.height = '60px';
+                    mLeft.style.borderLeft = '80px solid transparent'; mLeft.style.borderRight = '80px solid transparent'; mLeft.style.borderBottom = '160px solid var(--mountain)';
+                    mRight.style.borderLeft = '90px solid transparent'; mRight.style.borderRight = '90px solid transparent'; mRight.style.borderBottom = '180px solid var(--mountain)';
+                    
+                    // Sular biraz var (Ege Denizi)
+                    water.style.height = '80px';
+                    
+                    setTimeout(() => {
+                        // Boğazlar açılıyor
+                        bosphorus.style.width = '30px';
+                        
+                        // Kıbrıs kopuyor
+                        cyprus.style.opacity = '1';
+                        cyprus.style.transform = 'translateX(100px)';
+                        
+                        // Deltalar oluşuyor
+                        delta1.style.opacity = '1';
+                        delta2.style.opacity = '1';
+                        
+                        // Dağlara buzul iniyor
+                        snow1.style.opacity = '1';
+                        snow2.style.opacity = '1';
+                    }, 800);
+                    
+                    info.innerHTML = `<strong>4. Jeolojik Zaman (Kuvaterner): Günümüz Görünümü</strong> 
+                    <ul>
+                        <li><strong>Boğazlar ve Ege Denizi:</strong> Egeid karası çöktü, sular yükselerek İstanbul ve Çanakkale boğazlarını oluşturdu.</li>
+                        <li><strong>Buzullar:</strong> Buzul çağında yüksek dağlarımızın (Ağrı, Cilo, Kaçkar vb.) zirvelerinde buzullar (karlı tepeler) oluştu.</li>
+                        <li><strong>Deltalar:</strong> Akarsular kıyılarda Çukurova, Bafra ve Çarşamba gibi yeşil delta ovalarını oluşturdu.</li>
+                        <li><strong>Kıbrıs:</strong> Faylanmalar sonucu Kıbrıs Adası anakaradan koparak uzaklaştı.</li>
+                    </ul>`;
+                }
+            }, 50);
+        }
+    </script>
+</body>
+</html>

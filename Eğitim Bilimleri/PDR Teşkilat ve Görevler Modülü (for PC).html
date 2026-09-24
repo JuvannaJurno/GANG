@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDR Kapsamlı Çalışma Modülü</title>
+    <style>
+        :root {
+            /* Genel Temalar */
+            --bg-color: #f3f4f6;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --border: #d1d5db;
+            --success: #059669;
+            --error: #dc2626;
+            --info: #2563eb;
+            
+            /* Mod 1 Renkleri */
+            --m1-primary: #283593;
+            --m1-table: #5d4037;
+            --m1-chair: #f5f5f5;
+            
+            /* Mod 2 Renkleri */
+            --m2-primary: #4338ca;
+            --m2-primary-hover: #3730a3;
+
+            /* Mod 3 Renkleri */
+            --m3-primary: #059669;
+            --m3-primary-hover: #047857;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* --- ANA MENÜ TASARIMI --- */
+        #main-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 50px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .menu-title {
+            font-size: 2.5rem;
+            color: var(--m1-primary);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .menu-subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .menu-cards {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .menu-card {
+            flex: 1;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .menu-card.m1:hover { border-color: var(--m1-primary); }
+        .menu-card.m2:hover { border-color: var(--m2-primary); }
+        .menu-card.m3:hover { border-color: var(--m3-primary); }
+
+        .menu-card h3 { font-size: 1.5rem; margin-bottom: 15px; }
+        .menu-card.m1 h3 { color: var(--m1-primary); }
+        .menu-card.m2 h3 { color: var(--m2-primary); }
+        .menu-card.m3 h3 { color: var(--m3-primary); }
+        .menu-card p { color: var(--text-light); line-height: 1.5; margin-bottom: 20px; font-size: 0.95rem; }
+        
+        .menu-btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            margin-top: auto;
+        }
+        .btn-m1 { background-color: var(--m1-primary); }
+        .btn-m2 { background-color: var(--m2-primary); }
+        .btn-m3 { background-color: var(--m3-primary); }
+
+        /* Ortak Üst Bar (Geri Dönüş İçin) */
+        .top-bar {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+        .back-to-menu {
+            background: white;
+            color: var(--text-dark);
+            border: 1px solid var(--border);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .back-to-menu:hover { background: #e5e7eb; }
+
+        /* --- MOD 1: KOMİSYON MASASI TASARIMI --- */
+        #mode1-container { display: none; width: 100%; max-width: 1200px; flex-direction: column; align-items: center; }
+        .m1-header { color: var(--m1-primary); text-align: center; margin-bottom: 5px; font-size: 1.8rem;}
+        .m1-controls { margin-bottom: 30px; display: flex; gap: 10px; align-items: center; }
+        .m1-controls select, .m1-controls button { padding: 12px 15px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; font-weight: 500; }
+        .m1-controls select { width: 450px; }
+        .m1-controls button { background-color: var(--m1-primary); color: white; border: none; cursor: pointer; }
+        .m1-game-area { display: flex; gap: 40px; width: 100%; justify-content: center; align-items: flex-start; }
+        
+        .list-area { flex: 1; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); min-height: 450px; }
+        .list-area h3 { margin-top: 0; border-bottom: 3px solid var(--m1-primary); padding-bottom: 10px; color: var(--m1-primary); }
+        .draggable-item { background-color: #fff; border: 2px solid var(--m1-primary); color: var(--m1-primary); padding: 12px; margin-bottom: 10px; border-radius: 8px; cursor: grab; text-align: center; font-weight: bold; user-select: none; }
+        .draggable-item:hover { background-color: var(--m1-primary); color: white; }
+        
+        .table-area { flex: 2; display: flex; flex-direction: column; align-items: center; position: relative; margin-top: 40px; }
+        .commission-table { background-color: var(--m1-table); width: 320px; height: 450px; border-radius: 25px; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.6), 0 15px 25px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: #ffb74d; font-size: 20px; font-weight: 800; text-align: center; padding: 20px; border: 8px solid #3e2723; }
+        .chairs-container { position: absolute; top: -40px; bottom: -40px; left: -90px; right: -90px; display: flex; flex-wrap: wrap; justify-content: space-between; align-content: space-between; pointer-events: none; }
+        .chair { width: 130px; height: 65px; background-color: var(--m1-chair); border: 3px dashed #bdbdbd; border-radius: 12px; pointer-events: auto; display: flex; align-items: center; justify-content: center; font-size: 13px; text-align: center; padding: 5px; box-sizing: border-box; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .chair.hovered { background-color: #fff9c4; border-color: #fbc02d; transform: scale(1.05); }
+        .chair.filled { background-color: #c8e6c9; border-color: #2e7d32; border-style: solid; color: #1b5e20; font-weight: bold; }
+
+        #message-box { position: fixed; top: 20px; right: 20px; padding: 15px 25px; border-radius: 8px; color: white; font-weight: bold; opacity: 0; transition: opacity 0.3s; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.2); max-width: 350px; pointer-events: none;}
+        .msg-error { background-color: var(--error); }
+        .msg-success { background-color: var(--success); }
+        .msg-info { background-color: var(--info); }
+        
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-10px) rotate(-2deg); } 50% { transform: translateX(10px) rotate(2deg); } 75% { transform: translateX(-10px) rotate(-2deg); } 100% { transform: translateX(0); } }
+        .shake-animation { animation: shake 0.4s; }
+
+        /* --- MOD 2: GÖREV DRİLLİ TASARIMI --- */
+        #mode2-container { display: none; width: 100%; max-width: 700px; flex-direction: column; align-items: center; }
+        .m2-wrapper { width: 100%; background: white; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); padding: 2rem; }
+        .m2-header { font-size: 1.8rem; text-align: center; margin-bottom: 1.5rem; color: var(--m2-primary); }
+        
+        .category-block { margin-bottom: 1rem; background: #f9fafb; padding: 1rem; border-radius: 8px; border: 1px solid var(--border); }
+        .parent-cb { font-weight: bold; font-size: 1.1rem; padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem; color: var(--m2-primary); cursor: pointer; }
+        .child-group { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+        .child-cb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; cursor: pointer; }
+        .child-cb input[type="checkbox"], .parent-cb input[type="checkbox"] { transform: scale(1.3); accent-color: var(--m2-primary); cursor: pointer; }
+        
+        .m2-btn { width: 100%; background-color: var(--m2-primary); color: white; border: none; padding: 1rem; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px;}
+        .m2-btn:hover { background-color: var(--m2-primary-hover); }
+        
+        #m2-drill-area { display: none; }
+        .m2-drill-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-weight: bold; color: var(--text-light); }
+        .question-box { background: #eef2ff; border-left: 5px solid var(--m2-primary); padding: 1.5rem; border-radius: 0 8px 8px 0; margin-bottom: 2rem; font-size: 1.2rem; line-height: 1.6; color: #312e81; font-weight: 500; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .option-btn { background: white; color: var(--text-dark); border: 2px solid var(--border); font-weight: 600; font-size: 1rem; padding: 1.2rem 0.5rem; border-radius: 8px; cursor: pointer;}
+        .option-btn:hover:not(:disabled) { border-color: var(--m2-primary); color: var(--m2-primary); background: #f5f3ff; }
+        .option-btn.correct { background: var(--success); color: white; border-color: var(--success); }
+        .option-btn.wrong { background: var(--error); color: white; border-color: var(--error); }
+        .option-btn:disabled { cursor: not-allowed; }
+        #m2-next-btn { background-color: var(--success); margin-top: 1.5rem; display: none; }
+
+        /* --- MOD 3: HİZMET ALANLARI TASARIMI --- */
+        #mode3-container { display: none; width: 100%; max-width: 800px; flex-direction: column; align-items: center; }
+        .m3-wrapper { width: 100%; background: white; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); padding: 2rem; }
+        .m3-header { font-size: 1.8rem; text-align: center; margin-bottom: 1.5rem; color: var(--m3-primary); }
+        
+        .m3-question-box { background: #ecfdf5; border-left: 5px solid var(--m3-primary); padding: 1.5rem; border-radius: 0 8px 8px 0; margin-bottom: 2rem; font-size: 1.2rem; line-height: 1.6; color: #064e3b; font-weight: 500; }
+        
+        .m3-options-grid { display: flex; flex-direction: column; gap: 1rem; }
+        .m3-option-btn { background: white; color: var(--text-dark); border: 2px solid var(--border); font-weight: 600; font-size: 1.1rem; padding: 1.2rem; border-radius: 8px; cursor: pointer; transition: all 0.2s;}
+        .m3-option-btn:hover:not(:disabled) { border-color: var(--m3-primary); color: var(--m3-primary); background: #f0fdf4; transform: translateX(5px); }
+        .m3-option-btn.correct { background: var(--m3-primary); color: white; border-color: var(--m3-primary); }
+        .m3-option-btn.wrong { background: var(--error); color: white; border-color: var(--error); }
+        .m3-option-btn:disabled { cursor: not-allowed; }
+        
+        .m3-btn-next { width: 100%; background-color: var(--m3-primary); color: white; border: none; padding: 1rem; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 1.5rem; display: none; transition: background 0.2s;}
+        .m3-btn-next:hover { background-color: var(--m3-primary-hover); }
+
+        @media (max-width: 768px) {
+            .menu-cards { flex-direction: column; }
+            .m1-game-area { flex-direction: column; align-items: center;}
+            .child-group, .options-grid { grid-template-columns: 1fr; }
+            .m1-controls { flex-direction: column;}
+            .m1-controls select { width: 100%; }
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <!-- ORTAK MESAJ KUTUSU -->
+    <div id="message-box"></div>
+
+    <!-- ANA MENÜ -->
+    <div id="main-menu">
+        <h1 class="menu-title">PDR Teşkilat ve Görevler Modülü</h1>
+        <p class="menu-subtitle">Hangi yöntemle çalışmak istediğinizi seçin.</p>
+
+        <div class="menu-cards">
+            <div class="menu-card m1" onclick="openMode1()">
+                <h3>1. Komisyon Masası</h3>
+                <p>Birimleri, komisyonları ve kurulları doğru personelle doldur. Öğrenci temsilcisi gibi çeldiricilere dikkat et! (Görsel Hafıza)</p>
+                <button class="menu-btn btn-m1">Masayı Kur</button>
+            </div>
+            
+            <div class="menu-card m2" onclick="openMode2()">
+                <h3>2. Görev-Personel Drilli</h3>
+                <p>Verilen kritik görevlerin kime ait olduğunu çoktan seçmeli hızlı test formatında bul. (Soru Çözme)</p>
+                <button class="menu-btn btn-m2">Drill'e Başla</button>
+            </div>
+
+            <div class="menu-card m3" onclick="openMode3()">
+                <h3>3. PDR Hizmet Alanları</h3>
+                <p>Psikolojik danışmanın yürüttüğü görevlerin Gelişimsel, İyileştirici veya Destek hizmetlerinden hangisine ait olduğunu sınıflandır.</p>
+                <button class="menu-btn btn-m3">Sınıflandırmaya Başla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOD 1: ETKİLEŞİMLİ MASA -->
+    <div id="mode1-container">
+        <div class="top-bar">
+            <button class="back-to-menu" onclick="showMainMenu()">← Ana Menüye Dön</button>
+        </div>
+        
+        <h1 class="m1-header">Eksiksiz Rehberlik Örgütlenmesi</h1>
+        <p style="color: #555; margin-bottom: 25px;">Komisyonları ve RAM Bölümlerini Doğru Personelle Doldur!</p>
+        
+        <div class="m1-controls">
+            <select id="m1-commission-select">
+                <option value="okul">Okul PDR Hizmetleri Yürütme Komisyonu</option>
+                <option value="il">İl Danışma Komisyonu</option>
+                <option value="ram_ozel">RAM - Özel Eğitim Bölümü</option>
+                <option value="ram_pdr">RAM - Rehberlik ve Psikolojik Danışma Bölümü</option>
+            </select>
+            <button onclick="m1_startGame()">Masayı / Bölümü Kur</button>
+        </div>
+
+        <div class="m1-game-area" id="m1-game-area" style="display: none;">
+            <div class="list-area">
+                <h3>Aday Personel Listesi</h3>
+                <div id="m1-draggables-container"></div>
+            </div>
+
+            <div class="table-area">
+                <div class="commission-table" id="m1-table-label">Kurul Seçiniz</div>
+                <div class="chairs-container" id="m1-chairs-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOD 2: GÖREV DRİLLİ -->
+    <div id="mode2-container">
+        <div class="top-bar">
+            <button class="back-to-menu" onclick="showMainMenu()">← Ana Menüye Dön</button>
+        </div>
+
+        <div class="m2-wrapper" id="m2-setup-area">
+            <h1 class="m2-header">Görev Eşleştirme Drilli</h1>
+            <p style="margin-bottom: 15px; color: var(--text-light);">Çalışmak istediğin birim veya personelleri seç:</p>
+            <div id="m2-categories-container"></div>
+            <button class="m2-btn" onclick="m2_startDrill()">Teste Başla</button>
+        </div>
+
+        <div class="m2-wrapper" id="m2-drill-area">
+            <div class="m2-drill-header">
+                <span id="m2-progress-counter">1 / 10</span>
+                <button class="back-to-menu" onclick="m2_endDrill()" style="border: none; background: #fee2e2; color: var(--error);">Terk Et</button>
+            </div>
+            <div class="question-box" id="m2-question-text">Soru metni buraya gelecek...</div>
+            <div class="options-grid" id="m2-options-container"></div>
+            <button class="m2-btn" id="m2-next-btn" onclick="m2_nextQuestion()">Sıradaki Görev →</button>
+        </div>
+    </div>
+
+    <!-- MOD 3: HİZMET ALANLARI SINIFLANDIRMA -->
+    <div id="mode3-container">
+        <div class="top-bar">
+            <button class="back-to-menu" onclick="showMainMenu()">← Ana Menüye Dön</button>
+        </div>
+
+        <div class="m3-wrapper" id="m3-drill-area">
+            <div class="m2-drill-header">
+                <span id="m3-progress-counter">1 / 10</span>
+            </div>
+            <h1 class="m3-header">Bu Görev Hangi Hizmet Alanına Ait?</h1>
+            
+            <div class="m3-question-box" id="m3-question-text">Soru metni buraya gelecek...</div>
+            
+            <div class="m3-options-grid" id="m3-options-container">
+                <!-- Şıklar JS ile yüklenecek -->
+            </div>
+            
+            <button class="m3-btn-next" id="m3-next-btn" onclick="m3_nextQuestion()">Sıradaki Görev →</button>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================
+           GENEL NAVİGASYON (MENÜ) İŞLEMLERİ
+           ========================================== */
+        const mainMenu = document.getElementById('main-menu');
+        const mode1Container = document.getElementById('mode1-container');
+        const mode2Container = document.getElementById('mode2-container');
+        const mode3Container = document.getElementById('mode3-container');
+
+        function showMainMenu() {
+            mainMenu.style.display = 'flex';
+            mode1Container.style.display = 'none';
+            mode2Container.style.display = 'none';
+            mode3Container.style.display = 'none';
+        }
+
+        function openMode1() {
+            mainMenu.style.display = 'none';
+            mode1Container.style.display = 'flex';
+            document.getElementById('m1-game-area').style.display = 'none'; 
+        }
+
+        function openMode2() {
+            mainMenu.style.display = 'none';
+            mode2Container.style.display = 'flex';
+            document.getElementById('m2-setup-area').style.display = 'block';
+            document.getElementById('m2-drill-area').style.display = 'none';
+        }
+
+        function openMode3() {
+            mainMenu.style.display = 'none';
+            mode3Container.style.display = 'flex';
+            m3_startDrill(); // Mod 3 direkt başlar (seçim ekranı yok)
+        }
+
+        function showSharedMessage(text, type, duration) {
+            const msgBox = document.getElementById('message-box');
+            msgBox.innerText = text;
+            if(type === 'error') msgBox.className = 'msg-error';
+            else if(type === 'success') msgBox.className = 'msg-success';
+            else msgBox.className = 'msg-info';
+            
+            msgBox.style.opacity = '1';
+            setTimeout(() => { msgBox.style.opacity = '0'; }, duration);
+        }
+
+        /* ==========================================
+           MOD 1: KOMİSYON MASASI KODLARI
+           ========================================== */
+        const m1_komisyonVerileri = {
+            okul: { isim: "Okul Yürütme\nKomisyonu", uyeler: ["Okul Müdürü", "Müdür Yardımcıları", "Psikolojik Danışmanlar", "Sınıf Rehber Öğretmeni", "Disiplin Kurulu Temsilcisi", "Okul-Aile Birliği Temsilcisi"], celdiriciler: ["Öğrenci Temsilcisi (2020 İptal)", "Branş Öğretmeni", "Okul Memuru", "RAM Müdürü"], hataMesaji: (isim) => isim.includes("Öğrenci Temsilcisi") ? "HATA: 2020 Yönetmeliğine göre Öğrenci Temsilcisi komisyonda yok!" : `HATA: ${isim} bu komisyonda yer almaz!` },
+            il: { isim: "İl Danışma\nKomisyonu", uyeler: ["İl Millî Eğitim Müdürü", "İl Şube Müdürü", "İlçelerdeki Şube Müdürleri", "RAM Müdürü", "PDR Bölüm Başkanı", "Seçilen Okul Müdürleri", "En Az 3 Psikolojik Danışman"], celdiriciler: ["Öğrenci Temsilcisi", "Sınıf Rehber Öğretmeni", "Disiplin Kurulu Temsilcisi", "İl Valisi"], hataMesaji: (isim) => `HATA: ${isim} İl Danışma Komisyonu üyesi değildir.` },
+            ram_ozel: { isim: "RAM\nÖzel Eğitim", uyeler: ["Psikolojik Danışman", "Sosyal Çalışmacı", "Çocuk Gelişimi Uzmanı", "Psikolog", "Psikometrist", "Özel Eğitimci"], celdiriciler: ["Eğitim Programcısı", "Okul Müdürü", "Sınıf Rehber Öğretmeni"], hataMesaji: (isim) => isim === "Eğitim Programcısı" ? "DİKKAT: Eğitim Programcısı RAM PDR bölümünde yer alır!" : `HATA: ${isim} bu bölümde yer almaz.` },
+            ram_pdr: { isim: "RAM\nPDR Bölümü", uyeler: ["Psikolojik Danışman", "Sosyal Çalışmacı", "Eğitim Programcısı", "Psikolog", "Psikometrist"], celdiriciler: ["Çocuk Gelişimi Uzmanı", "Özel Eğitimci", "Branş Öğretmeni"], hataMesaji: (isim) => (isim === "Çocuk Gelişimi Uzmanı" || isim === "Özel Eğitimci") ? `DİKKAT: ${isim} Özel Eğitim Bölümünde görev yapar!` : `HATA: ${isim} bu bölümde yer almaz.` }
+        };
+
+        let m1_seciliKomisyon = "okul", m1_dogruUyeSayisi = 0, m1_yerlesenSayisi = 0, m1_draggedItem = null;
+
+        function m1_startGame() {
+            document.getElementById('m1-game-area').style.display = 'flex';
+            m1_seciliKomisyon = document.getElementById('m1-commission-select').value;
+            const data = m1_komisyonVerileri[m1_seciliKomisyon];
+            
+            document.getElementById('m1-table-label').innerText = data.isim;
+            m1_dogruUyeSayisi = data.uyeler.length;
+            m1_yerlesenSayisi = 0;
+
+            m1_renderChairs(m1_dogruUyeSayisi);
+            m1_renderDraggables(data.uyeler, data.celdiriciler);
+            showSharedMessage("Kurulum tamamlandı. Personelleri masaya sürükleyin.", "info", 2000);
+        }
+
+        function m1_renderChairs(count) {
+            const container = document.getElementById('m1-chairs-container');
+            container.innerHTML = '';
+            for(let i=0; i<count; i++) {
+                const chair = document.createElement('div');
+                chair.className = 'chair empty';
+                chair.innerText = "Boş Kadro";
+                chair.addEventListener('dragover', (e) => e.preventDefault());
+                chair.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('hovered'); });
+                chair.addEventListener('dragleave', function() { this.classList.remove('hovered'); });
+                chair.addEventListener('drop', m1_dragDrop);
+                container.appendChild(chair);
+            }
+        }
+
+        function m1_renderDraggables(uyeler, celdiriciler) {
+            const container = document.getElementById('m1-draggables-container');
+            container.innerHTML = '';
+            let tumAdaylar = uyeler.map(u => ({isim: u, dogruMu: true})).concat(celdiriciler.map(c => ({isim: c, dogruMu: false})));
+            tumAdaylar = tumAdaylar.sort(() => Math.random() - 0.5);
+
+            tumAdaylar.forEach(aday => {
+                const div = document.createElement('div');
+                div.className = 'draggable-item';
+                div.draggable = true;
+                div.innerText = aday.isim;
+                div.dataset.dogruMu = aday.dogruMu;
+                div.addEventListener('dragstart', function() { m1_draggedItem = this; setTimeout(() => this.style.opacity = '0.5', 0); });
+                div.addEventListener('dragend', function() { this.style.opacity = '1'; });
+                container.appendChild(div);
+            });
+        }
+
+        function m1_dragDrop() {
+            this.classList.remove('hovered');
+            if(this.classList.contains('filled') || !m1_draggedItem) return;
+
+            if (m1_draggedItem.dataset.dogruMu === "true") {
+                this.className = 'chair filled';
+                this.innerText = m1_draggedItem.innerText;
+                m1_draggedItem.remove(); 
+                m1_yerlesenSayisi++;
+                if(m1_yerlesenSayisi === m1_dogruUyeSayisi) showSharedMessage("TEBRİKLER! Tüm kadroyu eksiksiz tamamladınız.", "success", 3000);
+                else showSharedMessage("Doğru yerleştirme!", "success", 1500);
+            } else {
+                this.classList.add('shake-animation');
+                setTimeout(() => this.classList.remove('shake-animation'), 400);
+                showSharedMessage(m1_komisyonVerileri[m1_seciliKomisyon].hataMesaji(m1_draggedItem.innerText), "error", 3500);
+            }
+            m1_draggedItem.style.opacity = '1';
+            m1_draggedItem = null;
+        }
+
+        /* ==========================================
+           MOD 2: GÖREV-PERSONEL DRİLLİ KODLARI
+           ========================================== */
+        const m2_categoriesData = {
+            "Rehberlik Araştırma Merkezi (RAM)": ["ram_ozel", "ram_pdr"],
+            "Okul Yönetimi ve Komisyon": ["okul_muduru", "mudur_yard", "yurutme_komisyonu"],
+            "Okul PDR Servisi ve Öğretmenler": ["psikolojik_danisman", "koordinator_pd", "sinif_rehber", "brans_ogretmeni"]
+        };
+
+        const m2_personnelData = {
+            "ram_ozel": { name: "Özel Eğitim Bölümü (RAM)", tasks: ["İlde bulunan ve özel eğitime muhtaç çocukları tespit eder ve uygun hizmetler sunar.", "Özel eğitim hizmetlerinde gerekli olan ölçme araçlarını temin eder.", "Kaynaştırma eğitimi veren okulların çalışmalarını izler ve değerlendirir.", "Özel eğitime ihtiyaç duyan öğrencilerin ailelerine gerekli seminer ve konferansları verir."] },
+            "ram_pdr": { name: "PDR Bölümü (RAM)", tasks: ["Psikolojik danışmanı bulunmayan okullara, komisyon toplantılarına katılmak üzere danışman yönlendirir.", "İl çerçeve programını hazırlar ve okullar açılmadan önce gönderir.", "Okullara giderek zekâ taramaları yapar.", "Okullardan gelen rehberlik raporlarını inceler ve değerlendirir.", "Okullarda kullanılacak ölçme araçlarını geliştirir ve gönderir."] },
+            "okul_muduru": { name: "Okul Müdürü", tasks: ["Okuldaki rehberlik hizmetlerinin sağlıklı yürütülmesinden en üst düzeyde sorumludur.", "Rehberlik hizmetleri okul yürütme komisyonunu kurar ve buna başkanlık eder.", "Rehberlik servisi ile iş birliği yaparak her sınıfa bir sınıf rehber öğretmeni atar.", "Okulda birden fazla psikolojik danışman varsa içlerinden birini koordinatör seçer.", "Öğrenci sevki gibi durumlarda son onay yetkisine sahiptir.", "Rehberlik için fiziksel şartları hazırlar ve araç gereçleri temin eder."] },
+            "mudur_yard": { name: "Müdür Yardımcısı", tasks: ["Okul müdürü yokken PDR Hizmetleri Yürütme Komisyonuna başkanlık eder.", "Sürekli başarısızlık, devamsızlık gibi problemleri rehberlik bürosuna gönderir."] },
+            "yurutme_komisyonu": { name: "PDR Yürütme Komisyonu", tasks: ["Yıllık rehberlik planını inceler ve uygulanması için gerekli tedbirleri alır.", "Öğrenci ve velilerle yapılacak toplantıları planlar.", "Rehberlik servisinin ihtiyaç duyduğu araç gereç ve test ihtiyacını 'listeler'.", "Psikososyal destek hizmetlerinin programa eklenmesi hususunda görüş bildirir."] },
+            "psikolojik_danisman": { name: "Psikolojik Danışman", tasks: ["Bireyi tanıma tekniklerini uygular, değerlendirmelerini raporlaştırarak geri bildirim verir.", "Merkezi sınav tercih dönemlerinde yöneltme hizmeti kapsamında görev alır.", "Zorlu yaşam olaylarında (afet, kaza, salgın) psikososyal destek sağlar.", "Okul rehberlik programını e-Rehberlik üzerinden ekim ayının ilk haftasında hazırlar.", "Kasım ayında sınıf rehber öğretmenlerinden gelen verilerle 'risk haritasını' oluşturur."] },
+            "koordinator_pd": { name: "Koordinatör Psikolojik Danışman", tasks: ["Rehberlik servisi ile okul idaresi arasındaki eş güdümü (koordinasyonu) sağlar.", "Diğer rehber öğretmenlerin yönlendirdiği öğrencilerde 'sevk' kararında son sözü söyler.", "Ders yılı sonunda toplantı yaparak gelecek yılın araç gereç ihtiyacını tespit eder.", "Okul rehberlik programını hazırlayarak okul müdürünün onayına sunar."] },
+            "sinif_rehber": { name: "Sınıf Rehber Öğretmeni", tasks: ["PDR servisince verilen plana bağlı kalarak 'kendi sınıfı için' yıllık plan hazırlar.", "Rehberlik ders saatlerinde bu derslere girer ve etkinlikleri uygular.", "Toplu dosyalara bilgi aktarılması noktasında psikolojik danışmana yardım eder.", "Kendi sorumluluğunu aşan sorunlarda öğrencileri psikolojik danışmana yönlendirir.", "Öğrencilerin yeteneklerine göre 'eğitici kol' çalışmalarına katılmalarını sağlar."] },
+            "brans_ogretmeni": { name: "Branş Öğretmeni", tasks: ["Sınıfta güven verici bir ortam oluşturmak, kendi derslerine olan ilgiyi artırmak temel görevidir.", "Öğrencilerle empati kurarak onları koşulsuz kabul etmeleri gerekmektedir."] }
+        };
+
+        let m2_currentDrillPool = [], m2_currentIndex = 0;
+
+        function m2_initCheckboxes() {
+            const container = document.getElementById('m2-categories-container');
+            container.innerHTML = ''; 
+            for (const [categoryName, items] of Object.entries(m2_categoriesData)) {
+                const categoryId = "m2-" + categoryName.replace(/\s+/g, '-').toLowerCase();
+                const block = document.createElement('div');
+                block.className = 'category-block';
+                const parentLabel = document.createElement('label');
+                parentLabel.className = 'parent-cb';
+                parentLabel.innerHTML = `<input type="checkbox" id="${categoryId}" checked onchange="m2_toggleParent('${categoryId}')"> ${categoryName}`;
+                block.appendChild(parentLabel);
+                const childGroup = document.createElement('div');
+                childGroup.className = 'child-group';
+                items.forEach(itemKey => {
+                    if(m2_personnelData[itemKey]) {
+                        const childLabel = document.createElement('label');
+                        childLabel.className = 'child-cb';
+                        childLabel.innerHTML = `<input type="checkbox" value="${itemKey}" class="m2-drill-cb child-of-${categoryId}" checked onchange="m2_checkParent('${categoryId}')"> ${m2_personnelData[itemKey].name}`;
+                        childGroup.appendChild(childLabel);
+                    }
+                });
+                block.appendChild(childGroup);
+                container.appendChild(block);
+            }
+        }
+
+        function m2_toggleParent(categoryId) {
+            const isChecked = document.getElementById(categoryId).checked;
+            document.querySelectorAll(`.child-of-${categoryId}`).forEach(child => child.checked = isChecked);
+        }
+
+        function m2_checkParent(categoryId) {
+            const children = Array.from(document.querySelectorAll(`.child-of-${categoryId}`));
+            const parent = document.getElementById(categoryId);
+            parent.checked = children.every(c => c.checked);
+            parent.indeterminate = children.some(c => c.checked) && !parent.checked;
+        }
+
+        function array_shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function m2_startDrill() {
+            const selectedCbs = document.querySelectorAll('.m2-drill-cb:checked');
+            if (selectedCbs.length === 0) { showSharedMessage("Lütfen en az bir personel seçin!", "error", 2500); return; }
+            m2_currentDrillPool = [];
+            Array.from(selectedCbs).forEach(cb => {
+                m2_personnelData[cb.value].tasks.forEach(task => { m2_currentDrillPool.push({ taskText: task, correctKey: cb.value }); });
+            });
+            m2_currentDrillPool = array_shuffle(m2_currentDrillPool);
+            m2_currentIndex = 0;
+            document.getElementById('m2-setup-area').style.display = 'none';
+            document.getElementById('m2-drill-area').style.display = 'block';
+            m2_loadQuestion();
+        }
+
+        function m2_loadQuestion() {
+            const currentQ = m2_currentDrillPool[m2_currentIndex];
+            document.getElementById('m2-progress-counter').innerText = `Görev ${m2_currentIndex + 1} / ${m2_currentDrillPool.length}`;
+            document.getElementById('m2-question-text').innerText = `"${currentQ.taskText}"`;
+
+            const optionsGrid = document.getElementById('m2-options-container');
+            optionsGrid.innerHTML = '';
+            
+            let distractors = Object.keys(m2_personnelData).filter(k => k !== currentQ.correctKey);
+            let options = array_shuffle([...array_shuffle(distractors).slice(0, 3), currentQ.correctKey]);
+            
+            options.forEach(optKey => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = m2_personnelData[optKey].name;
+                btn.onclick = () => m2_checkAnswer(btn, optKey, currentQ.correctKey);
+                optionsGrid.appendChild(btn);
+            });
+            document.getElementById('m2-next-btn').style.display = 'none';
+        }
+
+        function m2_checkAnswer(selectedBtn, selectedKey, correctKey) {
+            document.querySelectorAll('#m2-options-container .option-btn').forEach(btn => btn.disabled = true);
+            if (selectedKey === correctKey) selectedBtn.classList.add('correct');
+            else {
+                selectedBtn.classList.add('wrong');
+                document.querySelectorAll('#m2-options-container .option-btn').forEach(btn => {
+                    if (btn.innerText === m2_personnelData[correctKey].name) btn.classList.add('correct');
+                });
+            }
+            const nextBtn = document.getElementById('m2-next-btn');
+            nextBtn.style.display = 'block';
+            nextBtn.innerText = (m2_currentIndex === m2_currentDrillPool.length - 1) ? "Tüm Görevleri Bitirdin! Kuruluma Dön ↺" : "Sıradaki Görev →";
+        }
+
+        function m2_nextQuestion() {
+            if (m2_currentIndex < m2_currentDrillPool.length - 1) { m2_currentIndex++; m2_loadQuestion(); }
+            else m2_endDrill();
+        }
+
+        function m2_endDrill() {
+            document.getElementById('m2-drill-area').style.display = 'none';
+            document.getElementById('m2-setup-area').style.display = 'block';
+        }
+
+        /* ==========================================
+           MOD 3: HİZMET ALANLARI SINIFLANDIRMA
+           ========================================== */
+        const m3_data = {
+            "Gelişimsel ve Önleyici Hizmetler": [
+                "Sınıf rehberlik programı kapsamında uzmanlık gerektiren etkinlikleri uygular.",
+                "Bireyi tanıma tekniklerini uygular, sonuçları raporlaştırıp ilgililerle paylaşır ve gerektiğinde bu teknikleri geliştirmeye katılır.",
+                "Öğrencilerin gelişim alanlarında ihtiyaç duydukları bilgileri bireysel, grup veya yayın yoluyla paylaşır.",
+                "Yöneltme ve izleme çalışmalarıyla öğrenciyi uygun eğitime, mesleğe veya etkinliğe yönlendirir ve merkezi sınavların tercih dönemlerinde görev alır."
+            ],
+            "İyileştirici Hizmetler": [
+                "Öğrencilerin kapasitelerinin güçlendirilmesi ve iyileştirilmesi amacıyla bireysel ve grupla psikolojik danışma yapar.",
+                "Doğal afet, kaza, istismar, göç ve salgın hastalık gibi zorlu yaşam olaylarında psikososyal destek sağlar.",
+                "Hakkında danışmanlık tedbir kararı verilen çocuklara ve ailelerine hizmet sunar.",
+                "Bireyin, uzmanlık ve müdahale alanı dışında yardıma ihtiyaç duyması durumunda daha yetkin uzman kişi veya kuruluşlara yönlendirme (sevk) yapar."
+            ],
+            "Destek Hizmetler": [
+                "Müşavirlik hizmetleri kapsamında öğretmen, veli ve idarecilere ortak bir rehberlik anlayışı kazandırmak için çalışmalar yürütür ve sınıf rehber öğretmenlerine müşavirlik eder.",
+                "Okul rehberlik programını e-Rehberlik üzerinden hazırlar (ekim ayının ilk haftası) ve kendi haftalık programını planlar.",
+                "Kasım ayı içerisinde sınıf rehber öğretmenlerinden gelen risk haritalarını birleştirerek kurumun risk haritasını oluşturur.",
+                "Yapılan çalışmaları e-Rehberlik sistemine işler, danışan dosyası aracılığıyla kayıt tutar ve elektronik ortamda olmayanları usulüne uygun saklar.",
+                "Programı iş birliği içinde uygular ve yıl sonunda etkililiğini değerlendirir.",
+                "Hizmet verimliliğini artırmak için araştırma, izleme çalışmaları yapar ve projelere katılır.",
+                "Çeşitli kurul/komisyonlara, RAM eğitim ve projelerine, işbirliklerine dâhil olur.",
+                "Görüşmeler sırasında öğrencinin devamsız yazılmaması için idare ve ders öğretmeni ile önlem alır.",
+                "Kongre, panel veya hizmet içi eğitimlere katılarak mesleki becerilerini geliştirir.",
+                "Okul müdürünün rehberlik ve psikolojik danışma hizmetleri ile ilgili vereceği diğer görevleri yapar."
+            ]
+        };
+
+        let m3_pool = [];
+        let m3_currentIndex = 0;
+        const m3_options = Object.keys(m3_data);
+
+        function m3_startDrill() {
+            m3_pool = [];
+            // Tüm görevleri tek bir havuza at
+            for (const [category, tasks] of Object.entries(m3_data)) {
+                tasks.forEach(task => {
+                    m3_pool.push({ taskText: task, correctCategory: category });
+                });
+            }
+            
+            m3_pool = array_shuffle(m3_pool);
+            m3_currentIndex = 0;
+            m3_loadQuestion();
+        }
+
+        function m3_loadQuestion() {
+            const currentQ = m3_pool[m3_currentIndex];
+            document.getElementById('m3-progress-counter').innerText = `Görev ${m3_currentIndex + 1} / ${m3_pool.length}`;
+            document.getElementById('m3-question-text').innerText = `"${currentQ.taskText}"`;
+
+            const optionsContainer = document.getElementById('m3-options-container');
+            optionsContainer.innerHTML = '';
+            
+            m3_options.forEach(optionName => {
+                const btn = document.createElement('button');
+                btn.className = 'm3-option-btn';
+                btn.innerText = optionName;
+                btn.onclick = () => m3_checkAnswer(btn, optionName, currentQ.correctCategory);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('m3-next-btn').style.display = 'none';
+        }
+
+        function m3_checkAnswer(selectedBtn, selectedCategory, correctCategory) {
+            // Tüm butonları pasifleştir
+            const allBtns = document.querySelectorAll('#m3-options-container .m3-option-btn');
+            allBtns.forEach(btn => btn.disabled = true);
+
+            if (selectedCategory === correctCategory) {
+                selectedBtn.classList.add('correct');
+            } else {
+                selectedBtn.classList.add('wrong');
+                // Doğru olanı vurgula
+                allBtns.forEach(btn => {
+                    if (btn.innerText === correctCategory) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+
+            const nextBtn = document.getElementById('m3-next-btn');
+            nextBtn.style.display = 'block';
+            nextBtn.innerText = (m3_currentIndex === m3_pool.length - 1) ? "Sınıflandırmayı Tamamladın! Yeniden Başla ↺" : "Sıradaki Görev →";
+        }
+
+        function m3_nextQuestion() {
+            if (m3_currentIndex < m3_pool.length - 1) {
+                m3_currentIndex++;
+                m3_loadQuestion();
+            } else {
+                m3_startDrill(); // Başa sar
+            }
+        }
+
+        // Başlangıç Kurulumları
+        window.onload = function() {
+            showMainMenu();
+            m2_initCheckboxes(); 
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGS Coğrafya - Yerleşmeler Quiz</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --container-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #3b82f6;
+            --hover-color: #2563eb;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--container-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            margin: 1rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: var(--accent-color);
+        }
+
+        .progress {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-top: 0.5rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option-btn {
+            background-color: #334155;
+            color: var(--text-color);
+            border: 2px solid transparent;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            background-color: #475569;
+            transform: translateY(-2px);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .option-btn.correct {
+            background-color: rgba(16, 185, 129, 0.2);
+            border-color: var(--success);
+            color: #34d399;
+        }
+
+        .option-btn.wrong {
+            background-color: rgba(239, 68, 68, 0.2);
+            border-color: var(--error);
+            color: #f87171;
+        }
+
+        .feedback-container {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 12px;
+            background-color: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--accent-color);
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .feedback-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #60a5fa;
+        }
+
+        .next-btn {
+            width: 100%;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            display: none;
+            transition: background-color 0.2s;
+        }
+
+        .next-btn:hover {
+            background-color: var(--hover-color);
+        }
+
+        .result-screen {
+            text-align: center;
+            display: none;
+        }
+
+        .result-score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 1rem 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#cografya" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <div class="app-container" id="quiz-app">
+        <div class="header">
+            <h1>Geçici & Daimi Yerleşmeler</h1>
+            <div class="progress" id="progress">Soru 1 / 10</div>
+        </div>
+
+        <div id="question-screen">
+            <div class="question-text" id="question-text">Soru yükleniyor...</div>
+            <div class="options" id="options">
+                </div>
+            
+            <div class="feedback-container" id="feedback">
+                <div class="feedback-title">Hikayeleştirme & İpucu:</div>
+                <div id="feedback-text"></div>
+            </div>
+
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">Sonraki Soru</button>
+        </div>
+
+        <div class="result-screen" id="result-screen">
+            <h2>Test Tamamlandı!</h2>
+            <p>AGS Coğrafya Yerleşmeler Skoru:</p>
+            <div class="result-score" id="score-display">0 / 10</div>
+            <button class="next-btn" style="display: block;" onclick="location.reload()">Tekrar Çöz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                q: "Özellikle Doğu Anadolu'da yaygın olan, etrafı taş duvarlarla çevrili, genellikle küçükbaş hayvancılık yapmak amacıyla kurulan yerleşmedir. Hangisidir ve türü nedir?",
+                options: ["Ağıl (Geçici)", "Kom (Geçici)", "Mezra (Daimi)", "Dam (Geçici)"],
+                answer: 1,
+                story: "Doğu'nun sert soğuğundan korunmak için taştan 'kom'pleksler yaparlar. Sadece otlatma dönemi kullanıldığı için geçicidir."
+            },
+            {
+                q: "Göçebe yaşayan Yörük ailelerinin çadırlarından oluşan, özellikle Toroslar'da yaygın olan yerleşmedir. Hangisidir ve türü nedir?",
+                options: ["Oba (Geçici)", "Yayla (Geçici)", "Divan (Daimi)", "Dalyan (Geçici)"],
+                answer: 0,
+                story: "Yörük çadırları yukarıdan bakıldığında 'O' harfi gibi yuvarlaktır (Oba). Göçebe oldukları için bugün buradalar, yarın başka yerdeler (Geçici)."
+            },
+            {
+                q: "Birkaç mahallenin birleşmesiyle oluşan, özellikle Batı Karadeniz'de yaygın olarak görülen yerleşmedir. Hangisidir ve türü nedir?",
+                options: ["Mezra (Daimi)", "Kom (Geçici)", "Divan (Daimi)", "Ağıl (Geçici)"],
+                answer: 2,
+                story: "Dağınık Karadenizliler, akşamları bir 'Divan' etrafında toplanıp kök salmaya, kalıcı bir mahalle kurmaya karar verdiler. (Daimi)"
+            },
+            {
+                q: "Ege ve Göller Yöresi'nde görülen, küçük çaplı tarım ve hayvancılık yapılan, genellikle birkaç evden oluşan yerleşmelerdir. Hangisidir ve türü nedir?",
+                options: ["Dam (Geçici)", "Çiftlik (Daimi)", "Mahalle (Daimi)", "Dalyan (Geçici)"],
+                answer: 0,
+                story: "Ege'de yazın incir, zeytin toplarken geçici olarak 'dam'da yatarlar. Hasat bitince asıl evlerine dönerler. (Geçici)"
+            },
+            {
+                q: "Tarım alanlarının sınırlı olduğu yerlerde değil, Ergene, Çukurova gibi geniş düzlüklerde kurulan, tarım ve hayvancılığın bir arada yapıldığı geniş arazili yerleşmedir. Hangisidir ve türü nedir?",
+                options: ["Mezra (Daimi)", "Çiftlik (Daimi)", "Yayla (Geçici)", "Ağıl (Geçici)"],
+                answer: 1,
+                story: "Koca traktörleri, devasa tarlaları ve siloları var. Her şeyi bırakıp göç edemezler, temelli oradalar. (Daimi)"
+            },
+            {
+                q: "Köye bağlı olan ancak köyden uzağa tarım amacıyla kurulan, zamanla büyüyüp sürekli yaşanılan bir yer haline gelen (Doğu ve G.Doğu Anadolu'da yaygın) yerleşmedir. Hangisidir ve türü nedir?",
+                options: ["Kom (Geçici)", "Oba (Geçici)", "Divan (Daimi)", "Mezra (Daimi)"],
+                answer: 3,
+                story: "Tarım yapmak için köyden uzağa gittiler ama toprak o kadar verimliydi ki 'Mezara' kadar burada kalalım dediler. (Daimi)"
+            },
+            {
+                q: "Türkiye'de en yaygın görülen, yazın serinlemek veya hayvan otlatmak amacıyla yüksek kesimlere çıkılarak oluşturulan yerleşmedir. Hangisidir ve türü nedir?",
+                options: ["Yayla (Geçici)", "Ağıl (Geçici)", "Mahalle (Daimi)", "Dam (Geçici)"],
+                answer: 0,
+                story: "Yazın sıcağından bunalanlar, hayvanlarını da alıp dağlara 'yayılmaya' giderler. Kar yağınca mecburen geri dönerler. (Geçici)"
+            },
+            {
+                q: "Deniz, göl veya nehir kenarlarında sadece balıkçılık yapmak amacıyla kurulan yerleşmelerdir. Ege ve Akdeniz kıyılarında görülür. Hangisidir ve türü nedir?",
+                options: ["Dalyan (Geçici)", "Divan (Daimi)", "Oba (Geçici)", "Mezra (Daimi)"],
+                answer: 0,
+                story: "Balıklar ağa 'dal'ar. Sadece balık sezonunda kullanıldığı ve sonra terk edildiği için geçicidir."
+            },
+            {
+                q: "Küçükbaş hayvanların gecelediği, etrafı çit, taş veya ahşapla çevrili üstü açık yerleşmelerdir. İç Anadolu'da yaygındır. Hangisidir ve türü nedir?",
+                options: ["Kom (Geçici)", "Ağıl (Geçici)", "Çiftlik (Daimi)", "Dam (Geçici)"],
+                answer: 1,
+                story: "Koyunlar kurttan korkup 'ağla'masın diye etrafını çitle çevirirler. Sadece geceleme amaçlıdır, kalıcı yaşam alanı değildir. (Geçici)"
+            },
+            {
+                q: "Köyün idari olarak muhtarlığa bağlı, birbirine yakın evlerden oluşan ve köyden bir tık daha küçük birimi olan yerleşmedir. Hangisidir ve türü nedir?",
+                options: ["Mahalle (Daimi)", "Oba (Geçici)", "Kom (Geçici)", "Yayla (Geçici)"],
+                answer: 0,
+                story: "Mahalle kültürü yerleşiktir, komşuluk ilişkileri kalıcıdır. Sürekli yaşanılan bir idari birimdir. (Daimi)"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options');
+        const progressText = document.getElementById('progress');
+        const feedbackContainer = document.getElementById('feedback');
+        const feedbackText = document.getElementById('feedback-text');
+        const nextBtn = document.getElementById('next-btn');
+        const questionScreen = document.getElementById('question-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const scoreDisplay = document.getElementById('score-display');
+
+        function loadQuestion() {
+            answered = false;
+            feedbackContainer.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressText.innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+            
+            const q = questions[currentQuestion];
+            questionText.innerText = q.q;
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => selectOption(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(index, selectedBtn) {
+            if (answered) return;
+            answered = true;
+
+            const q = questions[currentQuestion];
+            const buttons = optionsContainer.getElementsByClassName('option-btn');
+
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].disabled = true;
+                if (i === q.answer) {
+                    buttons[i].classList.add('correct');
+                } else if (i === index) {
+                    buttons[i].classList.add('wrong');
+                }
+            }
+
+            if (index === q.answer) {
+                score++;
+            }
+
+            feedbackText.innerText = q.story;
+            feedbackContainer.style.display = 'block';
+            nextBtn.style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            questionScreen.style.display = 'none';
+            resultScreen.style.display = 'block';
+            scoreDisplay.innerText = `${score} / ${questions.length}`;
+        }
+
+        // Başlat
+        loadQuestion();
+    </script>
+</body>
+</html>

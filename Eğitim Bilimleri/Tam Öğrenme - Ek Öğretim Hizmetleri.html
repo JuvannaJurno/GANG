@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tam Öğrenme - Ek Öğretim Eşleştirme</title>
+    <style>
+        :root {
+            --kavram-renk: #3498db;
+            --aciklama-renk: #9b59b6;
+            --dogru-renk: #2ecc71;
+            --yanlis-renk: #e74c3c;
+            --arkaplan: #f5f6fa;
+            --metin: #2f3640;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--arkaplan);
+            color: var(--metin);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .bilgi {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .oyun-alani {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .bolum-baslik {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #34495e;
+            border-bottom: 2px solid #dcdde1;
+            padding-bottom: 5px;
+        }
+
+        /* Butonlar için Izgara */
+        .grid-kapsayici {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        @media (min-width: 480px) {
+            .grid-kapsayici {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Genel Buton Stili */
+        .btn-kart {
+            background-color: white;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+
+        .btn-kart:active {
+            transform: scale(0.97);
+        }
+
+        /* Kavram Kartları */
+        .kavram-kart {
+            color: var(--kavram-renk);
+            border-color: #aed6f1;
+        }
+
+        .kavram-kart.secili {
+            background-color: var(--kavram-renk);
+            color: white;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+        }
+
+        /* Açıklama Kartları */
+        .aciklama-kart {
+            color: var(--metin);
+            border-color: #d2b4de;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .aciklama-kart.secili {
+            background-color: var(--aciklama-renk);
+            color: white;
+            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.4);
+        }
+
+        /* Doğru / Yanlış Efektleri */
+        .dogru-eslesme {
+            background-color: var(--dogru-renk) !important;
+            color: white !important;
+            border-color: var(--dogru-renk) !important;
+            opacity: 0.7;
+            pointer-events: none; /* Tıklanmayı kapat */
+            transform: scale(0.95);
+        }
+
+        .yanlis-eslesme {
+            animation: sarsilma 0.4s;
+            background-color: var(--yanlis-renk) !important;
+            color: white !important;
+            border-color: var(--yanlis-renk) !important;
+        }
+
+        @keyframes sarsilma {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        /* Tebrik Ekranı */
+        .tebrik-ekrani {
+            display: none;
+            text-align: center;
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+            border: 2px solid #c3e6cb;
+        }
+
+        .yeniden-baslat {
+            margin-top: 15px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <h2>Tam Öğrenme - Ek Öğretim Hizmetleri</h2>
+    <div class="bilgi">Mavi kavramlardan birini seç, ardından mor açıklamalardan doğru olanı bularak eşleştir.</div>
+
+    <div class="oyun-alani" id="oyun-alani">
+        <div>
+            <div class="bolum-baslik">Kavramlar (Etkinlikler)</div>
+            <div class="grid-kapsayici" id="kavramlar-alani"></div>
+        </div>
+
+        <div>
+            <div class="bolum-baslik">Açıklamalar</div>
+            <div class="grid-kapsayici" id="aciklamalar-alani"></div>
+        </div>
+    </div>
+
+    <div class="tebrik-ekrani" id="tebrik-ekrani">
+        <strong>🎉 Mükemmel!</strong><br><br>
+        Tam öğrenme modelinin tamamlayıcı ek öğretim hizmetlerini başarıyla eşleştirdin. Unutma; ödev her zaman <u>en son</u> başvurulması gereken etkinliktir.<br>
+        <button class="yeniden-baslat" onclick="oyunuBaslat()">Tekrar Oyna</button>
+    </div>
+
+    <script>
+        const eslesmeler = [
+            { id: 1, kavram: "Bire Bir Öğretim", aciklama: "Öğrencinin kendi hızında ilerlediği Programlı Öğretim, BDÖ veya Tutor (özel eğitmen) desteği." },
+            { id: 2, kavram: "Farklı Yöntem/Teknik", aciklama: "İlk anlatımda anlaşılamayan konunun, alternatif bir öğretim yöntemi (görsel, işitsel vb.) ile tekrar sunulması." },
+            { id: 3, kavram: "Eğitsel Oyun", aciklama: "Öğrenciyi sıkmadan, konuyu oyunlaştırarak ve eğlendirerek tekrar etmesini sağlayan etkinlikler." },
+            { id: 4, kavram: "Yardımcı Kaynaklar", aciklama: "Ana ders kitabı dışında kalan ek testler, çalışma yaprakları veya farklı kaynak kitaplar kullanılması." },
+            { id: 5, kavram: "Küçük Grupla Öğretim", aciklama: "Aynı konuda benzer öğrenme eksiği olan az sayıdaki öğrencinin bir araya getirilerek çalıştırılması." },
+            { id: 6, kavram: "En Son: Ödev", aciklama: "Sadece pekiştirme amaçlıdır. Tamamlayıcı eğitimde en az tercih edilmesi gereken ve en sona bırakılan etkinliktir." }
+        ];
+
+        let seciliKavram = null;
+        let seciliAciklama = null;
+        let dogruSayisi = 0;
+
+        function oyunuBaslat() {
+            dogruSayisi = 0;
+            seciliKavram = null;
+            seciliAciklama = null;
+            document.getElementById('tebrik-ekrani').style.display = 'none';
+            document.getElementById('oyun-alani').style.display = 'flex';
+            
+            butonlariOlustur();
+        }
+
+        function butonlariOlustur() {
+            const kavramlarAlani = document.getElementById('kavramlar-alani');
+            const aciklamalarAlani = document.getElementById('aciklamalar-alani');
+            
+            kavramlarAlani.innerHTML = '';
+            aciklamalarAlani.innerHTML = '';
+
+            // Kavramları ve açıklamaları kendi içlerinde ayrı ayrı karıştır
+            const karisikKavramlar = [...eslesmeler].sort(() => Math.random() - 0.5);
+            const karisikAciklamalar = [...eslesmeler].sort(() => Math.random() - 0.5);
+
+            // Kavram Butonları
+            karisikKavramlar.forEach(oge => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-kart kavram-kart';
+                btn.innerText = oge.kavram;
+                btn.onclick = () => kavramSec(btn, oge.id);
+                kavramlarAlani.appendChild(btn);
+            });
+
+            // Açıklama Butonları
+            karisikAciklamalar.forEach(oge => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-kart aciklama-kart';
+                btn.innerText = oge.aciklama;
+                btn.onclick = () => aciklamaSec(btn, oge.id);
+                aciklamalarAlani.appendChild(btn);
+            });
+        }
+
+        function kavramSec(btn, id) {
+            // Zaten doğru eşleşmişse tıklamayı yoksay
+            if (btn.classList.contains('dogru-eslesme')) return;
+
+            // Önceki seçimi temizle
+            document.querySelectorAll('.kavram-kart').forEach(b => b.classList.remove('secili'));
+            
+            btn.classList.add('secili');
+            seciliKavram = { element: btn, id: id };
+
+            kontrolEt();
+        }
+
+        function aciklamaSec(btn, id) {
+            if (btn.classList.contains('dogru-eslesme')) return;
+
+            document.querySelectorAll('.aciklama-kart').forEach(b => b.classList.remove('secili'));
+            
+            btn.classList.add('secili');
+            seciliAciklama = { element: btn, id: id };
+
+            kontrolEt();
+        }
+
+        function kontrolEt() {
+            // İkisi de seçilmişse kontrol et
+            if (seciliKavram && seciliAciklama) {
+                const kElem = seciliKavram.element;
+                const aElem = seciliAciklama.element;
+
+                if (seciliKavram.id === seciliAciklama.id) {
+                    // Eşleşme Doğru
+                    kElem.classList.remove('secili');
+                    aElem.classList.remove('secili');
+                    kElem.classList.add('dogru-eslesme');
+                    aElem.classList.add('dogru-eslesme');
+                    dogruSayisi++;
+
+                    // Tüm eşleşmeler bitti mi?
+                    if (dogruSayisi === eslesmeler.length) {
+                        setTimeout(() => {
+                            document.getElementById('oyun-alani').style.display = 'none';
+                            document.getElementById('tebrik-ekrani').style.display = 'block';
+                        }, 500);
+                    }
+                } else {
+                    // Eşleşme Yanlış
+                    kElem.classList.add('yanlis-eslesme');
+                    aElem.classList.add('yanlis-eslesme');
+
+                    setTimeout(() => {
+                        kElem.classList.remove('secili', 'yanlis-eslesme');
+                        aElem.classList.remove('secili', 'yanlis-eslesme');
+                    }, 500);
+                }
+
+                // Seçimleri sıfırla
+                seciliKavram = null;
+                seciliAciklama = null;
+            }
+        }
+
+        // Sayfa yüklendiğinde başlat
+        window.onload = oyunuBaslat;
+    </script>
+</body>
+</html>

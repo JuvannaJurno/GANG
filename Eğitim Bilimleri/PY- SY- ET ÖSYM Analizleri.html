@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eğitim Bilimleri ÖSYM Analizleri</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f4f6f9; 
+            color: #333; 
+            margin: 0; 
+            padding: 40px 20px; 
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .header h1 {
+            color: #1a252f;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        .category {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 30px;
+            border-top: 6px solid #ccc;
+        }
+        .category h2 {
+            margin-top: 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #edf2f7;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .note-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(48%, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+        .note {
+            background: #fcfcfc;
+            border-left: 5px solid #ccc;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+        .note:hover {
+            transform: translateY(-2px);
+        }
+        .note-title {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.15em;
+        }
+        .note p {
+            margin: 0;
+            font-size: 0.95em;
+            color: #4a5568;
+            white-space: pre-wrap;
+        }
+        
+        /* New Category Colors */
+        .cat-sinif { border-top-color: #3498db; }
+        .cat-sinif h2 { color: #2980b9; }
+        .cat-sinif .note { border-left-color: #3498db; background: #f4f9fd; }
+        .cat-sinif .note-title { color: #2980b9; }
+
+        .cat-materyal { border-top-color: #e91e63; }
+        .cat-materyal h2 { color: #c2185b; }
+        .cat-materyal .note { border-left-color: #e91e63; background: #fdf4f7; }
+        .cat-materyal .note-title { color: #c2185b; }
+
+        .cat-teknoloji { border-top-color: #00bcd4; }
+        .cat-teknoloji h2 { color: #0097a7; }
+        .cat-teknoloji .note { border-left-color: #00bcd4; background: #f0fbfc; }
+        .cat-teknoloji .note-title { color: #0097a7; }
+
+        .cat-program { border-top-color: #673ab7; }
+        .cat-program h2 { color: #512da8; }
+        .cat-program .note { border-left-color: #673ab7; background: #f6f4fa; }
+        .cat-program .note-title { color: #512da8; }
+        
+        @media (max-width: 768px) {
+            .note-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+    <div class="header">
+        <h1>Eğitim Bilimleri ÖSYM Analizleri</h1>
+        <p>Sınıf Yönetimi, Materyal Tasarımı, Eğitim Teknolojileri ve Program Okuryazarlığı detaylı not arşivi.</p>
+    </div>
+
+    <div class="container">
+        
+        <!-- Sınıf Yönetimi -->
+        <div class="category cat-sinif">
+            <h2>🏫 Sınıf Yönetimi</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">İstenmeyen Davranışa İlk Müdahale</span>
+                    <p>Öğretmenler, sınıfta istenmeyen bir öğrenci davranışıyla karşılaştıklarında, doğru çözümü üretebilmek adına <strong>öncelikle bu sorunun nedenlerini</strong> anlamaya çalışmalıdır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Fiziksel Durumlar ve İşbirliği</span>
+                    <p>Derste uyumak, aşırı uyku ve aşırı uykusuzluk <strong>sağlık için tehlikeli</strong> olduğu için öğretmenin durumun sebebini öğrenmesi veya <strong>aileyle işbirliği kurması</strong> gerekir.</p>
+                </div>
+                <div class="note" style="grid-column: 1 / -1;">
+                    <span class="note-title">Kademeli Müdahale ve Öğrenciye Sorumluluk Verme</span>
+                    <p>Sınıf yönetiminde öğretmen sorunun nedenlerini anladıktan sonra; görmezden gelme, sözsüz uyarı, sözlü uyarı, öğrenciye sorumluluk verme, derste değişikliğe gitme, özel görüşme yapma, rehberlik servisini ve veliyi haberdar etme ile ceza verme gibi uygulamaları yapar. Öğrenci, öğretmen tarafından <strong>sık sık uyarılmasına rağmen davranışlarını sürdürdüğü için</strong>, artık <strong>öğrenciye sorumluluk verme</strong> işlemi devreye sokulmalıdır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Tepkisel Sınıf Yönetimi</span>
+                    <p>Tepkisel sınıf yönetimi için <strong>mutlaka ceza olması gerekmez</strong>; öğretmenin istenmeyen davranışa karşı gösterdiği herhangi bir tepki (görmezden gelme, uyarma veya yönlendirme gibi) bu modelin içinde değerlendirilir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Sınıf İçi Rutinler</span>
+                    <p>Rutinler zaman zaman tekrarlanabilir ancak çocuklar süreci öğrendikleri için sınıf içerisinde bir yıl boyunca <strong>sabit bir rutin uygulamak gerekmez</strong>.</p>
+                </div>
+                <div class="note" style="grid-column: 1 / -1;">
+                    <span class="note-title">İstenmeyen Davranışlara Karşı Yöntemler</span>
+                    <p><strong>• Sorunu Anlamak:</strong> Davranışın altında yatan nedenleri analiz etmek.
+<strong>• Görmezden Gelmek:</strong> Kısa süreli, rahatsız edici boyutu düşük ve basit davranışlar için tercih edilir.
+<strong>• Öğrenciyi Uyarmak:</strong> Sözsüz uyarı yöntemlerini (göz teması kurmak veya öğrenciye yaklaşmak) içerir.
+<strong>• Sözlü Uyarı:</strong> Ses tonunu değiştirmek, öğrencinin ismini cümle içinde kullanmak, öğrenciye soru sormak veya davranışı konusunda doğrudan uyarmak.
+<strong>• Derste Değişiklik Yapmak:</strong> Akışı veya yöntemi farklılaştırarak dikkati yönetmek.
+<strong>• Öğrenciye Sorumluluk Vermek:</strong> Öğrencinin enerjisini olumlu yöne kanalize etmek.
+<strong>• Öğrenciyle Özel Görüşme Yapmak:</strong> Sorunu birebir ortamda çözümlemek.
+<strong>• İş Birliği Kurmak:</strong> Okul yönetimi, aile ve rehberlik servisi ile ilişki içinde olmak.
+<strong>• İkinci Tip Ceza:</strong> İstenmeyen durum sonucunda öğrencinin sevdiği bir mahrumiyeti veya sonucu uygulama.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Materyal Tasarımı -->
+        <div class="category cat-materyal">
+            <h2>🎨 Materyal Tasarımı</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Görsel ve Yazılı Metin Desteği</span>
+                    <p>Görseller yazıyla, yazılı materyaller ise görsellerle desteklendiğinde <strong>daha etkili</strong> olurlar.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Çalışma Yaprağının İçeriği</span>
+                    <p>Çalışma yaprağında; konuya ilişkin ilgi uyandıran resimler, konu hakkında hatırlatıcı kısa bilgiler, konuyla ilgili bulmacalar ve yönergeler bulunur. <strong>Fakat değerlendirme sorularına ilişkin çözümler bulunmaz.</strong> Çözümler yer alırsa çocuk soruları kendisi çözmez.</p>
+                </div>
+                <div class="note" style="grid-column: 1 / -1;">
+                    <span class="note-title">Zihin Haritası Çizme Adımları</span>
+                    <p><strong>• Ana Konuyu Merkeze Alma:</strong> Bir kâğıdın ortasına daire çizerek ana konuyu (örneğin, "MADDENİN HÂLLERİ") büyük harflerle bu dairenin içine yazmak.
+<strong>• Anahtar Kelimeler ve Görseller Ekleme:</strong> Konuyla ilgili temel anahtar kelimeleri büyük harflerle yazarak daire içine almak ve bu sözcüklerin yanına resimler çizmek.
+<strong>• Serbest Çağrışımları Aktarma:</strong> Konuyla ilgili akla gelen diğer tüm sözcükleri hızlıca kâğıda geçirmek.
+<strong>• İlişkileri Çizgilerle Belirtme:</strong> Kâğıda yazılan bu sözcükler arasındaki bağlantıları, aralarına düz çizgi çizerek göstermek.
+<em>(Not: "Çizgilerin üzerine bağlantı sözcükleri yazmak", işlemi kavram haritasına dönüştüren hatalı bir adım olduğu için zihin haritası çizme adımlarına dâhil edilmemiştir.)</em></p>
+                </div>
+                <div class="note">
+                    <span class="note-title">İçerik Tasarımı İlkeleri</span>
+                    <p>İçeriğin içinde bir ana fikrin yer alması ve öğrencinin bunu bulabilmesi <strong>soyutlama</strong>; tüm ayrıntıları vermeyerek öğrenciye tahminde bulunma şansı tanıması <strong>yapılandırma</strong>; hazır bulunuşluğa uygunluk <strong>düzey</strong>; zihin kodlaması oluşturma <strong>şema</strong>; başında ve sonunda sorulara yer verilmesi ise <strong>alıştırma</strong> ilkesiyle ilişkilidir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Gerçeklik İlkesi</span>
+                    <p>Görsel materyal tasarımında <strong>gerçekçi olan ve olmayan öğeler birlikte kullanılmamalıdır</strong>; çünkü bu durum, mesajın algılanmasını zorlaştırır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Tipografi ve Okunabilirlik</span>
+                    <p>Materyalde <strong>küçük harflerin kullanılması</strong>; alt ve üst uzantıların, yani küçük harflerdeki çıkıntıların gözün ayırt etme hızını artırması nedeniyle materyalin <strong>daha rahat okunmasını</strong> sağlar.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Bütünlük İlkesi</span>
+                    <p>Bütünlük; görsel elemanlar ve bunların fonksiyonları arasındaki uyumdur. Örneğin tüm slaytlarda <strong>aynı yazı karakterinin kullanılması</strong> veya bir slayt içinde görsel ve metin uyumuna dikkat edilmesi, tasarımın bütünlüğünü sağlar.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Bilgisayar Destekli Tasarım</span>
+                    <p>Bilgisayar destekli uygulamalar <strong>küçük birimlere bölünmeli</strong>, öğrencinin her adımda etkin katılımı sağlanmalı, son aşamada özet bilgilere yer verilmeli ve görsel tasarımlarda <strong>renk sayısı dört renkle sınırlandırılmalıdır</strong>.</p>
+                </div>
+                <div class="note" style="grid-column: 1 / -1;">
+                    <span class="note-title">Felsefi Akımlar ve Bilgi Anlayışı</span>
+                    <p><strong>• Varoluşçuluk:</strong> Özgürlük ve sorumluluk kazandıran bilgi değerlidir.
+<strong>• İdealizm:</strong> Bilgiyi zihin vadeder, bilgi akılla elde edilir; bilginin kaynağı akıl ve iddialardır.
+<strong>• Realizm:</strong> Kültürün aktarılmasını sağlayan bilgi önceliklidir.
+<strong>• Esasicilik:</strong> Bilginin tartışılmaz kaynağı otoritedir.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Eğitim Teknolojileri -->
+        <div class="category cat-teknoloji">
+            <h2>💻 Eğitim Teknolojileri</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Öğretici Yazılımlar</span>
+                    <p>Konunun tamamının özetini ve konu sorularını içeren bilgisayar yazılımlarına <strong>öğretici yazılım</strong> denir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Birebir Öğretim Yazılımları</span>
+                    <p>Birebir öğretim yazılımlarının diğer isimleri; <strong>özel ders yazılımı, tutor yazılım ve öğretici yazılım</strong>dır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Problem Çözme ve Buluş Yazılımları</span>
+                    <p>Problem çözme basamaklarını içeren öğretim yazılımları, buluş yoluyla öğretim stratejisini desteklediği için <strong>"buluş yazılımları"</strong> olarak da adlandırılır; yani ikisi aynı amaca hizmet eder.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Alıştırma ve Benzetim Yazılımları</span>
+                    <p><strong>Alıştırma yazılımı</strong> işlenen bir konuyla ilgili soru çözülmesine dayanır ve bilgi/kavrama düzeyindeki soruları kapsar. <strong>Benzetim (Simülasyon) yazılımı</strong> ise güvenli gözlem ve deneyimler sağlar. Her ikisinde de anında düzeltme ve bireysel hıza uygunluk vardır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Simülasyon Uygulamaları Dikkate Alınacaklar</span>
+                    <p>Simülasyon uygulamalarında; <strong>gerçek hayatla tutarlılık</strong>, zaman kısıtlamalarına uygun planlama, deneyin her boyutunun gözlemlenebilmesi ve <strong>her öğrencinin bireysel etkileşimine uygun olması</strong> dikkate alınmalıdır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Video İzleme Etkinlikleri</span>
+                    <p>Öğretim amaçlı video izleme etkinliğinde, <strong>önce tartışma yapılır</strong>. İzleme etkinliği için ayrılan süreye sınır getirilir ve ortam hazırlanır. İzleme etkinliği sonunda ise <strong>değerlendirme yapılmalıdır</strong>.</p>
+                </div>
+                <div class="note" style="grid-column: 1 / -1;">
+                    <span class="note-title">Kavram Haritalarının Yapısı ve Kuralları</span>
+                    <p>Kavram haritalarında, kavramlar arasındaki ilişkiyi gösteren çizgilerin <strong>yön belirtmesi</strong> gerekir. Kavramlar genelden özele doğru bir sıra izlemeli; tekrar yazılması gereken kavramlar <strong>çapraz çizgiyle</strong> birinciye bağlanmalıdır.
+Kavram haritaları ön bilgileri harekete geçirmek, kavramlar arasındaki bağlantıları göstermek, kavram yanılgılarını belirlemek ve öğrenilenleri değerlendirmek amacıyla kullanılır. Somut ve soyut kavramları içerir, somut örnekler sunar. <strong>Bununla birlikte kavramların yanına tanımları yazılmaz.</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Program Okuryazarlığı -->
+        <div class="category cat-program">
+            <h2>📚 Program Okuryazarlığı</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Açık Eğitim Sisteminde "Girdi"</span>
+                    <p>Eğitimde "girdi", sistemin hedeflerine ulaşabilmesi için <strong>dış çevreden aldığı her türlü kaynaktır</strong>.
+• <strong>Yönetmelik:</strong> Sistemin nasıl işleyeceğini belirleyen hukuki/yönetsel bir girdidir.
+• <strong>Para:</strong> Öğrencinin eğitim sürecini destekleyen ve sistemin dönmesini sağlayan ekonomik bir girdidir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Süreç Tasarımı</span>
+                    <p>Süreç tasarımında, konuların öğretimi için <strong>ortak bir öğrenme yolu</strong> kullanılır. Temel amaç, eleştirel düşünen bireyin doğru sorgulama yaparak dünyayı anlamlandırmasını sağlamaktır. Beceri odaklıdır ve <strong>öğrenene düşünmeyi öğretmeyi</strong> hedefler.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Sınıf Ortamının Boyutları</span>
+                    <p><strong>Çok boyutluluk:</strong> Sınıf ortamında aynı anda birden fazla olayın gerçekleşmesi.
+<strong>Eşzamanlılık:</strong> Öğretmenin aynı anda olayları kontrol etme becerisi.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">İlişkisel (Disiplinler Arası) Yaklaşım</span>
+                    <p>Korelasyonel yaklaşımda, konular ve dersler arasında bağ kurulur. Bir bilgi merkeze alınarak günlük yaşamla ilişkilendirilir. Farklı dersler bir konuyu açıklamak için kullanıldığında, öğrencilere <strong>bütüncül bir bakış açısı</strong> ve kalıcı öğrenme imkânı sağlanır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Öğretmenin Rehber Rolü</span>
+                    <p>Öğrenci merkezli çalışmalarda öğretmen; bilgiyi veya materyali doğrudan veren kişi değil, öğrencilerin <strong>doğru kaynaklara kendilerinin ulaşmasını sağlayan bir rehber</strong> olmalıdır.</p>
+                </div>
+                <div class="note" style="grid-column: 1 / -1;">
+                    <span class="note-title">İhtiyaç Belirleme Yaklaşımları</span>
+                    <p><strong>• Farklar Yaklaşımı:</strong> Olması gereken durum ile mevcut durum arasındaki farktan yola çıkar.
+<strong>• Analitik Yaklaşım:</strong> Gelecekte ulaşılmak istenen hedeflere veya ortaya çıkması olası durumlara göre ihtiyacı belirler.
+<strong>• Demokratik Yaklaşım:</strong> Toplumdaki baskı gruplarının, referans gruplarının ve çoğunluğun istek ve beklentilerinden hareketle ihtiyacı belirler.
+<strong>• Betimsel Yaklaşım:</strong> Belli bir durumun yokluğunun yarattığı zararlar ile varlığının sağlayacağı faydalar kıyaslanarak ihtiyaç analizi yapılır.</p>
+                </div>
+                <div class="note" style="grid-column: 1 / -1;">
+                    <span class="note-title">İhtiyaç Analizi Teknikleri</span>
+                    <p><strong>• Görüşme Tekniği:</strong> Eğitim ihtiyaçlarının belirlenmesinde bireylerden veya gruplardan görüşlerin sözlü olarak alındığı yöntemdir; ihtiyaç duyulduğunda yazılı formlar/anketler de kullanılabilir.
+<strong>• Progel Dacum Tekniği:</strong> O işin ustalarından, işin yapıldığı yerde, panel yoluyla; iş tanımı, o işi yapacaklarda bulunması gereken nitelikleri ortaya koyan <strong>beceri profili</strong> ve bu profili ölçecek <strong>beceri testi</strong> oluşturma konusunda bilgi toplanır.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

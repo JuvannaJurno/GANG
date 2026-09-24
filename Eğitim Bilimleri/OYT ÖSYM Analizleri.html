@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ÖYT ÖSYM Analizleri ve Ders Notları</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f4f6f9; 
+            color: #333; 
+            margin: 0; 
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .header h1 {
+            color: #1a252f;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        .category {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 30px;
+            border-top: 6px solid #34495e;
+        }
+        .category h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        .note-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+        .note {
+            background: #fdfefe;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .note:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        }
+        .note-title {
+            display: block;
+            font-weight: 700;
+            font-size: 1.15em;
+            margin-bottom: 12px;
+            color: #2d3748;
+        }
+        .note p {
+            margin: 0;
+            font-size: 0.98em;
+            color: #4a5568;
+            text-align: justify;
+        }
+        .note ul, .note ol {
+            margin: 8px 0 0 0;
+            padding-left: 20px;
+            font-size: 0.95em;
+            color: #4a5568;
+        }
+        .note li {
+            margin-bottom: 6px;
+        }
+        .critical-warning {
+            background-color: #fff5f5;
+            border-left: 4px solid #e53e3e;
+            padding: 10px 15px;
+            margin-top: 10px;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.92em;
+            color: #c53030;
+        }
+        .highlight {
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        /* Kategori Özel Renkleri */
+        .cat-ilkeler { border-top-color: #3182ce; }
+        .cat-ilkeler h2 { color: #2b6cb0; }
+        .cat-ilkeler .note-title { color: #2b6cb0; }
+
+        .cat-strateji { border-top-color: #319795; }
+        .cat-strateji h2 { color: #234e52; }
+        .cat-strateji .note-title { color: #234e52; }
+
+        .cat-yontem { border-top-color: #dd6b20; }
+        .cat-yontem h2 { color: #9c4221; }
+        .cat-yontem .note-title { color: #9c4221; }
+
+        .cat-bilişsel { border-top-color: #805ad5; }
+        .cat-bilişsel h2 { color: #553c9a; }
+        .cat-bilişsel .note-title { color: #553c9a; }
+
+        .cat-analiz { border-top-color: #e53e3e; }
+        .cat-analiz h2 { color: #9b2c2c; }
+        .cat-analiz .note-title { color: #9b2c2c; }
+
+        @media (max-width: 768px) {
+            .note-grid {
+                grid-template-columns: 1fr;
+            }
+            body {
+                padding: 20px 10px;
+            }
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <div class="header">
+        <h1>🎯 ÖYT ÖSYM Analizleri</h1>
+        <p>Öğretim Yöntem ve Teknikleri Sınav Mantığına Uygun Eksiksiz Ders Notları</p>
+    </div>
+
+    <div class="container">
+
+        <!-- 1. Öğretim İlkeleri, Planlama ve Dersin Etkinlikleri -->
+        <div class="category cat-ilkeler">
+            <h2>📘 1. Öğretim İlkeleri, Planlama ve Dersin Etkinlikleri</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Ders Sonu Etkinlikleri ve Görüş Geliştirme</span>
+                    <p>Ders sonunda etkinliklerin yapılması ve konuyla ilgili bazı ifadelerin okunması, o derste işlenenlerin toparlandığını ve zihinsel olarak gözden geçirildiğini gösterir. Ders sonunda yapılan bir Görüş Geliştirme etkinliğinde <span class="highlight">karar verme, zihinsel olarak gözden geçirilme, değerlendirme yapma ve kendini ifade etme</span> süreçleri yer alır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Öğrenmeyi Öğrenme Beceri Alanı</span>
+                    <p><span class="highlight">Araştırma, internet kullanma ve kaynak tarama</span> gibi bilgi ve beceriler öğrenmeyi öğrenmeyle alakalıdır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Öğrenme Etkinlikleri ve Bireysellik</span>
+                    <p>Öğrenme etkinlikleri bireyseldir. Programda öğretim ilkelerine göre ve öğrencilerin yeteneklerine uygun öğretim materyali seçenekleri oluşturulabilir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Öğretim Stratejisinin Temel İşlevi</span>
+                    <p>Öğretim stratejisi; bir dersin genel çerçevesinin çizilmesinde, öğrenci ve öğretmen rollerinin belirlenmesinde ve amacın gerçekleştirilmesine yönelik işlemlere karar verilmesinde <span class="highlight">temel belirleyicidir</span>.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Anında Dönüt</span>
+                    <p>Anında dönüt en etkili dönüt verme şeklidir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Dersin Giriş ve Geliştirme Basamakları</span>
+                    <p><span class="highlight">Hedeften Haberdar Etme (Gözden Geçirme):</span> Hedef açıklanır, hedef ve içerik ilişkisi kurulur.</p>
+                    <p style="margin-top: 6px;"><span class="highlight">Dikkat Çekme:</span> Dersin başında yapılan uyarıcı etkinliklerdir.</p>
+                    <p style="margin-top: 6px;"><span class="highlight">Güdüleme:</span> Öğrenilecek bilgilerin gerçek yaşamda ne işe yarayacağının açıklanmasıdır.</p>
+                    <p style="margin-top: 6px;"><span class="highlight">Geçiş:</span> Dersin giriş bölümünden geliştirme bölümüne geçerken yapılan uyarıcı materyal sunma etkinliğidir.</p>
+                    <p style="margin-top: 6px;"><span class="highlight">Geliştirme:</span> Yeni konunun işleneceği ve öğrenci davranışlarının değiştirileceği süreçtir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Anlatım Yönteminin Etkililiğini Artırma</span>
+                    <p>Anlatım yönteminin olumsuzluklarını azaltmak için dinleyen öğrencilere sık sık tekrarlar yapılabilir. Yeni öğrenilen bilginin uzun süreli hafızaya geçiş sürecini kolaylaştırmak ve zihinsel kodlamayı desteklemek için konuyla ilgili kavramları içeren <span class="highlight">kısa hikayeler ve görseller</span> kullanılabilir. Ayrıca aralıksız konuşma süresi <span class="highlight">15 dakikadan fazla tutulmamalıdır</span>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Öğretim Stratejileri ve Modelleri -->
+        <div class="category cat-strateji">
+            <h2>🟩 2. Öğretim Stratejileri, Yaklaşımları ve Modelleri</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Aktif Öğrenme</span>
+                    <p>Aktif öğrenmede öğrenmeye ayrılacak süre önceden belirlenmez, süreç esnasında ortaya çıkar; çünkü aktif öğrenmede bireysel farklılıklar önemsenir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Tam Öğrenme vs. Programlı Öğretim</span>
+                    <p><span class="highlight">Tam Öğrenme:</span> Sınıf ortamında, homojen gruplarla yürütülen grupla öğretim yaklaşımını temel alır.</p>
+                    <p style="margin-top: 10px;"><span class="highlight">Programlı Öğretim:</span> Öğrencinin kendi öğrenme hızına göre ilerlemesine izin veren, tamamen bireysel bir öğretim tekniğidir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Programlı Öğretim Esasları</span>
+                    <p>Programlı öğretimde <span class="highlight">düzeltme yapılmadan yeni öğrenme adımına geçilemez</span>. Yani sadece doğruların veya yanlışların belirlenmiş olması yetmez; yanlışlar mutlaka düzeltilir.</p>
+                    <ul>
+                        <li>Her öğrenme adımı küçük birimler halinde analiz edilir.</li>
+                        <li>Her adımda öğrencinin ne yapacağının belirlenmiş olması gerekir.</li>
+                        <li>Her öğrenme adımında öğrencinin cevaplaması gereken sorular vardır ve bu sorular öğrencinin başarılı olmasına fırsat verecek düzeydedir.</li>
+                        <li>Öğrenci kendi hızına göre hızlı veya yavaş çalışabilir.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Buluş Yoluyla Öğrenme ve İçeriğin Niteliği</span>
+                    <p><span class="highlight">Kavramlar ve Genellemeler:</span> Buluş yolu, öğrencilerin örnekleri inceleyerek kurallara, kavramlara ve genellemelere kendilerinin ulaşmasını hedeflediği için bu yapılarla tamamen uyumludur.</p>
+                    <p style="margin-top: 10px;"><span class="highlight">Olgular:</span> Olgular (örneğin tarihi tarihler, başkentler veya formüller gibi üzerinde tartışılmayan, kesin ve ezber bilgi niteliğindeki yapılar) keşif yoluyla bulunamayacağı için buluş yolu stratejisi olguların öğretiminde uygun bir strateji değildir. Olgular için daha çok sunuş yolu stratejisi tercih edilir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Harmanlanmış ve Ters Yüz Öğrenme Bağlantısı</span>
+                    <p>Ters yüz öğrenme (flipped learning), harmanlanmış öğrenmenin (blended learning) bir alt dalıdır; dolayısıyla soruda harmanlanmış öğrenme isteniyor ve şıklarda ters yüz eğitimin açıklaması varsa doğrudan o seçilebilir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Araştırma-İnceleme Yoluyla Öğretim</span>
+                    <p>Araştırma-inceleme yoluyla öğretim stratejisinde bir problem durumu vardır ve çözüm için bilimsel basamaklar (bilimsel yöntem süreçleri) kullanılır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Farklılaştırılmış Öğretim İllüzyonları</span>
+                    <p>Farklılaştırılmış öğretimde öğrencileri yetenek ve başarılarına göre seviye grupları oluşturarak ayrı sınıflara ayırma uygulaması <span class="highlight">yoktur</span>; verilen ödevlerin araştırma metodu ve sunum tercihi öğrencilere bırakılabilir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Otantik Öğrenme</span>
+                    <p>Öğrencilerin gerçek dünyaya adım atmasını, gerçek insanlarla iletişim kurup yetenek ve bilgilerini sergilemesini sağlayan yaklaşım otantik öğrenmedir. Otantik öğrenme, doğrudan bir konunun öğrenilmesinden ziyade <span class="highlight">yaşamın gerçek problemlerine çözümler üretilmesiyle</span> gerçekleşir ve gerçek materyaller ile aktiviteler aracılığıyla düzenlenir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Beyin Temelli Öğrenme İlkeleri</span>
+                    <ol>
+                        <li><span class="highlight">Her beyin biriciktir:</span> Bireysel farklılıklar esastır; herkesin nöron ağı ve öğrenme şekli kendine özgüdür.</li>
+                        <li><span class="highlight">Beyin paralel bir işlemcidir:</span> Duygu, düşünce ve bedensel duyumlar sırayla değil, eş zamanlı olarak işlenir.</li>
+                        <li><span class="highlight">Beyin aynı anda birden fazla işi yapabilir:</span> Öğrenci bir yandan dersi dinlerken diğer yandan görsel detayları inceleyip anılarıyla bağ kurabilir.</li>
+                        <li><span class="highlight">Odaklanmış dikkat ve çevresel algı:</span> Öğrenci sadece konuya odaklanmaz; sınıfın ısısı, rengi, ortamı gibi çevresel detayları da algılar (örtük öğrenme).</li>
+                        <li><span class="highlight">Öğrenme fizyolojik bir süreçtir:</span> Uyku, beslenme, yaş ve fiziksel sağlık durumu öğrenme kapasitesini doğrudan etkiler.</li>
+                        <li><span class="highlight">Duygular ve Örüntü (Korku vs. Teşvik):</span> Beyin bilgiyi duygularla anlamlandırır. Tehdit ve korku öğrenmeyi durdurur, güven ortamı ve teşvik ise öğrenmeyi en üst seviyeye çıkarır.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Öğretim Yöntem ve Teknikleri -->
+        <div class="category cat-yontem">
+            <h2>🍊 3. Öğretim Yöntem ve Teknikleri</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Konuşma Halkası Tekniği</span>
+                    <p>Her öğrenciye çemberdeki yerleşime göre sırayla söz hakkı verilir; sırası gelen öğrenci ise soruyu cevaplayıp cevaplamamaya kendisi karar verir. Konuşma halkası etkinliğinde öğrenciler bir video izlemek veya bir fotoğrafa bakmak yerine <span class="highlight">drama yapabilirler</span>. Ayrıca teknik yarım daire sıra düzeninde de yapılabilir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Panel vs. Konferans / Seminer Ayrımı</span>
+                    <p><span class="highlight">Konferans:</span> Bir konuşmacının uzman olduğu herhangi bir konuda dinleyiciler önünde yaptığı konuşma ve sunumdur; bir öğrencinin de bir konuyu uzman gibi arkadaşlarına sunması konferanstır.</p>
+                    <p style="margin-top: 8px;"><span class="highlight">Sayısal Kriter:</span> Bir kişi ile konferans ya da seminer yapılabilir, ancak panel yapılamaz (panel en az 3-5 kişilik bir grupla yapılır).</p>
+                    <p style="margin-top: 8px;"><span class="highlight">Panel İşleyişi:</span> Panelin sonunda başkan uygun görürse, tüm konuşmalar bittikten sonra dinleyenler konuşmacılara soru yöneltebilir; ayrıca konuşmacılar da önceden planladıkları soruları birbirlerine sorabilirler.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Bilişsel Çıraklık vs. Gösterip Yaptırma</span>
+                    <p><span class="highlight">Bilişsel Çıraklık:</span> Öğretmen tam destekle öğretime başlarken süreç ilerledikçe desteğini azaltır ve sürecin sonunda öğrenci işi kendi başına yapabilecek düzeye gelir. Daha çok bilişsel işlerle ilgilidir.</p>
+                    <p style="margin-top: 8px;"><span class="highlight">Gösterip Yaptırma:</span> Uygulamayı önce öğretmen yapar, arkasından öğrenci uygular. Daha çok psikomotor işlerle ilgilidir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Bilişsel Çıraklık Tekniğinin Aşamaları</span>
+                    <ul>
+                        <li><span class="highlight">Model Olma:</span> Uzmanın, öğrenilecek işi öğrencilerin gözlemleyebileceği biçimde yapmasıdır.</li>
+                        <li><span class="highlight">Koçluk Yapma (Çalıştırma):</span> Uzmanın gözetiminde öğrencinin beceriyi sergilemesidir.</li>
+                        <li><span class="highlight">Destekleme:</span> Uzmanın öğrenciye ipucu verme, araç önerme ve yapamadığı kısımları tamamlama gibi yollarla yardım etmesidir.</li>
+                        <li><span class="highlight">İfade Etme:</span> Öğrencilerin yaptıkları etkinliğin, akıl yürütmenin ya da çözdükleri problemin aşamalarını anlatmasıdır.</li>
+                        <li><span class="highlight">Yansıtma:</span> Öğrencinin sergilediği beceriyi uzmanın ya da diğer öğrencilerin sergiledikleriyle karşılaştırmasıdır.</li>
+                        <li><span class="highlight">Öteleme (Keşfetme):</span> Gitgide azalan desteğin tamamen kalkması ve öğrencinin beceriyi kendine özgü şekilde sergilemesidir.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Akran Öğretimi</span>
+                    <p>Benzer bilişsel özelliklere sahip akranların birlikte daha iyi öğrenmesini sağlamak, öğrencilere daha fazla dikkat ve duygusal destek sunmak, öğrencilere kendi öğrenme stillerine uygun yaşantılar kazandırmak ve öğretenle birlikte öğrenen öğrencilerin de gelişmesini desteklemek için kullanılabilir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Düşün-Eşleş-Paylaş Tekniği</span>
+                    <ul>
+                        <li><span class="highlight">Bireysel Düşünme (Düşün):</span> Öğrenciler öncelikle konu hakkında bireysel şekilde düşünür ve çalışır.</li>
+                        <li><span class="highlight">Eşleşme (Eşleş):</span> İkinci etapta her öğrenci başka bir öğrenci ile eşleşir; eşler birlikte fikir üretip çalışır.</li>
+                        <li><span class="highlight">Sınıfla Paylaşma (Paylaş):</span> Üçüncü etapta eşlerden biri sözcü olarak yaptıklarını sınıfla paylaşır ve sınıf bu çalışmaları değerlendirir.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Köşeleme Tekniği</span>
+                    <ul>
+                        <li><span class="highlight">Panoların Hazırlanması:</span> Sınıf duvarlarına veya köşelerine farklı çözüm önerilerini içeren hipotez panoları asılır.</li>
+                        <li><span class="highlight">Seçim ve Gruplanma:</span> Öğrenciler kendi görüşlerine veya mantıklı buldukları hipoteze uygun olan panonun altında toplanırlar.</li>
+                        <li><span class="highlight">Grup Çalışması ve İspat:</span> Aynı panonun altında toplanan öğrenciler, seçtikleri hipotezi gerekçelendirmeye ve ispatlamaya çalışırlar.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Beyin Fırtınası Yöntemi</span>
+                    <p><span class="highlight">Görevlendirme:</span> Beyin fırtınası sürecinde, ortaya atılan fikirlerin hızlıca kaydedilmesi ve sürecin aksamaması adına tahtaya yazım için iki kişi görevlendirilebilir.</p>
+                    <p style="margin-top: 8px;"><span class="highlight">Odaklanma:</span> Bu sayede hem fikir akışı kesintiye uğramaz hem de tüm öğrencilerin önerileri eksiksiz ve tarafsız bir şekilde kayıt altına alınmış olur.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Altı Şapkalı Düşünme Tekniğinde Şapkalar ve Kurallar</span>
+                    <p><span class="highlight">Yeşil Şapka:</span> Bir konu üzerindeki olasılıklar hakkında yaratıcı fikirler sunmaktır.</p>
+                    <p style="margin-top: 6px;"><span class="highlight">Mavi Şapka:</span> Süreci başlattığı, yönettiği ve en son karara bağlayıp özetlediği için ilk ve son olarak mavi şapka takılır. Mavi şapka, olumlu ve olumsuz fikirlerin tamamını bir bütün olarak özetlemenin yanı sıra düşünme sürecini kontrol eden ve düzenleyen bir moderatör görevindedir.</p>
+                    <p style="margin-top: 6px;"><span class="highlight">Grupla Uygulama:</span> Sınıf 6 gruba ayrılabilir ve görüşler renk (şapka) sırasına göre bildirilir. Hazırlık aşamasında öğretmen grupları yönlendirmez; sürecin sonunda ise görüşler öğretmen tarafından özetlenip değerlendirilebilir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Forum Tekniği</span>
+                    <p>Etkinliğin amacı katılımcıların yazılı ve sözlü sorularını cevaplandırmaktır; bu teknik forumdur (soru-cevap süreci esastır).</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Örnek Olay Yöntemi</span>
+                    <p>Örnek olay yönteminde öğretmen problemi senaryolaştırarak öğrencilerle paylaşır; öğrenciler de gruplar içinde tartışarak probleme yönelik çözüm fikirleri ve senaryolar oluşturur.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Münazaranın Adımları</span>
+                    <ol>
+                        <li>Tartışma konusu belirlenir.</li>
+                        <li>Zıt görüşleri savunacak iki grup oluşturulur.</li>
+                        <li>Jüri belirlenir.</li>
+                        <li>Hazırlık yapabilmeleri için konu iki hafta önceden öğrencilere duyurulur.</li>
+                        <li>Gruplar, belirlenen süre içinde görüşlerini sırasıyla savunur.</li>
+                        <li>Jüri, önceden belirlenen kriterlere göre değerlendirme yaparak kazananı açıklar.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Düşünme Becerileri, Zekâ Kuramları ve Öğrenme Stilleri -->
+        <div class="category cat-bilişsel">
+            <h2>💜 4. Düşünme Becerileri, Zekâ Kuramları ve Öğrenme Stilleri</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Eleştirel Düşünme Beceri Kazandırma</span>
+                    <p>Seçilen bazı görüşlere ilişkin öğrencilerden bilgi toplayarak bu görüşlerin uygulanabilirlikleri hakkında bir değerlendirmede bulunmalarını istemek, onlara <span class="highlight">eleştirel düşünme becerisi</span> kazandırmaya yardımcı olur.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Çoklu Zekâ Kuramı: Mantıksal Zekâ</span>
+                    <p>Öğrencilerin kendini tanıtmanın, ev adresi ve telefon numarası bilmenin önemini ve neden gerekli olduğunu kavrayacakları sorulara cevap vermesi mantıksal zekayla ilgilidir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Çoklu Zekâ Kuramı: İçsel (Özedönük) Zekâ</span>
+                    <p><span class="highlight">Temel Özellikleri:</span> Kendini gerçekleştirebilme, iç dünyasına erişebilme, güçlü ve zayıf yönleri ile duygularının farkında olma, bireysel hedefler belirleyip çaba gösterme gibi özellikler içsel zekaya aittir. Bu bireyler iç gözlem yapmak için özel bir zamana ihtiyaç duyarlar.</p>
+                    <p style="margin-top: 8px;"><span class="highlight">Uygun Görevler:</span> Çeşitli sorular üretme, ders sonunda konuyla ilgili günlük tutma ve derse uygun projeler seçme gibi görevler içsel zekası yüksek öğrenciler için uygundur.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Bilişsel Alan Basamakları (Hiyerarşik Sıralama)</span>
+                    <p>Aşağıdan yukarıya doğru doğru basamak sıralaması şu şekildedir:</p>
+                    <ul>
+                        <li><span class="highlight">C basamağı (En alt):</span> Bilme ve kavrama (temel bilgiler toplanır).</li>
+                        <li><span class="highlight">B basamağı (Orta):</span> Uygulama (bilgiler hayata geçirilir veya problem çözülür).</li>
+                        <li><span class="highlight">A basamağı (En üst):</span> Analiz, sentez ve değerlendirme (eleştirel ve yaratıcı düşünme gerçekleşir).</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Gagne & Bloom Mantığı: Bilişsel Strateji</span>
+                    <p>Gagne'ye göre öğrencilerin özgün ve farklı yollar üretmesi <span class="highlight">bilişsel strateji</span> anlamına gelir ve Bloom taksonomisindeki <span class="highlight">sentez</span> basamağına denk düşer.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Kolb'un Öğrenme Stilleri: Değiştiren (Diverging) Stil</span>
+                    <p>Teorilerden ziyade insanlarla iletişime geçerek, deneyim paylaşarak, ipucu ve dönüt alarak öğrenmeyi kapsar. Yaratıcıdır ancak öğrencinin yaşantılarına dayalıdır; ön öğrenmeleri harekete geçirir ve birden fazla duyu organına hitap eder.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Girişimci Kişinin Özellikleri</span>
+                    <ul>
+                        <li><span class="highlight">Temel Nitelikler:</span> Risk alır, özerktir, kendine güvenir ve sorumluluk almaya isteklidir.</li>
+                        <li><span class="highlight">Eylem Adımları:</span> Plan yapar ve bu planı uygular.</li>
+                        <li><span class="highlight">Sezi Yeteneği:</span> Herhangi bir alanda ihtiyaç duyulabilecek bir ürünün gerekliliğini sezer.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. ÖSYM Sınav Trendleri ve Kritik Uyarılar -->
+        <div class="category cat-analiz">
+            <h2>❤️ 5. ÖSYM Sınav Trendleri ve Öne Çıkan Sorular</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Çıkmış Sorularda En Çok Karşılaşılan Konular</span>
+                    <p>ÖSYM sorularında yüksek frekansla karşımıza çıkan başlıca ÖYT konuları şunlardır:</p>
+                    <ul>
+                        <li>İstasyon Tekniği</li>
+                        <li>Köşelenme Tekniği</li>
+                        <li>Beyin Fırtınası</li>
+                        <li>Konuşma Halkası</li>
+                        <li>Bilişsel Çıraklık</li>
+                        <li>Gösterip Yaptırma</li>
+                        <li>Altı Şapkalı Düşünme Tekniği</li>
+                        <li>Çoklu Zekâ Kuramı</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

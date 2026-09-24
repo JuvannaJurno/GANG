@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Maarif Modeli Senaryolu Test</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --bg-color: #f4f7f6;
+            --btn-bg: #ffffff;
+            --btn-hover: #e0e6ed;
+            --correct-color: #27ae60;
+            --wrong-color: #e74c3c;
+            --text-color: #333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 25px 20px;
+            margin-top: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .progress {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+
+        .question-box {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            text-align: center;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .keyword {
+            font-weight: bold;
+            color: #2980b9;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: var(--btn-bg);
+            border: 2px solid #bdc3c7;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-weight: 500;
+            color: var(--text-color);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .option-btn.correct {
+            background-color: var(--correct-color);
+            border-color: var(--correct-color);
+            color: #fff;
+        }
+
+        .option-btn.wrong {
+            background-color: var(--wrong-color);
+            border-color: var(--wrong-color);
+            color: #fff;
+        }
+
+        .next-btn {
+            margin-top: 20px;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+        }
+
+        .result-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .score-text {
+            font-size: 2rem;
+            margin: 20px 0;
+            color: var(--primary-color);
+        }
+
+        .restart-btn {
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <div class="container" id="quiz-container">
+        <header>
+            <h1>Maarif Modeli Senaryolu Test</h1>
+            <div class="progress" id="progress-text">Soru: 1 / 10</div>
+        </header>
+
+        <div class="question-box">
+            "<span id="question-text">...</span>"<br><br>
+            <span style="font-size: 1rem; color: #555;">Maarif modeline göre yukarıda betimlenen öğrenci aşağıdaki profillerden hangisine örnektir?</span>
+        </div>
+
+        <div class="options" id="options-container">
+            <!-- Butonlar JavaScript ile buraya eklenecek -->
+        </div>
+
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Sonraki Soru</button>
+    </div>
+
+    <div class="container result-screen" id="result-container">
+        <h1>Test Tamamlandı!</h1>
+        <div class="score-text" id="score-text">Doğru: 0 / 0</div>
+        <button class="restart-btn" onclick="startQuiz()">Yeniden Başla</button>
+    </div>
+
+    <script>
+        // Betimleyici Cümlelerle Geliştirilmiş Veri Seti
+        const data = {
+            "Ahlaklı": [
+                "Arkadaşları arasında her zaman <span class='keyword'>adil</span> davranmaya özen gösteren bir öğrenci",
+                "Gündelik hayatında <span class='keyword'>başkalarının haklarına saygılı</span> olmayı ilke edinen bir öğrenci",
+                "Çevresi tarafından sözünün eri ve <span class='keyword'>güvenilir</span> biri olarak bilinen bir öğrenci",
+                "Çevresindeki <span class='keyword'>tabiat ve toplumsal olaylara duyarlı</span> yaklaşan, doğayı koruyan bir öğrenci",
+                "Büyüklerine ve küçüklerine karşı daima <span class='keyword'>saygılı</span> tutumlar sergileyen bir öğrenci",
+                "Karşılaştığı zorluklarda bile <span class='keyword'>doğru ve dürüst</span> olmaktan vazgeçmeyen bir öğrenci"
+            ],
+            "Bilge": [
+                "Boş zamanlarında sergilere ve müzelere giderek <span class='keyword'>sanata ve kültüre duyarlı</span> olduğunu gösteren bir öğrenci",
+                "Olaylar karşısında başkalarından etkilenmeden <span class='keyword'>bağımsız düşünebilen</span> bir öğrenci",
+                "Düşüncelerini akıcı ve etkili bir şekilde aktararak <span class='keyword'>belagat sahibi</span> olduğunu hissettiren bir öğrenci",
+                "Öğrendiği yeni ve faydalı <span class='keyword'>bilgileri paylaşan</span> bir öğrenci",
+                "Merak ettiği konularda durmaksızın araştırma yapıp <span class='keyword'>ilme ulaşan</span> bir öğrenci"
+            ],
+            "Cesaretli": [
+                "Zorluklar karşısında korkmadan <span class='keyword'>yiğit</span> bir duruş sergileyen bir öğrenci",
+                "Verdiği sözün arkasında duran ve her zaman <span class='keyword'>mert</span> davranan bir öğrenci",
+                "Sınıf içi etkinliklerde beklemeden öne atılıp <span class='keyword'>inisiyatif alan</span> bir öğrenci",
+                "Zor günlerinde dostlarının arkasında durup onlara karşı hep <span class='keyword'>destekleyici</span> olan bir öğrenci",
+                "Gerekli durumlarda hedefleri için <span class='keyword'>risk alan</span> bir öğrenci",
+                "Yeni projeler üretme ve hayata geçirme konusunda <span class='keyword'>girişimci</span> bir ruha sahip öğrenci"
+            ],
+            "Estetik": [
+                "Yaşıtlarına göre olayları karşılarken oldukça <span class='keyword'>olgun</span> davranan bir öğrenci",
+                "Kendi içindeki <span class='keyword'>sanat yeteneklerini bilen/farkında olan</span> ve bunu geliştiren bir öğrenci",
+                "İnsanlarla iletişiminde her zaman ince ve <span class='keyword'>zarif</span> davranan bir öğrenci",
+                "Tepkilerinde aşırıya kaçmayan, davranışlarında daima <span class='keyword'>ölçülü</span> olan bir öğrenci",
+                "İzleyeceği filmleri veya okuyacağı kitapları belirlerken <span class='keyword'>seçici</span> davranan bir öğrenci"
+            ],
+            "İradeli": [
+                "Hedeflerine ulaşma konusunda son derece <span class='keyword'>kararlı</span> adımlar atan bir öğrenci",
+                "Katıldığı yarışmalarda elinden gelenin en iyisini yaparak <span class='keyword'>iddialı</span> olan bir öğrenci",
+                "Söyledikleriyle yaptıkları birbirini tutan, davranışlarında <span class='keyword'>tutarlı</span> olan bir öğrenci",
+                "Topluluk önünde konuşurken <span class='keyword'>kendisine güvenen</span> bir duruş sergileyen bir öğrenci",
+                "Verilen grup ödevlerinde üzerine düşen görevi bilip <span class='keyword'>sorumluluk alan</span> bir öğrenci",
+                "Yaşamında belirlediği kurallardan taviz vermeyen, <span class='keyword'>ilkeli</span> bir öğrenci",
+                "Sinirlendiği anlarda bile derin bir nefes alıp <span class='keyword'>öfkesini kontrol edebilen</span> bir öğrenci"
+            ],
+            "Merhametli": [
+                "Kendinden küçüklere ve sokak hayvanlarına karşı her zaman <span class='keyword'>şefkatli</span> yaklaşan bir öğrenci",
+                "Kendisine yapılan küçük hataları büyütmeyen ve çabuk <span class='keyword'>affedici</span> olan bir öğrenci",
+                "Çevresinde yardıma muhtaç birini gördüğünde hemen el uzatan, <span class='keyword'>iyiliksever</span> bir öğrenci",
+                "Sınıf arkadaşları derslerde zorlandığında onlara karşılıksız destek olan, <span class='keyword'>yardımsever</span> bir öğrenci",
+                "Elindeki imkanları ve eşyalarını başkalarıyla bölüşmeyi seven, <span class='keyword'>paylaşımcı</span> bir öğrenci",
+                "İnsanlara karşı içten ve sıcakkanlı tavırlarıyla bilinen, <span class='keyword'>sevecen</span> bir öğrenci"
+            ],
+            "Sağlıklı": [
+                "Öğle aralarında abur cubur yerine faydalı gıdalar tüketerek <span class='keyword'>sağlıklı beslenen</span> bir öğrenci",
+                "Fiziksel gelişimi için zamanında yatıp kalkarak <span class='keyword'>düzenli uyuyan ve dinlenen</span> bir öğrenci",
+                "Bedenini zinde tutmak için haftanın belli günlerinde <span class='keyword'>düzenli spor ve egzersiz yapan</span> bir öğrenci",
+                "Kişisel bakımına ve kıyafetlerine özen gösteren, daima <span class='keyword'>temiz</span> olan bir öğrenci",
+                "Ekran süresini kısıtlayıp zararlı alışkanlıklardan ve <span class='keyword'>bağımlılıktan kaçınan</span> bir öğrenci",
+                "İç huzurunu sağlamak için kendine vakit ayırıp <span class='keyword'>manevi sağlığını koruyan</span> bir öğrenci"
+            ],
+            "Sorgulayıcı": [
+                "Derslerde sürekli neden ve nasıl sorularını soran <span class='keyword'>meraklı</span> bir öğrenci",
+                "Duyduğu her bilgiye hemen inanmayıp kaynağını <span class='keyword'>eleştirel düşünen</span> bir öğrenci",
+                "Grup çalışmalarında arkadaşlarıyla uyum içinde <span class='keyword'>işbirliği yapan</span> bir öğrenci",
+                "Planlarda beklenmedik bir değişiklik olduğunda buna hemen uyum sağlayabilen <span class='keyword'>esnek</span> bir öğrenci",
+                "Verilen bir konuyu sadece ders kitabıyla sınırlı bırakmayıp derinlemesine inceleyen <span class='keyword'>araştırmacı</span> bir öğrenci",
+                "Karşılaşılan kriz anlarında pratik yollar bularak <span class='keyword'>problem çözen</span> bir öğrenci"
+            ],
+            "Üretken": [
+                "Geleceğe dair somut planlar kuran, <span class='keyword'>hayal ve hedefleri olan</span> bir öğrenci",
+                "Derslerinde başarılı olmak için disiplinli bir şekilde efor sarf eden <span class='keyword'>çalışkan</span> bir öğrenci",
+                "Yeni bir konu anlatıldığında dikkatle dinleyip <span class='keyword'>öğrenmeye istekli</span> olduğunu belli eden bir öğrenci",
+                "Karşılaştığı zorluklarda pes etmeyip sonuna kadar giden <span class='keyword'>azimli</span> bir öğrenci",
+                "Uzun süren projelerde bile motivasyonunu kaybetmeden beklemeyi bilen <span class='keyword'>sabırlı</span> bir öğrenci",
+                "Çevresiyle sürekli fikir alışverişinde bulunup <span class='keyword'>iletişime/dayanışmaya açık</span> olan bir öğrenci",
+                "Klasik yöntemler yerine farklı ve özgün fikirler üretebilen <span class='keyword'>yaratıcı</span> bir öğrenci"
+            ],
+            "Vatansever": [
+                "İstiklal Marşı törenlerinde gururla duran ve <span class='keyword'>bayrağını seven</span> bir öğrenci",
+                "Konuşurken yabancı kelimeler yerine ana dilimizi kullanmaya özen gösterip <span class='keyword'>Türkçeye sahip çıkan</span> bir öğrenci",
+                "Her platformda ülkesinin değerlerini koruyan, <span class='keyword'>vatanını ve milletini seven/savunan</span> bir öğrenci",
+                "Kamu mallarına zarar vermeyerek <span class='keyword'>gelişmiş devlet bilincine sahip</span> olduğunu gösteren bir öğrenci",
+                "Geleneklerine, göreneklerine, <span class='keyword'>milli kültür ve manevi değerlere bağlı</span> kalan bir öğrenci",
+                "Bireysel faydadan çok toplumsal ve milli faydayı gözeterek <span class='keyword'>ülke çıkarlarını üstün tutan</span> bir öğrenci",
+                "Toplumsal kurallara uyan ve çevresine karşı bilinçli olup <span class='keyword'>vatandaşlık hak/sorumluluklarını bilen</span> bir öğrenci"
+            ]
+        };
+
+        const allMainTraits = Object.keys(data);
+        let questionsBank = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        // Cümlelerden soruluk bir havuz oluştur
+        function generateQuestionsBank() {
+            questionsBank = [];
+            for (const [trait, sentences] of Object.entries(data)) {
+                sentences.forEach(sentence => {
+                    questionsBank.push({
+                        text: sentence,
+                        correctAnswer: trait
+                    });
+                });
+            }
+            // Soruları karıştır
+            questionsBank.sort(() => Math.random() - 0.5);
+        }
+
+        function startQuiz() {
+            document.getElementById('quiz-container').style.display = 'block';
+            document.getElementById('result-container').style.display = 'none';
+            generateQuestionsBank();
+            currentQuestionIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.style.display = 'none';
+            
+            const currentQ = questionsBank[currentQuestionIndex];
+            document.getElementById('progress-text').innerText = `Soru: ${currentQuestionIndex + 1} / ${questionsBank.length}`;
+            document.getElementById('question-text').innerHTML = currentQ.text;
+
+            // Şıkları ayarla (1 doğru, 3 yanlış rastgele)
+            let options = [currentQ.correctAnswer];
+            let remainingTraits = allMainTraits.filter(t => t !== currentQ.correctAnswer);
+            remainingTraits.sort(() => Math.random() - 0.5);
+            
+            options.push(remainingTraits[0], remainingTraits[1], remainingTraits[2]);
+            options.sort(() => Math.random() - 0.5); // Şıkları karıştır
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = option;
+                btn.onclick = () => checkAnswer(btn, option, currentQ.correctAnswer);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedBtn, selectedAnswer, correctAnswer) {
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            // Tüm butonları tıklanamaz yap
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (selectedAnswer === correctAnswer) {
+                selectedBtn.classList.add('correct');
+                score++;
+            } else {
+                selectedBtn.classList.add('wrong');
+                // Doğru cevabı göster
+                buttons.forEach(btn => {
+                    if (btn.innerText === correctAnswer) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questionsBank.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('score-text').innerText = `Doğru: ${score} / ${questionsBank.length}`;
+        }
+
+        // Uygulamayı başlat
+        startQuiz();
+    </script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Büyükşehir mi, Değil mi?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #FFF0F5; /* Tatlı bir lavanta/pembe arka plan */
+            --card-bg: #FFFFFF;
+            --primary: #92A8D1; /* Pastel Mavi */
+            --yes-btn: #B5EAD7; /* Pastel Yeşil */
+            --yes-text: #2D6A4F;
+            --no-btn: #FFB7B2; /* Pastel Kırmızı/Somon */
+            --no-text: #9D0208;
+            --text-main: #4A4E69;
+            --text-muted: #9DA8B9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 2rem;
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            border: 3px solid #F8E9F0;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            background: #F4F6F9;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+        }
+
+        .city-card {
+            background-color: #FAFBFC;
+            border: 3px dashed #E2E8F0;
+            border-radius: 1.5rem;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #cityName {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: var(--text-main);
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.05);
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        button {
+            padding: 1.2rem;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border: none;
+            border-radius: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button:active {
+            transform: scale(0.95) translateY(2px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-yes {
+            background-color: var(--yes-btn);
+            color: var(--yes-text);
+        }
+
+        .btn-no {
+            background-color: var(--no-btn);
+            color: var(--no-text);
+        }
+
+        .btn-reset {
+            background-color: var(--primary);
+            color: white;
+            margin-top: 1rem;
+            display: none;
+            width: 100%;
+        }
+
+        #feedback {
+            margin-top: 1.5rem;
+            font-weight: 800;
+            font-size: 1.2rem;
+            min-height: 2em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: popIn 0.3s ease-out;
+        }
+
+        .feedback-subtext {
+            font-size: 0.9rem;
+            font-weight: 700;
+            opacity: 0.7;
+            margin-top: 0.3rem;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .correct-text { color: var(--yes-text); }
+        .wrong-text { color: var(--no-text); }
+
+        /* Mobil Optimizasyon */
+        @media (max-width: 480px) {
+            .container { padding: 1.5rem; border-radius: 1.5rem; }
+            #cityName { font-size: 2.2rem; }
+            button { padding: 1rem; font-size: 1.1rem; }
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#cografya" aria-label="Ana menüye dön">← Menüye dön</a>
+
+<div class="container">
+    <div class="header">
+        <h1>Büyükşehir mi? 🏙️</h1>
+        <div class="stats">
+            <span id="questionCount">Soru: 1/81</span>
+            <span id="scoreDisplay">Puan: 0</span>
+        </div>
+    </div>
+
+    <div class="city-card" id="cityCard">
+        <div id="cityName">Hazırlanıyor...</div>
+    </div>
+
+    <div class="buttons" id="gameButtons">
+        <button class="btn-yes" onclick="checkAnswer(true)">✅ Büyükşehir</button>
+        <button class="btn-no" onclick="checkAnswer(false)">❌ Değil</button>
+    </div>
+
+    <button class="btn-reset" id="resetBtn" onclick="initGame()">🔄 Yeniden Başla</button>
+
+    <div id="feedback"></div>
+</div>
+
+<script>
+    const buyuksehirler = ["Adana", "Ankara", "Antalya", "Aydın", "Balıkesir", "Bursa", "Denizli", "Diyarbakır", "Erzurum", "Eskişehir", "Gaziantep", "Hatay", "İstanbul", "İzmir", "Kahramanmaraş", "Kayseri", "Kocaeli", "Konya", "Malatya", "Manisa", "Mardin", "Mersin", "Muğla", "Ordu", "Sakarya", "Samsun", "Şanlıurfa", "Tekirdağ", "Trabzon", "Van"];
+    
+    const digerIller = ["Adıyaman", "Afyonkarahisar", "Ağrı", "Amasya", "Artvin", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Çanakkale", "Çankırı", "Çorum", "Edirne", "Elazığ", "Erzincan", "Giresun", "Gümüşhane", "Hakkari", "Isparta", "Kars", "Kastamonu", "Kırklareli", "Kırşehir", "Kütahya", "Muş", "Nevşehir", "Niğde", "Rize", "Siirt", "Sinop", "Sivas", "Tokat", "Tunceli", "Uşak", "Yozgat", "Zonguldak", "Aksaray", "Bayburt", "Karaman", "Kırıkkale", "Batman", "Şırnak", "Bartın", "Ardahan", "Iğdır", "Yalova", "Karabük", "Kilis", "Osmaniye", "Düzce"];
+
+    let allCities = [];
+    let currentIndex = 0;
+    let score = 0;
+    let disableButtons = false;
+
+    function initGame() {
+        allCities = [];
+        score = 0;
+        currentIndex = 0;
+        disableButtons = false;
+        
+        buyuksehirler.forEach(city => allCities.push({ name: city, isMetro: true }));
+        digerIller.forEach(city => allCities.push({ name: city, isMetro: false }));
+        
+        // Karıştır
+        for (let i = allCities.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allCities[i], allCities[j]] = [allCities[j], allCities[i]];
+        }
+
+        document.getElementById('gameButtons').style.display = 'flex';
+        document.getElementById('resetBtn').style.display = 'none';
+        document.getElementById('feedback').innerHTML = '';
+        updateUI();
+    }
+
+    function updateUI() {
+        if (currentIndex < allCities.length) {
+            document.getElementById('cityName').innerText = allCities[currentIndex].name;
+            // Soru sayacını güncelledik (Yanlış bildikçe liste uzayacak)
+            document.getElementById('questionCount').innerText = `Soru: ${currentIndex + 1}/${allCities.length}`;
+            document.getElementById('scoreDisplay').innerText = `Puan: ${score}`;
+            document.getElementById('cityCard').style.borderColor = '#E2E8F0';
+            document.getElementById('cityCard').style.backgroundColor = '#FAFBFC';
+        } else {
+            endGame();
+        }
+    }
+
+    function checkAnswer(userSaysMetro) {
+        if(disableButtons) return; // Hızlı tıklamayı engelle
+        disableButtons = true;
+
+        const currentCity = allCities[currentIndex];
+        const isCorrect = userSaysMetro === currentCity.isMetro;
+        const feedbackEl = document.getElementById('feedback');
+        const cardEl = document.getElementById('cityCard');
+
+        if (isCorrect) {
+            score += 10;
+            feedbackEl.innerHTML = "Harikasın! ✨";
+            feedbackEl.className = "correct-text";
+            cardEl.style.borderColor = "var(--yes-btn)";
+            cardEl.style.backgroundColor = "#F0FDF4"; // Açık yeşil fon
+        } else {
+            const correctStatus = currentCity.isMetro ? "Büyükşehirdi!" : "Büyükşehir değildi!";
+            feedbackEl.innerHTML = `Ups! ${currentCity.name} ${correctStatus} 🙈 <span class="feedback-subtext">🔄 Listenin sonuna eklendi</span>`;
+            feedbackEl.className = "wrong-text";
+            cardEl.style.borderColor = "var(--no-btn)";
+            cardEl.style.backgroundColor = "#FEF2F2"; // Açık kırmızı fon
+            
+            // Yanlış bilinen ili listenin en sonuna ekle
+            allCities.push(currentCity);
+        }
+
+        currentIndex++;
+        
+        setTimeout(() => {
+            feedbackEl.innerHTML = '';
+            disableButtons = false;
+            updateUI();
+        }, 1600); // Geri bildirimi okuması için süreyi biraz uzattık
+    }
+
+    function endGame() {
+        document.getElementById('cityName').innerText = "Tebrikler! 🎉";
+        document.getElementById('questionCount').innerText = "Test Bitti";
+        document.getElementById('scoreDisplay').innerText = `Puan: ${score}`;
+        document.getElementById('feedback').innerHTML = `Hepsini doğru öğrenmeyi başardın! 🥳`;
+        document.getElementById('feedback').className = "correct-text";
+        
+        document.getElementById('gameButtons').style.display = 'none';
+        document.getElementById('resetBtn').style.display = 'block';
+        document.getElementById('cityCard').style.borderColor = 'var(--primary)';
+        document.getElementById('cityCard').style.backgroundColor = '#F0F4FF';
+    }
+
+    window.onload = initGame;
+</script>
+
+</body>
+</html>

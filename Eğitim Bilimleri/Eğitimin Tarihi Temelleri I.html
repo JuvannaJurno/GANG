@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MEB-AGS Eğitimin Tarihi Temelleri</title>
+    <style>
+        :root {
+            /* Tema Değiştirildi: Asil ve Akademik Mor Tonları */
+            --primary: #4A154B; /* Derin Saray Moru */
+            --success: #2E8B57;
+            --danger: #B22222;
+            --light: #F9F5FB;   /* Hafif Mor Tonal Altyapı */
+            --dark: #2C1A30;    /* Koyu Abanoz Mor */
+            --accent: #8A2BE2;  /* Canlı Menekşe / Parlak Mor */
+            --gold: #FFD700;    /* Kontrast Altın Sarısı */
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            /* Arka plan muazzam bir mor geçişli gece gradiyentidir */
+            background: linear-gradient(135deg, #1a052e 0%, #320d4e 50%, #4a154b 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #6C3483 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+        }
+        
+        header::before {
+            content: "🏛️";
+            font-size: 3rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            color: var(--gold);
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .quiz-container {
+            padding: 25px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--primary);
+        }
+        
+        .score {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .question-container {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--accent);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cat-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(74, 21, 75, 0.96);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .cat-text {
+            color: var(--gold);
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0 15px;
+            font-weight: bold;
+        }
+        
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #ccd1d9;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct-feedback {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect-feedback {
+            background-color: rgba(178, 34, 34, 0.1);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .next-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .results-container {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .results-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+        }
+        
+        .final-score {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .word-card {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--light);
+            text-align: left;
+            border-left: 6px solid var(--primary);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .question { font-size: 1.1rem; }
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+    <div class="container">
+        <header>
+            <h1>🏛️ MEB-AGS Eğitimin Tarihi Temelleri</h1>
+            <div class="subtitle">Eğitim Tarihi Genel Tekrar Testi</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="stats">
+                <div class="score">Puan: <span id="score">0</span></div>
+                <div>Soru: <span id="progress">0</span>/<span id="total">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="cat-cover" id="catCover">
+                    <img src="https://cataas.com/cat" alt="Random Cat" class="cat-image">
+                    <div class="cat-text">Şıkları görmek için bir sayıya (1-4) basın!</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <div id="feedbackText"></div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" style="display: none;">Sonraki Soru (Boşluk)</button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">🏆 Modül Tamamlandı!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="word-list" id="wordList"></div>
+            <button class="next-btn" onclick="location.reload()" style="margin-top: 30px;">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            { 
+                question: "Osmanlı Devleti'nin ilk medresesi aşağıdaki şehirlerden hangisinde kurulmuştur?", 
+                options: ["Bursa", "Söğüt", "İznik", "Edirne"], 
+                correctAnswer: "C", 
+                meaning: "Orhan Bey döneminde kurulan İznik Medresesi (Orhaniye), Osmanlı'nın bilinen ilk medresesidir. Baş müderrisi Dâvûd-i Kayserî'dir." 
+            },
+            { 
+                question: "Aşağıdakilerden hangisi Osmanlı Devleti'ndeki Sıbyan Mektepleri ile ilgili doğru bir bilgi değildir?", 
+                options: ["İlköğretim düzeyinde eğitim veren kurumlardır.", "Mektep giderleri vakıflar tarafından karşılanmaktadır.", "Okula başlayacak çocuklar için 'Âmin Alayı' adı verilen geleneksel bir tören düzenlenir.", "Öğrenciler yaş gruplarına ayrılmış modern sınıf sistemine göre ilerlemektedir."], 
+                correctAnswer: "D", 
+                meaning: "Sıbyan mekteplerinde yaş gruplarına veya seviyelere göre ayrılmış modern bir sınıf sistemi (kur sistemi) yoktu; bireysel ilerleme esastı." 
+            },
+            { 
+                question: "Selçuklu Devleti'nde yer alan ve bireylere ilköğretim (okuma-yazma ve temel dini bilgiler) düzeyinde eğitim veren kurum aşağıdakilerden hangisidir?", 
+                options: ["Medrese", "Küttab", "Darülkurra", "Enderun"], 
+                correctAnswer: "B", 
+                meaning: "Küttablar, İslam coğrafyasında ve Selçuklularda temel okuma-yazma ve Kur'an eğitiminin verildiği ilköğretim seviyesindeki kurumlardır." 
+            },
+            { 
+                question: "Devşirme sistemi gereğince Hristiyan çocukların Yeniçeri olarak yetiştirilmek üzere temel eğitimlerinin verildiği; okuma, yazma ve dini bilgilerin yanı sıra spor ve askeri talimlerin de yaptırıldığı kurum aşağıdakilerden hangisidir?", 
+                options: ["Enderun Mektebi", "Acemi Oğlanlar Ocağı", "Sahn-ı Seman Medresesi", "Hendesehane"], 
+                correctAnswer: "B", 
+                meaning: "Devşirilen çocuklar asker olacaklarsa Acemi Oğlanlar Ocağı'nda temel askeri eğitim alırlar, daha yetenekli ve zeki olanlar ise saray okulu olan Enderun'a seçilirdi." 
+            },
+            { 
+                question: "Selçuklu Devleti tarafından kurulan Nizamiye Medreseleri ilk olarak hangi şehirde kurulmuştur?", 
+                options: ["Bağdat", "İsfahan", "Rey", "Nişabur"], 
+                correctAnswer: "A", 
+                meaning: "Büyük Selçuklu Veziri Nizamülmülk tarafından ilk olarak 1067'de Bağdat'ta kurulan Nizamiye Medresesi, dönemin en önemli yükseköğretim kurumuydu." 
+            },
+            { 
+                question: "Selçuklu döneminde ortaya çıkan; küçük esnaf, sanatkar, usta, kalfa ve çıraklara meslek içinde yetişme imkanı sağlayan sistem ve eğitim kurumu aşağıdakilerden hangisidir?", 
+                options: ["Lonca Teşkilatı", "Ahilik", "Enderun Mektebi", "Darülfünun"], 
+                correctAnswer: "B", 
+                meaning: "Ahilik, Ahi Evran tarafından kurulan; mesleki eğitimi (çırak-kalfa-usta) ve ahlaki gelişimi birleştiren, işbaşında eğitim veren teşkilattır." 
+            },
+            { 
+                question: "Aşağıdakilerden hangisi Anadolu Selçuklu Devleti dönemi düşünür ve mutasavvıflarından biri değildir?", 
+                options: ["Yunus Emre", "Mevlânâ Celâleddîn-i Rûmî", "Hacı Bektaş-ı Veli", "Ahmet Yesevi"], 
+                correctAnswer: "D", 
+                meaning: "Ahmet Yesevi, Anadolu Selçuklu döneminde değil, onlardan daha önce Karahanlılar döneminde Orta Asya'da (Türkistan) yaşamış Türk mutasavvıfıdır." 
+            },
+            { 
+                question: "Osmanlı Devleti'nde II. Mahmut döneminde yayınlanan ve ilköğretimi (temel eğitimi) zorunlu hale getiren ilk yasal düzenleme aşağıdakilerden hangisidir?", 
+                options: ["Tanzimat Fermanı", "Maarif-i Umumiye Nizamnamesi", "Talim-i Sıbyan Fermanı", "Islahat Fermanı"], 
+                correctAnswer: "C", 
+                meaning: "II. Mahmut'un 1824 yılında yayınladığı Talim-i Sıbyan Fermanı ile İstanbul'da ilköğretim çağındaki çocukların eğitim alması zorunlu hale getirilmiştir." 
+            },
+            { 
+                question: "1915 yılında kızlar için açılan, ilk mezunlarını 1917'de veren ve 1920 yılında kaldırılarak genel Darülfünun'a bağlanan yükseköğretim kurumu aşağıdakilerden hangisidir?", 
+                options: ["Darülmuallimat", "İnas Darülfünunu", "Sanayi-i Nefise Mektebi", "Darüşşafaka"], 
+                correctAnswer: "B", 
+                meaning: "'İnas' Arapça kadınlar/kızlar demektir. İnas Darülfünunu, Osmanlı'da kadınların yükseköğrenim (üniversite) görmesi için atılan ilk büyük adımdır." 
+            },
+            { 
+                question: "Osmanlı Devleti'nde eğitimde yenileşme çalışmaları kapsamında oluşturulan öğretmen örgütleri (cemiyetleri) ilk olarak aşağıdaki dönemlerin hangisinde ortaya çıkmıştır?", 
+                options: ["Lale Devri", "Tanzimat Dönemi", "İstibdat Dönemi", "Meşrutiyet Dönemi"], 
+                correctAnswer: "D", 
+                meaning: "İkinci Meşrutiyet'in (1908 sonrası) getirdiği sivil örgütlenme serbestliği ile birlikte Encümen-i Muallimin gibi ilk öğretmen dernekleri kurulmuştur." 
+            },
+            { 
+                question: "Osmanlı Devleti'nin ilk dönemlerinde özellikle başkentlerde kurulan; hukuk, idare ve din alanlarına yönelik memur yetiştirmeyi amaçlayan ve eğitimini tamamlayıp icazet alanların müderris olarak görev yapabildiği eğitim kurumu aşağıdakilerden hangisidir?", 
+                options: ["Enderun Mektebi", "Medrese", "Darülfünun", "Muallimhane"], 
+                correctAnswer: "B", 
+                meaning: "Medreseler, Osmanlı'da din, hukuk, eğitim (müderris) ve idare alanlarına nitelikli kadro yetiştiren temel kurumlarıydı. Diplomaya 'icazet' denirdi." 
+            },
+            { 
+                question: "Genellikle merkez camilerinin yakınına kurulan, giderleri vakıflar tarafından karşılanan ve öğrenci kabulü için belirli bir kayıt dönemi ya da zaman dilimi bulunmayan eğitim kurumu aşağıdakilerden hangisidir?", 
+                options: ["Rüştiye Mektebi", "Enderun Mektebi", "Sıbyan Mektebi", "İdadi"], 
+                correctAnswer: "C", 
+                meaning: "Sıbyan mekteplerinde (mahalle mektepleri) belirli bir ders yılı başlangıcı yoktu, çocuk uygun yaşa geldiğinde dilediği zaman eğitime başlayabilirdi." 
+            },
+            { 
+                question: "Türkiye Cumhuriyeti'nde eğitimi laikleştirmek, millileştirmek ve eğitim kurumlarını tek çatı altında toplamak adına atılan ilk adım aşağıdakilerden hangisidir?", 
+                options: ["Maarif Teşkilatı Hakkında Kanun'un çıkarılması", "Harf İnkılabı'nın yapılması", "Tevhid-i Tedrisat Kanunu'nun kabul edilmesi", "Köy Enstitülerinin kurulması"], 
+                correctAnswer: "C", 
+                meaning: "3 Mart 1924'teki Tevhid-i Tedrisat (Öğretim Birliği) Kanunu ile ülkedeki tüm eğitim kurumları MEB'e bağlanarak ikiliklere son verilmiştir." 
+            },
+            { 
+                question: "Osmanlı Devleti'nde Tanzimat Dönemi'nde açılan; ortaokul düzeyinde eğitim veren, özellikle modernleşme sürecinde dünyevi bilimleri öğretmek ve bu alanlarda öğrenci yetiştirmek amacıyla kurulan eğitim kurumu aşağıdakilerden hangisidir?", 
+                options: ["İdadi", "Rüştiye", "Sultani", "Darülmuallimin"], 
+                correctAnswer: "B", 
+                meaning: "Rüştiyeler (erginliğe ulaşma çağı), Tanzimat döneminde geleneksel mektepler ile yüksek okullar arasında modern bir ortaokul basamağı olarak kurgulanmıştır." 
+            },
+            { 
+                question: "Fransız eğitim sistemine benzer bir yapıda düzenlenen; hem dini hem de pozitif bilimlerin birlikte okutulduğu, eğitim süresinin uzun olduğu ve mezunlarının genellikle yüksek kademe devlet hizmetine alındığı Osmanlı eğitim kurumu aşağıdakilerden hangisidir?", 
+                options: ["Rüştiye", "İdadi", "Sultani", "Darülfünun"], 
+                correctAnswer: "C", 
+                meaning: "Özellikle 1868'de açılan Galatasaray Sultanisi (Mekteb-i Sultani), Fransız lise modeline göre kurulmuş ve devlet kademelerine aydın bürokrat yetiştirmiştir." 
+            },
+            { 
+                question: "1932 yılında halkın kültürel seviyesini yükseltmek ve halk arasındaki eğitim and kültür farklılıklarını ortadan kaldırmak amacıyla kurulan, ancak zamanla kuruluş amacından uzaklaştığı gerekçesiyle 1951-1952 yıllarında kapatılan kurum aşağıdakilerden hangisidir?", 
+                options: ["Millet Mektepleri", "Köy Enstitüleri", "Halkevleri", "Türk Ocakları"], 
+                correctAnswer: "C", 
+                meaning: "Halkevleri, Cumhuriyetin getirdiği inkılapları halka benimsetmek için kurulmuş, Demokrat Parti döneminde siyasi bir yapıya dönüştüğü gerekçesiyle kapatılmıştır." 
+            },
+            { 
+                question: "Aşağıdakilerden hangisi Tanzimat Dönemi eğitim hareketlerinin genel özelliklerinden biri değildir?", 
+                options: ["Maarif-i Umumiye Nizamnamesi ile Osmanlı eğitim sisteminin düzenlenmesi", "İlkokul ve ortaokulların birleştirilmesiyle altı yıllık ilköğretim okullarının kurulması", "Kız ortaokullarının ve kız öğretmen okulunun açılması", "İlk örgün mesleki ve teknik eğitim kurumlarının açılması"], 
+                correctAnswer: "B", 
+                meaning: "Tanzimat döneminde İbtidai mektepler (ilkokul) ve Rüştiyeler (ortaokul) ayrı kademeler olarak yapılandırılmıştır; okulların birleştirilmesi Cumhuriyet dönemi uygulamasıdır." 
+            },
+            { 
+                question: "Tanzimat Dönemi'nde açılan ve ülkede eğitim-öğretimin tümüyle yabancı dilde (Fransızca) yapıldığı ilk devlet okulu aşağıdakilerden hangisidir?", 
+                options: ["Mekteb-i Harbiye", "Mekteb-i Mülkiye", "Galatasaray Sultanisi", "Mekteb-i Tıbbiye"], 
+                correctAnswer: "D", 
+                meaning: "1839'da açılan Mekteb-i Tıbbiye-i Şahane'de modern tıbbı batıdan takip edebilmek amacıyla eğitim dili Fransızca olarak belirlenmiştir." 
+            },
+            { 
+                question: "Osmanlı Devleti'nde rüştiyelere öğretmen yetiştirmek amacıyla 1848 yılında açılan ve modern anlamda 'ilk öğretmen okulu' kabul edilen kurum aşağıdakilerden hangisidir?", 
+                options: ["Darülmuallimat", "Darülmuallimin", "Mekteb-i Maarif-i Adliye", "Darülfünun"], 
+                correctAnswer: "B", 
+                meaning: "Darülmuallimin, Osmanlı'da erkek rüştiye okullarına modern formasyona sahip erkek öğretmen yetiştirmek için açılan ilk mesleki kurumdur." 
+            },
+            { 
+                question: "1870 yılında, kız sıbyan ve kız rüştiye mekteplerine kadın öğretmen yetiştirmek amacıyla açılan okul aşağıdakilerden hangisidir?", 
+                options: ["İnas Mektebi", "Kız Sanayi Mektebi", "Darülmuallimat", "Darülelhan"], 
+                correctAnswer: "C", 
+                meaning: "Darülmuallimat, Türk kadınının meslek hayatına atılması, memur statüsü kazanması ve eğitimde söz sahibi olması açısından devrim niteliğinde bir adımdır." 
+            },
+            { 
+                question: "Osmanlı eğitim sistemini ilkokuldan üniversiteye kadar (sıbyan, rüştiye, idadi, sultani, darülfünun) kademelendiren ve modern eğitimin yasal çerçevesini çizen 1869 tarihli hukuki belge hangisidir?", 
+                options: ["Islahat Fermanı", "Tanzimat Fermanı", "Maarif-i Umumiye Nizamnamesi", "Kanun-i Esasi"], 
+                correctAnswer: "C", 
+                meaning: "Fransız eğitim sistemine göre Saffet Paşa öncülüğünde hazırlanan Maarif-i Umumiye Nizamnamesi, Osmanlı eğitim tarihinin en kapsamlı düzenlemesidir." 
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        function shuffleArray(array) {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTextEl = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const totalEl = document.getElementById('total');
+        const progressBarEl = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScoreEl = document.getElementById('finalScore');
+        const wordListEl = document.getElementById('wordList');
+        const catCoverEl = document.getElementById('catCover');
+
+        function initQuiz() {
+            questions = shuffleArray(quizData);
+            totalEl.textContent = questions.length;
+            showQuestion();
+            catCoverEl.addEventListener('click', () => catCoverEl.style.display = 'none');
+            
+            window.addEventListener('keydown', (e) => {
+                if (e.key >= '1' && e.key <= '4') {
+                    if (catCoverEl.style.display !== 'none') {
+                        catCoverEl.style.display = 'none';
+                        return; 
+                    }
+                    
+                    const idx = parseInt(e.key) - 1;
+                    const btns = document.querySelectorAll('.option-btn');
+                    if (btns[idx] && !btns[idx].disabled) {
+                        btns[idx].click();
+                    }
+                }
+                
+                if (e.code === 'Space' || e.key === ' ') {
+                    if (nextBtn.style.display !== 'none') {
+                        nextBtn.click();
+                        e.preventDefault(); 
+                    }
+                }
+            });
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            
+            const correctText = currentQuestion.options[currentQuestion.correctAnswer.charCodeAt(0) - 65];
+            const shuffledOptions = shuffleArray(currentQuestion.options);
+            
+            optionsEl.innerHTML = '';
+            optionsEl.appendChild(catCoverEl);
+            catCoverEl.style.display = 'flex';
+
+            shuffledOptions.forEach(optionText => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn', 'fade-in');
+                button.textContent = optionText;
+                button.onclick = () => selectAnswer(optionText, correctText, currentQuestion.meaning);
+                optionsEl.appendChild(button);
+            });
+            
+            feedbackEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        function selectAnswer(selectedOption, correctOptionText, meaning) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correctOptionText) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selectedOption) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            const isCorrect = selectedOption === correctOptionText;
+            if (isCorrect) {
+                score++;
+                scoreEl.textContent = score;
+            }
+
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+            feedbackTextEl.innerHTML = isCorrect ? 
+                `<strong>✅ Doğru!</strong><br><br>${meaning}` : 
+                `<strong>❌ Hatalı Seçim!</strong><br>Doğru Cevap: ${correctOptionText}<br><br>${meaning}`;
+            
+            nextBtn.style.display = 'block';
+        }
+
+        nextBtn.onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        };
+
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            finalScoreEl.textContent = `Puanınız: ${score} / ${questions.length}`;
+            
+            wordListEl.innerHTML = '<h3 style="margin-bottom:15px; color: var(--primary);">Genel Tekrar Kartları:</h3>';
+            questions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `<strong>${q.question}</strong><br><small style="color:var(--dark); display:block; margin-top:8px;"><em>${q.meaning}</em></small>`;
+                wordListEl.appendChild(card);
+            });
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>

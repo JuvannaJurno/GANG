@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rehberlik ÖSYM Analizleri ve Ders Notları</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f4f6f9; 
+            color: #333; 
+            margin: 0; 
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .header h1 {
+            color: #1a252f;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        .category {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 30px;
+            border-top: 6px solid #34495e;
+        }
+        .category h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        .note-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+        .note {
+            background: #fdfefe;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .note:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        }
+        .note-title {
+            display: block;
+            font-weight: 700;
+            font-size: 1.15em;
+            margin-bottom: 12px;
+            color: #2d3748;
+        }
+        .note p {
+            margin: 0;
+            font-size: 0.98em;
+            color: #4a5568;
+            text-align: justify;
+        }
+        .note ul {
+            margin: 8px 0 0 0;
+            padding-left: 20px;
+            font-size: 0.95em;
+            color: #4a5568;
+        }
+        .note li {
+            margin-bottom: 6px;
+        }
+        .critical-warning {
+            background-color: #fff5f5;
+            border-left: 4px solid #e53e3e;
+            padding: 10px 15px;
+            margin-top: 10px;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.92em;
+            color: #c53030;
+        }
+        .highlight {
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        /* Kategori Özel Renkleri */
+        .cat-genel { border-top-color: #3182ce; }
+        .cat-genel h2 { color: #2b6cb0; }
+        .cat-genel .note-title { color: #2b6cb0; }
+
+        .cat-kpdr { border-top-color: #319795; }
+        .cat-kpdr h2 { color: #234e52; }
+        .cat-kpdr .note-title { color: #234e52; }
+
+        .cat-mesleki { border-top-color: #dd6b20; }
+        .cat-mesleki h2 { color: #9c4221; }
+        .cat-mesleki .note-title { color: #9c4221; }
+
+        .cat-birey { border-top-color: #805ad5; }
+        .cat-birey h2 { color: #553c9a; }
+        .cat-birey .note-title { color: #553c9a; }
+
+        .cat-org { border-top-color: #e53e3e; }
+        .cat-org h2 { color: #9b2c2c; }
+        .cat-org .note-title { color: #9b2c2c; }
+
+        .cat-ozel { border-top-color: #d69e2e; }
+        .cat-ozel h2 { color: #975a16; }
+        .cat-ozel .note-title { color: #975a16; }
+
+        .cat-kuram { border-top-color: #ed64a6; }
+        .cat-kuram h2 { color: #b83280; }
+        .cat-kuram .note-title { color: #b83280; }
+
+        @media (max-width: 768px) {
+            .note-grid {
+                grid-template-columns: 1fr;
+            }
+            body {
+                padding: 20px 10px;
+            }
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <div class="header">
+        <h1>🎯 Rehberlik ÖSYM Analizleri</h1>
+        <p>Sınav Mantığına Uygun, Kategorize Edilmiş Eksiksiz Ders Notları</p>
+    </div>
+
+    <div class="container">
+
+        <!-- 1. Genel Rehberlik Kavramları -->
+        <div class="category cat-genel">
+            <h2>📘 1. Genel Rehberlik Kavramları</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Kapsamlı Gelişimsel Rehberlik (G.R)</span>
+                    <p><span class="highlight">Ardışık ve Esnek:</span> Yapısı gereği öğrencilerin gelişim basamaklarına göre ardışık bir sıra izler ve değişen şartlara/ihtiyaçlara göre esneklik gösterir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Empati = Yansıtıcı Konuşma</span>
+                    <p>Karşımızdakinin anlattıklarını ve hissettiklerini ona kendi cümlelerimizle özetleyerek geri vermektir. Yani ona ayna tutarak <span class="highlight">"Seni duyuyorum ve ne hissettiğini anlıyorum"</span> mesajı vermektir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">İlgi Gelişimi</span>
+                    <p><span class="highlight">11-12 yaşlarında başlar, Ergenlikte tutarlı hale gelir:</span> Çocuklar ilkokul sonlarına doğru (11-12) belli alanlara ilgi duymaya başlar ancak bu ilgiler geçicidir (heves gibidir). Ergenlikle beraber kişinin ilgileri kalıcı ve belirgin (tutarlı) bir yapıya bürünür.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Test Tekniklerinin Kullanımı ve Kültür</span>
+                    <p>Testler psikolojik danışmanın vazgeçilmezi değildir / Kültüre uyarlanır. Bireyi tanımak için sadece test (anket, envanter) kullanmak şart değildir; gözlem, görüşme gibi testsiz teknikler de çok önemlidir. Eğer yabancı kökenli bir test kullanılacaksa, doğrudan çevrilip kullanılamaz; mutlaka bizim toplumumuzun kültürüne ve yapısına uyarlanmalıdır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Rehberliğin Amacı</span>
+                    <p>Rehberliğin amacı tek bir yol göstermek değildir. Bireye alternatif yollar (<span class="highlight">çoğul/plural</span>) sunmak ve kendi kararlarını alabilmesi için onu özerk hale getirmek esastır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Grup Rehberliği</span>
+                    <p>Grup rehberliği, gerektiğinde bireysel rehberliğin yerini alabilir ve süreçlerin verimliliğini artırmada kritik bir rol oynar.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Rehberlik Hizmetlerinin Ortaya Çıkış Nedenleri</span>
+                    <ul>
+                        <li>Bireye verilen değerin (insan odaklı yaklaşımların) artması.</li>
+                        <li>Bilgi ve iletişim teknolojilerinin hızla gelişmesi.</li>
+                        <li>İş hayatındaki yoğun rekabet ortamı.</li>
+                        <li>Nitelikli insan gücüne duyulan ihtiyacın artması ve tercih edilir olması.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Kapsamlı Psikolojik Danışma ve Rehberlik (KPDR) Programı Öğeleri -->
+        <div class="category cat-kpdr">
+            <h2>🟩 2. Kapsamlı Rehberlik Modeli ve Program Öğeleri (KPDR)</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Rehberlik Müfredatı</span>
+                    <p>Tüm öğrencilere yönelik, gelişimsel ve önleyici özellik taşıyan, genellikle sınıf içinde veya okul çapında grup etkinlikleri şeklinde uygulanan genel programdır (Örn: Verimli ders çalışma semineri).</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Bireysel Planlama</span>
+                    <p>Öğrencinin kendi geleceğini çizmesi için yapılan yardımlardır. Hangi alanı seçeceği, hangi mesleğe yöneleceği gibi konularda bireyi tanıma, ona bilgi verme ve uygun yere yerleştirme/izleme çalışmalarıdır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Müdahale Hizmetleri</span>
+                    <p>Anlık, acil veya özel sorunlar yaşayan öğrencilere sunulan hizmetlerdir. Kriz durumu (kayıp, travma vb.), psikolojik danışmanlık verilmesi veya çocuğun uzman bir kuruma/psikiyatra sevk (yönlendirme) edilmesi bu kapsama girer.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Sistem Desteği</span>
+                    <p>Öğrencilerle doğrudan yapılmayan, ancak sistemin iyi yürümesi için arka planda yapılan çalışmalardır. Öğretmenlere veya velilere bilgi verilmesi (<span class="highlight">müşavirlik/konsültasyon</span>), yeni yöntemler araştırılması (AR-GE) ve çevreyle işbirliği kurulmasıdır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Kapsamlı Rehberlik Programı Esasları</span>
+                    <p>Kapsamlı gelişimsel rehberlik programı planlanırken şu dinamikler göz önünde bulundurulur:</p>
+                    <ul>
+                        <li>Öğrencilerin ilgileri, ihtiyaçları ve beklentileri.</li>
+                        <li>Velilerin beklentileri.</li>
+                        <li>Öğretmenlerin görüşleri ve okulun ihtiyaçları.</li>
+                        <li>Okulun bulunduğu çevrenin sosyoekonomik düzeyi ile birlikte sosyokültürel özellikleri.</li>
+                        <li>Okulun misyon ve vizyonu gibi temel unsurlar.</li>
+                        <li>Programın içinde rehberlik saati (etkinlikleri) de mutlaka yer alır.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Gelişimsel Model vs. Geleneksel Model</span>
+                    <p><span class="highlight">Gelişimsel Rehberlik:</span> Öğrenci gelişim düzeylerine dayalı olarak ardışıktır, esnek bir yapıdadır, tüm öğrencilere yöneliktir ve eğitsel bir temeli vardır.</p>
+                    <p style="margin-top: 10px;"><span class="highlight">Geleneksel Rehberlik Anlayışı:</span> Terapötik unsurlara dayalıdır, sorun çözmeye odaklanır ve problemli bireylere ağırlık verir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Kapsamlı Gelişimsel Rehberlik Modeli Nitelikleri</span>
+                    <p><span class="highlight">Amaçları:</span> Karar verme ve problem çözme becerileri kazandırmak; kariyer farkındalığı ve eğitsel planlama yapma becerilerini geliştirmek; okul başarısını artırmaya yönelik beceriler kazandırmak.</p>
+                    <p style="margin-top: 10px;"><span class="highlight">Temel Özellikleri:</span> Yaşam boyu öğrenmeyi temel alır. Programın uygulanması tüm paydaşların iş birliğini gerektirir. <span class="highlight">Programın esas uygulayıcısı okul psikolojik danışmanı değildir</span> (Tüm okul personelinin ve sistemin ortak sorumluluğudur).</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Kapsamlı Gelişimsel Rehberlikte Katmanlar</span>
+                    <ul>
+                        <li><span class="highlight">Fiziksel Katman:</span> Öğrencinin bulunduğu okul ve sınıf ortamındaki fiziksel düzenlemelerin (mekânsal erişilebilirlik, oturma düzeni vb.) öğrencinin ihtiyaçlarına göre şekillendirilmesi.</li>
+                        <li><span class="highlight">Sosyal Katman:</span> Öğrencinin akranlarıyla olan ilişkileri, okul iklimine uyumu ve sosyal kabul (aidiyet) süreçleri.</li>
+                        <li><span class="highlight">Öğretimsel Katman:</span> Bireyselleştirilmiş programlar (BEP gibi) aracılığıyla öğrencinin akademik destek alması ve müfredattaki kazanımlara ulaşmasının sağlanması.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Mesleki Gelişim Evreleri ve Kariyer Danışmanlığı -->
+        <div class="category cat-mesleki">
+            <h2>🍊 3. Mesleki Gelişim Evreleri ve Kariyer Danışmanlığı</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Mesleki Gelişim Evreleri (Genel)</span>
+                    <ul>
+                        <li><span class="highlight">Uyanış ve Farkında Olma:</span> Çocukluk (ilkokul) dönemidir. Çocuklar çevresindeki mesleklerin var olduğunu fark ederler ancak tam olarak ne iş yaptıklarını derinlemesine bilmezler. İlkokul sonuna doğru mesleklerin birbirlerinden benzerlik ve farklılıklarını ayırt etmeye başlarlar.</li>
+                        <li><span class="highlight">Hazırlık (18-23 Yaş):</span> Üniversite ve mesleki eğitim dönemidir. Kişi seçtiği meslek için gerekli olan eğitimi alır, staj yapar, o mesleğin gerektirdiği donanımlara çalışır.</li>
+                        <li><span class="highlight">İşe Yerleşme (23 yaş sonrası):</span> Eğitimin bitip kişinin iş hayatına atıldığı dönemdir. Kişi artık öğrendiği bilgi ve becerileri sahada uygulamaya (ortaya koymaya) başlar.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">İlkokul Döneminde Mesleki Rehberlik</span>
+                    <p>İlkokul döneminde çocuklar; kişisel nitelikleri ile çalışma ve iş yaşamı arasındaki ilişkileri anlayabilirler. Meslekleri keşfedebilir ve birlikte çalışmayı öğrenebilirler. Toplumsal gelişimin iş yaşamını nasıl etkilediğini kavrayabilirler. <span class="highlight">Ancak bu dönemde, bunlardan daha kompleks (karmaşık) şeyleri anlayamazlar.</span></p>
+                </div>
+                <div class="note">
+                    <span class="note-title">İlkokul ve Ortaokul Düzeyinde Mesleki Gelişim</span>
+                    <p>Öğrenciler bu kademelerde henüz kendi özelliklerine uygun, <span class="highlight">nihai meslek tercihlerinde bulunmazlar.</span> Çevrelerindeki kişilerin mesleklerini tanırlar, çalışma yaşamının önemini ve gerekliliğini kavrarlar. Hangi tür faaliyetlerden hoşlandıklarını (ilgi alanlarını) fark etmeye ve çalışmaya yönelik olumlu tutum geliştirmeye başlarlar.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Ortaöğretim Kademesinde Mesleki Rehberlik</span>
+                    <p><span class="highlight">Dönemin Niteliği:</span> Bireyin kariyer planları yaptığı, hedeflerini somutlaştırmaya çalıştığı ve mesleki kararlar almaya odaklandığı bir evredir. Öğrencinin ilgi, yetenek ve kişilik gibi öz niteliklerini tanıması sağlanır. Kademenin sonuna gelindiğinde, bireyin bu tanıma sürecine dayanarak sağlıklı bir mesleki karar verme becerisi kazanması hedeflenir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Ginzberg ve Arkadaşlarının Gelişim Kuramı</span>
+                    <p>Meslek seçiminin bir süreç olduğu, bu sürecin daima bir <span class="highlight">uzlaşma</span> içerdiği ve büyük ölçüde <span class="highlight">geriye dönülmez</span> olduğu vurgulanmaktadır. Bu kuramda <span class="highlight">"meslek seçimi belirli bir zaman diliminde yapılmaktadır" anlayışı yer almaz.</span> Çünkü gelişimsel anlayış gereği, meslek tercihi gelişim sürecinin bir parçasıdır ve gerekli olgunluğa eriştikten sonra gerçekleştirilir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Süper'in Benlik Kuramı: Çocukluk Dönemi</span>
+                    <p><span class="highlight">Özdeşim (Model Alma) ve Çevresel Etki:</span> Çocukluk çağında meslek tercihi yaparken temel mekanizma özdeşimdir. Çocuk, etrafındaki kişilerin (ebeveynler, öğretmenler, yakın çevre) mesleklerini gözlemler ve onlarla özdeşim kurarak bu meslekleri kendine yakın bulur. Süper, bu dönemdeki seçimlerin rasyonel veya yetenek odaklı değil, büyük ölçüde <span class="highlight">hayranlık duyulan kişileri taklit etmeye (model almaya)</span> dayalı olduğunu belirtir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Parsons vs. Holland Karşılaştırması</span>
+                    <p><span class="highlight">Parsons (Özellik-Faktör Kuramı):</span> Kişinin sahip olduğu nitelikler (yetenekler, beceriler) ile mesleğin gerektirdiği niteliklerin doğrudan eşleştirilmesine odaklanır.</p>
+                    <p style="margin-top: 10px;"><span class="highlight">Holland (Tipoloji Kuramı):</span> Kişinin kişilik özelliklerine odaklanır. Bireyin kişilik tipi ile iş ortamının özellikleri arasındaki uyumu temel alır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Sosyal Bilişsel Kariyer Kuramı (Temel Beklentiler)</span>
+                    <ul>
+                        <li><span class="highlight">Yetkinlik Beklentisi:</span> Bireyin, bir işi başarılı bir şekilde yapabilme kapasitesine dair inancı.</li>
+                        <li><span class="highlight">Sonuç Beklentisi:</span> Bireyin, bir davranışı yaptıktan sonra ortaya çıkacak sonuçlara dair inancı.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Öğrencilerin Kariyer Farkındalığını Geliştirme</span>
+                    <ul>
+                        <li><span class="highlight">İlgi ve Yetenek Farkındalığı:</span> Öğrencilerin kendi ilgi ve yeteneklerini keşfetmelerini sağlayacak durumlar ve senaryolar planlanmalıdır.</li>
+                        <li><span class="highlight">Karar Verme Becerisi:</span> Öğrencilerin karar verme süreçlerini destekleyici görevler verilmelidir.</li>
+                        <li><span class="highlight">Gerçekçi Benlik Algısı:</span> Öğrencilerin gerçekçi bir benlik kavramı geliştirmeleri için uygun zamanda doğru dönütler verilmelidir.</li>
+                        <li><span class="highlight">Mesleki Deneyim Paylaşımı:</span> Farklı meslek elemanları sınıfa davet edilerek deneyimlerini paylaşmaları sağlanmalıdır.</li>
+                    </ul>
+                    <div class="critical-warning">⚠️ Kritik Uyarı: Öğrencilerin kariyer kararları vermeleri aşamasında sadece okul derslerindeki başarılarını göz önünde bulundurmalarını önermek etkili bir yaklaşım değildir.</div>
+                </div>
+                <div class="note">
+                    <span class="note-title">Meslek ve İş Arasındaki Fark</span>
+                    <p><span class="highlight">Meslek:</span> Kuralları toplumca belirlenmiş, belirli bir eğitim süreci gerektiren ve diğer insanlara fayda sağlamak adına yürütülen iş grubudur.</p>
+                    <p style="margin-top: 10px;"><span class="highlight">İş:</span> Bir mesleki alan içerisinde gerçekleştirilen somut uygulama ve eylemlerdir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Mesleki Rehberlikte Yanlış Algılar</span>
+                    <p><span class="highlight">Yanlış Algı:</span> "Yeterli çaba gösterilirse her meslek yapılabilir" düşüncesi hatalı bir yaklaşımdır. Bir meslekte başarıya ulaşmak ve o mesleği sürdürebilmek için sadece çaba yeterli değildir; bireyin kişisel özelliklerinin (yetenek, ilgi, kişilik vb.) mesleğin gereklilikleriyle uyumlu olması hayati derecede önemlidir.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Bireyi Tanıma Teknikleri ve Gözlem Kuralları -->
+        <div class="category cat-birey">
+            <h2>💜 4. Bireyi Tanıma Teknikleri ve Gözlem Kuralları</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Gözlem Tekniğinin Temel Kuralları</span>
+                    <ul>
+                        <li><span class="highlight">Plan yapılmalıdır:</span> Gözlem rastgele yapılamaz. Kimi, nerede, ne zaman ve hangi davranış için gözlemleyeceğimizi önceden belirlemeliyiz.</li>
+                        <li><span class="highlight">Kayıt yöntemi belirlenmeli:</span> Gözlem sırasında bilgilerin nasıl not edileceği (derecelendirme ölçeği mi, anekdot formu mu kullanılacağı) baştan seçilmelidir.</li>
+                        <li><span class="highlight">Yalnız tek kişi gözlenir:</span> Aynı anda birden fazla öğrenciyi gözlemlemeye çalışmak dikkat dağınıklığına yol açar ve detaylar kaçar. Odak her zaman tek bir öğrencide olmalıdır.</li>
+                        <li><span class="highlight">Amaca uygun yeterli zamanda yapılır:</span> Gözlem süresi gereğinden kısa olursa yanlış anlarız, gereğinden uzun olursa zaman kaybederiz. Davranışı anlamaya yetecek "optimum" süre ayrılmalıdır.</li>
+                        <li><span class="highlight">Kısa süreli, farklı aralıklarla gözlemlenmeli:</span> Bir çocuğu sadece bir gün 1 saat izlemek yanıltıcı olabilir. Bunun yerine farklı günlerde ve farklı ortamlarda (derste, teneffüste) 10'ar dakikalık kısa kesitler halinde gözlemlemek en doğru sonucu verir.</li>
+                        <li><span class="highlight">Birey bütün olarak gözlenir:</span> Öğrencinin sadece sözlerine değil; mimiklerine, beden diline ve çevresindeki arkadaşlarıyla olan etkileşimine bütüncül olarak bakılmalıdır.</li>
+                        <li><span class="highlight">Sonuçlar hemen sonra kaydedilir:</span> Gözlem biter bitmez detaylar unutulmadan ve araya yorumsal duygular girmeden (objektifliği kaybetmemek için) anında not edilmelidir. Hafızaya güvenilmemelidir.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Otobiyografi Sonuçlarını Yorumlama</span>
+                    <p><span class="highlight">Dikkate Alınan Unsurlar:</span> Yazıdan elde edilen genel izlenim; anlatımdaki özen ve tutum; öyküde (metinde) yer verilmeyen önemli kişiler; yazının uzunluğu ve kısalığı.</p>
+                    <p style="margin-top: 10px;"><span class="highlight">Dikkate Alınmayan Unsur:</span> Yazının serbest veya planlı oluşuna bakılmaz. Çünkü otobiyografinin formatını (serbest mi yoksa planlı mı yazılacağını) zaten uygulamayı yapan kişi önceden belirler.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Sosyometri ve Sınırlılıkları</span>
+                    <p><span class="highlight">Tanım:</span> Bir grubun sosyal yapısını ve üyeler arasındaki ilişki ağını haritalandıran, test dışı bir tekniktir.</p>
+                    <p style="margin-top: 5px;"><span class="highlight">Sunulan Bilgiler:</span> Grup üyelerinin birbirleriyle olan etkileşim ağları/ilişki kalıpları ve belirli sosyal durumlar kapsamında ("kiminle oturmak istersin" vb.) tercih durumları hakkında bilgi sağlar.</p>
+                    <div class="critical-warning">⚠️ Önemli Sınırlılık: İlişkilerin nedenlerine dair bilgi vermez. Bireyler seçimlerini yaparken "neden" tercih ettiklerine dair açıklama yapmadıkları için, sosyometri bize sadece "kimin kimi seçtiğini" gösterir, seçimin altında yatan psikolojik veya sosyal motivasyonu açıklamaz.</div>
+                </div>
+                <div class="note">
+                    <span class="note-title">Öğrenci Tanıma Dosyası Bilgi Düzeyleri</span>
+                    <p>Gizlilik hiyerarşisine göre öğrenci tanıma dosyaları dört seviyeye ayrılır:</p>
+                    <ul>
+                        <li><span class="highlight">Birinci Düzey (En Düşük Gizlilik):</span> Özlük bilgileri (Ad-soyad, adres, telefon, cinsiyet, boy, kilo, açık beden kusurları).</li>
+                        <li><span class="highlight">İkinci Düzey (Genel Bilgiler):</span> Akademik geçmiş, ailevi durum, temel ilgi alanları.</li>
+                        <li><span class="highlight">Üçüncü Düzey:</span> Kişiye özgü daha özel eğitsel/sosyal bilgiler.</li>
+                        <li><span class="highlight">Dördüncü Düzey (En Yüksek Gizlilik):</span> Doğrudan kişilik bilgileri, psikolojik test sonuçları ve gizli kalınması gereken uzman raporları.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Derecelendirme Ölçeklerinde Yapılan Hatalar</span>
+                    <ul>
+                        <li><span class="highlight">Merkezi Yönelme Hatası:</span> Değerlendiricinin aşırı uçlardan (1 veya 5 gibi) kaçınarak sürekli "orta yola" (3 değerine) cevap vermesi.</li>
+                        <li><span class="highlight">Kişisel Yanlılık Hatası:</span> Gözlemcinin ölçekteki tüm dereceleri kullanmayıp, genellikle yüksek (cömertlik hatası) veya düşük (katılık hatası) puanlara yığılması.</li>
+                        <li><span class="highlight">Mantık Hatası:</span> Birbiriyle ilişkili olduğu düşünülen iki farklı özelliğin birbirine karıştırılması (örneğin; zeki birinin aynı zamanda çok düzenli olduğunu varsaymak).</li>
+                        <li><span class="highlight">Genelleme (Hale) Hatası:</span> Bireyin belirgin bir özelliğinden (örneğin; dış görünüşü veya popülerliği) yola çıkarak, onun diğer tüm özelliklerini de aynı yönde değerlendirme eğilimi.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Bireyi Tanıma Hizmetlerinde Geçerlik ve Güvenirlik</span>
+                    <p>Bir test güncelliğini yitirmişse, çağın ve bireyin kişisel gereksinimlerine hitap etmez hale gelmişse; bu testten elde edilen bilgilerin güvenirliği ve geçerliliği düşük olacaktır. Bu nedenle testlerin, testi hazırlayan kişi veya kurumlarca mutlaka güncellenmesi ve eksikliklerinin giderilmesi gerekmektedir. Bu durum, bireyi tanıma hizmetlerindeki <span class="highlight">"birey hakkında toplanan bilgiler geçerli ve güvenilir olmalıdır"</span> ilkesinin temel bir gereğidir.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Eğitsel Rehberlik, Okul Örgütlenmesi ve Görevler -->
+        <div class="category cat-org">
+            <h2>❤️ 5. Eğitsel Rehberlik, Okul Örgütlenmesi ve Görevler</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Eğitsel Rehberliğin Niteliği ve Kapsamı</span>
+                    <p>Eğitsel rehberlik soyut (anlaşılması zor veya pratikten uzak) değildir. Gerçekleştirilebilir ve ulaşılabilir hedefler ister.</p>
+                    <ul style="margin-top: 10px;">
+                        <li><span class="highlight">Mesleki Bağlam:</span> Öğrencilerin okul yaşamı ile meslek yaşamı arasında ilişki kurmasını sağlar.</li>
+                        <li><span class="highlight">Uyum (Oryantasyon):</span> Okula uyumu kolaylaştırma, okul ortamı ve işleyişi hakkında bilgilendirme yapma çalışmaları bu alanın konusudur.</li>
+                        <li><span class="highlight">Yönlendirme:</span> Öğrencilerin ilgi, yetenek ve amaçlarına en uygun alan ve ders seçimlerine aracılık eder.</li>
+                        <li><span class="highlight">Engel Giderme:</span> Öğrenci başarısını olumsuz etkilediği tespit edilen faktörlerin etkisini azaltmaya veya tamamen ortadan kaldırmaya çalışır.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Eğitsel Rehberlik Hizmet Alanları (Oryantasyon & Sınıf)</span>
+                    <ul>
+                        <li><span class="highlight">Oryantasyon:</span> Okula ve okulun bulunduğu çevreye uyum sağlama süreçleri.</li>
+                        <li><span class="highlight">Sınıf Yönetimi:</span> Sınıf kurallarını oluşturma ve uyum süreçleri.</li>
+                        <li><span class="highlight">Akademik Destek:</span> Akademik başarıyı artırma ve öğrencileri sınavlara hazırlama süreçleri.</li>
+                        <li><span class="highlight">Beceri Geliştirme:</span> Öğrencilere eğitsel beceriler kazandırma.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Eğitimde Rehberlik Hizmetlerinin Örgütlenmesi</span>
+                    <p>Rehberlik hizmetleri idari olarak; <span class="highlight">bakanlık, il ve okul</span> olmak üzere üç kademede örgütlenir. Hizmetlerin hedefe tam anlamıyla ulaşabilmesi için örgütlenmiş ve sistemli bir biçimde sunulmaları gerekir.</p>
+                    <p style="margin-top: 10px;">Rehberlik hizmetlerini il düzeyinde planlamak ve değerlendirmek üzere <span class="highlight">İl Danışma Komisyonu yılda en az iki kez toplanır.</span> Rehberlik hizmetleri yönetmeliği, okul psikolojik danışmanının okuldaki görev ve sorumluluklarını açıkça tanımlar.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Okul Müdürünün Rehberlik Görevleri</span>
+                    <p>Okuldaki rehberlik hizmetlerinin en yetkili kişisidir. Rehberlik ve Psikolojik Danışma Hizmetleri Yürütme Komisyonunu kurar ve bu komisyona başkanlık eder. Sınıf rehber öğretmenlerini atar. Diğer spesifik görevleri şunlardır:</p>
+                    <ul>
+                        <li><span class="highlight">Risk Haritaları:</span> Okul risk haritalarını bağlı bulunan Rehberlik ve Araştırma Merkezi'ne (RAM) ulaştırır.</li>
+                        <li><span class="highlight">Sınıf Planları:</span> Sınıf rehber öğretmenlerinin hazırladığı sınıf rehberlik planlarını onaylar ve uygulanmasını izler.</li>
+                        <li><span class="highlight">Okul Programı:</span> Okul rehberlik ve psikolojik danışma programının hazırlanmasını sağlar. (Okulun çerçeve planını okul psikolojik danışmanı hazırlar, ancak müdür onaylar ve yürütülmesini sağlar).</li>
+                        <li><span class="highlight">e-Rehberlik:</span> Eğitim kurumunun özel hedeflerini e-rehberlik sistemine işler.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Rehberlik Hizmetleri Yürütme Komisyonu Niteliği</span>
+                    <p><span class="highlight">Bireysel Görev vs. Grup Eylemi:</span> Bir öncül "görüş bildirme", "öneri getirme", "önlem alma" veya "tedbirleri tartışma" ile sonlanıyorsa, bu ifade tek bir kişinin (örneğin sadece okul psikolojik danışmanının) asli görevi olarak değerlendirilemez. Bu süreçler ortak akıl gerektiren, grupça yürütülen eylemlerdir ve okullarda bu tarz kararlar doğrudan <span class="highlight">Rehberlik Hizmetleri Yürütme Komisyonu'nun</span> görev alanına girer.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Rehberlik Hizmetlerini Değerlendirme Süreci</span>
+                    <p>Değerlendirme süreci şu kronolojik aşamalarla yürütülür:</p>
+                    <ol>
+                        <li><span class="highlight">Hedeflerin belirlenmesi:</span> Neyi değerlendireceğimizin sınırlarının çizilmesi.</li>
+                        <li><span class="highlight">Uygulama planının yapılması:</span> Değerlendirme sürecinin nasıl işleyeceğine dair yol haritasının oluşturulması.</li>
+                        <li><span class="highlight">Kullanılacak ölçme araçlarının belirlenmesi:</span> Veri toplamak için hangi yöntem veya araçların (anket, gözlem formu, görüşme vb.) seçileceği.</li>
+                        <li><span class="highlight">Ölçme araçları ile veri toplanması:</span> Sahada uygulamaya geçilerek bilgilerin derlenmesi.</li>
+                        <li><span class="highlight">Hedeflerin gerçekleşme derecesinin saptanması:</span> Toplanan verilerin analiz edilerek, başlangıçta belirlenen hedeflere ne oranda ulaşıldığının karara bağlanması.</li>
+                    </ol>
+                </div>
+                <div class="note">
+                    <span class="note-title">Rehberlik Hizmetleri Yönetmeliği: Gelişim Alanları</span>
+                    <p>Yönetmelikte rehberlik hizmetleri üç ana gelişim alanı üzerine yapılandırılmıştır:</p>
+                    <ul>
+                        <li><span class="highlight">Akademik Gelişim Alanı:</span> Öğrencilerin okul süreçlerine uyumunu sağlamaya yönelik oryantasyon çalışmaları bu alanın konusudur.</li>
+                        <li><span class="highlight">Sosyal Duygusal Gelişim Alanı:</span> Duyguları düzenleme becerileri bu alan kapsamındadır.</li>
+                        <li><span class="highlight">Kariyer Gelişim Alanı:</span> Lise öğrencilerinin mesleki karar verme sürecinin niteliklerini tespit etme, mesleki farkındalığı artırmaya yönelik tanıtımlar yapma ve kariyer farkındalığı oluşturmak adına staj çalışmaları gerçekleştirme bu alanla ilgilidir.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Özel Eğitim, BEP ve İzleme Hizmetleri -->
+        <div class="category cat-ozel">
+            <h2>💛 6. Özel Eğitim, BEP ve İzleme Hizmetleri</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">BEP Geliştirme Biriminin Görev Dağılımı</span>
+                    <p>Bireyselleştirilmiş Eğitim Programı (BEP) hazırlamak <span class="highlight">psikolojik danışmanın tek başına görevi değildir.</span> Bu programı hazırlamak okuldaki <span class="highlight">BEP Geliştirme Biriminin</span> görevidir.</p>
+                    <p style="margin-top: 10px;">Psikolojik danışman bu kurulun doğal bir üyesidir ve danışmanlık yapar, ancak programı tek başına hazırlama ve yürütme sorumluluğu yoktur.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">RAM (Rehberlik ve Araştırma Merkezi)</span>
+                    <p>Okulda çözülemeyen durumlarda öğrencilerin sevk edildiği kurumdur. Özellikle özel eğitime ihtiyacı olan (üstün yetenekli, öğrenme güçlüğü olan, kaynaştırma vb.) öğrencilerin <span class="highlight">"eğitsel tanılamasını"</span> (hangi okulda/ortamda, ne düzeyde eğitim alması gerektiğini) belirler.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">İzleme ve Değerlendirme Hizmetlerinin Kapsamı</span>
+                    <p>Yapılan tüm çalışmaların etkililiğini ölçmek adına yürütülen şu faaliyetler izleme kapsamındadır:</p>
+                    <ul>
+                        <li>Yapılan rehberlik çalışmalarının takip edilmesi.</li>
+                        <li>Gerçekleştirilen çalışmalara yönelik geri bildirim alınması.</li>
+                        <li>Karşılaşılan çeşitli sorunların ya da yetersizliklerin araştırılması.</li>
+                        <li>Ulaşılan sonuçların analiz edilmesi ve sorgulanması.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Kaynaştırma Öğrencilerinde Müdahale ve Uyarlamalar</span>
+                    <p>Eğer bir kaynaştırma öğrencisi, programda (BEP) yer alan amaçları gerçekleştiremiyorsa şu düzenlemelerin yapılması uygundur:</p>
+                    <ul>
+                        <li>Öğretimde kullanılan materyallerin ve etkinliklerin gözden geçirilmesi.</li>
+                        <li>Öğretim sürecinin (yöntem ve tekniklerin) değiştirilmesi ve öğrenciye ek alıştırmalar sunulması.</li>
+                        <li>Öğrenciden beklenen davranışın (hedefin/kriterin zorluk derecesinin) öğrencinin seviyesine göre yeniden uyarlanması.</li>
+                        <li>Yeni bir beceriye geçmeden önce, o beceri için gereken ön koşul davranışlara (temel bilgilere) öğrencinin sahip olup olmadığının kontrol edilmesi.</li>
+                        <li>İçeriğin ve yönergelerin değiştirilmesi.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Özel Öğrenme Güçlüğü Analizi</span>
+                    <p><span class="highlight">Zekadan Bağımsızdır:</span> Öğrenme güçlüğü zihinsel yetersizlikle (zihinsel engelle) ilişkili değildir. Öğrenme güçlüğü yaşayan bir öğrencinin zeka düzeyi ortalama olabilir veya öğrenci üstün zekalı da olabilir. Okuma, yazma, heceleme, matematik ve dil kullanma gibi akademik alanlarda, zekadan bağımsız olarak ortaya çıkan ciddi zorlukları ifade eder.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Test Geliştirme ve Örneklem Hatası</span>
+                    <ul>
+                        <li><span class="highlight">Örneklem:</span> Bir test geliştirilirken (norm çalışmaları yapılırken) hedef kitle olarak seçilen belirli kişi veya gruplardır (örneğin; belirli yaş grupları, öğretim kademeleri vb.).</li>
+                        <li><span class="highlight">Örneklem Hatası:</span> Testin, geliştirildiği hedef kitle dışındaki kişilere (örneğin; çocuklar için geliştirilmiş bir testi yetişkinlere veya yetişkinler için geliştirilmiş bir testi çocuklara) uygulanmasıdır.</li>
+                        <li><span class="highlight">Sonuç:</span> Bu durum testten elde edilen bilgilerin geçerliğini tamamen yitirmesine neden olur, çünkü testin uygulandığı grup örneklemle uyuşmamaktadır.</li>
+                    </ul>
+                </div>
+                <div class="note">
+                    <span class="note-title">Özel Eğitim ve Özel Yetiştirme Hizmetleri</span>
+                    <ul>
+                        <li>Akademik başarısı düşük olan öğrencileri başarısızlık nedenleri konusunda bilgilendirme.</li>
+                        <li>Öğrencileri akademik olarak desteğe ihtiyaç duydukları alanlarda açılmış olan kurslara yönlendirme.</li>
+                        <li>Özel yetenekli öğrencilerin yeteneklerini geliştirecekleri fırsatları değerlendirmelerine yardım etme.</li>
+                        <li>Öğrencilerin başarılarını artırmaları için verimli ders çalışma becerileri kazanmalarına yardım etme.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Glasser’ın Seçim Kuramı -->
+        <div class="category cat-kuram">
+            <h2>💗 7. Glasser’ın Seçim Kuramı ve Temel İhtiyaçlar</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">1. Hayatta Kalma ve Üreme</span>
+                    <p>Bedenin biyolojik dengesini korumaya yönelik temel fizyolojik ihtiyaçlardır; beslenme, barınma, güvenlik, sağlık ve üreme bu kapsamdadır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">2. Sevgi ve Ait Olma</span>
+                    <p>Başkarıyla bağ kurma, sevilme, ilgi görme, paylaşma ve bir grubun parçası olma ihtiyacıdır. Glasser, diğer ihtiyaçları karşılamak için de insan ilişkilerine ihtiyaç duyduğumuzdan, bunu <span class="highlight">en temel psikolojik ihtiyaç</span> olarak görür.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">3. Güç ve Başarı</span>
+                    <p>Bir şeyi başarma, yetkin olma, rekabet etme, başkaları üzerinde etkili olma veya kendine saygı duyma ihtiyacıdır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">4. Özgürlük</span>
+                    <p>Kişinin kendi seçimlerini yapabilmesi, kendi kararlarını alabilmesi, hareket alanı ve kişisel özerkliğine sahip olma ihtiyacıdır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">5. Eğlenme</span>
+                    <p>Öğrenme, gülme, oyun oynama ve yaşamdan keyif alma ihtiyacıdır. Glasser’a göre bu ihtiyaç, <span class="highlight">öğrenmenin sürekliliği</span> için de kritiktir ve genellikle karşılanması en kolay olan ihtiyaçtır.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

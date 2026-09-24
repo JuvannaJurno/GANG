@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>MEB Kurumlar Quiz + Ders Notu</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            background: #f4f7fc;
+            padding: 16px 12px 40px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            padding: 20px 18px 28px;
+            box-shadow: 0 8px 24px rgba(0, 20, 40, 0.08);
+            transition: 0.2s;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0b2b4a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        .subhead {
+            font-size: 14px;
+            color: #3a5a7a;
+            border-left: 4px solid #2b7be4;
+            padding-left: 12px;
+            margin-bottom: 20px;
+            font-weight: 400;
+            background: #f0f5fe;
+            border-radius: 0 12px 12px 0;
+            padding: 10px 14px;
+        }
+
+        .progress-bar {
+            background: #e5edf6;
+            height: 6px;
+            border-radius: 12px;
+            margin: 12px 0 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: #1a73e8;
+            border-radius: 12px;
+            transition: width 0.25s ease;
+        }
+
+        .question-counter {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f4a7a;
+            text-align: right;
+            margin-bottom: 8px;
+        }
+
+        .question-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 16px 16px 12px;
+            margin-bottom: 16px;
+            border: 1px solid #e9eef3;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .question-text {
+            font-size: 17px;
+            font-weight: 500;
+            line-height: 1.5;
+            color: #0b2b4a;
+            margin-bottom: 16px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            background: #f8fafd;
+            border: 1.5px solid #dfe7ef;
+            border-radius: 18px;
+            padding: 14px 16px;
+            font-size: 15px;
+            font-weight: 450;
+            color: #1f3a5a;
+            cursor: pointer;
+            transition: 0.12s;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+
+        .option:active {
+            transform: scale(0.98);
+        }
+
+        .option.selected-correct {
+            background: #d6f0d6;
+            border-color: #1f8b4c;
+            color: #0a3d24;
+        }
+
+        .option.selected-wrong {
+            background: #ffe1de;
+            border-color: #c73b2b;
+            color: #6b1f14;
+        }
+
+        .option.disabled {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .option.show-correct {
+            background: #d6f0d6;
+            border-color: #1f8b4c;
+        }
+
+        .feedback-note {
+            margin-top: 14px;
+            background: #f3f8ff;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            color: #1f4970;
+            border-left: 5px solid #2b7be4;
+            line-height: 1.5;
+            display: none;
+        }
+
+        .feedback-note.visible {
+            display: block;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin: 22px 0 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 100px;
+            background: white;
+            border: 1.5px solid #cbd8e8;
+            padding: 14px 10px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 15px;
+            color: #1f4a7a;
+            cursor: pointer;
+            transition: 0.15s;
+            background: #f9fcff;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #1a73e8;
+            border-color: #1a73e8;
+            color: white;
+        }
+
+        .btn-primary:active {
+            background: #1557b0;
+        }
+
+        .btn-secondary:active {
+            background: #e2ebf5;
+        }
+
+        .btn:disabled {
+            opacity: 0.45;
+            pointer-events: none;
+        }
+
+        .result-area {
+            margin-top: 20px;
+            background: #f2f8fe;
+            border-radius: 28px;
+            padding: 20px 16px;
+            border: 1px solid #d4e2f2;
+        }
+
+        .result-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: 500;
+            color: #0b2b4a;
+            margin-bottom: 12px;
+        }
+
+        .score-badge {
+            background: #1a73e8;
+            color: white;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 15px;
+        }
+
+        .note-box {
+            background: #fefcf3;
+            border-radius: 20px;
+            padding: 16px 16px 20px;
+            border: 1px solid #e9e0c7;
+            margin-top: 16px;
+            display: none;
+        }
+
+        .note-box.visible {
+            display: block;
+        }
+
+        .note-box h3 {
+            font-size: 18px;
+            color: #2d3e5a;
+            margin-bottom: 16px;
+            text-align: center;
+            border-bottom: 2px solid #e9e0c7;
+            padding-bottom: 10px;
+        }
+        
+        .note-content-section {
+            margin-bottom: 16px;
+        }
+        
+        .note-content-section h4 {
+            color: #1f4a7a;
+            font-size: 15px;
+            margin-bottom: 8px;
+            border-left: 4px solid #1a73e8;
+            padding-left: 8px;
+            background: #eef3f9;
+            padding: 6px 8px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .note-content-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .note-content-section li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e4ddcc;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #1f3a4a;
+            position: relative;
+            padding-left: 14px;
+        }
+        
+        .note-content-section li::before {
+            content: "•";
+            color: #1a73e8;
+            position: absolute;
+            left: 0;
+            top: 8px;
+            font-weight: bold;
+        }
+
+        .note-content-section li:last-child {
+            border-bottom: none;
+        }
+
+        .highlight {
+            background: #e0edfb;
+            padding: 1px 6px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #0b2b4a;
+        }
+
+        .footer-credit {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #6f8ba8;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+<div class="container" id="app">
+    <h1>📚 MEB Kurumlar</h1>
+    <div class="subhead">⚡ 34 soru · her soru cevap notu içerir</div>
+
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="question-counter" id="questionCounter">1 / 34</div>
+
+    <div id="questionWrapper">
+        <div class="question-card" id="questionCard">
+            <div class="question-text" id="questionText">Soru yükleniyor...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="feedback-note" id="feedbackNote"></div>
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-secondary" id="prevBtn" disabled>◀ Geri</button>
+        <button class="btn btn-primary" id="nextBtn">İleri ▶</button>
+    </div>
+
+    <div class="result-area" id="resultArea">
+        <div class="result-stats">
+            <span>📊 Doğru: <span id="correctCount">0</span></span>
+            <span>❌ Yanlış: <span id="wrongCount">0</span></span>
+            <span class="score-badge" id="scoreBadge">%0</span>
+        </div>
+        <button class="btn btn-primary" id="showNoteBtn" style="width:100%; margin-top: 6px;">📘 Tüm görevleri içeren ders notunu göster</button>
+    </div>
+
+    <!-- DERS NOTU -->
+    <div class="note-box" id="noteBox">
+        <h3>📖 Kapsamlı Ders Notu – MEB Kurumlar</h3>
+        <div id="noteList"></div>
+    </div>
+
+    <div class="footer-credit">⚡ mobil quiz · tüm bilgiler MEB teşkilat mevzuatından sentezlenmiştir</div>
+</div>
+
+<script>
+    (function() {
+        // ---- TÜM SORULAR (Eksik birimler eklenerek 34 soruya çıkarıldı) ----
+        const questions = [
+            {
+                question: "Öğretmen ve yönetici adaylarını mesleğe hazırlamak, aday öğretmenlerin eğitimini ve sınavlarını organize etmek, ayrıca okul müdürlüğü gibi yönetici yetiştirme süreçlerini yürütmek amacıyla kurulan, doğrudan Bakanlığa bağlı kurum aşağıdakilerden hangisidir?",
+                options: [
+                    "A) Öğretmen Yetiştirme ve Geliştirme Genel Müdürlüğü",
+                    "B) Talim ve Terbiye Kurulu Başkanlığı",
+                    "C) Millî Eğitim Akademisi Başkanlığı",
+                    "D) Personel Genel Müdürlüğü"
+                ],
+                correct: 2,
+                note: "Cevap: C) Millî Eğitim Akademisi Başkanlığı\n(Not: Sınavda en büyük çeldirici Öğretmen Yetiştirme ve Geliştirme Genel Müdürlüğü (A şıkkı) olacaktır. Ancak yeni sistemde aday öğretmenlerin ve yöneticilerin eğitimi tamamen Akademi'ye devredilmiştir. Adayların %90'ını eleyecek harika bir bilgidir.)"
+            },
+            {
+                question: "Millî Eğitim Akademisi Başkanlığının kuruluşuna yasal dayanak oluşturan ve kurumun temelini teşkil eden kanun aşağıdakilerden hangisidir?",
+                options: [
+                    "A) 1739 Sayılı Millî Eğitim Temel Kanunu",
+                    "B) 7499 Sayılı Öğretmenlik Meslek Kanunu",
+                    "C) 1 Sayılı Cumhurbaşkanlığı Kararnamesi",
+                    "D) 222 Sayılı İlköğretim ve Eğitim Kanunu"
+                ],
+                correct: 1,
+                note: "Cevap: B) 7499 Sayılı Öğretmenlik Meslek Kanunu\n(Not: Akademinin kuruluşu ve işleyişi doğrudan ÖMK (Öğretmenlik Meslek Kanunu) içine entegre edilmiştir. Sınavda 1 Sayılı CBK ile çok karıştırılır.)"
+            },
+            {
+                question: "Millî Eğitim Akademisi Başkanlığının yönetim yapılanmasına göre, Akademi Başkanı aşağıdakilerden hangisi tarafından atanır?",
+                options: [
+                    "A) Cumhurbaşkanı",
+                    "B) Millî Eğitim Bakanı",
+                    "C) Talim ve Terbiye Kurulu Başkanı",
+                    "D) Yükseköğretim Kurulu (YÖK) Başkanı"
+                ],
+                correct: 1,
+                note: "Cevap: B) Millî Eğitim Bakanı\n(Not: Üst düzey bürokratların birçoğu Cumhurbaşkanı tarafından atandığı için A şıkkı çok tehlikeli bir tuzaktır. Akademi başkanının doğrudan Millî Eğitim Bakanı tarafından atanması ezber bozan, çok önemli bir detaydır.)"
+            },
+            {
+                question: "1926 yılında Mustafa Kemal Atatürk'ün öncülüğünde 789 sayılı \"Maarif Teşkilatına Dair Kanun\" ile kurulan ve Millî Eğitim Bakanlığının en yüksek danışma ve karar organı olan kurum aşağıdakilerden hangisidir?",
+                options: [
+                    "A) Millî Eğitim Şûrası",
+                    "B) Talim ve Terbiye Kurulu Başkanlığı",
+                    "C) Öğretmen Yetiştirme ve Geliştirme Genel Müdürlüğü",
+                    "D) Yükseköğretim Kurulu (YÖK)"
+                ],
+                correct: 1,
+                note: "Cevap: B) Talim ve Terbiye Kurulu Başkanlığı\n(Not: Tarih sorularında 1924 Tevhid-i Tedrisat ile çok karıştırılır. TTK'nın 1926'da 789 sayılı kanunla kurulduğu detayı tam bir eleyici sınav bilgisidir.)"
+            },
+            {
+                question: "Eğitim sistemimizde \"danışma\" işlevi gören iki önemli yapı sıklıkla karıştırılmaktadır. Buna göre, kararları sadece \"tavsiye\" niteliğinde olan en yüksek danışma kurulu Millî Eğitim Şûrası iken; programları onaylama yetkisine sahip olan \"Bakanlığın en yüksek danışma ve karar organı\" aşağıdakilerden hangisidir?",
+                options: [
+                    "A) Talim ve Terbiye Kurulu Başkanlığı",
+                    "B) Teftiş Kurulu Başkanlığı",
+                    "C) Strateji Geliştirme Başkanlığı",
+                    "D) Özel Öğretim Kurumları Genel Müdürlüğü"
+                ],
+                correct: 0,
+                note: "Cevap: A) Talim ve Terbiye Kurulu Başkanlığı\n(Not: Bu ayrım hayati önem taşır! Şûra sadece tavsiye eder (karar bağlayıcı değildir), ancak Talim ve Terbiye Kurulu hem danışma hem de karar organıdır, onayladığı programlar resmen yürürlüğe girer.)"
+            },
+            {
+                question: "Günümüzde, MEB'in uygulamaya koyduğu \"Türkiye Yüzyılı Maarif Modeli\"nin kuramsal çerçevesinin oluşturulması ve beceri temelli müfredatların hazırlanması süreçlerinde aktif rol üstlenen kurum aşağıdakilerden hangisidir?",
+                options: [
+                    "A) Yenilik ve Eğitim Teknolojileri Genel Müdürlüğü (YEĞİTEK)",
+                    "B) Ortaöğretim Genel Müdürlüğü",
+                    "C) Talim ve Terbiye Kurulu Başkanlığı",
+                    "D) Hayat Boyu Öğrenme Genel Müdürlüğü"
+                ],
+                correct: 2,
+                note: "Cevap: C) Talim ve Terbiye Kurulu Başkanlığı\n(Not: Güncel eğitim politikaları sorusu olarak gelme ihtimali çok yüksektir. Müfredat ve modelleme işi her zaman TTK'nın mutfağından çıkar.)"
+            },
+            {
+                question: "Millî Eğitim Bakanlığına bağlı okullara geçişte uygulanan LGS (Liselere Geçiş Sistemi) gibi merkezi sınavların hazırlanmasını ve uygulanmasını sağlamak aşağıdaki kurumlardan hangisinin asli görevidir?",
+                options: [
+                    "A) Ölçme, Seçme ve Yerleştirme Merkezi (ÖSYM)",
+                    "B) Ortaöğretim Genel Müdürlüğü",
+                    "C) Ölçme, Değerlendirme ve Sınav Hizmetleri Genel Müdürlüğü",
+                    "D) Talim ve Terbiye Kurulu Başkanlığı"
+                ],
+                correct: 2,
+                note: "Cevap: C) Ölçme, Değerlendirme ve Sınav Hizmetleri Genel Müdürlüğü\n(Not: Sınav heyecanıyla \"merkezi sınav\" ifadesini gören adayların eli ÖSYM'ye (A şıkkı) çok kolay gidebilir. Ancak ÖSYM YKS, KPSS gibi sınavları yapar; MEB'in kendi içindeki okullara geçiş sınavlarını (LGS, bursluluk vb.) kendi genel müdürlüğü hazırlar. Harika bir tuzaktır!)"
+            },
+            {
+                question: "MEB'e bağlı okullarda uygulanan sınavların planlamasını, içerik tasarımını yapmak ve ölçme-değerlendirme süreçlerini bilimsel temellere dayandırmak MEB bünyesindeki hangi hizmet biriminin sorumluluğundadır?",
+                options: [
+                    "A) Talim ve Terbiye Kurulu Başkanlığı",
+                    "B) Ölçme, Değerlendirme ve Sınav Hizmetleri Genel Müdürlüğü",
+                    "C) Yenilik ve Eğitim Teknolojileri Genel Müdürlüğü",
+                    "D) Strateji Geliştirme Başkanlığı"
+                ],
+                correct: 1,
+                note: "Cevap: B) Ölçme, Değerlendirme ve Sınav Hizmetleri Genel Müdürlüğü\n(Not: \"Bilimsel temeller\" ve \"içerik tasarımı\" ifadeleri Talim ve Terbiye Kurulu (A şıkkı) ile çok karıştırılır. Ancak cümlenin başındaki \"sınavların\" kelimesi görevin adresini net bir şekilde belirler.)"
+            },
+            {
+                question: "Eğitim sisteminde sektör iş birliği içinde mesleki beceri kazandırma projeleri geliştirmek ve öğrencilerin mezuniyet sonrası istihdamını artırıcı uygulamalar yürütmek aşağıdaki hizmet birimlerinden hangisinin asli görevidir?",
+                options: [
+                    "A) Hayat Boyu Öğrenme Genel Müdürlüğü",
+                    "B) Mesleki ve Teknik Eğitim Genel Müdürlüğü",
+                    "C) Ortaöğretim Genel Müdürlüğü",
+                    "D) Özel Öğretim Kurumları Genel Müdürlüğü"
+                ],
+                correct: 1,
+                note: "Cevap: B) Mesleki ve Teknik Eğitim Genel Müdürlüğü\n(Not: Sınavlarda meslek edindirme ve iş bulma (istihdam) konuları \"Halk Eğitim\" mantığıyla kafa karıştırıp Hayat Boyu Öğrenme'ye (A şıkkı) kaymana neden olabilir. İstihdam ve sektör işbirliği doğrudan Mesleki ve Teknik Eğitim'in işidir.)"
+            },
+            {
+                question: "EBA, E-Okul ve MEBBİS gibi platformların teknik altyapısını ve işletilmesini Bilgi İşlem Genel Müdürlüğü sağlarken; EBA'nın içeriğini yönetmek, geliştirmek ve dijital içerik üretimi yapmak MEB bünyesindeki hangi kurumun sorumluluğundadır?",
+                options: [
+                    "A) Talim ve Terbiye Kurulu Başkanlığı",
+                    "B) Yenilik ve Eğitim Teknolojileri Genel Müdürlüğü",
+                    "C) Destek Hizmetleri Genel Müdürlüğü",
+                    "D) Bilgi İşlem Genel Müdürlüğü"
+                ],
+                correct: 1,
+                note: "Cevap: B) Yenilik ve Eğitim Teknolojileri Genel Müdürlüğü\n(Not: İşte efsanevi tuzak! \"Bilgi İşlem\" platformun kablosunu çeker, sunucusunu çalıştırır (işletir). Ama EBA'nın içindeki konu anlatımlarını, testleri, videoları (içeriği) \"Yenilik ve Eğitim Teknolojileri\" (YEĞİTEK) üretir ve yönetir. Bu ayrım net netler kazandırır!)"
+            },
+            {
+                question: "Okullarda akıllı tahta, tablet gibi donanım destek projelerini yürütmek ve eğitimde STEM (Fen, Teknoloji, Mühendislik, Matematik) uygulamaları alanında AR-GE çalışmaları yapmak kimin görevidir?",
+                options: [
+                    "A) İnşaat ve Emlak Genel Müdürlüğü",
+                    "B) Destek Hizmetleri Genel Müdürlüğü",
+                    "C) Bilgi İşlem Genel Müdürlüğü",
+                    "D) Yenilik ve Eğitim Teknolojileri Genel Müdürlüğü"
+                ],
+                correct: 3,
+                note: "Cevap: D) Yenilik ve Eğitim Teknolojileri Genel Müdürlüğü\n(Not: Araç-gereç ve donanım kelimeleri normalde Destek Hizmetlerine (B şıkkı) aittir. Ancak konu \"akıllı tahta, tablet\" yani eğitim teknolojisi ise görev YEĞİTEK'indir.)"
+            },
+            {
+                question: "Sürücü kursları, dil kursları, etüt merkezleri ve özel okullar gibi eğitim kurumlarının açılması, işleyişi ve denetimiyle ilgili işlemleri yürütmek aşağıdaki kurumlardan hangisinin görevidir?",
+                options: [
+                    "A) Hayat Boyu Öğrenme Genel Müdürlüğü",
+                    "B) Temel Eğitim Genel Müdürlüğü",
+                    "C) Özel Öğretim Kurumları Genel Müdürlüğü",
+                    "D) Teftiş Kurulu Başkanlığı"
+                ],
+                correct: 2,
+                note: "Cevap: C) Özel Öğretim Kurumları Genel Müdürlüğü\n(Not: \"Kurs\" kelimesi adayları çok sık Hayat Boyu Öğrenme'ye (A şıkkı), \"denetim\" kelimesi ise Teftiş Kurulu'na (D şıkkı) çeker. Ancak bunların \"özel\" teşebbüs olması, görevi doğrudan Özel Öğretim Kurumlarına bağlar. Çok iyi bir çeldiricili sorudur.)"
+            },
+            {
+                question: "Eğitimde özel sektörün katılımını ve niteliğini artırmaya yönelik politikalar geliştirmek ile özel öğretim mevzuatını hazırlayıp uygulamak MEB bünyesindeki hangi hizmet biriminin sorumluluğundadır?",
+                options: [
+                    "A) Hukuk Hizmetleri Genel Müdürlüğü",
+                    "B) Özel Öğretim Kurumları Genel Müdürlüğü",
+                    "C) Strateji Geliştirme Başkanlığı",
+                    "D) Talim ve Terbiye Kurulu Başkanlığı"
+                ],
+                correct: 1,
+                note: "Cevap: B) Özel Öğretim Kurumları Genel Müdürlüğü\n(Not: \"Mevzuat\" kelimesi Hukuk Hizmetlerine (A şıkkı), \"politika geliştirmek\" ifadesi ise Strateji Geliştirme Başkanlığına (C şıkkı) çok güzel birer tuzaktır. \"Özel sektör\" ve \"özel öğretim\" vurguları soruyu çözdürür.)"
+            },
+            {
+                question: "Millî Eğitim Bakanlığının merkez ve taşra teşkilatına ait lojistik, satın alma, araç-gereç temini, temizlik, güvenlik ve arşiv gibi temel operasyonel hizmetlerini yürütmekle görevli birim aşağıdakilerden hangisidir?",
+                options: [
+                    "A) İnşaat ve Emlak Genel Müdürlüğü",
+                    "B) Strateji Geliştirme Başkanlığı",
+                    "C) Destek Hizmetleri Genel Müdürlüğü",
+                    "D) İnsan Kaynakları Genel Müdürlüğü"
+                ],
+                correct: 2,
+                note: "Cevap: C) Destek Hizmetleri Genel Müdürlüğü\n(Not: Lojistik ve bina güvenliği gibi kavramlar bazen İnşaat ve Emlak (A şıkkı) ile karıştırılabilir, ancak bu tür günlük operasyonel ve destek hizmetlerinin tamamı bu genel müdürlüğe aittir.)"
+            },
+            {
+                question: "Müfredata uygunluğu onaylanan ders kitaplarının basımı, dağıtımı ve depolanması süreçlerini organize etmek MEB bünyesindeki hangi kurumun sorumluluğundadır?",
+                options: [
+                    "A) Talim ve Terbiye Kurulu Başkanlığı",
+                    "B) Destek Hizmetleri Genel Müdürlüğü",
+                    "C) Yenilik ve Eğitim Teknolojileri Genel Müdürlüğü",
+                    "D) Ortaöğretim Genel Müdürlüğü"
+                ],
+                correct: 1,
+                note: "Cevap: B) Destek Hizmetleri Genel Müdürlüğü\n(Not: Bu soru devasa bir tuzaktır! \"Ders kitabı\" kelimesini görenlerin eli alışkanlıktan anında Talim ve Terbiye Kurulu'na (A şıkkı) gider. Ancak Talim ve Terbiye kitabı inceleyip onaylar; o kitabın matbaada basılması, kamyonlara yüklenip okullara dağıtılması tamamen Destek Hizmetlerinin lojistik görevidir.)"
+            },
+            {
+                question: "Millî Eğitim Bakanlığı bünyesinde E-Okul, MEBBİS, EBA gibi dijital platformların işletilmesini sağlamak ve eğitimde dijital dönüşüm projelerini yürütmek aşağıdaki hizmet birimlerinden hangisinin asli görevidir?",
+                options: [
+                    "A) Yenilik ve Eğitim Teknolojileri Genel Müdürlüğü (YEĞİTEK)",
+                    "B) Bilgi İşlem Genel Müdürlüğü",
+                    "C) Strateji Geliştirme Başkanlığı",
+                    "D) Ölçme, Değerlendirme ve Sınav Hizmetleri Genel Müdürlüğü"
+                ],
+                correct: 1,
+                note: "Cevap: B) Bilgi İşlem Genel Müdürlüğü\n(Not: Bu soru harika bir tuzaktır! EBA kelimesini ve \"dijital\" ifadesini gören adayların eli anında Yenilik ve Eğitim Teknolojileri'ne (A şıkkı) gider. Ancak bu platformların altyapısını kurmak ve \"işletilmesini sağlamak\" doğrudan Bilgi İşlem'in görevidir.)"
+            },
+            {
+                question: "Bakanlığın bilgi işlem altyapısını kurmak, yönetmek, güncellemek ve özellikle Bakanlık merkez ve taşra teşkilatında veri güvenliği ile siber güvenlik politikalarını uygulamakla görevli kurum aşağıdakilerden hangisidir?",
+                options: [
+                    "A) Destek Hizmetleri Genel Müdürlüğü",
+                    "B) Teftiş Kurulu Başkanlığı",
+                    "C) Bilgi İşlem Genel Müdürlüğü",
+                    "D) Yenilik ve Eğitim Teknolojileri Genel Müdürlüğü"
+                ],
+                correct: 2,
+                note: "Cevap: C) Bilgi İşlem Genel Müdürlüğü\n(Not: Siber güvenlik ve veri güvenliği doğrudan altyapısal bir mesele olduğu için görev tanımı Bilgi İşlem'e aittir.)"
+            },
+            {
+                question: "Millî Eğitim Bakanlığı adına yurt dışına gönderilecek burslu öğrencilerin (MEB bursları) seçim ve yönlendirme işlemlerini yürütmek ile uluslararası öğrenci ve akademisyen değişimlerini koordine etmek aşağıdaki kurumlardan hangisinin görevidir?",
+                options: [
+                    "A) Avrupa Birliği ve Dış İlişkiler Genel Müdürlüğü",
+                    "B) Yükseköğretim ve Yurt Dışı Eğitim Genel Müdürlüğü",
+                    "C) Dışişleri Bakanlığı Eğitim Ataşeliği",
+                    "D) Yükseköğretim Kurulu (YÖK)"
+                ],
+                correct: 1,
+                note: "Cevap: B) Yükseköğretim ve Yurt Dışı Eğitim Genel Müdürlüğü\n(Not: Yurt dışı ve uluslararası kelimeleri \"Avrupa Birliği ve Dış İlişkiler\" (A şıkkı) çeldiricisine çok güçlü bir şekilde çeker. Akademisyen ve MEB bursu detayına dikkat!)"
+            },
+            {
+                question: "Yurt dışı diploma denklik işlemleri konusunda mevzuatta belirlenen iş bölümüne göre; lisans ve lisansüstü düzeydeki denklik işlemleriyle ilgilenmek MEB bünyesindeki hangi birimin görev alanına girmektedir?",
+                options: [
+                    "A) Talim ve Terbiye Kurulu Başkanlığı",
+                    "B) Ortaöğretim Genel Müdürlüğü",
+                    "C) Avrupa Birliği ve Dış İlişkiler Genel Müdürlüğü",
+                    "D) Yükseköğretim ve Yurt Dışı Eğitim Genel Müdürlüğü"
+                ],
+                correct: 3,
+                note: "Cevap: D) Yükseköğretim ve Yurt Dışı Eğitim Genel Müdürlüğü\n(Not: Bu muazzam bir ayırt edici sorudur! Daha önce çalıştığımız üzere \"ilköğretim ve ortaöğretim\" diplomalarının denkliği Talim ve Terbiye Kurulu'ndayken; \"lisans ve lisansüstü\" diplomaların denkliği Yükseköğretim ve Yurt Dışı Eğitim Genel Müdürlüğü'ndedir. İkisi sınavlarda birbirinin yerine çeldirici olarak mutlaka kullanılır.)"
+            },
+            {
+                question: "Millî Eğitim Bakanlığı bünyesinde faaliyet gösteren Halk Eğitim Merkezleri ve Olgunlaşma Enstitüleri gibi yaygın eğitim kurumlarını planlamak ve yönetmek aşağıdaki hizmet birimlerinden hangisinin asli görevidir?",
+                options: [
+                    "A) Özel Öğretim Kurumları Genel Müdürlüğü",
+                    "B) Mesleki ve Teknik Eğitim Genel Müdürlüğü",
+                    "C) Hayat Boyu Öğrenme Genel Müdürlüğü",
+                    "D) Temel Eğitim Genel Müdürlüğü"
+                ],
+                correct: 2,
+                note: "Cevap: C) Hayat Boyu Öğrenme Genel Müdürlüğü\n(Not: Sınavlarda \"Olgunlaşma Enstitüleri\" ve \"Halk Eğitim\" ifadeleri meslek edindirme ile karıştırılıp B şıkkına çok düşülür. Yaygın eğitim vurgusu burada kilittir.)"
+            },
+            {
+                question: "Vatandaşlar için okuryazarlık kursları ile mesleki ve sosyal gelişim kurslarını organize etmek; ayrıca DESEM (Destekleme ve Yetiştirme Kursları) vb. yaygın eğitim hizmetlerini sunmakla görevli genel müdürlük aşağıdakilerden hangisidir?",
+                options: [
+                    "A) Hayat Boyu Öğrenme Genel Müdürlüğü",
+                    "B) Öğretmen Yetiştirme ve Geliştirme Genel Müdürlüğü",
+                    "C) Ortaöğretim Genel Müdürlüğü",
+                    "D) Ölçme, Değerlendirme ve Sınav Hizmetleri Genel Müdürlüğü"
+                ],
+                correct: 0,
+                note: "Cevap: A) Hayat Boyu Öğrenme Genel Müdürlüğü\n(Not: Destekleme ve Yetiştirme Kursları okullarda verildiği için akla hemen Ortaöğretim veya Temel Eğitim gelebilir, ancak bu kursların planlaması ve yaygın eğitim kapsamındaki organizasyonu doğrudan Hayat Boyu Öğrenme'ye aittir.)"
+            },
+            {
+                question: "İmam Hatip Okulları ve din öğretimi ile ilgili derslerin programlarını hazırlamak ile bu okulların fiziki, akademik ve insan kaynağı planlamasını yapmak aşağıdaki kurumlardan hangisinin görevidir?",
+                options: [
+                    "A) Ortaöğretim Genel Müdürlüğü",
+                    "B) Din Öğretimi Genel Müdürlüğü",
+                    "C) Talim ve Terbiye Kurulu Başkanlığı",
+                    "D) Özel Öğretim Kurumları Genel Müdürlüğü"
+                ],
+                correct: 1,
+                note: "Cevap: B) Din Öğretimi Genel Müdürlüğü\n(Not: Sınavda \"program hazırlamak\" ifadesini görenler anlık bir refleksle Talim ve Terbiye'ye (C şıkkı) gidebilir. Ancak İmam Hatip ve din öğretimi derslerine özel programları hazırlamak doğrudan bu genel müdürlüğün görevidir, güzel bir detay!)"
+            },
+            {
+                question: "Okullarda okutulan Din Kültürü ve Ahlak Bilgisi derslerinin öğretim materyallerini geliştirmek ve din eğitimi konusunda uluslararası iş birlikleri geliştirmek MEB bünyesindeki hangi hizmet biriminin sorumluluğundadır?",
+                options: [
+                    "A) Avrupa Birliği ve Dış İlişkiler Genel Müdürlüğü",
+                    "B) Yenilik ve Eğitim Teknolojileri Genel Müdürlüğü",
+                    "C) Temel Eğitim Genel Müdürlüğü",
+                    "D) Din Öğretimi Genel Müdürlüğü"
+                ],
+                correct: 3,
+                note: "Cevap: D) Din Öğretimi Genel Müdürlüğü\n(Not: Bu soruda \"uluslararası iş birlikleri\" ifadesi, bir önceki çalıştığımız Avrupa Birliği ve Dış İlişkiler Genel Müdürlüğü (A şıkkı) için harika bir tuzaktır. \"Din eğitimi\" vurgusuna dikkat etmek hayat kurtarır.)"
+            },
+            {
+                question: "Millî Eğitim Bakanlığı bünyesinde Erasmus+ ve eTwinning gibi uluslararası projelerin koordinasyonunu sağlamakla görevli hizmet birimi aşağıdakilerden hangisidir?",
+                options: [
+                    "A) Yenilik ve Eğitim Teknolojileri Genel Müdürlüğü",
+                    "B) Yükseköğretim ve Yurt Dışı Eğitim Genel Müdürlüğü",
+                    "C) Avrupa Birliği ve Dış İlişkiler Genel Müdürlüğü",
+                    "D) Strateji Geliştirme Başkanlığı"
+                ],
+                correct: 2,
+                note: "Cevap: C) Avrupa Birliği ve Dış İlişkiler Genel Müdürlüğü\n(Not: Sınavlarda eTwinning kelimesini görenler genelde teknoloji kelimesinden dolayı A şıkkına, \"Yurt Dışı\" ibaresinden dolayı da B şıkkına çok düşerler. Harika bir ayırt edici sorudur.)"
+            },
+            {
+                question: "Türkiye'nin AB ve diğer uluslararası kuruluşlarla olan eğitim işbirliklerini yürütmek, uluslararası protokolleri hazırlayıp uygulamak ve yurt dışındaki eğitim müşavirlikleriyle koordinasyonu sağlamak aşağıdaki kurumlardan hangisinin sorumluluğundadır?",
+                options: [
+                    "A) Avrupa Birliği ve Dış İlişkiler Genel Müdürlüğü",
+                    "B) Dışişleri Bakanlığı Eğitim Ataşeliği",
+                    "C) Talim ve Terbiye Kurulu Başkanlığı",
+                    "D) Özel Öğretim Kurumları Genel Müdürlüğü"
+                ],
+                correct: 0,
+                note: "Cevap: A) Avrupa Birliği ve Dış İlişkiler Genel Müdürlüğü"
+            },
+            {
+                question: "Türkiye'de eğitim politikalarının belirlenmesinde \"en yüksek danışma organı\" sıfatını taşıyan kurul aşağıdakilerden hangisidir?",
+                options: [
+                    "A) Talim ve Terbiye Kurulu Başkanlığı",
+                    "B) Millî Eğitim Şûrası",
+                    "C) Yükseköğretim Kurulu (YÖK)",
+                    "D) Eğitim Politikaları Daire Başkanlığı"
+                ],
+                correct: 1,
+                note: "Cevap: B) Millî Eğitim Şûrası"
+            },
+            {
+                question: "Millî Eğitim Şûrası'nın hukuki statüsü ve aldığı kararların niteliği hakkında aşağıdakilerden hangisi doğrudur?",
+                options: [
+                    "A) Kararları kanun hükmündedir ve tüm kurumlar için derhal uygulanması zorunludur.",
+                    "B) Sadece Millî Eğitim Bakanlığı merkez teşkilatını bağlayıcı niteliktedir.",
+                    "C) Aldığı kararlar Cumhurbaşkanı onayıyla kesin ve bağlayıcı hale gelir.",
+                    "D) Aldığı kararlar bağlayıcı değildir, tavsiye niteliğinde ve yönlendiricidir."
+                ],
+                correct: 3,
+                note: "Cevap: D) Aldığı kararlar bağlayıcı değildir, tavsiye niteliğinde ve yönlendiricidir."
+            },
+            {
+                question: "Eğitim sisteminde \"Maarif Şûrası\" düşüncesi ilk olarak 1933 yılında kimin talimatıyla ortaya çıkmıştır?",
+                options: [
+                    "A) Hasan Âli Yücel",
+                    "B) İsmet İnönü",
+                    "C) Mustafa Kemal Atatürk",
+                    "D) Mustafa Necati"
+                ],
+                correct: 2,
+                note: "Cevap: C) Mustafa Kemal Atatürk"
+            },
+            {
+                question: "Eğitim tarihimizde \"Birinci Maarif Şûrası\" ile resmî olarak şûra toplantılarının başladığı yıl ve bu kurumun \"Millî Eğitim Şûrası Yönetmeliği\" ile yasal statü kazandığı yıl aşağıdakilerin hangisinde sırasıyla doğru verilmiştir?",
+                options: [
+                    "A) 1933 – 1939",
+                    "B) 1939 – 1946",
+                    "C) 1924 – 1933",
+                    "D) 1946 – 1982"
+                ],
+                correct: 1,
+                note: "Cevap: B) 1939 – 1946"
+            },
+            {
+                question: "Aşağıdakilerden hangisi Millî Eğitim Şûralarının katılımcı yapısında yer alan paydaşlardan biri değildir?",
+                options: [
+                    "A) Sendika ve STK temsilcileri",
+                    "B) Akademisyenler",
+                    "C) Uluslararası gözlemciler ve yabancı misyon şefleri",
+                    "D) Bakanlık yetkilileri ve öğretmenler"
+                ],
+                correct: 2,
+                note: "Cevap: C) Uluslararası gözlemciler ve yabancı misyon şefleri"
+            },
+            {
+                question: "1 Sayılı Cumhurbaşkanlığı Kararnamesi'ne göre, Millî Eğitim Bakanlığının \"bilimsel danışma ve inceleme organı\" aşağıdakilerden hangisidir?",
+                options: [
+                    "A) Yükseköğretim Kurulu (YÖK)",
+                    "B) Özel Öğretim Kurumları Genel Müdürlüğü",
+                    "C) Talim ve Terbiye Kurulu Başkanlığı",
+                    "D) Teftiş Kurulu Başkanlığı"
+                ],
+                correct: 2,
+                note: "Cevap: C) Talim ve Terbiye Kurulu Başkanlığı"
+            },
+            {
+                question: "Yurtdışı eğitim ve öğretim kurumlarından alınmış, ilköğretim ve ortaöğretim diploma ve öğrenim belgelerinin derece ve denkliklerine ilişkin ilke kararlarını Bakanın onayına sunmakla görevli merci aşağıdakilerden hangisidir?",
+                options: [
+                    "A) Avrupa Birliği ve Dış İlişkiler Genel Müdürlüğü",
+                    "B) Ortaöğretim Genel Müdürlüğü",
+                    "C) Dışişleri Bakanlığı Eğitim Ataşeliği",
+                    "D) Talim ve Terbiye Kurulu Başkanlığı"
+                ],
+                correct: 3,
+                note: "Cevap: D) Talim ve Terbiye Kurulu Başkanlığı\n(Not: Bu soru sınavlarda çok düşürücüdür, \"yurtdışı\" kelimesini görenler genelde Dış İlişkiler veya Dışişleri şıklarına atlar, o yüzden bu harika bir flashcard olur!)"
+            },
+            {
+                question: "Talim ve Terbiye Kurulu, Bakanlık birimlerince hazırlanan eğitim ve öğretim programları, ders kitapları ve öğretmen kılavuz kitaplarını inceleyip sonucunu kime sunmakla görevlidir?",
+                options: [
+                    "A) Millî Eğitim Bakanı",
+                    "B) Cumhurbaşkanı",
+                    "C) Bakan Yardımcıları",
+                    "D) Türkiye Büyük Millet Meclisi (TBMM) Eğitim Komisyonu"
+                ],
+                correct: 0,
+                note: "Cevap: A) Millî Eğitim Bakanı"
+            },
+            {
+                question: "Aşağıdakilerden hangisi Talim ve Terbiye Kurulu Başkanlığının mevzuatta belirtilen görevlerinden biri değildir?",
+                options: [
+                    "A) Eğitim ve öğretimle ilgili konularda Bakanlığın diğer birimleri ile işbirliği yapmak",
+                    "B) Öğretmenlerin atama ve yer değiştirme işlemlerini gerçekleştirmek",
+                    "C) Eğitim sistemini araştırmak, geliştirmek ve uygulamaya ilişkin görüşlerini Bakana sunmak",
+                    "D) Ders kitaplarını hazırlatmak veya hazırlananları incelemek"
+                ],
+                correct: 1,
+                note: "Cevap: B) Öğretmenlerin atama ve yer değiştirme işlemlerini gerçekleştirmek. (Bu görev Personel Genel Müdürlüğüne aittir.)"
+            },
+            // ----- EKLENEN YENİ SORULAR (Teftiş, Personel, Özel Eğitim) -----
+            {
+                question: "Millî Eğitim Bakanlığının personel politikalarını belirlemek; öğretmen ve diğer personelin atama, yer değiştirme, terfi, emeklilik ve özlük haklarına ilişkin işlemleri yürütmekle görevli birim aşağıdakilerden hangisidir?",
+                options: [
+                    "A) Hukuk Hizmetleri Genel Müdürlüğü",
+                    "B) Öğretmen Yetiştirme ve Geliştirme Genel Müdürlüğü",
+                    "C) Strateji Geliştirme Başkanlığı",
+                    "D) Personel Genel Müdürlüğü"
+                ],
+                correct: 3,
+                note: "Cevap: D) Personel Genel Müdürlüğü\n(Not: Atama, tayin ve özlük hakları denildiğinde cevap doğrudan Personel Genel Müdürlüğüdür. Öğretmen Yetiştirme (B şıkkı) sadece mesleki eğitim kısımlarıyla ilgilidir.)"
+            },
+            {
+                question: "Bakanlığın merkez ve taşra teşkilatının her türlü faaliyet ve işlemleriyle ilgili denetim, inceleme ve soruşturma işlerini yürütmekle görevli kurum aşağıdakilerden hangisidir?",
+                options: [
+                    "A) Teftiş Kurulu Başkanlığı",
+                    "B) Hukuk Hizmetleri Genel Müdürlüğü",
+                    "C) Talim ve Terbiye Kurulu Başkanlığı",
+                    "D) Özel Öğretim Kurumları Genel Müdürlüğü"
+                ],
+                correct: 0,
+                note: "Cevap: A) Teftiş Kurulu Başkanlığı\n(Not: Denetim, inceleme ve soruşturma işlemlerinin tek adresi Teftiş Kuruludur. Kurumların kanuna ve mevzuata uygun çalışıp çalışmadığını sahada kontrol ederler.)"
+            },
+            {
+                question: "Özel eğitim ihtiyacı olan (kaynaştırma öğrencileri, özel yetenekliler vb.) bireylerin eğitim-öğretim süreçlerini planlamak ve okullardaki psikolojik danışmanlık ve rehberlik (PDR/RAM) hizmetlerini koordine etmek hangi birimin asli görevidir?",
+                options: [
+                    "A) Temel Eğitim Genel Müdürlüğü",
+                    "B) Özel Öğretim Kurumları Genel Müdürlüğü",
+                    "C) Özel Eğitim ve Rehberlik Hizmetleri Genel Müdürlüğü",
+                    "D) Hayat Boyu Öğrenme Genel Müdürlüğü"
+                ],
+                correct: 2,
+                note: "Cevap: C) Özel Eğitim ve Rehberlik Hizmetleri Genel Müdürlüğü\n(Not: Özel \"Öğretim\" (özel okullar/kurslar) ile Özel \"Eğitim\" (engelliler/yetenekliler/rehberlik) sınavlarda en çok birbirine karıştırılan iki kavramdır. PDR ve özel gereksinim kelimeleri cevabı C yapar.)"
+            }
+        ];
+
+        // ---- state ----
+        let currentIndex = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let answerStatus = new Array(questions.length).fill(null);
+
+        // DOM refs
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedbackNote = document.getElementById('feedbackNote');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressFill = document.getElementById('progressFill');
+        const questionCounter = document.getElementById('questionCounter');
+        const correctCountSpan = document.getElementById('correctCount');
+        const wrongCountSpan = document.getElementById('wrongCount');
+        const scoreBadge = document.getElementById('scoreBadge');
+        const noteBox = document.getElementById('noteBox');
+        const noteList = document.getElementById('noteList');
+        const showNoteBtn = document.getElementById('showNoteBtn');
+
+        // ---- render question ----
+        function renderQuestion(index) {
+            const q = questions[index];
+            questionText.textContent = q.question;
+
+            // options
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.textContent = opt;
+                div.dataset.index = idx;
+
+                // mark if already answered
+                if (userAnswers[index] !== null) {
+                    div.classList.add('disabled');
+                    if (userAnswers[index] === idx) {
+                        if (answerStatus[index] === 'correct') {
+                            div.classList.add('selected-correct');
+                        } else if (answerStatus[index] === 'wrong') {
+                            div.classList.add('selected-wrong');
+                        }
+                    }
+                    // show correct answer if wrong
+                    if (answerStatus[index] === 'wrong' && idx === q.correct) {
+                        div.classList.add('show-correct');
+                    }
+                }
+
+                div.addEventListener('click', () => handleOptionClick(index, idx));
+                optionsContainer.appendChild(div);
+            });
+
+            // feedback note
+            if (userAnswers[index] !== null) {
+                feedbackNote.textContent = q.note;
+                feedbackNote.className = 'feedback-note visible';
+            } else {
+                feedbackNote.className = 'feedback-note';
+                feedbackNote.textContent = '';
+            }
+
+            // counter & progress
+            questionCounter.textContent = `${index+1} / ${questions.length}`;
+            progressFill.style.width = `${((index+1) / questions.length) * 100}%`;
+
+            // buttons
+            prevBtn.disabled = (index === 0);
+            if (index === questions.length - 1) {
+                nextBtn.textContent = '🏁 Bitir';
+            } else {
+                nextBtn.textContent = 'İleri ▶';
+            }
+        }
+
+        // ---- handle option click ----
+        function handleOptionClick(qIndex, optIndex) {
+            if (userAnswers[qIndex] !== null) return;
+
+            const q = questions[qIndex];
+            const isCorrect = (optIndex === q.correct);
+            userAnswers[qIndex] = optIndex;
+            answerStatus[qIndex] = isCorrect ? 'correct' : 'wrong';
+
+            renderQuestion(qIndex);
+            updateStats();
+        }
+
+        // ---- update stats ----
+        function updateStats() {
+            let correct = 0, wrong = 0;
+            for (let i = 0; i < answerStatus.length; i++) {
+                if (answerStatus[i] === 'correct') correct++;
+                else if (answerStatus[i] === 'wrong') wrong++;
+            }
+            correctCountSpan.textContent = correct;
+            wrongCountSpan.textContent = wrong;
+            const total = correct + wrong;
+            const pct = total === 0 ? 0 : Math.round((correct / total) * 100);
+            scoreBadge.textContent = `%${pct}`;
+        }
+
+        // ---- navigation ----
+        function goToPrev() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion(currentIndex);
+            }
+        }
+
+        function goToNext() {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                renderQuestion(currentIndex);
+            } else {
+                document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        // ---- build ders notu (Sentezlenmiş Kapsamlı Not) ----
+        function buildNote() {
+            const noteHTML = `
+                <div class="note-content-section">
+                    <h4>1. Karar, Danışma ve AR-GE Organları</h4>
+                    <ul>
+                        <li><span class="highlight">Talim ve Terbiye Kurulu (TTKB):</span> MEB'in "en yüksek karar, bilimsel danışma ve inceleme" organıdır (1926). Müfredatı, ders kitaplarını (basımı değil içeriğini) onaylar. Yurt dışı <b>ilk ve ortaöğretim</b> diplomalarının denkliğini Bakana sunar. Türkiye Yüzyılı Maarif Modeli'nin mimarıdır.</li>
+                        <li><span class="highlight">Millî Eğitim Şûrası:</span> Sadece "tavsiye" niteliğinde kararlar alan en yüksek "danışma" kuruludur. Kararları bağlayıcı değildir. (İlk fikir 1933 Atatürk, resmî başlama 1939).</li>
+                        <li><span class="highlight">Millî Eğitim Akademisi:</span> Öğretmen ve yönetici adaylarını mesleğe hazırlamak, eğitim ve sınavlarını yapmakla yükümlüdür. Başkanı bizzat <b>Millî Eğitim Bakanı</b> tarafından atanır. Yasal dayanağı 7499 sayılı ÖMK'dır.</li>
+                    </ul>
+                </div>
+
+                <div class="note-content-section">
+                    <h4>2. Operasyonel ve Teknolojik Birimler (Dikkat! Çeldirici)</h4>
+                    <ul>
+                        <li><span class="highlight">YEĞİTEK:</span> EBA'nın "içeriğini" (video, test) üretir. Akıllı tahta ve tablet donanımlarını sağlar, STEM AR-GE'si yapar.</li>
+                        <li><span class="highlight">Bilgi İşlem GM:</span> EBA, E-Okul ve MEBBİS'in "işletilmesini" (sunucu/altyapı) sağlar. Siber güvenlik ve veri güvenliği bu birimdedir.</li>
+                        <li><span class="highlight">Ölçme, Değ. ve Sınav (ÖDSGM):</span> LGS ve Bursluluk gibi Bakanlık içi merkezi sınavları hazırlar ve yapar (ÖSYM ile karıştırılmamalıdır).</li>
+                    </ul>
+                </div>
+
+                <div class="note-content-section">
+                    <h4>3. Lojistik ve Personel Birimleri</h4>
+                    <ul>
+                        <li><span class="highlight">Destek Hizmetleri GM:</span> Bakanlığın lojistiği, temizliği, güvenliği, satın alması ve <b>ders kitaplarının basılıp dağıtılması</b> işlerini yapar. (TTKB onaylar, Destek Hizm. basar).</li>
+                        <li><span class="highlight">Personel GM:</span> Tüm atama, yer değiştirme (tayin), terfi ve emeklilik özlük işlemlerinin merkezidir.</li>
+                        <li><span class="highlight">Teftiş Kurulu:</span> Sahadaki her türlü denetim, inceleme ve soruşturmayı yürütür.</li>
+                    </ul>
+                </div>
+
+                <div class="note-content-section">
+                    <h4>4. Eğitim Türlerine Göre Genel Müdürlükler</h4>
+                    <ul>
+                        <li><span class="highlight">Hayat Boyu Öğrenme GM:</span> Halk Eğitim Merkezleri, Olgunlaşma Enstitüleri, okuma-yazma ve DESEM kursları (yaygın eğitim).</li>
+                        <li><span class="highlight">Mesleki ve Teknik Eğitim GM:</span> Sektör iş birliği ve mezuniyet sonrası istihdam odaklıdır.</li>
+                        <li><span class="highlight">Özel Öğretim Kurumları GM:</span> Sürücü kursları, özel okullar, etüt merkezlerinin açılması, mevzuatı ve denetimi. (Özel sektör vurgusu).</li>
+                        <li><span class="highlight">Özel Eğitim ve Rehberlik GM:</span> Kaynaştırma, üstün yetenekliler, PDR, RAM hizmetleri.</li>
+                        <li><span class="highlight">Din Öğretimi GM:</span> İmam Hatip okullarının planlanması, DKAB materyalleri, din eğitiminde uluslararası işbirlikleri.</li>
+                    </ul>
+                </div>
+
+                <div class="note-content-section">
+                    <h4>5. Uluslararası Eğitim Birimleri (Kritik Ayrım)</h4>
+                    <ul>
+                        <li><span class="highlight">Avrupa Birliği ve Dış İlişkiler GM:</span> Erasmus+, eTwinning, eğitim ataşelikleriyle koordinasyon, uluslararası genel protokoller.</li>
+                        <li><span class="highlight">Yükseköğretim ve Yurt Dışı Eğitim GM:</span> MEB burslu öğrencilerin seçimi, yurt dışı <b>lisans ve lisansüstü</b> diploma denklikleri, akademisyen değişimleri.</li>
+                    </ul>
+                </div>
+            `;
+            noteList.innerHTML = noteHTML;
+        }
+
+        // ---- show/hide note ----
+        showNoteBtn.addEventListener('click', function() {
+            if (noteBox.classList.contains('visible')) {
+                noteBox.classList.remove('visible');
+                this.textContent = '📘 Tüm görevleri içeren ders notunu göster';
+            } else {
+                buildNote();
+                noteBox.classList.add('visible');
+                this.textContent = '📕 Ders notunu gizle';
+                noteBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+
+        // ---- event listeners ----
+        prevBtn.addEventListener('click', goToPrev);
+        nextBtn.addEventListener('click', goToNext);
+
+        // ---- init ----
+        renderQuestion(0);
+        updateStats();
+        // pre-build note
+        buildNote();
+
+    })();
+</script>
+</body>
+</html>

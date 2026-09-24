@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Coğrafya Nüfus Pratikleri</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --accent-hover: #2980b9;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #7f8c8d;
+            --warning: #f39c12;
+            --warning-hover: #e67e22;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 15px;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 550px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        h1 { font-size: 1.5rem; color: var(--primary); margin-bottom: 20px; }
+
+        /* Menu Styles */
+        .menu-btn {
+            display: block; width: 100%; padding: 18px; margin-bottom: 15px;
+            background-color: #ebf5fb; color: var(--primary); border: 2px solid var(--accent);
+            border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .menu-btn:hover { background-color: var(--accent); color: white; }
+        
+        .mode-desc { font-size: 0.85rem; color: var(--text-muted); font-weight: normal; display: block; margin-top: 5px; }
+
+        /* Quiz Styles */
+        header { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--bg-color); position: relative; }
+        .back-btn { position: absolute; left: 0; top: 0; background: none; border: none; color: var(--text-muted); font-weight: bold; cursor: pointer; font-size: 1rem; padding: 5px; }
+        .progress { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; margin-top: 10px; }
+
+        .question-text { font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 15px; line-height: 1.4; }
+        .instruction { font-size: 0.95rem; color: var(--accent); font-weight: bold; margin-bottom: 20px; background-color: #ebf5fb; padding: 10px; border-radius: 8px; border: 1px dashed var(--accent); }
+
+        .options-grid { display: grid; gap: 10px; margin-bottom: 25px; }
+        .options-grid.two-cols { grid-template-columns: 1fr 1fr; }
+        .options-grid.one-col { grid-template-columns: 1fr; }
+
+        .option-btn {
+            background-color: var(--bg-color); border: 2px solid transparent; border-radius: 10px;
+            padding: 14px 10px; font-size: 0.95rem; font-weight: 600; color: var(--primary);
+            cursor: pointer; transition: all 0.2s ease; user-select: none; text-align: left;
+        }
+        .option-btn:active { transform: scale(0.98); }
+        .option-btn.selected { background-color: #ebf5fb; border-color: var(--accent); color: var(--accent); }
+        .option-btn.correct { background-color: #eafaf1; border-color: var(--success); color: var(--success); }
+        .option-btn.wrong { background-color: #fdedec; border-color: var(--danger); color: var(--danger); }
+
+        .action-btn {
+            width: 100%; background-color: var(--accent); color: white; border: none; border-radius: 10px;
+            padding: 16px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: background-color 0.2s;
+        }
+        .action-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+
+        .cheat-btn {
+            background-color: var(--warning);
+            margin-bottom: 15px;
+            font-size: 1rem;
+            padding: 12px;
+        }
+        .cheat-btn:hover { background-color: var(--warning-hover); }
+
+        .feedback { margin-top: 20px; padding: 15px; border-radius: 8px; font-size: 0.95rem; font-weight: 500; line-height: 1.5; display: none; text-align: left; }
+        .feedback.success { display: block; background-color: #eafaf1; color: var(--success); border: 1px solid var(--success); }
+        .feedback.error { display: block; background-color: #fdedec; color: var(--danger); border: 1px solid var(--danger); }
+        .feedback.info { display: block; background-color: #fcf3cf; color: #b9770e; border: 1px solid #f1c40f; }
+
+        .hidden { display: none !important; }
+
+        .score-circle {
+            width: 100px; height: 100px; border-radius: 50%; background-color: #ebf5fb; color: var(--accent);
+            display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold;
+            margin: 0 auto 20px auto; border: 4px solid var(--accent);
+        }
+
+        /* Modal Styles */
+        #map-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 1000; overflow-y: auto;
+            padding: 20px; display: flex; flex-direction: column; align-items: center;
+        }
+        #map-modal img {
+            max-width: 100%; border-radius: 8px; margin-bottom: 25px; border: 2px solid white;
+        }
+        .close-modal-btn {
+            background: white; color: var(--primary); border: none; padding: 12px 25px;
+            font-size: 1.1rem; font-weight: bold; margin-bottom: 20px; border-radius: 8px; cursor: pointer;
+        }
+
+        .results-maps img { width: 100%; border-radius: 8px; margin-bottom: 15px; border: 2px solid #ddd; }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#cografya" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <!-- MAP MODAL (Kopya Çek) -->
+    <div id="map-modal" class="hidden">
+        <button class="close-modal-btn" onclick="toggleMapModal()">Kapat</button>
+        <h3 style="color: white; margin-bottom: 10px;">Seyrek Nüfus Haritası</h3>
+        <img src="https://i.imgur.com/cUr91JR.jpeg" alt="Seyrek Nüfus Haritası">
+        <h3 style="color: white; margin-bottom: 10px;">Yoğun Nüfus Haritası</h3>
+        <img src="https://i.imgur.com/5Z0YoFL.jpeg" alt="Yoğun Nüfus Haritası">
+    </div>
+
+    <div class="container" id="menu-screen">
+        <h1>Coğrafya Pratikleri</h1>
+        <p style="margin-bottom: 25px; color: var(--text-muted);">Çalışmak istediğiniz modu seçin:</p>
+        
+        <button class="menu-btn" onclick="startMode(1)">
+            Mod 1: Ne, Nerede?
+            <span class="mode-desc">İlkler, mağaralar, nüfus yoğunluğu...</span>
+        </button>
+        <button class="menu-btn" onclick="startMode(2)">
+            Mod 2: Nüfus Politikaları
+            <span class="mode-desc">Yıllara göre politikalar, yöntemler ve nedenleri</span>
+        </button>
+        <button class="menu-btn" onclick="startMode(3)">
+            Mod 3: Seyrek mi, Sık mı?
+            <span class="mode-desc">Bölgelerin nüfus yoğunluğu tahmini</span>
+        </button>
+    </div>
+
+    <div class="container hidden" id="quiz-screen">
+        <header>
+            <button class="back-btn" onclick="showMenu()">&#8592; Menü</button>
+            <h1 id="mode-title">Mod Başlığı</h1>
+            <div class="progress">Soru: <span id="current-q">1</span> / <span id="total-q">10</span></div>
+        </header>
+
+        <button id="cheat-btn" class="action-btn cheat-btn hidden" onclick="toggleMapModal()">👀 Kopya Çek (Haritalara Bak)</button>
+
+        <div class="question-text" id="question-text">Soru metni buraya gelecek...</div>
+        <div class="instruction hidden" id="instruction-text">İpucu metni</div>
+
+        <div class="options-grid" id="options-container"></div>
+
+        <button class="action-btn" id="submit-btn" disabled>Cevapla</button>
+        <button class="action-btn hidden" id="next-btn">Sonraki</button>
+
+        <div class="feedback" id="feedback-text"></div>
+    </div>
+
+    <div class="container hidden" id="results-screen">
+        <h1>Test Tamamlandı!</h1>
+        <div class="score-circle"><span id="score-text">0/0</span></div>
+
+        <div id="results-maps" class="results-maps hidden">
+            <h3 style="margin-bottom: 10px; font-size: 1.1rem; color: var(--primary);">Seyrek Nüfus Haritası</h3>
+            <img src="https://i.imgur.com/cUr91JR.jpeg" alt="Seyrek Nüfus Haritası">
+            <h3 style="margin-bottom: 10px; font-size: 1.1rem; color: var(--primary);">Yoğun Nüfus Haritası</h3>
+            <img src="https://i.imgur.com/5Z0YoFL.jpeg" alt="Yoğun Nüfus Haritası">
+        </div>
+
+        <button class="action-btn" style="margin-bottom: 10px;" onclick="restartCurrentMode()">Tekrar Çöz</button>
+        <button class="action-btn" style="background-color: var(--primary);" onclick="showMenu()">Ana Menüye Dön</button>
+    </div>
+
+    <script>
+        // --- DATA DEPOSU ---
+        
+        const mode1Data = [
+            { q: "Anadolu'daki ilk köy yerleşimi neresidir?", a: ["Çayönü (Diyarbakır)"], options: ["Çayönü (Diyarbakır)", "Çatalhöyük (Konya)", "Kültepe (Kayseri)", "Göbeklitepe (Şanlıurfa)"], exp: "Anadolu'daki ilk köy Çayönü (Diyarbakır)'dır." },
+            { q: "Anadolu'daki ilk şehir yerleşimi neresidir?", a: ["Çatalhöyük (Konya)"], options: ["Çatalhöyük (Konya)", "Kültepe (Kayseri)", "Hattuşaş (Çorum)", "Çayönü (Diyarbakır)"], exp: "Anadolu'daki ilk şehir Çatalhöyük (Konya)'dır." },
+            { q: "Dünya'nın ilk ticaret kenti neresidir?", a: ["Kültepe (Kayseri)"], options: ["Kültepe (Kayseri)", "Efes (İzmir)", "Göbeklitepe (Şanlıurfa)", "Zeugma (Gaziantep)"], exp: "Dünya'nın ilk ticaret kenti Kültepe (Kayseri)'dir." },
+            { q: "Dünya'nın ilk medeniyeti ve inanç kenti neresidir?", a: ["Göbeklitepe (Şanlıurfa)"], options: ["Göbeklitepe (Şanlıurfa)", "Çatalhöyük (Konya)", "Yarımburgaz (İstanbul)", "Karain (Antalya)"], exp: "Göbeklitepe, Dünya'nın ilk medeniyeti ve inanç kentidir." },
+            { q: "Karain (Antalya) ve Yarımburgaz (İstanbul) yerleşimlerinin ortak özelliği nedir?", a: ["Mağara olmaları"], options: ["Mağara olmaları", "İlk ticaret merkezleri olmaları", "İlk köyler olmaları", "Liman kenti olmaları"], exp: "Karain ve Yarımburgaz önemli tarihi mağaralardır." },
+            { q: "Anadolu'nun son yerleşim alanı neresidir?", a: ["Doğu Karadeniz"], options: ["Doğu Karadeniz", "Güneydoğu Anadolu", "Trakya", "Menteşe Yöresi"], exp: "Anadolu'nun son yerleşim alanı Doğu Karadeniz'dir." },
+            { q: "Ortanca yaşın en YÜKSEK ve en DÜŞÜK olduğu iller sırasıyla hangileridir?", a: ["Sinop - Şanlıurfa"], options: ["Sinop - Şanlıurfa", "İstanbul - Tunceli", "Kastamonu - Hakkari", "Balıkesir - Şırnak"], exp: "Ortanca yaşın en yüksek olduğu il Sinop, en düşük olduğu il ise Şanlıurfa'dır." },
+            { q: "Aritmetik nüfus yoğunluğunun en FAZLA ve en AZ olduğu iller sırasıyla hangileridir?", a: ["İstanbul - Tunceli"], options: ["İstanbul - Tunceli", "Kocaeli - Bayburt", "İzmir - Hakkari", "İstanbul - Ardahan"], exp: "En fazla yoğunluk İstanbul'da, en az yoğunluk Tunceli'dedir." },
+            { q: "Aritmetik nüfus yoğunluğunun en FAZLA ve en AZ olduğu BÖLGELER sırasıyla hangileridir?", a: ["Marmara - Doğu Anadolu"], options: ["Marmara - Doğu Anadolu", "Ege - Güneydoğu Anadolu", "Marmara - Karadeniz", "Akdeniz - İç Anadolu"], exp: "En yoğun bölge Marmara, en seyrek bölge Doğu Anadolu'dur." }
+        ];
+
+        // Mod 2 Data - 3 steps per period: 1) Policy 2) Methods 3) Reasons/Events
+        const mode2Data = [
+            // 1923-1965
+            { type: "single", q: "1923-1965 döneminde Türkiye'de nasıl bir nüfus politikası uygulanmıştır?", a: ["Artırma"], options: ["Artırma", "Azaltma", "İyileştirme"], exp: "Cumhuriyetin ilk yıllarında savaş kayıplarını telafi etmek ve kalkınma için nüfusu ARTIRMA politikası izlenmiştir." },
+            { type: "multi", q: "1923-1965 (Artırma) döneminde uygulanan yöntemler nelerdir?", 
+              a: ["Gümrük ve yol vergisinden muafiyet", "Madalya takılması", "Para ve toprak yardımı", "Evlilik yaşı düşürüldü", "Doğum kontrol yasağı", "Çocuk Bakım Hizmetleri ve devlet desteği"], 
+              options: ["Gümrük ve yol vergisinden muafiyet", "Doğum kontrol yasağı", "Madalya takılması", "1965 aile planlaması kanunu", "Para ve toprak yardımı", "Evlilik yaşı düşürüldü", "Çocuk Bakım Hizmetleri ve devlet desteği", "Dış göçlerin teşviki"], 
+              exp: "Nüfusu artırmak için evlilik yaşı düşürülmüş, doğum kontrolü yasaklanmış, çok çocuklulara madalya/vergi muafiyeti ve annelere çocuk bakım desteği sağlanmıştır." },
+            { type: "multi", q: "1923-1965 dönemindeki politikanın NEDENLERİ ve nüfusu etkileyen OLAYLAR nelerdir?",
+              a: ["Savaşlarda erkek nüfusun kaybedilmesi", "Yüksek bebek ve çocuk ölümleri", "Tarımda insan gücüne duyulan ihtiyaç", "Seferberlik / Erkeklerin askere alınması (Artış hızını düşürdü)"],
+              options: ["Savaşlarda erkek nüfusun kaybedilmesi", "Yüksek bebek ve çocuk ölümleri", "Tarımda insan gücüne duyulan ihtiyaç", "Seferberlik / Erkeklerin askere alınması (Artış hızını düşürdü)", "Şehirde yaşayanların (kentleşme) artması", "Kadının iş hayatına yaygın olarak katılması"],
+              exp: "Savaş kayıpları, çocuk ölümleri ve tarımdaki işgücü ihtiyacı nüfusu artırmayı zorunlu kılmıştır. Hatay'ın 1939'da katılması nüfusu artırırken, II. Dünya Savaşı'ndaki seferberlik artış hızını düşürmüştür." },
+
+            // 1965-1980
+            { type: "single", q: "1965-1980 döneminde Türkiye'de nasıl bir nüfus politikası uygulanmıştır?", a: ["Azaltma"], options: ["Artırma", "Azaltma", "İyileştirme"], exp: "1965'ten itibaren nüfus artış hızını düşürme (AZALTMA) politikasına geçilmiştir." },
+            { type: "multi", q: "1965-1980 (Azaltma) döneminde uygulanan yöntemler nelerdir?", 
+              a: ["Dış göçler teşvik edildi", "1965 aile planlaması kanunu çıktı", "Doğum kontrol yöntemleri serbest bırakıldı", "Evlenme yaşının yükseltilmesi"], 
+              options: ["1965 aile planlaması kanunu çıktı", "Dış göçler teşvik edildi", "Doğum kontrol yasağı getirildi", "Evlenme yaşının yükseltilmesi", "Evlilik yaşı düşürüldü", "Doğum kontrol yöntemleri serbest bırakıldı"], 
+              exp: "Aile planlaması yasallaşmış, doğum kontrolü serbest bırakılıp evlenme yaşı yükseltilmiş ve işçi göçleri (özellikle Almanya'ya) desteklenmiştir." },
+            { type: "multi", q: "1965-1980 döneminde nüfus artış hızını AZALTMA politikasına geçilmesinin NEDENLERİ nelerdir?",
+              a: ["Nüfus artış hızının, ekonomik kalkınma hızını aşması", "Tarımda makineleşme ile işsizliğin artması", "Hızlı nüfus artışının altyapı sorunları yaratması"],
+              options: ["Nüfus artış hızının, ekonomik kalkınma hızını aşması", "Tarımda makineleşme ile işsizliğin artması", "Hızlı nüfus artışının altyapı sorunları yaratması", "Bebek ve çocuk ölümlerinin çok artması", "Savaşlar nedeniyle nüfusun azalması"],
+              exp: "Kalkınma planlarının uygulanmaya başlamasıyla, hızlı nüfus artışının (ve tarımda makineleşmeyle artan işsizliğin) ekonomik gelişmeyi yavaşlattığı görülmüş ve politika değiştirilmiştir." },
+
+            // 1980-2005
+            { type: "single", q: "1980-2005 döneminde Türkiye'de nasıl bir nüfus politikası uygulanmıştır?", a: ["İyileştirme"], options: ["Artırma", "Azaltma", "İyileştirme"], exp: "Bu dönemde mevcut nüfusun niteliğini (eğitim, sağlık vb.) İYİLEŞTİRME hedeflenmiştir." },
+            { type: "multi", q: "1980-2005 (İyileştirme) döneminin öne çıkan özellikleri nelerdir?", 
+              a: ["Nicelikten çok nitelik üzerinde duruldu", "Eğitim ve sağlık ön planda tutuldu"], 
+              options: ["Dış göçler devlet eliyle teşvik edildi", "Nicelikten çok nitelik üzerinde duruldu", "Çok çocuklu ailelere madalya takıldı", "Eğitim ve sağlık ön planda tutuldu"], 
+              exp: "Nüfusun sayısından (nicelik) çok, eğitim ve sağlık gibi niteliklerinin artırılmasına odaklanılmıştır." },
+            { type: "multi", q: "1980 sonrasında nüfus artış hızının KENDİLİĞİNDEN DÜŞMESİNİN nedenleri nelerdir?",
+              a: ["Şehirde yaşayanların (kentleşme) oranının artması", "Kadınların iş hayatına daha fazla katılması", "Eğitim seviyesinin yükselmesi", "Evlenme yaşının yükselmesi"],
+              options: ["Şehirde yaşayanların (kentleşme) oranının artması", "Kadınların iş hayatına daha fazla katılması", "Eğitim seviyesinin yükselmesi", "Evlenme yaşının yükselmesi", "Seferberlik ilan edilmesi", "Doğum kontrolünün yasaklanması"],
+              exp: "Kentleşme, kadının çalışma hayatına girmesi ve eğitim seviyesinin artması gibi sosyolojik nedenlerle nüfus artış hızı doğal yollarla düşüş eğilimine girmiştir." },
+
+            // 2005-Sonrası
+            { type: "single", q: "2005'ten Sonrası dönemde Türkiye'de nasıl bir nüfus politikası uygulanmaya başlanmıştır?", a: ["Artırma"], options: ["Artırma", "Azaltma", "İyileştirme"], exp: "Doğurganlık hızının düşmesi nedeniyle tekrar ARTIRMA politikasına dönülmüştür." },
+            { type: "multi", q: "2005 Sonrası (Artırma) dönemiyle ilgili hangileri doğrudur?", 
+              a: ["2014 yılından itibaren teşvikler verilmeye başlandı", "En düşük nüfus artışı 2022-2023'te yaşandı"], 
+              options: ["2014 yılından itibaren teşvikler verilmeye başlandı", "1965 aile planlaması kanunu çıkarıldı", "En düşük nüfus artışı 2022-2023'te yaşandı", "Yol vergisinden muafiyet getirildi"], 
+              exp: "Çeyiz hesabı, doğum yardımı gibi yeni teşvikler getirilmiş; ancak yine de 2022-23'te Cumhuriyet tarihinin en düşük artış hızı yaşanmıştır." },
+            { type: "multi", q: "2005 sonrasında tekrar nüfusu ARTIRMA politikasına geçilmesinin NEDENLERİ nelerdir?",
+              a: ["Doğurganlık oranının çok düşmesi", "Genç nüfus oranının azalmaya başlaması", "Nüfusun hızla yaşlanmaya başlaması"],
+              options: ["Doğurganlık oranının çok düşmesi", "Genç nüfus oranının azalmaya başlaması", "Nüfusun hızla yaşlanmaya başlaması", "Tarımda iş gücüne ihtiyacın çok artması", "Bebek ölümlerinin çok yüksek olması"],
+              exp: "Günümüzde doğum oranlarının yenilenme seviyesinin altına düşmesi ve nüfusun yaşlanması (demografik tehlike) nedeniyle tekrar artırıcı teşvikler uygulanmaktadır." }
+        ];
+
+        // Mod 3 Data
+        const rawMode3 = [
+            { place: "Sivas", type: "Seyrek" }, { place: "Menteşe Yöresi", type: "Seyrek" }, { place: "Teke Yöresi", type: "Seyrek" },
+            { place: "Biga - Gelibolu", type: "Seyrek" }, { place: "Güneydoğu'nun güneyi", type: "Seyrek" }, { place: "Tunceli", type: "Seyrek" },
+            { place: "Iğdır", type: "Seyrek" }, { place: "Hakkari", type: "Seyrek" }, { place: "Kars - Ardahan", type: "Seyrek" }, { place: "Çoruh - Kelkit Olukları", type: "Seyrek" },
+            { place: "Zonguldak çevresi", type: "Sık" }, { place: "Eskişehir - Ankara", type: "Sık" }, { place: "İstanbul - Bursa", type: "Sık" },
+            { place: "İzmir - Aydın - Manisa", type: "Sık" }, { place: "Antalya - Mersin - Adana - Hatay", type: "Sık" },
+            { place: "Elazığ - Malatya", type: "Sık" }, { place: "Diyarbakır - Batman - Gaziantep - Şanlıurfa", type: "Sık" },
+            { place: "Van", type: "Sık" }, { place: "Samsun", type: "Sık" }, { place: "Doğu Karadeniz KIYILARI", type: "Sık" }
+        ];
+
+        let currentMode = 0;
+        let activeQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let selectedOptions = new Set();
+        let isAnswered = false;
+
+        const ui = {
+            menu: document.getElementById('menu-screen'),
+            quiz: document.getElementById('quiz-screen'),
+            results: document.getElementById('results-screen'),
+            title: document.getElementById('mode-title'),
+            qText: document.getElementById('question-text'),
+            instruction: document.getElementById('instruction-text'),
+            options: document.getElementById('options-container'),
+            submit: document.getElementById('submit-btn'),
+            next: document.getElementById('next-btn'),
+            feedback: document.getElementById('feedback-text'),
+            currentQ: document.getElementById('current-q'),
+            totalQ: document.getElementById('total-q'),
+            score: document.getElementById('score-text'),
+            cheatBtn: document.getElementById('cheat-btn'),
+            resultsMaps: document.getElementById('results-maps'),
+            mapModal: document.getElementById('map-modal')
+        };
+
+        function toggleMapModal() {
+            ui.mapModal.classList.toggle('hidden');
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function showMenu() {
+            ui.menu.classList.remove('hidden');
+            ui.quiz.classList.add('hidden');
+            ui.results.classList.add('hidden');
+            ui.resultsMaps.classList.add('hidden');
+            ui.cheatBtn.classList.add('hidden');
+            ui.mapModal.classList.add('hidden');
+        }
+
+        function startMode(modeNum) {
+            currentMode = modeNum;
+            currentIndex = 0;
+            score = 0;
+            
+            ui.menu.classList.add('hidden');
+            ui.results.classList.add('hidden');
+            ui.quiz.classList.remove('hidden');
+
+            ui.cheatBtn.classList.add('hidden');
+            ui.resultsMaps.classList.add('hidden');
+
+            if (modeNum === 1) {
+                ui.title.textContent = "Ne, Nerede?";
+                activeQuestions = shuffle([...mode1Data]);
+            } else if (modeNum === 2) {
+                ui.title.textContent = "Nüfus Politikaları";
+                activeQuestions = [...mode2Data]; 
+            } else if (modeNum === 3) {
+                ui.title.textContent = "Seyrek mi, Sık mı?";
+                ui.cheatBtn.classList.remove('hidden');
+                
+                let pool = shuffle([...rawMode3]).slice(0, 10);
+                activeQuestions = pool.map(item => ({
+                    type: "single",
+                    q: `"${item.place}" nüfus yoğunluğu bakımından nasıldır?`,
+                    a: [item.type + " Nüfus"], 
+                    options: ["Seyrek Nüfus", "Sık Nüfus"],
+                    exp: `${item.place}, ${item.type} nüfuslu bir alandır.`
+                }));
+            }
+
+            ui.totalQ.textContent = activeQuestions.length;
+            loadQuestion();
+        }
+
+        function restartCurrentMode() {
+            startMode(currentMode);
+        }
+
+        function loadQuestion() {
+            isAnswered = false;
+            selectedOptions.clear();
+            const qData = activeQuestions[currentIndex];
+            
+            ui.currentQ.textContent = currentIndex + 1;
+            ui.qText.textContent = qData.q;
+            ui.feedback.className = "feedback hidden";
+            ui.submit.classList.remove('hidden');
+            ui.submit.disabled = true;
+            ui.next.classList.add('hidden');
+
+            if (qData.type === 'multi') {
+                ui.instruction.textContent = `Lütfen ${qData.a.length} adet doğru seçeneği işaretleyin.`;
+                ui.instruction.classList.remove('hidden');
+                ui.options.className = "options-grid one-col";
+            } else {
+                ui.instruction.classList.add('hidden');
+                if (currentMode === 3) {
+                    ui.options.className = "options-grid two-cols";
+                } else {
+                    ui.options.className = "options-grid one-col";
+                }
+            }
+
+            renderOptions(qData);
+        }
+
+        function renderOptions(qData) {
+            ui.options.innerHTML = '';
+            
+            let opts = (currentMode === 3) ? qData.options : shuffle([...qData.options]);
+            
+            opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => toggleOption(opt, btn, qData);
+                ui.options.appendChild(btn);
+            });
+        }
+
+        function toggleOption(opt, btnElement, qData) {
+            if (isAnswered) return;
+
+            const isMulti = qData.type === 'multi';
+            const maxAllowed = isMulti ? qData.a.length : 1;
+
+            if (selectedOptions.has(opt)) {
+                selectedOptions.delete(opt);
+                btnElement.classList.remove('selected');
+            } else {
+                if (!isMulti) {
+                    selectedOptions.clear();
+                    Array.from(ui.options.children).forEach(b => b.classList.remove('selected'));
+                }
+                
+                if (selectedOptions.size < maxAllowed || !isMulti) {
+                    selectedOptions.add(opt);
+                    btnElement.classList.add('selected');
+                }
+            }
+
+            ui.submit.disabled = selectedOptions.size !== maxAllowed;
+        }
+
+        ui.submit.onclick = () => {
+            const qData = activeQuestions[currentIndex];
+            const maxAllowed = qData.type === 'multi' ? qData.a.length : 1;
+            
+            if (selectedOptions.size !== maxAllowed) return;
+            
+            isAnswered = true;
+            ui.submit.classList.add('hidden');
+            ui.next.classList.remove('hidden');
+
+            let isPerfectMatch = true;
+            
+            Array.from(ui.options.children).forEach(btn => {
+                const opt = btn.textContent;
+                const isSelected = selectedOptions.has(opt);
+                const isCorrect = qData.a.includes(opt);
+
+                if (isSelected && isCorrect) {
+                    btn.classList.add('correct');
+                } else if (isSelected && !isCorrect) {
+                    btn.classList.add('wrong');
+                    isPerfectMatch = false;
+                } else if (!isSelected && isCorrect) {
+                    btn.classList.add('correct');
+                    btn.style.borderStyle = 'dashed';
+                    isPerfectMatch = false;
+                }
+                
+                if (!isSelected && !isCorrect) {
+                    btn.style.opacity = '0.5';
+                }
+            });
+
+            if (isPerfectMatch) score++;
+
+            let fbClass = isPerfectMatch ? "success" : "error";
+            let fbTitle = isPerfectMatch ? "Tebrikler, doğru!" : "Yanlış cevap.";
+            
+            ui.feedback.innerHTML = `<strong>${fbTitle}</strong><br><br>${qData.exp}`;
+            
+            if (currentMode === 2 && qData.type === 'multi') {
+                 ui.feedback.className = `feedback info`;
+            } else {
+                 ui.feedback.className = `feedback ${fbClass}`;
+            }
+        };
+
+        ui.next.onclick = () => {
+            currentIndex++;
+            if (currentIndex < activeQuestions.length) {
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        };
+
+        function endQuiz() {
+            ui.quiz.classList.add('hidden');
+            ui.results.classList.remove('hidden');
+            ui.score.textContent = `${score}/${activeQuestions.length}`;
+            
+            if (currentMode === 3) {
+                ui.resultsMaps.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

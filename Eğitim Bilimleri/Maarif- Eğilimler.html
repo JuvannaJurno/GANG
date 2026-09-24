@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eğilim Dedektifi | Zihin ve Karakter Haritası</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --benlik: #3498db;
+            --sosyal: #e67e22;
+            --entelektuel: #9b59b6;
+            --success: #27ae60;
+            --error: #c0392b;
+            --bg: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .quiz-container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 { color: var(--primary); margin-bottom: 5px; }
+        p.subtitle { color: #666; margin-bottom: 30px; font-style: italic; }
+
+        .term-box {
+            background: #fff;
+            border: 2px dashed var(--primary);
+            padding: 20px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            color: var(--primary);
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+        }
+
+        button {
+            padding: 15px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            color: white;
+        }
+
+        .btn-benlik { background-color: var(--benlik); }
+        .btn-sosyal { background-color: var(--sosyal); }
+        .btn-entelektuel { background-color: var(--entelektuel); }
+
+        button:hover { opacity: 0.9; transform: scale(1.02); }
+
+        #feedback {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            text-align: left;
+            line-height: 1.5;
+        }
+
+        .feedback-correct { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .feedback-wrong { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        #next-btn {
+            margin-top: 20px;
+            background-color: var(--primary);
+            display: none;
+            width: 100%;
+        }
+
+        .stats { margin-top: 20px; font-size: 0.9rem; color: #888; }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+
+<div class="quiz-container">
+    <h1>Eğilim Dedektifi</h1>
+    <p class="subtitle">Bu kavram hangi temel eğilime ait?</p>
+    
+    <div id="term-display" class="term-box">Yükleniyor...</div>
+
+    <div class="options">
+        <button class="btn-benlik" onclick="checkAnswer('Benlik Eğilimleri')">Benlik Eğilimi</button>
+        <button class="btn-sosyal" onclick="checkAnswer('Sosyal Eğilimler')">Sosyal Eğilim</button>
+        <button class="btn-entelektuel" onclick="checkAnswer('Entelektüel Eğilimler')">Entelektüel Eğilim</button>
+    </div>
+
+    <div id="feedback"></div>
+    <button id="next-btn" onclick="loadNext()">Sıradaki Kavram →</button>
+
+    <div class="stats">Kalan: <span id="remaining">0</span></div>
+</div>
+
+<script>
+    const data = [
+        { term: "Merak", cat: "Benlik Eğilimleri", exp: "Merak, bireyin iç dünyasından gelen, dış dünyayı keşfetme arzusudur. Bilgi edinme sürecini (entelektüel) başlatsa da, kökeni bireyin öz keşif dürtüsüdür." },
+        { term: "Bağımsızlık", cat: "Benlik Eğilimleri", exp: "Kendi kararlarını verebilme ve kendi başına var olabilme yetisidir. Tamamen 'ben'in sınırları ve hürriyetiyle ilgilidir." },
+        { term: "Azim ve Kararlılık", cat: "Benlik Eğilimleri", exp: "Zorluklar karşısında bireyin içsel direnç göstermesidir. Başkalarıyla değil, kişinin kendi iradesiyle verdiği bir savaştır." },
+        { term: "Öz Yeterlilik", cat: "Benlik Eğilimleri", exp: "Bireyin bir işi yapabileceğine dair kendine olan inancıdır. 'Ben yapabilirim' duygusu benlik algısının çekirdeğidir." },
+        { term: "Kendine Güven", cat: "Benlik Eğilimleri", exp: "Bireyin kendi değerine ve yeteneklerine duyduğu güvendir. Sosyal etkileşimleri etkilese de kaynağı kişinin kendisidir." },
+        { term: "Seçicilik", cat: "Benlik Eğilimleri", exp: "Bireyin kendi değer yargılarına göre tercih yapmasıdır. Kişinin 'ben'liğini neyle besleyeceğine karar vermesidir." },
+        
+        { term: "Empati", cat: "Sosyal Eğilimler", exp: "Bir başkasının duygusunu anlama çabasıdır. Doğası gereği en az 'iki kişi' gerektirir, bu yüzden sosyaldir." },
+        { term: "Sorumluluk", cat: "Sosyal Eğilimler", exp: "Bireyin topluma veya bir başkasına karşı olan yükümlülükleridir. Ortak yaşamın düzenini sağlar." },
+        { term: "Girişkenlik", cat: "Sosyal Eğilimler", exp: "Toplum içine karışma ve iletişim başlatma becerisidir. İnsanlarla kurulan köprüleri temsil eder." },
+        { term: "Güven", cat: "Sosyal Eğilimler", exp: "İlişkilerin temelidir. Başkalarına inanma ve emniyet hissetme durumu sosyal bir bağdır." },
+        { term: "Oyunseverlik", cat: "Sosyal Eğilimler", exp: "Kolektif eğlence, paylaşım ve etkileşim biçimidir. Kurallar çerçevesinde başkalarıyla uyumlanmayı içerir." },
+
+        { term: "Muhakeme", cat: "Entelektüel Eğilimler", exp: "Verileri tartma ve sonuç çıkarma işlemidir. Tamamen bilişsel/zihinsel bir süreçtir." },
+        { term: "Odaklanma", cat: "Entelektüel Eğilimler", exp: "Zihnin tek bir noktaya yoğunlaşma kapasitesidir. Düşünce disiplininin temelidir." },
+        { term: "Yaratıcılık", cat: "Entelektüel Eğilimler", exp: "Farklı düşünme ve yeni çözümler üretme yetisidir. Zihinsel esnekliğin en üst aşamasıdır." },
+        { term: "Gerçeği Arama", cat: "Entelektüel Eğilimler", exp: "Olguları olduğu gibi anlama tutkusudur. Bilimsel ve felsefi düşüncenin yakıtıdır." },
+        { term: "Açık Fikirlilik", cat: "Entelektüel Eğilimler", exp: "Yeni bilgileri önyargısız değerlendirme yetisidir. Zihinsel gelişimin kapısıdır." },
+        { term: "Analitiklik", cat: "Entelektüel Eğilimler", exp: "Bütünü parçalara ayırarak inceleme yöntemidir. Mantıksal çözümleme aracıdır." },
+        { term: "Sistematiklik", cat: "Entelektüel Eğilimler", exp: "Düşünceleri bir düzen ve hiyerarşi içinde sunmaktır. Zihnin düzenleme işlevidir." },
+        { term: "Soru Sorma", cat: "Entelektüel Eğilimler", exp: "Bilginin sınırlarını zorlama eylemidir. Öğrenmenin teknik motorudur." },
+        { term: "Şüphe Duyma", cat: "Entelektüel Eğilimler", exp: "Bilgiyi hemen kabul etmeyip doğruluğunu denetlemektir. Zihinsel bir savunma mekanizmasıdır." },
+        { term: "Eleştirel Bakma", cat: "Entelektüel Eğilimler", exp: "Bir durumu tüm boyutlarıyla, artıları ve eksileriyle tartma becerisidir." }
+    ];
+
+    let currentItem;
+    let pool = [...data];
+
+    function loadNext() {
+        if (pool.length === 0) {
+            document.querySelector('.quiz-container').innerHTML = "<h2>Tebrikler!</h2><p>Tüm eğilimleri başarıyla inceledin. Sivaslı Cem Bü felsefesinde derinleşmeye hazırsın.</p><button onclick='location.reload()'>Yeniden Başla</button>";
+            return;
+        }
+        const index = Math.floor(Math.random() * pool.length);
+        currentItem = pool[index];
+        document.getElementById('term-display').innerText = currentItem.term;
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('remaining').innerText = pool.length;
+        
+        // Butonları tekrar aktif et
+        const buttons = document.querySelectorAll('.options button');
+        buttons.forEach(b => { b.disabled = false; b.style.opacity = '1'; });
+    }
+
+    function checkAnswer(userChoice) {
+        const feedback = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+        const buttons = document.querySelectorAll('.options button');
+        
+        feedback.style.display = 'block';
+        nextBtn.style.display = 'block';
+        buttons.forEach(b => b.disabled = true);
+
+        if (userChoice === currentItem.cat) {
+            feedback.className = 'feedback-correct';
+            feedback.innerHTML = `<strong>Doğru!</strong> ✨ <br>${currentItem.exp}`;
+            pool = pool.filter(item => item.term !== currentItem.term);
+        } else {
+            feedback.className = 'feedback-wrong';
+            feedback.innerHTML = `<strong>Yanlış!</strong> Aslında bu bir <strong>${currentItem.cat}</strong> başlığıdır. <br><br> <em>Neden mi?</em> ${currentItem.exp}`;
+        }
+    }
+
+    loadNext();
+</script>
+
+</body>
+</html>

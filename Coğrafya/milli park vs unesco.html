@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tam Liste: Korunan Alanlar Bilgi Yarışması</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .quiz-container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 480px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eef2f5;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #3498db;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .question-box {
+            background-color: #f8fafd;
+            border-radius: 12px;
+            padding: 24px 16px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            line-height: 1.4;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background-color: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #4a5568;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            width: 100%;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.correct {
+            background-color: #2ecc71;
+            border-color: #2ecc71;
+            color: #ffffff;
+        }
+
+        .option-btn.incorrect {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+            color: #ffffff;
+        }
+
+        .option-btn.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .option-btn.disabled.correct, .option-btn.disabled.incorrect {
+            opacity: 1;
+        }
+
+        .next-btn {
+            background-color: #2c3e50;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+            display: none;
+        }
+
+        .next-btn:hover {
+            background-color: #1a252f;
+        }
+
+        .result-screen {
+            text-align: center;
+            display: none;
+            padding: 10px 0;
+        }
+
+        .result-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .score-text {
+            font-size: 48px;
+            font-weight: 800;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .feedback-text {
+            font-size: 15px;
+            color: #7f8c8d;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .restart-btn {
+            background-color: #3498db;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#cografya" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <div class="quiz-container">
+        <div id="quiz-screen">
+            <div class="header">
+                <div class="title">Korunan Alanlar - Tam Liste Testi</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress"></div>
+                </div>
+                <div class="stats">
+                    <span id="question-number">Soru: 1/70</span>
+                    <span id="score-counter">Doğru: 0</span>
+                </div>
+            </div>
+
+            <div class="question-box">
+                <div class="question-text" id="question">Yükleniyor...</div>
+            </div>
+
+            <div class="options-container" id="options">
+                <button class="option-btn" onclick="checkAnswer(0)">Unesco mirası</button>
+                <button class="option-btn" onclick="checkAnswer(1)">Milli Park</button>
+                <button class="option-btn" onclick="checkAnswer(2)">İkisi de</button>
+            </div>
+
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">Sonraki Soru</button>
+        </div>
+
+        <div id="result-screen" class="result-screen">
+            <div class="result-title">Maraton Tamamlandı!</div>
+            <div class="score-text" id="final-score">0/0</div>
+            <div class="feedback-text" id="feedback">Analiz hazırlanıyor...</div>
+            <button class="restart-btn" onclick="restartQuiz()">Yeniden Başlat (Karışık)</button>
+        </div>
+    </div>
+
+    <script>
+        // Python'dan aktarılan dev veri seti
+        const quizData = [{"name": "Adana - Yumurtalık Lagünü", "answer": 1}, {"name": "Adana / Kayseri / Niğde - Aladağlar", "answer": 1}, {"name": "Adıyaman / Malatya - Nemrut Dağı", "answer": 2}, {"name": "Afyonkarahisar / Denizli - Akdağ", "answer": 1}, {"name": "Afyonkarahisar / Kütahya / Uşak - Başkomutan Tarihî", "answer": 1}, {"name": "Ağrı / Iğdır - Ağrı Dağı", "answer": 1}, {"name": "Ankara - Sakarya Meydan Muharebesi Tarihî", "answer": 1}, {"name": "Ankara - Sarıçalı Dağı", "answer": 1}, {"name": "Ankara - Soğuksu", "answer": 1}, {"name": "Ankara / Çankırı / Kastamonu - İstiklâl Yolu Tarihî", "answer": 1}, {"name": "Antalya - Altınbeşik Mağarası", "answer": 1}, {"name": "Antalya - Beydağları Sahil", "answer": 1}, {"name": "Antalya - Güllük Dağı (Termessos)", "answer": 1}, {"name": "Antalya - Köprülü Kanyon", "answer": 1}, {"name": "Antalya / Muğla - Saklıkent", "answer": 1}, {"name": "Artvin - Hatila Vadisi", "answer": 1}, {"name": "Artvin - Karagöl-Sahara", "answer": 1}, {"name": "Artvin / Erzurum / Rize - Kaçkar Dağları", "answer": 1}, {"name": "Aydın - Dilek Yarımadası ve Büyük Menderes Deltası", "answer": 1}, {"name": "Balıkesir - Kazdağı", "answer": 1}, {"name": "Balıkesir - Kuşcenneti", "answer": 1}, {"name": "Bartın / Kastamonu - Küre Dağları", "answer": 1}, {"name": "Bayburt / Erzurum - Kop Dağı Müdafaası Tarihî", "answer": 1}, {"name": "Bolu - Abant Gölü", "answer": 1}, {"name": "Bolu - Yedigöller", "answer": 1}, {"name": "Bursa - Uludağ", "answer": 1}, {"name": "Çanakkale - Troya (Truva)", "answer": 2}, {"name": "Çankırı / Kastamonu - Ilgaz Dağı", "answer": 1}, {"name": "Çorum - Hattuşa (Boğazköy-Alacahöyük)", "answer": 2}, {"name": "Denizli - Honaz Dağı", "answer": 1}, {"name": "Edirne - Gala Gölü", "answer": 1}, {"name": "Erzurum - Nene Hatun Tarihî", "answer": 1}, {"name": "Erzurum / Kars - Sarıkamış-Allahuekber Dağları", "answer": 1}, {"name": "Hakkâri - Cilo ve Sat Dağları", "answer": 1}, {"name": "Isparta - Kızıldağ", "answer": 1}, {"name": "Isparta - Kovada Gölü", "answer": 1}, {"name": "İzmir / Manisa - Spil Dağı", "answer": 1}, {"name": "Kahramanmaraş - Geben Vadisi", "answer": 1}, {"name": "Kayseri - Sultansazlığı", "answer": 1}, {"name": "Kırklareli - İğneada Longoz Ormanları", "answer": 1}, {"name": "Konya - Beyşehir Gölü", "answer": 1}, {"name": "Konya - Derebucak Çamlık Mağaraları", "answer": 1}, {"name": "Muğla - Marmaris", "answer": 1}, {"name": "Muş - Malazgirt Meydan Muharebesi Tarihî", "answer": 1}, {"name": "Osmaniye - Karatepe-Aslantaş", "answer": 1}, {"name": "Siirt - Botan Vadisi", "answer": 1}, {"name": "Sivas - Divriği", "answer": 1}, {"name": "Şanlıurfa - Tek Tek Dağları", "answer": 1}, {"name": "Trabzon - Altındere Vadisi", "answer": 1}, {"name": "Tunceli - Munzur Vadisi", "answer": 1}, {"name": "Yozgat - Yozgat Çamlığı", "answer": 1}, {"name": "Ankara - Gordion Antik Kenti", "answer": 0}, {"name": "Ankara - Modern Cumhuriyet Başkentinin Planlanması ve İnşası", "answer": 0}, {"name": "Antalya / Muğla - Xanthos - Letoon", "answer": 0}, {"name": "Aydın - Afrodisias (Aphrodisias)", "answer": 0}, {"name": "Bursa - Cumalıkızık ve Bursa (Osmanlı İmparatorluğu'nun Doğuşu)", "answer": 0}, {"name": "Denizli - Hierapolis ve Pamukkale", "answer": 0}, {"name": "Diyarbakır - Diyarbakır Kalesi ve Hevsel Bahçeleri Kültürel Peyzajı", "answer": 0}, {"name": "Edirne - Selimiye Camii ve Külliyesi", "answer": 0}, {"name": "İstanbul - İstanbul'un Tarihi Alanları", "answer": 0}, {"name": "İzmir - Bergama Çok Katmanlı Kültürel Peyzaj Alanı", "answer": 0}, {"name": "İzmir - Efes", "answer": 0}, {"name": "Karabük - Safranbolu Şehri", "answer": 0}, {"name": "Kars - Ani Arkeolojik Alanı", "answer": 0}, {"name": "Konya - Çatalhöyük Neolitik Kenti", "answer": 0}, {"name": "Malatya - Arslantepe Höyüğü", "answer": 0}, {"name": "Manisa - Sardes Antik Kenti ve Bin Tepe Lidya Tümülüsleri", "answer": 0}, {"name": "Nevşehir - Göreme ve Kapadokya", "answer": 0}, {"name": "Sivas - Divriği Ulu Camii ve Darüşşifası", "answer": 0}, {"name": "Şanlıurfa - Göbeklitepe", "answer": 0}, {"name": "Çeşitli İller (Ankara, Afyonkarahisar...) - Anadolu'nun Orta Çağ Dönemi Ahşap Hipostil Camileri", "answer": 0}];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function initQuiz() {
+            shuffleArray(quizData);
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = false;
+            document.getElementById("quiz-screen").style.display = "block";
+            document.getElementById("result-screen").style.display = "none";
+            showQuestion();
+        }
+
+        function showQuestion() {
+            answered = false;
+            const currentQuestion = quizData[currentQuestionIndex];
+            
+            document.getElementById("question").innerText = currentQuestion.name;
+            document.getElementById("question-number").innerText = `Soru: ${currentQuestionIndex + 1}/${quizData.length}`;
+            document.getElementById("score-counter").innerText = `Doğru: ${score}`;
+            
+            const progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+            document.getElementById("progress").style.width = `${progressPercent}%`;
+
+            const buttons = document.querySelectorAll(".option-btn");
+            buttons.forEach(btn => {
+                btn.className = "option-btn";
+            });
+            
+            document.getElementById("next-btn").style.display = "none";
+        }
+
+        function checkAnswer(selectedIndex) {
+            if (answered) return;
+            answered = true;
+
+            const currentQuestion = quizData[currentQuestionIndex];
+            const correctAnswerIndex = currentQuestion.answer;
+            const buttons = document.querySelectorAll(".option-btn");
+
+            if (selectedIndex === correctAnswerIndex) {
+                buttons[selectedIndex].classList.add("correct");
+                score++;
+                document.getElementById("score-counter").innerText = `Doğru: ${score}`;
+            } else {
+                buttons[selectedIndex].classList.add("incorrect");
+                buttons[correctAnswerIndex].classList.add("correct");
+            }
+
+            buttons.forEach(btn => btn.classList.add("disabled"));
+            document.getElementById("next-btn").style.display = "block";
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById("progress").style.width = "100%";
+            document.getElementById("quiz-screen").style.display = "none";
+            document.getElementById("result-screen").style.display = "block";
+            
+            document.getElementById("final-score").innerText = `${score} / ${quizData.length}`;
+            
+            let feedback = "";
+            const ratio = score / quizData.length;
+            if (ratio >= 0.9) {
+                feedback = "İnanılmaz! AGS tarih/coğrafya netlerin uçuşa geçecek. Bu konuyu yemiş yutmuşsun.";
+            } else if (ratio >= 0.7) {
+                feedback = "Harika iş çıkardın. Büyük çoğunluğunu ezberlemişsin, birkaç küçük tekrarla fulleyebilirsin.";
+            } else if (ratio >= 0.4) {
+                feedback = "Ortalama bir sonuç. Milli Parklar ile UNESCO listesi birbirine biraz karışmış gibi görünüyor.";
+            } else {
+                feedback = "Biraz daha çalışmaya ihtiyaç var. Bu testi günde 1 kez çözerek aktif hatırlama (active recall) yapabilirsin.";
+            }
+            document.getElementById("feedback").innerText = feedback;
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>

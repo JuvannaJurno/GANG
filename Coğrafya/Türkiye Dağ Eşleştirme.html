@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türkiye Dağları Eşleştirme Uygulaması</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                grid-template-columns: 1.2fr 1fr;
+                align-items: start;
+            }
+        }
+
+        header {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 10px 0;
+            margin-bottom: 10px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            color: #64748b;
+        }
+
+        /* Harita Bölümü */
+        .map-section {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            position: sticky;
+            top: 20px;
+        }
+
+        .map-container {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .map-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+
+        /* Dağ Listesi Bölümü */
+        .list-section {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+
+        .list-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .reset-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #dc2626;
+        }
+
+        .mountain-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        @media (min-width: 480px) {
+            .mountain-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .mountain-row {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 8px 12px;
+            transition: all 0.2s;
+        }
+
+        .mountain-number {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #475569;
+            width: 32px;
+            height: 32px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .mountain-slot {
+            flex-grow: 1;
+            background: #ffffff;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 8px 12px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: #94a3b8;
+            font-weight: 500;
+            user-select: none;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .mountain-slot:hover {
+            border-color: #3b82f6;
+            background-color: #f0fdf4;
+        }
+
+        .mountain-slot.filled {
+            border-style: solid;
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .mountain-slot.correct {
+            border-color: #22c55e;
+            background-color: #f0fdf4;
+            color: #15803d;
+        }
+
+        .mountain-slot.incorrect {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+            color: #b91c1c;
+        }
+
+        /* Alt Çekmece (Drawer) */
+        .backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 999;
+        }
+
+        .backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .drawer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #ffffff;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            padding: 24px;
+            box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.1), 0 -8px 10px -6px rgba(0, 0, 0, 0.1);
+            max-height: 70vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .drawer.active {
+            transform: translateY(0);
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+
+        .drawer-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .drawer-close {
+            background: #f1f5f9;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #64748b;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            overflow-y: auto;
+            padding-bottom: 10px;
+        }
+
+        @media (min-width: 576px) {
+            .options-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .option-btn {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-btn:hover {
+            background: #e0f2fe;
+            border-color: #0284c7;
+            color: #0369a1;
+            transform: translateY(-1px);
+        }
+
+        .option-marker {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            margin-right: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .option-btn:hover .option-marker {
+            background: #0284c7;
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#cografya" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <div class="container">
+        <header>
+            <h1>Türkiye Dağları Eşleştirme Uygulaması</h1>
+            <p>Haritadaki sayılara bakarak aşağıdaki listeden boşlukları doğru dağ isimleriyle doldurun.</p>
+        </header>
+
+        <!-- Sol Panel: Görsel / Harita -->
+        <div class="map-section">
+            <div class="map-container" id="mapContainer">
+                <img src="https://i.ibb.co/YFNYYFCr/Ekran-Resmi-2026-05-27-20-51-09.png" alt="Türkiye Dağlar Haritası" class="map-img">
+            </div>
+        </div>
+
+        <!-- Sağ Panel: Sayı Listesi ve Boşluklar -->
+        <div class="list-section">
+            <div class="list-header">
+                <span class="list-title">Dağ İsimlerini Yerleştirin</span>
+                <button class="reset-btn" onclick="resetAll()">Tümünü Temizle</button>
+            </div>
+            
+            <div class="mountain-grid" id="mountainGrid">
+                <!-- JavaScript dinamik olarak dolduracak -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Alt Çekmece Bileşeni (Drawer) -->
+    <div class="backdrop" id="backdrop" onclick="closeDrawer()"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <span class="drawer-title" id="drawerTitle">Sayı için Dağ Seçin</span>
+            <button class="drawer-close" onclick="closeDrawer()">&times;</button>
+        </div>
+        <div class="options-container" id="optionsContainer">
+            <!-- Seçenek butonları dinamik yüklenecek -->
+        </div>
+    </div>
+
+    <script>
+        // Kullanıcının sağladığı veriler doğrultusunda dağ listesi ve doğru eşleşmeler
+        const mountainsData = [
+            { id: 1, name: "Yıldız" },
+            { id: 2, name: "Samanlı" },
+            { id: 3, name: "Bolu" },
+            { id: 4, name: "Küre" },
+            { id: 5, name: "Ilgaz" },
+            { id: 6, name: "Köroğlu" },
+            { id: 7, name: "Sündiken" },
+            { id: 8, name: "Canik" },
+            { id: 9, name: "Giresun" },
+            { id: 10, name: "Kaçkar" },
+            { id: 11, name: "Yalnızçam" },
+            { id: 12, name: "Allahuekber" },
+            { id: 14, name: "Mescid" },
+            { id: 15, name: "Palandöken" },
+            { id: 16, name: "Mercan" },
+            { id: 17, name: "Bey" },
+            { id: 18, name: "Dedegöl" },
+            { id: 19, name: "Sultan" },
+            { id: 20, name: "Geyik" },
+            { id: 21, name: "Bolkar" },
+            { id: 22, name: "Aladağ" },
+            { id: 23, name: "Tahtalı" },
+            { id: 24, name: "Tecer" },
+            { id: 25, name: "Güneydoğu Toroslar" }
+        ];
+
+        const allMountainNames = mountainsData.map(m => m.name);
+        let userAnswers = {};
+        let activeSlotId = null;
+
+        // Sayfa yüklendiğinde grid elemanlarını oluştur
+        function initGrid() {
+            const grid = document.getElementById('mountainGrid');
+            grid.innerHTML = '';
+            
+            mountainsData.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'mountain-row';
+                
+                row.innerHTML = `
+                    <div class="mountain-number">${item.id}</div>
+                    <div class="mountain-slot" id="slot-${item.id}" onclick="openMountainDrawer(${item.id})">
+                        <span>Dağ Seçin...</span>
+                        <span class="status-icon">▼</span>
+                    </div>
+                `;
+                grid.appendChild(row);
+            });
+        }
+
+        // Çekmeceyi aç ve 4 adet seçenek üret (1 doğru, 3 rastgele çeldirici)
+        function openMountainDrawer(id) {
+            activeSlotId = id;
+            const currentItem = mountainsData.find(m => m.id === id);
+            const correctAnswer = currentItem.name;
+            
+            document.getElementById('drawerTitle').innerText = `${id} Numaralı Alan İçin Dağ Seçin`;
+            
+            const distractors = allMountainNames.filter(name => name !== correctAnswer);
+            const shuffledDistractors = distractors.sort(() => 0.5 - Math.random());
+            const selectedDistractors = shuffledDistractors.slice(0, 3);
+            
+            const finalOptions = [correctAnswer, ...selectedDistractors].sort(() => 0.5 - Math.random());
+            
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+            
+            const markers = ['A', 'B', 'C', 'D'];
+            finalOptions.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.onclick = () => selectOption(option);
+                btn.innerHTML = `
+                    <span class="option-marker">${markers[index]}</span>
+                    <span>${option}</span>
+                `;
+                container.appendChild(btn);
+            });
+            
+            document.getElementById('backdrop').classList.add('active');
+            document.getElementById('drawer').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDrawer() {
+            document.getElementById('backdrop').classList.remove('active');
+            document.getElementById('drawer').classList.remove('active');
+            document.body.style.overflow = '';
+            activeSlotId = null;
+        }
+
+        function selectOption(selectedName) {
+            if (!activeSlotId) return;
+            
+            const currentItem = mountainsData.find(m => m.id === activeSlotId);
+            const slot = document.getElementById(`slot-${activeSlotId}`);
+            
+            userAnswers[activeSlotId] = selectedName;
+            slot.querySelector('span').innerText = selectedName;
+            slot.classList.add('filled');
+            
+            if (selectedName === currentItem.name) {
+                slot.className = 'mountain-slot filled correct';
+                slot.querySelector('.status-icon').innerText = '✓';
+            } else {
+                slot.className = 'mountain-slot filled incorrect';
+                slot.querySelector('.status-icon').innerText = '✗';
+            }
+            
+            closeDrawer();
+        }
+
+        function resetAll() {
+            userAnswers = {};
+            initGrid();
+        }
+
+        window.onload = initGrid;
+    </script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gelişim Psikolojisi ÖSYM Analizleri</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f4f6f9; 
+            color: #333; 
+            margin: 0; 
+            padding: 40px 20px; 
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .header h1 {
+            color: #1a252f;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        .category {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 30px;
+            border-top: 6px solid #ccc;
+        }
+        .category h2 {
+            margin-top: 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #edf2f7;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .note-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(48%, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+        .note {
+            background: #fcfcfc;
+            border-left: 5px solid #ccc;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+        .note:hover {
+            transform: translateY(-2px);
+        }
+        .note-title {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.15em;
+        }
+        .note p {
+            margin: 0;
+            font-size: 0.95em;
+            color: #4a5568;
+            white-space: pre-wrap;
+        }
+        
+        /* Category Colors */
+        .cat-bilissel { border-top-color: #9b59b6; }
+        .cat-bilissel h2 { color: #8e44ad; }
+        .cat-bilissel .note { border-left-color: #9b59b6; background: #faf5fd; }
+        .cat-bilissel .note-title { color: #8e44ad; }
+
+        .cat-dil { border-top-color: #e67e22; }
+        .cat-dil h2 { color: #d35400; }
+        .cat-dil .note { border-left-color: #e67e22; background: #fdf6f0; }
+        .cat-dil .note-title { color: #d35400; }
+        
+        .cat-savunma { border-top-color: #e74c3c; }
+        .cat-savunma h2 { color: #c0392b; }
+        .cat-savunma .note { border-left-color: #e74c3c; background: #fdf4f3; }
+        .cat-savunma .note-title { color: #c0392b; }
+
+        .cat-kisilik { border-top-color: #2ecc71; }
+        .cat-kisilik h2 { color: #27ae60; }
+        .cat-kisilik .note { border-left-color: #2ecc71; background: #f2fbf5; }
+        .cat-kisilik .note-title { color: #27ae60; }
+
+        .cat-ahlak { border-top-color: #f1c40f; }
+        .cat-ahlak h2 { color: #f39c12; }
+        .cat-ahlak .note { border-left-color: #f1c40f; background: #fefbf0; }
+        .cat-ahlak .note-title { color: #f39c12; }
+
+        .cat-baglanma { border-top-color: #1abc9c; }
+        .cat-baglanma h2 { color: #16a085; }
+        .cat-baglanma .note { border-left-color: #1abc9c; background: #f0fbf9; }
+        .cat-baglanma .note-title { color: #16a085; }
+
+        .cat-fiziksel { border-top-color: #34495e; }
+        .cat-fiziksel h2 { color: #2c3e50; }
+        .cat-fiziksel .note { border-left-color: #34495e; background: #f4f6f7; }
+        .cat-fiziksel .note-title { color: #2c3e50; }
+        
+        @media (max-width: 768px) {
+            .note-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+    <div class="header">
+        <h1>Gelişim Psikolojisi ÖSYM Analizleri</h1>
+        <p>Benzer konulara ve etiketlere göre kategorize edilmiş detaylı not arşivi.</p>
+    </div>
+
+    <div class="container">
+        
+        <!-- Bilişsel Gelişim -->
+        <div class="category cat-bilissel">
+            <h2>🧠 Bilişsel Gelişim</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Hipotetik Düşünme</span>
+                    <p>Bir probleme zihinsel olarak çözüm üretmek, hipotetik düşünme becerisiyle doğrudan ilişkilidir; yani gerçekte henüz gerçekleşmemiş olasılıkları zihinde kurgulayıp analiz etme yeteneğidir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Döngüsel Tepkiler (Piaget)</span>
+                    <p>Birincil döngüsel tepkiler (1-4 ay), bebeğin odağının tamamen kendi bedeni olduğu ve tesadüfen bulduğu hoş bedensel hareketleri (parmak emme gibi) tekrarlamasıdır; ikincil döngüsel tepkiler (4-8 ay) ise odağın dış dünyaya kaydığı ve çevredeki nesnelerle tesadüfen yaratılan ilginç sonuçların tekrarlanmasıdır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Düzenleme / Akomodasyon</span>
+                    <p>Çocuğun ilk kez karşılaştığı tünel kaydırakta mevcut şemalarının yetersiz kalması üzerine, diğerlerini izleyerek şemasını bu yeni duruma göre değiştirip uyarlaması düzenleme (akomodasyon) sürecidir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Bakış Açısı Alma ve Toplumsal Referans</span>
+                    <p>Bakış açısı alma (göreceli düşünme ve perspektif alma); basit düzeyde somut işlemler döneminde başlar, tam anlamıyla ise soyut işlemler döneminde gelişir. Ayna tepkiler basit taklit ile ilişkiliyken; karşındakinin duygularını okuyarak kendi tepkisini ayarlama süreci toplumsal referans olarak adlandırılır ve bu durum tepkisel koşullanma değil, bilişsel bir öğrenmedir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Perspektif Alma (Empati)</span>
+                    <p>Bir kişinin başkalarının bakış açılarını kavraması, onların duygusal durumlarını doğru bir şekilde okuyabilmesi ve hislerini anlayabilmesi; bireyin perspektif alma (empati kurma) becerisine sahip olduğunu gösterir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Dönüşümsel Düşünme</span>
+                    <p>Dönüşümsel düşünme; geçmişte edinilen anı ve bilgilerin zihinde detaylı bir şekilde kodlanarak geriye dönük hatırlanabilmesi becerisidir ve somut işlemler döneminde kazanılır.</p>
+                </div>
+                <div class="note" style="grid-column: 1 / -1;">
+                    <span class="note-title">Piaget'nin Duyusal-Motor Alt Evreleri</span>
+                    <p>• Refleksler Dönemi (0-1 ay): Yeni doğan bebek, yaşamını sürdürmesini sağlayan doğuştan getirdiği reflekslere (emme, yakalama vb.) sahiptir.
+• Birinci Döngüsel Tepkiler (1-4 ay): Bebek, kendi bedenini merkeze alan ve hoşuna giden hareketleri (örneğin parmak emme) tesadüfen keşfedip tekrar eder.
+• İkinci Döngüsel Tepkiler (4-8 ay): Bebek, bedeni dışındaki nesnelere odaklanır; bir çıngırağı sallayıp çıkan sesten keyif alması gibi, dış dünyadaki nesneleri etkileyen hareketleri tekrarlar.
+• İkinci Şemaların Koordinasyonu (8-12 ay): Bebek, daha önceden öğrendiği şemaları birleştirerek amaçlı davranışlar sergiler ve basit problemleri çözmek için farklı hareketleri koordine eder.
+• Üçüncü Döngüsel Tepkiler (12-18 ay): "Deneme-yanılma" evresidir; bebek nesnelerle farklı yöntemler deneyerek yeni sonuçlar elde etmeye ve problem çözmeye odaklanır.
+• Sembolik Problem Çözme (18-24 ay): Bebek artık fiziksel denemeler yapmadan, nesneleri veya durumları zihninde sembollerle temsil edebilir ve problemleri zihinsel olarak çözmeye başlar.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Özel Konuşma (Vygotsky)</span>
+                    <p>Vygotsky'ye göre kendi kendine konuşma (özel konuşma), çocuğun düşünce süreçlerinin ve bilişsel gelişiminin ayrılmaz bir parçasıdır; çocuk bu konuşmayı karmaşık görevleri planlamak, yönlendirmek ve zorlandığı durumlarda kendi kendini düzenleyerek bilişsel süreçlerine destek olmak amacıyla bir araç olarak kullanır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Sosyal Öğrenme (Vygotsky)</span>
+                    <p>Vygotsky'ye göre öğrenme sosyal bir süreçtir; bireysel öğrenmeden ziyade iş birliğine dayalı öğrenme daha etkindir. Çocuk; yetişkinlerin ve özellikle akran kılavuzluğu yönteminin desteğiyle, sosyal çevresinden aldığı yardımı içselleştirerek bilişsel gelişimini çok daha güçlü bir şekilde ilerletir.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dil Gelişimi -->
+        <div class="category cat-dil">
+            <h2>🗣️ Dil Gelişimi</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Evrensel Dilbilgisi (Noam Chomsky)</span>
+                    <p>Noam Chomsky'nin görüşüne göre, çocuk dil edinimini çevresindeki sesleri basit bir taklit süreciyle değil; beynine doğuştan kodlanmış olan "Evrensel Dilbilgisi" (Universal Grammar) sayesinde, maruz kaldığı dilin kurallarını içselleştirerek ve bu kuralları yaratıcı bir şekilde kullanarak gerçekleştirir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Üretici Dil Bilgisi Kuramı</span>
+                    <p>Psikolinguistik kuram (özellikle Noam Chomsky'nin temsil ettiği yaklaşım), dilin yapısal kurallarının ve cümle kurma becerisinin doğuştan geldiğini ve zihnin bu kuralları kullanarak sınırsız sayıda özgün cümle üretme kapasitesine sahip olduğunu savunduğu için üretici (transformasyonel) dil bilgisi kuramı olarak da adlandırılır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Doğuştanımcı (Nativist) Yaklaşım</span>
+                    <p>Psikolinguistik kurama göre dil gelişimi büyük oranda biyolojik ve kalıtsal bir süreçtir; bu nedenle çevre (anne-baba etkileşimi, uyaranlar vb.) dilin edinilmesinde temel belirleyici değil, sadece dilin ortaya çıkmasını destekleyen ikinci planda bir faktördür.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Tümce Söz (Morgem)</span>
+                    <p>Çocuğun tek bir kelimeyi aynı anda jest ve mimiklerle destekleyerek bütün bir cümlenin anlamını ifade edecek şekilde kullanmasına tümce söz (morgem) denir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Kritik Dönem ve Morgem</span>
+                    <p>Dil gelişiminde çocuğun ilk anlamlı konuşmaya başladığı tek sözcük (morgem) dönemi, dil kazanımının temellerinin atıldığı en önemli ve kritik dönem olarak kabul edilir.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Savunma Mekanizmaları -->
+        <div class="category cat-savunma">
+            <h2>🛡️ Savunma Mekanizmaları</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Yansıtma</span>
+                    <p>Yansıtma savunma mekanizması; sadece kendi dürtülerini başkasına atfetmek değil, aynı zamanda suçu başkasına yükleyerek ve suça ortaklar yaratarak kişinin kendi vicdanını rahatlatma ve davranışını normalleştirme çabasıdır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Yerdeğiştirme</span>
+                    <p>Yerdeğiştirme savunma mekanizması; kişinin bir nesneye veya kişiye karşı duyduğu yoğun duyguları, asıl hedef yerine ona benzeyen ya da çağrışım yapan başka bir hedefe yönlendirmesidir; ölen babaya duyulan sevginin, ona benzeyen birine aktarılması da bu mekanizmanın bir örneğidir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Yansıtma vs. Yerdeğiştirme Ayrımı</span>
+                    <p>Duygularınızın kaynağı olan kişiye tepki veriyorsanız bu yansıtma, duygunun asıl muhatabı dışındaki benzer bir kişiye tepki veriyorsanız bu yer değiştirme savunma mekanizmasıdır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Özdeşim</span>
+                    <p>Bir markanın veya ünlünün popülaritesini kendi kimliğinle bütünleştirerek bundan bir pay çıkarma çaban, özdeşim savunma mekanizmasının bir yansımasıdır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Ödünleme ve Yüceltme Farkı</span>
+                    <p>Ödünleme, bir alandaki eksikliğinizi başka bir başarıyla kapatmaya veya o eksikliği geliştirerek telafi etmeye çalışmaktır; yüceltme ise toplumun kabul etmediği dürtüleri, sosyal olarak onaylanan başarılı faaliyetlere dönüştürerek "kılıfına uydurma" sürecidir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Çarpıtma</span>
+                    <p>Çarpıtma, dış dünyadan gelen uyaranları veya bize söylenenleri kendi zihinsel ihtiyaçlarımıza göre yeniden şekillendirerek, gerçekliği kendimiz için daha katlanılabilir bir hale getirme sürecidir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Bedenselleştirme (Somatizasyon) vs. Organ Nevrozu</span>
+                    <p>Bedenselleştirme (somatizasyon), psikolojik kökenli ancak gerçek fiziksel belirtilerin (ağrı, yorgunluk vb.) yaşandığı bir durumdur; organ nevrozu ise bedensel bir hastalık olmaksızın, psikolojik çatışmaların organlarda işlevsel bozukluk veya rahatsızlık hissi olarak deneyimlenmesidir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Dış Denetimlilik</span>
+                    <p>Dış denetimlilik, bireyin hayatındaki sonuçları kendi çabası veya kararları yerine şans, kader, diğer insanlar ya da dış güçlere bağlama eğilimidir.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kişilik ve Psikososyal Gelişim -->
+        <div class="category cat-kisilik">
+            <h2>🧑‍🤝‍🧑 Kişilik ve Psikososyal Gelişim</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Cinsel Kimlik ve Fallik Dönem (Freud)</span>
+                    <p>Cinsel kimliğin oluşmaya başladığı ve çocuğun kendi cinsiyetinin farkına vardığı evre Genital dönem değil, Fallik dönemdir (3 - 6 yaş). Çocuk bu evrede Oidipus/Elektra karmaşasını çözerek hemcinsi olan ebeveyniyle özdeşim kurar ve cinsel kimliğini kazanır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Fallik vs. Latent (Gizil) Dönem</span>
+                    <p>Psikoseksüel kurama göre cinsiyet farkındalığı ve toplumsal cinsiyet rollerinin temeli fallik dönemde atılırken; hemcins ebeveynle olan çatışmaların çözülüp özdeşim kurularak bu rollerin daha da pekiştirildiği ve geliştirildiği evre latent (gizil) dönemdir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Fallik ve Genital Dönem Karşılaştırması</span>
+                    <p>Fallik dönem (3-6 yaş), cinsel kimliğin temellerinin atıldığı ve çocuğun kendi cinsiyetinin farkına vardığı evredir. Genital dönem ise ergenlikle başlayıp yetişkinlikte devam eden, erotik ve romantik ilginin toplumsal olarak uygun bir düzeye eriştiği olgun cinsellik evresidir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Freud ve Erikson'un 3-6 Yaş Karşılaştırması</span>
+                    <p>• Freud (Fallik Dönem): Bireyin içsel çatışmalarına, dürtüsel gelişimine, cinsel kimlik kazanımına ve hemcins ebeveynle özdeşim kurma sürecine odaklanır. Merkezde içsel keşif vardır.
+• Erikson (Girişimciliğe Karşı Suçluluk): Çocuğun çevresiyle etkileşimine, merakını gidermek için dış dünyaya yönelmesine, inisiyatif almasına odaklanır. Merkezde sosyal eylem vardır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Girişimciliğe Karşı Suçluluk (Erikson)</span>
+                    <p>Bu evrede çocuklar merak ve araştırma duygularını doyurma eğilimindedirler; bu davranışlar onların sosyalleşmesini ve yaratıcılığını destekler. Önceki evre olan özerkliğe karşı kuşku döneminde ise, çocukların ebeveynlerini model alarak sorumluluk alma çabasında oldukları görülür.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Başarıya Karşı Aşağılık (Erikson)</span>
+                    <p>Sağlıklı bir gelişim için; çocuklardan kendi düzeylerine uygun beklentilerde bulunmak, onları kesinlikle başkalarıyla kıyaslamamak, başarılarını takdir etmek ve kendilerini kanıtlayıp başarılı olabilecekleri uygun ortamlar yaratmak kritik öneme sahiptir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Üretkenliğe Karşı Durgunluk (Erikson)</span>
+                    <p>Bireyin sürekli kendi çocuklarına nasihat verme isteği duyduğu ve temel odak noktasının gelecek nesilleri yetiştirmek olduğu gelişim evresidir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Ego (Benlik) Bütünlüğü ve Umutsuzluk (Erikson)</span>
+                    <p>Ego bütünlüğü, ileri yetişkinlik (65+ yaş) krizidir; kişinin geçmişine bakıp "keşkeler" yerine "iyi ki yaşamışım" diyerek barışıklık sağlamasıdır. Eğer geçmişte verilen kararlarda pişmanlıklar odak noktası olursa bu durum umutsuzluğa yol açar.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Bireysel Psikoloji ve Kardeş Sırası (Adler)</span>
+                    <p>Adler’e göre; insan aşağılık duygusuyla doğar, üstünlük çabası güder. Gelişimde kardeş sırası önemlidir: En büyük çocuk "tacını yitirmiş kral"dır; ortanca çocuk rekabet ve mücadele halindedir; en küçük çocuk ise genellikle şımartılan ilgi merkezidir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Öz Kontrol / Öz Düzenleme (Bandura)</span>
+                    <p>Kişinin kendi davranışlarına yön verebilme ve onları denetleme becerisidir. Birey, eylemlerinin olası sonuçlarının farkına vardığında veya kendisine bu konuda somut deliller sunulduğunda, hareketlerini bu farkındalığa göre yeniden düzenler.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Kimlik Statüleri Kuramı (Marcia)</span>
+                    <p>Moratoryum statüsünde kimlik bunalımı ve arayış varken karara bağlama yoktur; dağınık kimlikte arayış da karara bağlama da bulunmadığı için kimlik karmaşası yaşanmaz; ipotekli kimlikte başkasının belirlediği kimliği isteyerek benimseme söz konusuyken, gölgelenmiş kimlikte başkası tarafından dayatılan kimliği zorla alma durumu vardır.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ahlak Gelişimi -->
+        <div class="category cat-ahlak">
+            <h2>⚖️ Ahlak Gelişimi</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Dışa Bağlı (Heteronom) Ahlak (Piaget)</span>
+                    <p>Dışa bağlı (heteronom) ahlaki gerçeklik döneminde çocuklar için kurallar otorite tarafından konulmuş, değiştirilemez ve kutsaldır; 0-6 yaş arasında ise benmerkezcilik nedeniyle kurallar henüz tam olarak içselleştirilemediğinden gerçek bir ahlaki dönemden bahsedilemez.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Motivasyon ve Ahlaki Değerlendirme (Piaget)</span>
+                    <p>Heteronom ahlak döneminde motivasyon, kurallara uymadaki temel amacı cezadan kaçınmak üzerine kurar. Ahlaki değerlendirme ise niyetten ziyade sonucun büyüklüğüne (nesnel sorumluluk) göre yapılır; zarar az ise o davranış "ahlaklı" kabul edilir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Sonuç Odaklı Adalet Anlayışı (Piaget)</span>
+                    <p>Bu ahlaki gelişim döneminde, adalet anlayışı salt sonuç odaklıdır; dolayısıyla her olumlu davranış mutlaka ödüllendirilmeli, her olumsuz davranış ise istisnasız cezalandırılmalıdır. Yanlış bir davranışa verilecek ceza doğrudan nedensel (fiziksel) sonuca göre şekillenir.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Dışa Bağımlı vs. Özerk Ahlak (Piaget)</span>
+                    <p>Dışa bağımlı ahlak, eylemin sadece ortaya çıkardığı fiziksel sonuca ve zararın büyüklüğüne odaklanırken; özerk ahlak, eylemin altındaki niyete ve kişinin içinde bulunduğu şartlara odaklanır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Saf Çıkarcılık Eğilimi (Kohlberg)</span>
+                    <p>Saf çıkarcılık evresinde bireyler kuralları kendi çıkarları doğrultusunda esnetebilir; yani kurallara tamamen karşılıklı bir "alışveriş" mantığıyla yaklaşırlar.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Piaget ve Kohlberg Karşılaştırması</span>
+                    <p>Piaget'nin dışa bağımlı (heteronom) ahlak dönemi, kuralların otorite tarafından belirlendiği ve değişmez kabul edildiği yönüyle; Kohlberg'in geleneksel düzeyin bir parçası olan kanun ve düzen (toplumsal düzeni koruma) eğilimi evresi ile benzerlik gösterir; her ikisinde de kurallara uyum ve otoriteye bağlılık ön plandadır.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Psikanalitik Ahlak Gelişimi (Freud)</span>
+                    <p>Psikanalitik kurama göre ahlak gelişimi; çocuğun kastrasyon anksiyetesi ve ebeveyn sevgisini yitirme korkusuyla hemcins ebeveyniyle özdeşim kurarak onun ahlaki standartlarını içselleştirmesi ve acı verici suçluluk duygusundan kaçınmak amacıyla bu kurallara uyması esasına dayanır.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bağlanma Kuramı -->
+        <div class="category cat-baglanma">
+            <h2>🔗 Bağlanma Kuramı</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Bağlanma Stilleri Çerçevesi</span>
+                    <p>Güvenli bağlanan bireyler hem kendilerini hem de başkalarını olumlu görürken; kayıtsız bağlananlar kendilerini aşırı olumlu, karşı tarafı olumsuz değerlendirir; korkulu bağlananlar yakın ilişkilerden kaçınır; saplantılı bağlananlar ise kendilerini değersiz, karşı tarafı ise değerli bulurlar.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Güvenli Üs ve Güvenli Bağlanma</span>
+                    <p>Güvenli bağlanma modelinde; bebek, anneyi çevreyi keşfederken kendisine dönüp güç alabileceği bir "güvenli üs" olarak kullanır. Anne geri döndüğünde stresi hızla yatışır ve sıcak iletişim kurar.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Çelişkili vs. Kaçınan Bağlanma</span>
+                    <p>Güvensiz çelişkili (kuşkulu/kararsız) bağlanan bebekler anne ortamda yokken aşırı huzursuzdur, anne döndüğünde ise ona hem sıkıca tutunup hem de öfkeyle hırçın davranır. Güvensiz kaçınan bebekler ise anne gittiğinde tepkisiz kalır veya ağlar, döndüğünde onu görmezden gelir.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fiziksel Gelişim -->
+        <div class="category cat-fiziksel">
+            <h2>🏃 Fiziksel Gelişim</h2>
+            <div class="note-grid">
+                <div class="note">
+                    <span class="note-title">Son Çocukluk (6-12 Yaş)</span>
+                    <p>Son çocukluk döneminde fiziksel gelişim, okul öncesi yıllara kıyasla çok daha yavaş ve istikrarlı bir seyir izler. Hem boy uzaması hem de kilo artış hızı yavaşlar; ancak kas kütlesi ve gücü kademeli olarak artmaya başlar.</p>
+                </div>
+                <div class="note">
+                    <span class="note-title">Puberte Dönemi</span>
+                    <p>Puberte döneminde fiziksel değişimler nedeniyle beden imajı büyük önem taşır; süreçte önce ikincil, ardından birincil cinsiyet özellikleri ortaya çıkar ve bu durum olgunlaşmaya bağlı olduğu için çevreden ziyade kalıtımın etkisi altındadır.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

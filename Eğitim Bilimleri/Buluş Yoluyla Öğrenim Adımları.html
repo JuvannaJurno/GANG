@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Buluş Yolu Stratejisi Sıralama</title>
+    <style>
+        :root {
+            --ogretmen-renk: #0984e3;
+            --ogretmen-bg: #e3f2fd;
+            --ogrenci-renk: #e17055;
+            --ogrenci-bg: #ffeaa7;
+            --dogru-renk: #00b894;
+            --yanlis-renk: #d63031;
+            --arkaplan: #f5f6fa;
+            --metin: #2d3436;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--arkaplan);
+            color: var(--metin);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            color: #2d3436;
+        }
+
+        .aciklama {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #636e72;
+            margin-bottom: 15px;
+            padding: 0 10px;
+        }
+
+        /* İlerleme Çubuğu */
+        .ilerleme-kapsayici {
+            width: 100%;
+            max-width: 600px;
+            height: 10px;
+            background-color: #dfe6e9;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .ilerleme-cubugu {
+            height: 100%;
+            width: 0%;
+            background-color: var(--dogru-renk);
+            transition: width 0.4s ease;
+        }
+
+        /* Soru Alanı */
+        .etkinlik-alani {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .adim-etiketi {
+            font-weight: 800;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #2d3436;
+        }
+
+        .ipucu-metni {
+            font-size: 1rem;
+            color: #636e72;
+            font-style: italic;
+        }
+
+        /* Seçenekler Izgarası */
+        .secenekler-izgarasi {
+            display: grid;
+            grid-template-columns: 1fr; 
+            gap: 10px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        @media (min-width: 480px) {
+            .secenekler-izgarasi {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .buton-secenek {
+            background-color: white;
+            border: 2px solid #b2bec3;
+            padding: 12px 8px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* Öğretmen ve Öğrenci Renk Kodlaması */
+        .rol-ogretmen {
+            color: var(--ogretmen-renk);
+            border-color: var(--ogretmen-renk);
+        }
+        .rol-ogretmen:hover { background-color: var(--ogretmen-bg); }
+
+        .rol-ogrenci {
+            color: var(--ogrenci-renk);
+            border-color: var(--ogrenci-renk);
+        }
+        .rol-ogrenci:hover { background-color: var(--ogrenci-bg); }
+
+        .buton-secenek:active {
+            transform: scale(0.96);
+        }
+
+        /* Efektler */
+        .hata-titreme {
+            animation: sarsilma 0.4s;
+            border-color: var(--yanlis-renk) !important;
+            background-color: #ff7675 !important;
+            color: white !important;
+        }
+
+        .dogru-efekt {
+            border-color: var(--dogru-renk) !important;
+            background-color: var(--dogru-renk) !important;
+            color: white !important;
+            transform: scale(1.05);
+        }
+
+        @keyframes sarsilma {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        /* Bitiş Ekranı */
+        .tebrik-ekrani {
+            display: none;
+            text-align: center;
+            background: #e8f8f5;
+            color: #16a085;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #a3e4d7;
+            width: 100%;
+            max-width: 600px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            box-sizing: border-box;
+        }
+
+        .yeniden-baslat {
+            margin-top: 15px;
+            background-color: var(--dogru-renk);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <h2>Buluş Yolu Stratejisi</h2>
+    <div class="aciklama">Sıradaki adımı bul! Unutma, süreç genellikle "Öğretmen" ile başlar ve "Öğrenci" ile devam eder.</div>
+
+    <div class="ilerleme-kapsayici">
+        <div class="ilerleme-cubugu" id="ilerleme"></div>
+    </div>
+
+    <div class="etkinlik-alani" id="soru-alani">
+        <div class="adim-etiketi" id="adim-basligi">1. Adım</div>
+        <div class="ipucu-metni" id="ipucu-icerigi">Bu aşamada kim, ne yapmalı? Aşağıdan seç.</div>
+    </div>
+
+    <div class="secenekler-izgarasi" id="secenekler"></div>
+
+    <div class="tebrik-ekrani" id="bitis-alani">
+        <strong>🎓 Tebrikler! Kuralı Keşfettin!</strong><br><br>
+        Buluş yoluyla öğretim stratejisinin 11 basamaklı zorlu pinpon maçını başarıyla tamamladın. Sınavda bu sıradan soru gelirse kaçırmayacağına eminim.<br>
+        <button class="yeniden-baslat" onclick="oyunuBaslat()">Tekrar Çöz</button>
+    </div>
+
+    <script>
+        // Basamaklar senin verdiğin liste üzerinden hazırlandı.
+        // rol: "ogretmen" veya "ogrenci" (Renk kodlaması için eklendi)
+        const basamaklar = [
+            { id: 1, metin: "Öğretmen örnek verir.", rol: "ogretmen" },
+            { id: 2, metin: "Öğrenci örneği tanımlar.", rol: "ogrenci" },
+            { id: 3, metin: "Öğretmen ek örnek verir.", rol: "ogretmen" },
+            { id: 4, metin: "Öğrenci örneği açıklar, ilk örnekle karşılaştırır.", rol: "ogrenci" },
+            { id: 5, metin: "Öğretmen alakalı ve alakasız örnekler verir.", rol: "ogretmen" },
+            { id: 6, metin: "Öğrenci örnekleri karşılaştırır, benzerlik/farklılık belirler.", rol: "ogrenci" },
+            { id: 7, metin: "Öğretmen öğrencilerin keşfetmelerini sağlar.", rol: "ogretmen" },
+            { id: 8, metin: "Öğrenci örnek olan/olmayan durumlar arası ilişki kurar.", rol: "ogrenci" },
+            { id: 9, metin: "Öğrenci bilgiye ulaşır ve tanımlamalar yapar.", rol: "ogrenci" },
+            { id: 10, metin: "Öğretmen daha fazla örnek ister.", rol: "ogretmen" },
+            { id: 11, metin: "Öğrenci ek örnek verir.", rol: "ogrenci" }
+        ];
+
+        let guncelSira = 0;
+
+        function oyunuBaslat() {
+            guncelSira = 0;
+            document.getElementById('bitis-alani').style.display = 'none';
+            document.getElementById('soru-alani').style.display = 'block';
+            document.getElementById('secenekler').style.display = 'grid';
+            ilerlemeyiGuncelle();
+            soruyuGetir();
+            butonlariOlustur();
+        }
+
+        function soruyuGetir() {
+            const baslik = document.getElementById('adim-basligi');
+            baslik.innerText = `${guncelSira + 1}. Adım`;
+        }
+
+        function butonlariOlustur() {
+            const seceneklerAlani = document.getElementById('secenekler');
+            seceneklerAlani.innerHTML = '';
+
+            // Seçenekleri karıştır
+            const karisikBasamaklar = [...basamaklar].sort(() => Math.random() - 0.5);
+
+            karisikBasamaklar.forEach(basamak => {
+                const btn = document.createElement('button');
+                btn.className = `buton-secenek rol-${basamak.rol}`;
+                
+                // Başına ikon ekleyelim (Öğretmen vs Öğrenci)
+                const ikon = basamak.rol === 'ogretmen' ? '👨‍🏫 ' : '🎓 ';
+                btn.innerText = ikon + basamak.metin;
+                
+                btn.onclick = function() {
+                    if (basamak.id === basamaklar[guncelSira].id) {
+                        // Doğru
+                        btn.classList.add('dogru-efekt');
+                        setTimeout(() => {
+                            btn.style.visibility = 'hidden'; 
+                            guncelSira++;
+                            ilerlemeyiGuncelle();
+                            
+                            if (guncelSira < basamaklar.length) {
+                                soruyuGetir();
+                            } else {
+                                oyunuBitir();
+                            }
+                        }, 350);
+                    } else {
+                        // Yanlış
+                        btn.classList.add('hata-titreme');
+                        setTimeout(() => {
+                            btn.classList.remove('hata-titreme');
+                        }, 400);
+                    }
+                };
+                seceneklerAlani.appendChild(btn);
+            });
+        }
+
+        function ilerlemeyiGuncelle() {
+            const yuzde = (guncelSira / basamaklar.length) * 100;
+            document.getElementById('ilerleme').style.width = yuzde + '%';
+        }
+
+        function oyunuBitir() {
+            document.getElementById('soru-alani').style.display = 'none';
+            document.getElementById('secenekler').style.display = 'none';
+            document.getElementById('bitis-alani').style.display = 'block';
+        }
+
+        window.onload = oyunuBaslat;
+    </script>
+</body>
+</html>

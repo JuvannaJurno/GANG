@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGS Coğrafya - Tarım, Maden ve Enerji Drill</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --text-light: #475569;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --error: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .section { margin-bottom: 1.5rem; }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .radio-label:hover { background: var(--bg); }
+        .radio-label input[type="radio"] { transform: scale(1.2); }
+
+        .category-block { margin-bottom: 1rem; background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid var(--border); }
+        
+        .parent-cb {
+            font-weight: bold;
+            font-size: 1.1rem;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+        }
+
+        .child-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .child-cb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            padding: 0.25rem 0;
+        }
+
+        input[type="checkbox"] {
+            transform: scale(1.2);
+            accent-color: var(--primary);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover { background-color: var(--primary-hover); }
+        
+        #next-btn {
+            background-color: var(--success);
+            margin-top: 1rem;
+            display: none;
+        }
+
+        /* Drill Area */
+        #drill-area { display: none; }
+        
+        .image-container {
+            width: 100%;
+            min-height: 250px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        /* Siyah Beyaz Sınıfı */
+        .grayscale {
+            filter: grayscale(100%);
+        }
+
+        .hint-box {
+            background: #eff6ff;
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #1e3a8a;
+            display: none;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .option-btn {
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--border);
+            font-weight: 500;
+            padding: 1rem 0.5rem;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .option-btn.correct {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .option-btn.wrong {
+            background: var(--error);
+            color: white;
+            border-color: var(--error);
+        }
+
+        .option-btn:disabled { cursor: not-allowed; }
+
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .back-btn {
+            background: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--border);
+            padding: 0.4rem 0.8rem;
+            width: auto;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Feedback Image Container */
+        .feedback-box {
+            display: none;
+            margin-top: 1.5rem;
+            text-align: center;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        .feedback-box p {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feedback-box img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .feedback-hint-text {
+            font-weight: normal;
+            color: #1e3a8a;
+            text-align: left;
+            line-height: 1.5;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .child-group { grid-template-columns: 1fr; }
+            .options-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#cografya" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <div class="container" id="setup-area">
+        <h1>AGS Coğrafya Drill</h1>
+        
+        <div class="section">
+            <h2>Test Modu Seç</h2>
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="mode" value="harita" checked>
+                    1. Haritada Dağılış Yerleri
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="mode" value="sehir">
+                    2. İpuçları (Şehir/Özellik) ile Bil
+                </label>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Görsel Tercihi</h2>
+            <div class="radio-group" style="flex-direction: row; gap: 1rem;">
+                <label class="radio-label" style="flex: 1;">
+                    <input type="radio" name="colorMode" value="bw" checked>
+                    Siyah Beyaz
+                </label>
+                <label class="radio-label" style="flex: 1;">
+                    <input type="radio" name="colorMode" value="color">
+                    Renkli
+                </label>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Ürün/Maden Seçimi</h2>
+            <div id="categories-container">
+                </div>
+        </div>
+
+        <button onclick="startDrill()">Teste Başla</button>
+    </div>
+
+    <div class="container" id="drill-area">
+        <div class="header-controls">
+            <button class="back-btn" onclick="endDrill()">← Geri Dön</button>
+            <span id="progress-counter">1 / 10</span>
+        </div>
+
+        <div class="image-container">
+            <img id="question-image" src="" alt="Soru Görseli">
+        </div>
+
+        <div id="hint-container" class="hint-box">
+            <strong>AGS İpucu:</strong> <span id="hint-text"></span>
+        </div>
+
+        <div class="options-grid" id="options-container">
+            </div>
+
+        <div id="feedback-container" class="feedback-box">
+            <p id="feedback-title">En Çok Yetişen/Çıkarılan Şehirler</p>
+            <img id="feedback-image" src="" alt="Geri Bildirim Haritası">
+            <div id="feedback-hint" class="feedback-hint-text"></div>
+        </div>
+
+        <button id="next-btn" onclick="nextQuestion()">Sıradaki Soru →</button>
+    </div>
+
+    <script>
+        const categoriesData = {
+            "Tahıl ve Bakliyat": [
+                "buğday", "arpa", "mısır", "nohut", "kırmızı mercimek", 
+                "yeşil mercimek", "kuru fasulye", "çeltik", "susam", "soya fasulyesi"
+            ],
+            "Meyve ve Sebze": [
+                "fındık", "kivi", "zeytin", "elma", "kayısı", "antep fıstığı", 
+                "incir", "üzüm", "muz", "yer fıstığı", "turunçgiller", "avokado", "patates"
+            ],
+            "Hayvancılık": [
+                "sığır", "koyun", "kümes", "arıcılık", "manda", "kıl_kecisi", "tiftik_kecisi", "ipek_bocegi"
+            ],
+            "Madenler": [
+                "altin", "asbest", "bakir", "barit", "boksit", "bor", "demir", "fosfat",
+                "krom", "kursun_cinko", "kukurt_manyezit", "mermer", "perlit", "pomza", "trona", "volfram", "zimpara"
+            ],
+            "Enerji Kaynakları": [
+                "asfaltit", "dogalgaz", "linyit", "petrol", "taskomuru", "uranyum_toryum"
+            ]
+        };
+
+        const cropsData = {
+            // Tahıl ve Bakliyat
+            "buğday": { name: "Buğday", map: "https://i.imgur.com/N69wMMA.png", city: "https://i.imgur.com/mn13fNL.png", hints: "Büyüme döneminde nem, olgunlaşma döneminde kuraklık ister. Karadeniz kıyılarında her mevsim yağışlı olduğu için, Erzurum-Kars'ta ise yazlar serin geçtiği için yetişmez. İç bölgelerde yaygındır." },
+            "arpa": { name: "Arpa", map: "https://i.imgur.com/Fx9MOjN.png", city: "https://i.imgur.com/1JYNZwt.png", hints: "Soğuğa ve sıcağa dayanıklılığı en yüksek olan tahıllardan biridir. Büyüme süresi kısadır, erken olgunlaşır. Yem sanayisinde ve içecek sektöründe sıkça kullanılır." },
+            "mısır": { name: "Mısır", map: "https://i.imgur.com/6FxkV4R.png", city: "https://i.imgur.com/f7OkPaZ.png", hints: "Yaz yağışı isteyen bir bitki olduğu için doğal yetişme alanı Karadeniz'dir. Ancak günümüzde sulama imkanlarının artmasıyla en çok Akdeniz (Çukurova) ve İç Anadolu (Konya) bölgelerinde ticari olarak yetiştirilir." },
+            "nohut": { name: "Nohut", map: "https://i.imgur.com/TL0qK3G.png", city: "https://i.imgur.com/R7Ybjlu.png", hints: "Kuraklığa en dayanıklı baklagildir. Türkiye'de en çok üretilen baklagil türüdür. Yarı kurak iklim şartlarına tam uyum sağlar. İç Anadolu ve İç Ege'de üretimi yoğundur." },
+            "kırmızı mercimek": { name: "Kırmızı Mercimek", map: "https://i.imgur.com/IVBWFld.png", city: "https://i.imgur.com/YKKrE8H.png", hints: "Sıcaklığa ve kuraklığa karşı son derece dayanıklıdır. Bu nedenle en çok Güneydoğu Anadolu Bölgesi'nde (özellikle Şanlıurfa ve Diyarbakır çevresinde) yetiştirilir." },
+            "yeşil mercimek": { name: "Yeşil Mercimek", map: "https://i.imgur.com/27RBA9V.png", city: "https://i.imgur.com/tIYEdly.png", hints: "Yaz kuraklığına dayanıklıdır ancak kırmızı olana göre biraz daha serin şartlar ister. En çok İç Anadolu Bölgesi'nde (özellikle Yozgat) üretilir." },
+            "kuru fasulye": { name: "Kuru Fasulye", map: "https://i.imgur.com/GoGwymi.png", city: "https://i.imgur.com/dqc01Kr.png", hints: "Yazın büyüme döneminde sulama ister. Yüksek sıcaklıklardan zarar görebilir. Uygun sulama şartlarında hemen her bölgemizde yetişebilir, İç Anadolu öne çıkar." },
+            "çeltik": { name: "Çeltik (Pirinç)", map: "https://i.imgur.com/6akR8Qy.png", city: "https://i.imgur.com/4mEYret.png", hints: "Su içinde (bataklık) yetişen bir üründür. Sıtma hastalığı taşıyan sivrisineklerin üremesine yol açtığı için yerleşim yerleri uzağında, devlet kontrolünde üretilir. En çok Marmara'da (Ergene Havzası/Edirne) akarsu boylarında yetiştirilir." },
+            "susam": { name: "Susam", map: "https://i.imgur.com/ikn7VWU.png", city: "https://i.imgur.com/j0HNDEs.png", hints: "Sıcaklık isteği çok yüksek bir üründür. Ağırlıklı olarak Akdeniz iklim bölgesinde (Ege, Akdeniz, Güneydoğu) yaz aylarında yetiştirilir." },
+            "soya fasulyesi": { name: "Soya Fasulyesi", map: "https://i.imgur.com/gGqnkgt.png", city: "https://i.imgur.com/PZHECrr.png", hints: "Besin değeri yüksek, aynı zamanda sanayi (yağ) bitkisidir. Doğal olarak Karadeniz'de yetişebilse de ticari olarak en çok Akdeniz'de (Çukurova) sulama ile ikinci ürün olarak yetiştirilir." },
+            
+            // Meyve ve Sebze
+            "fındık": { name: "Fındık", map: "https://i.imgur.com/Q86hEEd.png", city: "https://i.imgur.com/CHEDkpf.png", hints: "Karadeniz ikliminin karakteristik ürünüdür. Her mevsim yağış ister. Don olaylarına karşı hassastır." },
+            "kivi": { name: "Kivi", map: "https://i.imgur.com/g5imNUw.png", city: "https://i.imgur.com/PhRIbjc.png", hints: "Nemli ve ılıman iklim ister. Karadeniz kıyılarında ve son yıllarda Marmara (Yalova) çevresinde sıklıkla yetiştirilir." },
+            "zeytin": { name: "Zeytin", map: "https://i.imgur.com/MyDD1VA.png", city: "https://i.imgur.com/KSQTsEs.png", hints: "Akdeniz ikliminin tanıtıcı ağacıdır. Yaz kuraklığı ister, kış ılıklığı şarttır. Kışın don olaylarına dayanamaz." },
+            "elma": { name: "Elma", map: "https://i.imgur.com/EGDl0Zm.png", city: "https://i.imgur.com/ZFAhGQd.png", hints: "Soğuğa en dayanıklı meyvelerden biridir. İklim seçiciliği çok az olduğu için hemen hemen her bölgemizde yetiştirilebilir." },
+            "kayısı": { name: "Kayısı", map: "https://i.imgur.com/Cm2jLCv.png", city: "https://i.imgur.com/5MUNlyo.png", hints: "Karasal iklim şartlarına uyum sağlamıştır. İlkbahar donlarından olumsuz etkilenir. Doğu Anadolu (özellikle Malatya) üretimde zirvededir." },
+            "antep fıstığı": { name: "Antep Fıstığı", map: "https://i.imgur.com/K0jTyVa.png", city: "https://i.imgur.com/Iw8RBci.png", hints: "Yaz kuraklığı ve yüksek sıcaklık ister. Güneydoğu Anadolu Bölgesi'nin iklim şartlarına tam uyum sağlamış karakteristik bir ürünüdür." },
+            "incir": { name: "İncir", map: "https://i.imgur.com/RBVpp1x.png", city: "https://i.imgur.com/TYqEz8k.png", hints: "Kış ılıklığı ister, don olaylarından çok çabuk etkilenir. Ege Bölgesi (özellikle Büyük Menderes Havzası/Aydın) üretiminde dünyada da ilk sıradadır." },
+            "üzüm": { name: "Üzüm", map: "https://i.imgur.com/RmimdGk.png", city: "https://i.imgur.com/goKAFqY.png", hints: "Soğuğa oldukça dayanıklıdır. Elma ile birlikte Türkiye'de en geniş alanda yetiştirilen meyvedir. Ege'de çekirdeksiz türü ihracatta önemlidir." },
+            "muz": { name: "Muz", map: "https://i.imgur.com/3BrO6Mn.png", city: "https://i.imgur.com/K9eVeZA.png", hints: "Tropikal bir meyvedir. Türkiye'de sadece dar bir mikro-klima alanı olan Akdeniz kıyılarında (Mersin-Anamur, Antalya-Alanya) yetişebilir." },
+            "yer fıstığı": { name: "Yer Fıstığı", map: "https://i.imgur.com/K9eVeZA.png", city: "https://i.imgur.com/wE0DK3I.png", hints: "Sıcak ve nemli iklim ile gelişimi için gevşek toprak ister. Akdeniz Bölgesi (özellikle Çukurova/Osmaniye) üretiminde ilk sıradadır." },
+            "turunçgiller": { name: "Turunçgiller", map: "https://i.imgur.com/lpS7w9K.png", city: "https://i.imgur.com/qadYAHe.png", hints: "Kış ılıklığı şarttır, don olayına kesinlikle dayanamazlar. Ağırlıklı olarak Akdeniz ve Ege kıyıları ile Doğu Karadeniz'de (Rize/mikroklima) yetiştirilir." },
+            "avokado": { name: "Avokado", map: "https://i.imgur.com/Q3ln7Ka.png", city: "https://i.imgur.com/todlVlD.png", hints: "Tropikal ve subtropikal iklim ister. Türkiye'de Akdeniz sahil şeridinde (özellikle Antalya ve Mersin) yetiştirilir. Don olaylarına çok hassastır." },
+            "patates": { name: "Patates", map: "https://i.imgur.com/wKZLPie.png", city: "https://i.imgur.com/PE1FK75.png", hints: "Kumlu toprakları sever. İklim seçiciliği az olan, yumru bir bitkidir. İç Anadolu (özellikle Niğde ve Nevşehir çevresi) üretiminde öne çıkar." },
+
+            // Hayvancılık
+            "sığır": { name: "Sığır - İnek (Baş)", map: "https://i.imgur.com/iLDvAzK.png", city: "https://i.imgur.com/UpnEmED.png", hints: "Yaz yağışlarına bağlı yeşeren gür otlaklarda (Erzurum-Kars, D. Karadeniz) mera hayvancılığı; tüketim nüfusunun fazla olduğu batı illerinde ve yem üretiminin arttığı yörelerde (Konya, İzmir) ahır/besi hayvancılığı şeklinde yapılır." },
+            "koyun": { name: "Koyun (Baş)", map: "https://i.imgur.com/E8PJsrp.png", city: "https://i.imgur.com/XE28Gmg.png", hints: "Bozkır (step) bitki örtüsünün ve yarı kurak iklimin karakteristik hayvanıdır. Türkiye'de en çok yetiştirilen küçükbaş hayvandır. Düz ve engebesiz arazileri sever. Van, Konya ve Şanlıurfa öne çıkar." },
+            "kümes": { name: "Kümes - Tavuk (Adet)", map: "https://i.imgur.com/fHrzobu.png", city: "https://i.imgur.com/202klnO.png", hints: "Kapalı alanlarda yapıldığı için iklim ve bitki örtüsünden bağımsızdır. Pazarlama kolaylığı ve tüketim fazlalığı için büyükşehirlerin etrafında yoğunlaşmıştır (Manisa, Balıkesir, Sakarya)." },
+            "arıcılık": { name: "Arıcılık (Bal)", map: "https://i.imgur.com/Ba1zq0L.png", city: "https://i.imgur.com/1zUUTKA.png", hints: "Bitki çeşitliliğinin (flora) zengin olduğu, sanayiden ve tarımsal ilaçlamadan uzak dağlık/ormanlık alanlarda gelişmiştir. Ordu, Adana (Kozan), Muğla (Menteşe) ve Hakkari yöreleri öne çıkar." },
+            "manda": { name: "Manda (Baş)", map: "https://i.imgur.com/5ztKJs4.png", city: "https://i.imgur.com/XNuFHHq.png", hints: "Suyu, çamuru ve sulak alanları (bataklıkları) çok seven bir büyükbaş hayvandır. Daha çok Karadeniz kıyı kuşağında, bilhassa Samsun'da (Kızılırmak Deltası vb.) yaygındır." },
+            "kıl_kecisi": { name: "Kıl Keçisi (Baş)", map: "https://i.imgur.com/pxCUBa9.png", city: "https://i.imgur.com/4vcwUiD.png", hints: "Dağlık, sarp arazilere ve çalılıklara (maki) çok iyi tırmanır, ağaç filizlerini yer. Ormanlara zarar verdiği için devlet teşvikiyle sınırlandırılmıştır. Akdeniz (Toroslar) ve Mersin öne çıkar." },
+            "tiftik_kecisi": { name: "Tiftik Keçisi (Baş)", map: "https://i.imgur.com/IGeEJAZ.png", city: "https://i.imgur.com/7YZF4HQ.png", hints: "Karasal (step/bozkır) iklime iyi uyum sağlamıştır. Dünyada Ankara keçisi (Angora) adıyla bilinir. Dokumada kullanılan tiftik yünü çok değerlidir. Ankara ve çevresinde yoğunlaşmıştır." },
+            "ipek_bocegi": { name: "İpek Böceği (Koza)", map: "https://i.imgur.com/6MbfNmx.png", city: "https://i.imgur.com/3KXrMf5.png", hints: "Yaşam döngüsü tamamen dut ağacı yapraklarıyla beslenmesine bağlıdır. Geleneksel olarak Marmara'da (Bursa, Bilecik) bilinse de son yıllarda yaş koza üretiminde Diyarbakır ilk sıradadır." },
+
+            // Madenler (Harita ve Şehir URL'si aynı, ipuçları ile fark yaratılıyor)
+            "altin": { name: "Altın", map: "https://i.imgur.com/y75sEF7.png", city: "https://i.imgur.com/y75sEF7.png", hints: "Çıkarımında siyanür kullanıldığı için zaman zaman çevre sorunlarına yol açar. Uşak (Kışladağ), İzmir (Bergama), Çanakkale (Kaz Dağları) ve Artvin (Cerattepe) önemli çıkarım alanlarıdır." },
+            "asbest": { name: "Asbest (Amyant)", map: "https://i.imgur.com/zWv0vVb.png", city: "https://i.imgur.com/zWv0vVb.png", hints: "Isıya ve ateşe çok dayanıklı olduğu için itfaiyeci elbisesi ve fren balatası yapımında kullanılmıştır. Ancak kanserojen olduğu için üretimi/kullanımı ciddi oranda sınırlandırılmıştır. İskenderun ve Bursa civarında bulunur." },
+            "bakir": { name: "Bakır", map: "https://i.imgur.com/Qj4catx.png", city: "https://i.imgur.com/Qj4catx.png", hints: "KADER şifresiyle bilinir: Kastamonu (Küre), Artvin (Murgul), Diyarbakır (Ergani), Elazığ (Maden), Rize (Çayeli). İletkenliği yüksek olduğu için elektrik-elektronik sanayisinde kullanılır. Samsun'da çıkarılmamasına rağmen ulaşım (liman) imkanından dolayı dev işleme tesisi (izabe) buradadır." },
+            "barit": { name: "Barit", map: "https://i.imgur.com/qgC2dOe.png", city: "https://i.imgur.com/qgC2dOe.png", hints: "Suda erimeyen, ağır bir madendir. Özellikle petrol ve doğalgaz sondaj kuyularında basıncı dengelemek için kullanılır. Antalya (Alanya-Gazipaşa) ve Kahramanmaraş (Elbistan) öne çıkar." },
+            "boksit": { name: "Boksit", map: "https://i.imgur.com/aEh8z6c.png", city: "https://i.imgur.com/aEh8z6c.png", hints: "Alüminyumun hammaddesidir. Çok hafif olduğu için uçak ve otomotiv sanayisinde kullanılır. Konya (Seydişehir) ve Antalya (Akseki) en önemli merkezlerdir. İşleme tesisi de Seydişehir'dedir." },
+            "bor": { name: "Bor Mineralleri", map: "https://i.imgur.com/U777YR4.png", city: "https://i.imgur.com/U777YR4.png", hints: "Türkiye dünya rezervinde (%72) ilk sıradadır. Balıkesir (Susurluk, Bigadiç), Bursa (M.Kemalpaşa), Kütahya (Emet) ve Eskişehir (Kırka) havzasında çıkarılır. Roket yakıtından deterjana çok geniş kullanım alanı vardır." },
+            "demir": { name: "Demir", map: "https://i.imgur.com/MspyEis.png", city: "https://i.imgur.com/MspyEis.png", hints: "Ağır sanayinin temelidir. Sivas (Divriği) ve Malatya (Hekimhan, Hasançelebi) en önemli yerlerdir. Karabük ve Ereğli'de çıkmaz ancak enerjiye (taş kömürüne) yakınlıktan dolayı demir-çelik fabrikaları buradadır. İskenderun'daki tesis ise liman (ulaşım) sebeplidir." },
+            "fosfat": { name: "Fosfat", map: "https://i.imgur.com/xrVMzzH.png", city: "https://i.imgur.com/xrVMzzH.png", hints: "Suni gübre yapımında kullanılır. Türkiye'deki rezervi yetersiz olduğu için çokça ithal edilir. Ülkemizde en çok çıkarıldığı ve işlendiği yer Mardin (Mazıdağı)'dir." },
+            "krom": { name: "Krom", map: "https://i.imgur.com/ppx3BFg.png", city: "https://i.imgur.com/ppx3BFg.png", hints: "Paslanmaz çelik (metalürji) sanayisinde kullanılır ve ihraç ürünlerimizdendir. Elazığ (Guleman) ve Muğla (Fethiye, Köyceğiz) en çok çıkarıldığı yerlerdir. İşleme tesisleri ise Elazığ ve Antalya'dadır." },
+            "kursun_cinko": { name: "Kurşun - Çinko", map: "https://i.imgur.com/4hZzkBt.png", city: "https://i.imgur.com/4hZzkBt.png", hints: "Doğada genelde bir arada bulunurlar. Akü imalatı ve kablo izolasyonunda kullanılır. Yozgat, Kayseri (Zamantı), Elazığ (Keban) ve Niğde (Çamardı) yörelerinde çıkarılır." },
+            "kukurt_manyezit": { name: "Kükürt ve Manyezit", map: "https://i.imgur.com/jSBI0A9.png", city: "https://i.imgur.com/jSBI0A9.png", hints: "Kükürt kimya/gübre sanayisinde (Isparta-Keçiborlu), Manyezit ise ateşe dayanıklı fırın tuğlası yapımında (Kütahya, Eskişehir, Konya) yaygın olarak kullanılır." },
+            "mermer": { name: "Mermer", map: "https://i.imgur.com/48hWtHl.png", city: "https://i.imgur.com/48hWtHl.png", hints: "Kireç taşının (kalker) yüksek basınç ve sıcaklık altında başkalaşmasıyla oluşur. Türkiye'nin maden ihracatında (dış satım) miktar ve döviz getirisi olarak EN FAZLA paya sahip madenidir. Afyon, Balıkesir (Marmara Adası), Burdur ve Denizli öne çıkar." },
+            "perlit": { name: "Perlit (İnci Taşı)", map: "https://i.imgur.com/6uzZAqj.png", city: "https://i.imgur.com/6uzZAqj.png", hints: "Volkanik kökenli bir camdır. Isıtıldığında mısır gibi patlayıp genleştiği için inşaatlarda ısı ve ses yalıtım malzemesi olarak kullanılır. Van, Erzurum, Kars ile İzmir yörelerinde bulunur." },
+            "pomza": { name: "Pomza Taşı (Sünger/Topuk Taşı)", map: "https://i.imgur.com/uUcIINF.png", city: "https://i.imgur.com/uUcIINF.png", hints: "Volkanik kökenli, bol gözenekli, çok hafif bir taştır. İnşaat (hafif bims tuğla) ve tekstilde kullanılır. Nevşehir (Kapadokya), Bitlis, Van çevresinde yoğunlaşmıştır. Türkiye dünya rezervinde ilk sıralardadır." },
+            "trona": { name: "Trona (Soda Külü)", map: "https://i.imgur.com/2SQtEEO.png", city: "https://i.imgur.com/2SQtEEO.png", hints: "Doğal soda külüdür. Cam sanayisi, deterjan ve kimya sektöründe kullanılır. Ankara (Beypazarı ve Kazan) çevresinde dünyadaki en büyük yataklardan birine sahibiz." },
+            "volfram": { name: "Volfram (Tungsten)", map: "https://i.imgur.com/ELd1xdE.png", city: "https://i.imgur.com/ELd1xdE.png", hints: "Çok sert ve erime noktası aşırı yüksek bir madendir. Ampul teli, uzay-havacılık sanayisi ve matkap uçlarında kullanılır. Türkiye'deki en meşhur çıkarım alanı Bursa (Uludağ)'dır." },
+            "zimpara": { name: "Zımpara Taşı", map: "https://i.imgur.com/nQh8HQk.png", city: "https://i.imgur.com/nQh8HQk.png", hints: "Sertliği yüksek olduğu için aşındırıcı ve parlatıcı olarak kullanılır. Özellikle Ege Bölgesi'nde; İzmir, Muğla, Aydın ve Denizli yörelerinde çıkarılır." },
+
+            // Enerji Kaynakları
+            "asfaltit": { name: "Asfaltit", map: "https://i.imgur.com/NM3acAw.png", city: "https://i.imgur.com/NM3acAw.png", hints: "Petrolün katılaşmış halidir. Kalorisi yüksektir. Türkiye'de sadece Güneydoğu Anadolu'da, özellikle Şırnak (Silopi) ve Mardin'de bulunur. Silopi'de bununla çalışan termik santral vardır." },
+            "dogalgaz": { name: "Doğal Gaz", map: "https://i.imgur.com/NFQgFt9.png", city: "https://i.imgur.com/NFQgFt9.png", hints: "En temiz yanan fosil yakıttır. Elektrik üretimimizde çok büyük bir paya sahiptir ancak yataklarımız yetersiz olduğu için aşırı ithal edilir. Kırklareli (Hamitabat), Tekirdağ (Hayrabolu), Mardin (Çamurlu) ve Düzce (Akçakoca) çevresinde çıkarılır." },
+            "linyit": { name: "Linyit", map: "https://i.imgur.com/rcj6GyG.png", city: "https://i.imgur.com/rcj6GyG.png", hints: "3. Jeolojik Zaman'da (Tersiyer) oluşmuştur. Ülkemiz genç oluşumlu olduğu için Türkiye'nin hemen hemen her bölgesinde bolca bulunur. En büyük havza Kahramanmaraş (Afşin-Elbistan)'dır. Kütahya (Seyitömer, Tunçbilek), Manisa (Soma), Muğla (Yatağan) linyitle çalışan önemli termik santrallerin olduğu yerlerdir." },
+            "petrol": { name: "Petrol", map: "https://i.imgur.com/iPv8GOY.png", city: "https://i.imgur.com/iPv8GOY.png", hints: "İlk kez Batman (Raman) dağında bulunmuştur. Çıkarımın tamamına yakını Güneydoğu Anadolu'dadır. Ancak ihtiyacı karşılamaz, ithal edilir. Batman rafinerisi hammaddeye; İzmir, İzmit, Mersin ulaşıma (liman); Kırıkkale rafinerisi ise pazara/güvenliğe yakınlıktan dolayı kurulmuştur." },
+            "taskomuru": { name: "Taş Kömürü", map: "https://i.imgur.com/qgubU3p.png", city: "https://i.imgur.com/qgubU3p.png", hints: "1. Jeolojik Zaman'da (Paleozoik) oluşmuştur. Ülkemiz genç olduğu için yatakları dardır. Kalorisi çok yüksek olduğu için demir-çelik sanayisinde yakıt olarak kullanılır. Zonguldak, Bartın (Amasra) ve Karabük çevresinde bulunur. Çatalağzı termik santrali bu kömürle çalışır." },
+            "uranyum_toryum": { name: "Uranyum ve Toryum", map: "https://i.imgur.com/tT151kV.png", city: "https://i.imgur.com/tT151kV.png", hints: "Nükleer santrallerin enerji hammaddesidir. Toryum rezervi açısından Türkiye (Eskişehir-Sivrihisar) dünyada ilk sıralardadır. Uranyum ise Yozgat (Sorgun) ve Uşak (Eşme) civarında tespit edilmiştir." }
+        };
+
+        let currentDrillQueue = [];
+        let currentIndex = 0;
+        let selectedMode = 'harita';
+        let isGrayscale = true;
+
+        function initCheckboxes() {
+            const container = document.getElementById('categories-container');
+            container.innerHTML = ''; 
+
+            for (const [categoryName, items] of Object.entries(categoriesData)) {
+                const categoryId = categoryName.replace(/\s+/g, '-').toLowerCase();
+                
+                const block = document.createElement('div');
+                block.className = 'category-block';
+
+                const parentLabel = document.createElement('label');
+                parentLabel.className = 'parent-cb';
+                parentLabel.innerHTML = `
+                    <input type="checkbox" id="${categoryId}" checked onchange="toggleParent('${categoryId}')">
+                    ${categoryName}
+                `;
+                block.appendChild(parentLabel);
+
+                const childGroup = document.createElement('div');
+                childGroup.className = 'child-group';
+
+                items.forEach(itemKey => {
+                    if(cropsData[itemKey]) {
+                        const childLabel = document.createElement('label');
+                        childLabel.className = 'child-cb';
+                        childLabel.innerHTML = `
+                            <input type="checkbox" value="${itemKey}" class="drill-cb child-of-${categoryId}" checked onchange="checkParent('${categoryId}')">
+                            ${cropsData[itemKey].name}
+                        `;
+                        childGroup.appendChild(childLabel);
+                    }
+                });
+
+                block.appendChild(childGroup);
+                container.appendChild(block);
+            }
+        }
+
+        function toggleParent(categoryId) {
+            const isChecked = document.getElementById(categoryId).checked;
+            const children = document.querySelectorAll(`.child-of-${categoryId}`);
+            children.forEach(child => child.checked = isChecked);
+        }
+
+        function checkParent(categoryId) {
+            const children = document.querySelectorAll(`.child-of-${categoryId}`);
+            const allChecked = Array.from(children).every(c => c.checked);
+            const someChecked = Array.from(children).some(c => c.checked);
+            const parent = document.getElementById(categoryId);
+            
+            parent.checked = allChecked;
+            parent.indeterminate = someChecked && !allChecked;
+        }
+
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function startDrill() {
+            const selectedRadios = document.querySelector('input[name="mode"]:checked');
+            selectedMode = selectedRadios.value;
+
+            const selectedColorMode = document.querySelector('input[name="colorMode"]:checked').value;
+            isGrayscale = (selectedColorMode === 'bw');
+
+            const selectedCbs = document.querySelectorAll('.drill-cb:checked');
+            if (selectedCbs.length === 0) {
+                alert("Lütfen en az bir ürün/maden seçin!");
+                return;
+            }
+
+            currentDrillQueue = Array.from(selectedCbs).map(cb => cb.value);
+            currentDrillQueue = shuffle(currentDrillQueue);
+            currentIndex = 0;
+
+            document.getElementById('setup-area').style.display = 'none';
+            document.getElementById('drill-area').style.display = 'block';
+
+            loadQuestion();
+        }
+
+        function generateOptions(correctKey) {
+            // Doğru cevabın bulunduğu kategoriyi bul ve çeldiricileri oradan seç
+            let targetCategoryItems = [];
+            for (const items of Object.values(categoriesData)) {
+                if (items.includes(correctKey)) {
+                    targetCategoryItems = items;
+                    break;
+                }
+            }
+
+            let distractors = targetCategoryItems.filter(k => k !== correctKey && cropsData[k]);
+            
+            if (distractors.length < 3) {
+                const allKeys = Object.keys(cropsData);
+                let fallback = allKeys.filter(k => k !== correctKey && !distractors.includes(k));
+                distractors = distractors.concat(shuffle(fallback));
+            }
+
+            distractors = shuffle(distractors).slice(0, 3);
+            let options = [...distractors, correctKey];
+            return shuffle(options);
+        }
+
+        function applyColorMode() {
+            const qImg = document.getElementById('question-image');
+            const fImg = document.getElementById('feedback-image');
+            
+            if (isGrayscale) {
+                qImg.classList.add('grayscale');
+                fImg.classList.add('grayscale');
+            } else {
+                qImg.classList.remove('grayscale');
+                fImg.classList.remove('grayscale');
+            }
+        }
+
+        function loadQuestion() {
+            const cropKey = currentDrillQueue[currentIndex];
+            const crop = cropsData[cropKey];
+
+            // Set Image
+            const imgEl = document.getElementById('question-image');
+            // Eğer şehir modu seçildiyse ve şehir resmi harita ile aynıysa (madenler gibi), haritayı gösterir
+            imgEl.src = selectedMode === 'harita' ? crop.map : crop.city;
+            
+            applyColorMode();
+
+            // Update Progress
+            document.getElementById('progress-counter').innerText = `${currentIndex + 1} / ${currentDrillQueue.length}`;
+
+            // Handle Hints
+            const hintContainer = document.getElementById('hint-container');
+            if (selectedMode === 'sehir') {
+                document.getElementById('hint-text').innerText = crop.hints;
+                hintContainer.style.display = 'block';
+            } else {
+                hintContainer.style.display = 'none';
+            }
+
+            // Generate Options
+            const optionsGrid = document.getElementById('options-container');
+            optionsGrid.innerHTML = '';
+            
+            const currentOptions = generateOptions(cropKey);
+            currentOptions.forEach(optKey => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = cropsData[optKey].name;
+                btn.onclick = () => checkAnswer(btn, optKey, cropKey);
+                optionsGrid.appendChild(btn);
+            });
+
+            document.getElementById('feedback-container').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+            window.scrollTo(0, 0);
+        }
+
+        function checkAnswer(selectedBtn, selectedKey, correctKey) {
+            // Disable all buttons
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(btn => btn.disabled = true);
+
+            // Şıkkı kontrol et
+            if (selectedKey === correctKey) {
+                selectedBtn.classList.add('correct');
+            } else {
+                selectedBtn.classList.add('wrong');
+                allBtns.forEach(btn => {
+                    if (btn.innerText === cropsData[correctKey].name) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+
+            // Harita Modu Geri Bildirimi
+            if (selectedMode === 'harita') {
+                const feedbackContainer = document.getElementById('feedback-container');
+                const feedbackImg = document.getElementById('feedback-image');
+                const feedbackTitle = document.getElementById('feedback-title');
+                const feedbackHint = document.getElementById('feedback-hint');
+
+                feedbackContainer.style.display = 'block';
+
+                // Eğer ikinci bir resim (şehir resmi) varsa onu göster (Tarım ve Hayvancılık için)
+                if (cropsData[correctKey].map !== cropsData[correctKey].city) {
+                    feedbackTitle.innerText = "En Çok Yetişen / Üretilen Şehirler";
+                    feedbackImg.src = cropsData[correctKey].city;
+                    feedbackImg.style.display = 'inline-block';
+                    feedbackHint.style.display = 'none';
+                } 
+                // İkinci resim yoksa (Madenler ve Enerji için) doğrudan AGS ipucunu göster!
+                else {
+                    feedbackTitle.innerText = "Nokta Atışı AGS Bilgileri";
+                    feedbackImg.style.display = 'none';
+                    feedbackHint.innerText = cropsData[correctKey].hints;
+                    feedbackHint.style.display = 'block';
+                }
+            }
+
+            // Show Next Button
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.style.display = 'block';
+            
+            if (currentIndex === currentDrillQueue.length - 1) {
+                nextBtn.innerText = "Testi Bitir ↺";
+            } else {
+                nextBtn.innerText = "Sıradaki Soru →";
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIndex < currentDrillQueue.length - 1) {
+                currentIndex++;
+                loadQuestion();
+            } else {
+                endDrill();
+            }
+        }
+
+        function endDrill() {
+            document.getElementById('drill-area').style.display = 'none';
+            document.getElementById('setup-area').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        // Run on load
+        window.onload = initCheckboxes;
+    </script>
+</body>
+</html>

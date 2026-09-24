@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Program Geliştirme Aşamaları Sıralama Etkinliği</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --accent-blue: #2563eb;
+            --accent-green: #16a34a;
+            --accent-red: #dc2626;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            padding: 16px 12px 40px 12px;
+            max-width: 600px;
+            margin: 0 auto;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        p.subtitle {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            background: rgba(244, 246, 249, 0.95);
+            backdrop-filter: blur(8px);
+            padding: 8px 0;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-blue);
+            color: #ffffff;
+        }
+
+        .btn-primary:active {
+            background-color: #1d4ed8;
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background-color: #ffffff;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:active {
+            background-color: #f1f5f9;
+            transform: scale(0.98);
+        }
+
+        .status-box {
+            display: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .status-box.success {
+            display: block;
+            background-color: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-box.partial {
+            display: block;
+            background-color: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+
+        .list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .item-card {
+            background-color: var(--card-bg);
+            border-radius: 14px;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            touch-action: manipulation;
+        }
+
+        .item-card.dragging {
+            opacity: 0.6;
+            transform: scale(0.98);
+            border-color: var(--accent-blue);
+        }
+
+        .item-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            gap: 12px;
+            cursor: grab;
+        }
+
+        .item-index {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: #f1f5f9;
+            color: var(--text-secondary);
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .item-title {
+            flex: 1;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .item-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .btn-arrow {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            width: 32px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .btn-arrow:active {
+            background-color: #e2e8f0;
+        }
+
+        .reason-box {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease-out, padding 0.35s ease-out;
+            background-color: #f8fafc;
+            border-top: 0px solid transparent;
+            padding: 0 14px;
+            font-size: 0.85rem;
+            color: #334155;
+            line-height: 1.45;
+        }
+
+        .item-card.show-reason .reason-box {
+            max-height: 200px;
+            padding: 12px 14px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .reason-title {
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Validation States */
+        .item-card.correct {
+            border-color: var(--accent-green);
+        }
+
+        .item-card.correct .item-index {
+            background-color: var(--accent-green);
+            color: #ffffff;
+        }
+
+        .item-card.incorrect {
+            border-color: var(--accent-red);
+        }
+
+        .item-card.incorrect .item-index {
+            background-color: var(--accent-red);
+            color: #ffffff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <header>
+        <h1>Program Geliştirme Aşamaları</h1>
+        <p class="subtitle">Aşamaları doğru sıraya dizin. Doğru sıraya koyduğunuzda sebepleri altında açılacaktır.</p>
+    </header>
+
+    <div class="action-bar">
+        <button class="btn btn-primary" onclick="checkOrder()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Kontrol Et
+        </button>
+        <button class="btn btn-secondary" onclick="shuffleList()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            Karıştır
+        </button>
+    </div>
+
+    <div id="statusBox" class="status-box"></div>
+
+    <div id="list" class="list-container"></div>
+
+    <script>
+        const correctData = [
+            {
+                id: 1,
+                title: "1. Planlama",
+                reason: "Süreç başlamadan önce çalışacak komisyonların kurulması, çalışma takviminin çıkarılması, bütçe ve kullanılacak kaynakların belirlenmesi gerekir."
+            },
+            {
+                id: 2,
+                title: "2. İhtiyaç Analizi",
+                reason: "Hazırlanacak programın bireysel, toplumsal ve konu alanı açısından hangi eksikleri kapatacağını ve hedefleri belirlemek için veri toplamak şarttır."
+            },
+            {
+                id: 3,
+                title: "3. Kazanım (Hedef) Yazımı",
+                reason: "İhtiyaç analizinden elde edilen veriler ışığında öğrencilere kazandırılacak bilgi, beceri, tutum ve davranışların netleştirilmesi gerekir."
+            },
+            {
+                id: 4,
+                title: "4. İçerik Analizi",
+                reason: "Belirlenen kazanımlara ulaştıracak konu başlıklarının, ünitelerin ve kavramların seçilmesi, analiz edilmesi ve düzenlenmesi gerekir."
+            },
+            {
+                id: 5,
+                title: "5. Belirtke Tablosunun Hazırlanması",
+                reason: "Kazanımlar ile içeriği (konuları) eşleştiren iki boyutlu tablodur. Eğitim durumları ve sınav soruları bu tablodaki dağılıma göre hazırlanacağı için eğitim durumlarından önce yer almalıdır."
+            },
+            {
+                id: 6,
+                title: "6. Eğitim Durumunun Yazılması",
+                reason: "Belirtke tablosuna uygun olarak konunun nasıl işleneceği, hangi öğretim yöntem-tekniklerinin, materyallerin ve öğrenme etkinliklerinin kullanılacağı planlanır."
+            },
+            {
+                id: 7,
+                title: "7. Sınama Durumlarının Belirlenmesi",
+                reason: "Öğrencilerin belirlenen hedeflere (kazanımlara) ne derece ulaştığını ölçmek amacıyla kullanılacak sınav, test ve değerlendirme araçları tasarlanır."
+            },
+            {
+                id: 8,
+                title: "8. Raporlaştırma",
+                reason: "Program geliştirme sürecinin tüm aşamaları, pilot uygulama sonuçları ve değerlendirme raporları hazırlanarak resmiyet kazandırılır ve ilgili kurumlara sunulur."
+            }
+        ];
+
+        let currentList = [...correctData];
+
+        function shuffleList() {
+            // Shuffle algorithm
+            for (let i = currentList.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [currentList[i], currentList[j]] = [currentList[j], currentList[i]];
+            }
+            renderList();
+            document.getElementById('statusBox').className = 'status-box';
+            document.getElementById('statusBox').style.display = 'none';
+        }
+
+        function cleanTitle(title) {
+            // Remove number prefix for shuffled view if desired, or keep display clean
+            return title.replace(/^[0-9]+\.\s*/, '');
+        }
+
+        function renderList() {
+            const listEl = document.getElementById('list');
+            listEl.innerHTML = '';
+
+            currentList.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                card.dataset.id = item.id;
+                card.dataset.index = index;
+
+                card.innerHTML = `
+                    <div class="item-header">
+                        <div class="item-index">${index + 1}</div>
+                        <div class="item-title">${cleanTitle(item.title)}</div>
+                        <div class="item-controls">
+                            <button class="btn-arrow" onclick="moveItem(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
+                            <button class="btn-arrow" onclick="moveItem(${index}, 1)" ${index === currentList.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
+                        </div>
+                    </div>
+                    <div class="reason-box">
+                        <div class="reason-title">
+                            💡 Neden bu sırada?
+                        </div>
+                        <div>${item.reason}</div>
+                    </div>
+                `;
+
+                listEl.appendChild(card);
+            });
+        }
+
+        function moveItem(index, direction) {
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= currentList.length) return;
+
+            const temp = currentList[index];
+            currentList[index] = currentList[targetIndex];
+            currentList[targetIndex] = temp;
+
+            renderList();
+        }
+
+        function checkOrder() {
+            const listEl = document.getElementById('list');
+            const cards = listEl.querySelectorAll('.item-card');
+            let correctCount = 0;
+
+            cards.forEach((card, index) => {
+                const itemId = parseInt(card.dataset.id);
+                const expectedId = index + 1;
+
+                card.classList.remove('correct', 'incorrect', 'show-reason');
+
+                if (itemId === expectedId) {
+                    correctCount++;
+                    card.classList.add('correct');
+                    card.classList.add('show-reason'); // Show reason when correctly placed!
+                } else {
+                    card.classList.add('incorrect');
+                }
+            });
+
+            const statusBox = document.getElementById('statusBox');
+            if (correctCount === currentList.length) {
+                statusBox.className = 'status-box success';
+                statusBox.innerHTML = '🎉 Tebrikler! Tüm aşamaları doğru sıraya dizdiniz. Bütün sebepler aşağıda açıldı.';
+            } else {
+                statusBox.className = 'status-box partial';
+                statusBox.innerHTML = `🎯 ${currentList.length} adımdan ${correctCount} tanesi doğru konumda. Yeşil olanların sebepleri altında açıldı!`;
+            }
+        }
+
+        // Initial Shuffle on Load
+        window.onload = shuffleList;
+    </script>
+</body>
+</html>

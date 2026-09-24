@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eğitim Tarihi ve Bilim İnsanları</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #1a0b2e;
+            color: #e0d4f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background-color: #2d164d;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            border: 1px solid #4a2b7a;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #bfa1eb;
+            font-size: 1.2rem;
+        }
+        .question-text {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option-btn {
+            background-color: #3f226b;
+            color: white;
+            border: 2px solid #5d3599;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+        .option-btn:hover {
+            background-color: #5d3599;
+            transform: translateY(-2px);
+        }
+        .option-btn:disabled {
+            cursor: not-allowed;
+            transform: none;
+        }
+        .option-btn.correct {
+            background-color: #2ecc71;
+            border-color: #27ae60;
+            color: white;
+        }
+        .option-btn.wrong {
+            background-color: #e74c3c;
+            border-color: #c0392b;
+            color: white;
+        }
+        .next-btn {
+            background-color: #8e44ad;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 25px;
+            width: 100%;
+            font-weight: bold;
+            display: none;
+            transition: background-color 0.2s;
+        }
+        .next-btn:hover {
+            background-color: #9b59b6;
+        }
+        .progress {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #9a7ebf;
+        }
+        .result-screen {
+            display: none;
+            text-align: center;
+        }
+        .result-screen h1 {
+            color: #bfa1eb;
+            margin-bottom: 15px;
+        }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+
+<div class="container" id="quiz-container">
+    <h2 id="quiz-title">Eğitimin Tarihi Temelleri & Bilim İnsanları</h2>
+    <div id="question-container">
+        <div class="question-text" id="question-text">Soru yükleniyor...</div>
+        <div class="options-grid" id="options-grid"></div>
+    </div>
+    <button class="next-btn" id="next-btn">Sonraki Soru</button>
+    <div class="progress" id="progress"></div>
+</div>
+
+<div class="container result-screen" id="result-screen">
+    <h1>Test Tamamlandı!</h1>
+    <p class="question-text" id="score-text"></p>
+    <button class="next-btn" style="display: block; margin-top: 20px;" onclick="location.reload()">Tekrar Çöz</button>
+</div>
+
+<script>
+    const questions = [
+        // Eklenen 3 Yeni Soru
+        {
+            q: "Fatih Sultan Mehmet'in daveti üzerine İstanbul'a gelen, Ayasofya Medresesi'nde müderrislik yapan ve astronomi alanındaki önemli eseri olan 'Risâletü'l-Fethiyye'yi Fatih'e sunan ünlü bilgin aşağıdakilerden hangisidir?",
+            options: ["Takiyüddin", "Kadızâde-i Rûmî", "Ali Kuşçu", "Matrakçı Nasuh"],
+            answer: 2
+        },
+        {
+            q: "Osmanlı döneminde ahlak ve eğitim felsefesi üzerine yazılmış ilk Türkçe eserlerden biri olan 'Ahlâk-ı Alâî' isimli kitabında, çocuk eğitiminde anne babanın rolüne ve ailenin önemine değinen Osmanlı bilgini aşağıdakilerden hangisidir?",
+            options: ["Kınalızâde Ali Efendi", "Kâtip Çelebi", "Koçi Bey", "İbrahim Hakkı"],
+            answer: 0
+        },
+        {
+            q: "Milli eğitim anlayışının temellerini atan, 'Türkçülüğün Esasları' adlı eserinde eğitimin milli ve modern olması gerektiğini savunarak, kültürel değerlerin eğitim yoluyla yeni nesillere aktarılmasını vurgulayan düşünür aşağıdakilerden hangisidir?",
+            options: ["Prens Sabahattin", "Ziya Gökalp", "İsmail Hakkı Baltacıoğlu", "Mehmet Akif Ersoy"],
+            answer: 1
+        },
+        // Kullanıcının Soruları
+        {
+            q: "Aşağıdakilerden hangisi Cumhuriyet Dönemi'nde eğitim sistemini incelemek ve reformlar yapmak üzere Türkiye'ye davet edilen yabancı uzmanlardan biri değildir?",
+            options: ["Albert Malche", "Ömer Buyse", "Beryl Parker", "Abraham Maslow"],
+            answer: 3
+        },
+        {
+            q: "İslam dünyasında eğitimi ilk defa sistematik olarak ele almış ve erdemli bireyler yetiştirmeyi amaçlayarak topluma katkı sağlayacağını savunmuştur. Eğitimin bireyin mutluluğa ulaşmasını sağlaması gerektiği fikrini öne sürmüştür. Ayrıca eğitimde kolaydan zora, bilinenden bilinmeyene doğru bir yöntem izlenmesi gerektiğini belirterek 'İkinci Öğretmen' (Muallim-i Sani) unvanıyla anılmıştır. Bu eğitim anlayışına sahip düşünür aşağıdakilerden hangisidir?",
+            options: ["İbn-i Sina", "Farabi", "Gazali", "İbn-i Haldun"],
+            answer: 1
+        },
+        {
+            q: "Çocuğun alması gereken ilk eğitimin ahlak eğitimi olması gerektiğini savunan; öğretmenin alanında uzman, bilgili, dürüst, sabırlı ve çocukların yeteneklerine karşı ilgili olması gerektiğine inanan; ayrıca öğretmenin yumuşak ve nazik bir tutum sergilerken aynı zamanda otoritesini de koruyacak bir denge kurmasını şart koşan İslam düşünürü aşağıdakilerden hangisidir?",
+            options: ["Farabi", "İbn-i Sina", "Gazali", "İbn-i Haldun"],
+            answer: 1
+        },
+        {
+            q: "Yeni harflerin kabul edilmesi, her düzeydeki öğretimden ücret alınmasının kaldırılması ve okul kitaplarının Bakanlıkça basılması kararları aşağıdaki Milli Eğitim Bakanlarından hangisinin döneminde alınmıştır?",
+            options: ["Hasan Âli Yücel", "Saffet Arıkan", "Mustafa Necati", "Dr. Reşit Galip"],
+            answer: 2
+        },
+        {
+            q: "Tıpta deneye büyük önem veren; 'Mücerrebname' isimli eserinde yılan zehrine karşı geliştirdiği panzehri önce horozlarda, sonra da kendi üzerinde deneyerek sonuçlarına yer veren ve 'Cerrahiyyetü'l-Haniyye' adlı meşhur resimli kitabında çeşitli ameliyat tekniklerini anlatan Osmanlı hekimi aşağıdakilerden hangisidir?",
+            options: ["Akşemseddin", "Sabuncuoğlu Şerafeddin", "İbn-i Sina", "Altuncuzade"],
+            answer: 1
+        },
+        {
+            q: "Sultan Orhan Gazi döneminde İznik'te kurulan Osmanlı'nın ilk medresesine baş müderris olarak atanan, akli ve nakli ilimlerde ihtisas yapmış ünlü âlim aşağıdakilerden hangisidir?",
+            options: ["Dâvûd-i Kayserî", "Kadızâde-i Rûmî", "Ali Kuşçu", "Molla Fenari"],
+            answer: 0
+        },
+        {
+            q: "Semerkant'ta önce rasathane müdürlüğü, ardından Semerkant Medresesi baş müderrisliği yapan; matematik ve fizik kurallarını astronomide ilk defa uygulayan, Şerh-i Eşkâlü’t-Te’sîs adlı eseriyle tanınan bilim insanı aşağıdakilerden hangisidir?",
+            options: ["Takiyüddin", "Kadızâde-i Rûmî", "Akşemseddin", "Uluğ Bey"],
+            answer: 1
+        },
+        {
+            q: "Fatih Sultan Mehmet döneminin önemli hekim ve bilim insanlarından olan; 'Risâletü'n-Nûriyye' ve 'Mâddetü'l Hayât' adlı eserleri yazan, mikrop teorisini ortaya atan ve ilk kanser araştırmacısı olarak kabul edilen kişi aşağıdakilerden hangisidir?",
+            options: ["Sabuncuoğlu Şerafeddin", "İbn-i Sina", "Akşemseddin", "Altuncuzade"],
+            answer: 2
+        },
+        {
+            q: "Sultan III. Murad döneminde İstanbul'da Osmanlı'nın ilk rasathanesini inşa eden; ekinoksları belirlemek için 'Zatü'l Evtar' isimli rasat aletini icat eden ve Osmanlı bilim tarihinin en büyük astronomu kabul edilen kişi aşağıdakilerden hangisidir?",
+            options: ["Ali Kuşçu", "Takiyüddin", "Kadızâde-i Rûmî", "Matrakçı Nasuh"],
+            answer: 1
+        },
+        {
+            q: "Türkçü değil Osmanlıcı görüşlere sahip olmasına rağmen Türkçüler tarafından da kendisine büyük saygı duyulan, eğitim ve okul öncesi alanındaki çalışmalarından dolayı 'Türk Frobel'i' olarak anılan ve eğitim reformlarının üniversiteden değil ilköğretimden (aşağıdan yukarıya) başlaması gerektiğini savunarak 'Kiraz Ağacı Nazariyesi'ni öne süren eğitimci aşağıdakilerden hangisidir?",
+            options: ["Emrullah Efendi", "Ziya Gökalp", "Satı Bey (Mustafa Satı el-Husri)", "İsmail Hakkı Baltacıoğlu"],
+            answer: 2
+        },
+        {
+            q: "Osmanlı Devleti'nin son dönemlerinde, eğitim reformlarının ilköğretimden başlamasının kısa sürede sonuç vermeyeceğini, bu nedenle yenileşme ve planlama hareketlerine yükseköğretimden (üniversitelerden) başlanması gerektiğini savunan 'Tûbâ Ağacı Nazariyesi'ni ileri süren eğitimci ve devlet adamı aşağıdakilerden hangisidir?",
+            options: ["Satı Bey", "Emrullah Efendi", "Ziya Gökalp", "Prens Sabahattin"],
+            answer: 1
+        },
+        {
+            q: "Horasan doğumlu olan, 1240'larda Anadolu'ya geldiği sanılan ve günümüzde Nevşehir'de kendi adıyla anılan ilçedeki türbesinde yatan mutasavvıf aşağıdakilerden hangisidir? Eserlerinde tasavvuf kültürüne, hoşgörüye, sevgiye ve sır saklamanın önemine geniş yer veren bu düşünürün en bilindik eseri Makâlât'tır.",
+            options: ["Yunus Emre", "Mevlânâ Celâleddîn-i Rûmî", "Hacı Bektaş-ı Veli", "Ahi Evran"],
+            answer: 2
+        },
+        {
+            q: "Eserleri Balkanlar'dan Orta Asya'ya, Kazan'dan Mısır'a çok geniş bir coğrafyada yenilikçi eğitim hareketleri üzerinde etkili olan ve 'Türkiye'nin ilk modern pedagogu' olarak kabul edilen kişi aşağıdakilerden hangisidir?",
+            options: ["Ahmet Sami Bey", "Ekrem Fuat Beşeri", "Selim Sabit Efendi", "Rıza Sadık"],
+            answer: 2
+        },
+        {
+            q: "'Kutadgu Bilig' adlı eserinde bilginin insanı doğru davranışlara yönlendireceğini, mutluluğun ancak bilgiyle mümkün olacağını belirten ve çocuk eğitimine özel önem veren düşünür aşağıdakilerden hangisidir?",
+            options: ["Kaşgarlı Mahmud", "Yusuf Has Hacip", "Nizamülmülk", "Gazali"],
+            answer: 1
+        },
+        {
+            q: "'Divânü Lügati't-Türk' adlı eserinde dilin, eğitimin temeli olduğunu vurgulayan ve 'Bilgi devleti yüceltir' diyerek eğitimin devlet için temel bir unsur olduğunu belirten düşünür aşağıdakilerden hangisidir?",
+            options: ["Yusuf Has Hacip", "Farabi", "Kaşgarlı Mahmud", "El-Biruni"],
+            answer: 2
+        },
+        {
+            q: "Hem dinî hem de aklî ilimlerin birlikte öğretilmesini savunan, bilginin mutlaka ahlakla bütünleşmesi gerektiğini vurgulayan ve eğitimde öğrenciye bireysel yaklaşım sergilenmesini ilke edinen İslam düşünürü aşağıdakilerden hangisidir?",
+            options: ["İbn Sina", "Gazali", "El-Cezeri", "Farabi"],
+            answer: 1
+        },
+        {
+            q: "Eğitimde eleştirel düşünceyi, gözleme dayalı bilgiyi ve araştırmayı ön plana çıkaran; aynı zamanda eğitimi evrensel ve kültürler üstü bir faaliyet olarak gören bilim insanı aşağıdakilerden hangisidir?",
+            options: ["El-Biruni", "Ömer Hayyam", "El-Cezeri", "İbn Rüşd"],
+            answer: 0
+        },
+        {
+            q: "Özellikle matematik ve astronomi alanında yaptığı çalışmalarla tanınan ve bu bilimlerin, akıl yürütmeye dayalı eğitimin ayrılmaz bir parçası olduğunu savunan düşünür aşağıdakilerden hangisidir?",
+            options: ["El-Cezeri", "Takiyüddin", "Ömer Hayyam", "Ali Kuşçu"],
+            answer: 2
+        },
+        {
+            q: "Eğitimde teorik bilginin yanı sıra uygulamalı bilgilerin önemini vurgulayan, özellikle sibernetik ve mühendislik eğitimi alanında verdiği eserlerle tanınan bilim insanı aşağıdakilerden hangisidir?",
+            options: ["El-Cezeri", "El-Biruni", "Sabuncuoğlu Şerafeddin", "Ömer Hayyam"],
+            answer: 0
+        },
+        {
+            q: "Parçacık fiziği alanında yaptığı çalışmalarla, özellikle 'ikili simetri' ve 'sigma modelleri' kuramları ile öne çıkan Türk fizikçi aşağıdakilerden hangisidir?",
+            options: ["Behram Kurşunoğlu", "Orhan Asım Barut", "Feza Gürsey", "Ahmed Yüksel Özemre"],
+            answer: 2
+        },
+        {
+            q: "Nükleer fizik alanında uzmanlaşan ve atom fiziği üzerine yaptığı uluslararası yayınlarla tanınan bilim insanı aşağıdakilerden hangisidir?",
+            options: ["Behram Kurşunoğlu", "Doğan Kuban", "Orhan Asım Barut", "Akil Muhtar Özden"],
+            answer: 0
+        },
+        {
+            q: "Kuramsal fizik alanında çalışan; madde modeli ve elektron-proton etkileşimi üzerine önemli teoriler geliştiren bilim insanı aşağıdakilerden hangisidir?",
+            options: ["Feza Gürsey", "Orhan Asım Barut", "Ahmed Yüksel Özemre", "Hulusi Behçet"],
+            answer: 1
+        },
+        {
+            q: "Tıp alanında (özellikle dermatoloji) yaptığı gözlemler sonucunda kendi adıyla anılan 'Behçet Hastalığı'nı tanımlayarak dünya tıp literatürüne geçen ilk kişi aşağıdakilerden hangisidir?",
+            options: ["Mazhar Osman", "Akil Muhtar Özden", "Hulusi Behçet", "Gazi Yaşargil"],
+            answer: 2
+        },
+        {
+            q: "Tıp alanında yaptığı çalışmalar sonucunda geliştirdiği 'Santonin Testi' ile Avrupa tıp literatürüne girmeyi başaran Türk doktor aşağıdakilerden hangisidir?",
+            options: ["Akil Muhtar Özden", "Hulusi Behçet", "Mazhar Osman", "Refik Saydam"],
+            answer: 0
+        },
+        {
+            q: "Türkiye'de kendi psikiyatri ekolünü kurarak bu alanda öncü çalışmalara imza atan bilim insanı aşağıdakilerden hangisidir?",
+            options: ["Hulusi Behçet", "Mazhar Osman", "Akil Muhtar Özden", "Orhan Asım Barut"],
+            answer: 1
+        },
+        {
+            q: "Atom mühendisliği alanında çalışmalar yapan; fizik ve mühendislik alanında 350'den fazla makale ile birçok kitap kaleme alan bilim insanı aşağıdakilerden hangisidir?",
+            options: ["Feza Gürsey", "Behram Kurşunoğlu", "Ahmed Yüksel Özemre", "Doğan Kuban"],
+            answer: 2
+        },
+        {
+            q: "Türk mimarlığının özgünlüğünü vurgulayan teorik çalışmaları ve mimarlık tarihi üzerine yazdığı eserlerle tanınan isim aşağıdakilerden hangisidir?",
+            options: ["Doğan Kuban", "Vedat Tek", "Mimar Kemalettin", "Sedad Hakkı Eldem"],
+            answer: 0
+        },
+        {
+            q: "Osmanlı tarihi üzerine 25'ten fazla kitap ve 300'den fazla makale yazarak bu alanda en büyük otoritelerden biri kabul edilen tarihçi aşağıdakilerden hangisidir?",
+            options: ["Fuat Köprülü", "Halil İnalcık", "İlber Ortaylı", "İsmail Hakkı Uzunçarşılı"],
+            answer: 1
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    const questionText = document.getElementById('question-text');
+    const optionsGrid = document.getElementById('options-grid');
+    const nextBtn = document.getElementById('next-btn');
+    const progressText = document.getElementById('progress');
+    const quizContainer = document.getElementById('quiz-container');
+    const resultScreen = document.getElementById('result-screen');
+    const scoreText = document.getElementById('score-text');
+
+    function loadQuestion() {
+        answered = false;
+        nextBtn.style.display = 'none';
+        
+        const currentQ = questions[currentQuestionIndex];
+        questionText.textContent = `${currentQuestionIndex + 1}. ${currentQ.q}`;
+        progressText.textContent = `Soru ${currentQuestionIndex + 1} / ${questions.length}`;
+        
+        optionsGrid.innerHTML = '';
+        const labels = ['A', 'B', 'C', 'D'];
+        
+        currentQ.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'option-btn';
+            button.textContent = `${labels[index]}) ${option}`;
+            button.onclick = () => checkAnswer(index, button);
+            optionsGrid.appendChild(button);
+        });
+    }
+
+    function checkAnswer(selectedIndex, buttonClicked) {
+        if (answered) return;
+        answered = true;
+        
+        const currentQ = questions[currentQuestionIndex];
+        const buttons = optionsGrid.children;
+        
+        if (selectedIndex === currentQ.answer) {
+            buttonClicked.classList.add('correct');
+            score++;
+        } else {
+            buttonClicked.classList.add('wrong');
+            buttons[currentQ.answer].classList.add('correct');
+        }
+        
+        for (let btn of buttons) {
+            btn.disabled = true;
+        }
+        
+        nextBtn.style.display = 'block';
+    }
+
+    nextBtn.addEventListener('click', () => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    });
+
+    function showResults() {
+        quizContainer.style.display = 'none';
+        resultScreen.style.display = 'block';
+        scoreText.innerHTML = `Toplam ${questions.length} soruda <br><strong style="font-size: 2rem; color: #2ecc71;">${score}</strong> doğru yaptın.`;
+    }
+
+    // Soruları karıştırmak istersen bu satırı aktif edebilirsin
+    // questions.sort(() => Math.random() - 0.5);
+
+    loadQuestion();
+</script>
+
+</body>
+</html>

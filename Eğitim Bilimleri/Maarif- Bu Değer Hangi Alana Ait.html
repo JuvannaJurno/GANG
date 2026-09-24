@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Erdem-Değer-Eylem Çerçevesi Quizi</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --btn-bg: #edf2f7;
+            --btn-hover: #e2e8f0;
+            --correct: #48bb78;
+            --wrong: #f56565;
+            --primary: #5a8b8c;
+            --feedback-bg: #f7fafc;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 450px;
+            border-radius: 24px;
+            padding: 40px 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .roof-value {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            background: var(--btn-bg);
+            padding: 6px 12px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .score-board {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .question-label {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .value-text {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 30px;
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: var(--btn-bg);
+            color: var(--text-main);
+            border: none;
+            border-radius: 16px;
+            padding: 16px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .option-btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .option-btn.correct {
+            background-color: var(--correct);
+            color: white;
+        }
+
+        .option-btn.wrong {
+            background-color: var(--wrong);
+            color: white;
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        /* Geri Bildirim ve İpucu Alanı */
+        .feedback-container {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--feedback-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            text-align: left;
+            animation: slideDown 0.3s ease forwards;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feedback-text {
+            font-size: 14px;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .feedback-hint {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 3px solid #ecc94b;
+        }
+
+        .next-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .next-btn:hover {
+            opacity: 0.9;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .result-list {
+            text-align: left;
+            max-height: 350px;
+            overflow-y: auto;
+            font-size: 14px;
+            margin-bottom: 20px;
+            padding-right: 10px;
+            border: 1px solid var(--btn-bg);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        
+        .result-list h4 {
+            color: var(--primary);
+            margin-top: 15px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--btn-bg);
+            padding-bottom: 4px;
+        }
+        
+        .result-list h4:first-child { margin-top: 0; }
+        
+        .result-list ul {
+            list-style-position: inside;
+            padding-left: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .result-list li { margin-bottom: 4px; }
+
+        .result-list::-webkit-scrollbar { width: 6px; }
+        .result-list::-webkit-scrollbar-track { background: var(--btn-bg); border-radius: 4px; }
+        .result-list::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <div class="quiz-container">
+        <div class="progress-bar" id="progress"></div>
+        
+        <div class="roof-value" id="roof">Çatı Değer: Saygı - Sorumluluk - Adalet</div>
+
+        <div class="score-board">
+            <span id="question-count">Soru: 1/17</span>
+            <span id="score-text">Puan: 0</span>
+        </div>
+
+        <div class="question-label" id="qLabel">Bu Değer Hangi Alana Ait?</div>
+        <div class="value-text" id="valueDisplay">Yükleniyor...</div>
+
+        <div class="options-container" id="options">
+            <button class="option-btn" onclick="checkAnswer('Huzurlu İnsan')">Huzurlu İnsan</button>
+            <button class="option-btn" onclick="checkAnswer('Huzurlu Aile ve Toplum')">Huzurlu Aile ve Toplum</button>
+            <button class="option-btn" onclick="checkAnswer('Yaşanabilir Çevre')">Yaşanabilir Çevre</button>
+        </div>
+
+        <div class="feedback-container" id="feedbackArea">
+            <div class="feedback-title" id="feedbackTitle"></div>
+            <div class="feedback-text" id="feedbackReason"></div>
+            <div class="feedback-hint" id="feedbackHint"></div>
+            <button class="next-btn" onclick="nextQuestion()">Sonraki Soruya Geç</button>
+        </div>
+    </div>
+
+    <script>
+        // Verilere 'reason' (sebep) ve 'hint' (ipucu) eklendi
+        const valuesData = [
+            // Huzurlu İnsan
+            { name: "Çalışkanlık", category: "Huzurlu İnsan", reason: "Bireyin kendi potansiyelini gerçekleştirmesi ve iç huzuru bulması kendi çabasıyla mümkündür.", hint: "Kişisel emek, gayret ve üretkenlikle ilgilidir." },
+            { name: "Mahremiyet", category: "Huzurlu İnsan", reason: "Kişisel sınırların ve özel alanın korunması, bireyin iç huzurunun temelidir.", hint: "Kişisel alan ve saygı duyulması gereken sınırlar." },
+            { name: "Mütevazılık", category: "Huzurlu İnsan", reason: "Kibrin zıddı olan bu değer, insanın kendiyle barışık olmasını ve iç dengesini sağlar.", hint: "Alçakgönüllülük ve haddini bilmek." },
+            { name: "Sabır", category: "Huzurlu İnsan", reason: "Zorluklar karşısında psikolojik dayanıklılık göstermek bireysel huzuru korur.", hint: "Acele etmemek, bekleyebilmek ve tahammül etmek." },
+            { name: "Sağlıklı Yaşam", category: "Huzurlu İnsan", reason: "Beden ve ruh sağlığının korunması, bireyin hayatta huzurlu olmasının ilk şartıdır.", hint: "Kendine iyi bakmak ve zararlı alışkanlıklardan uzak durmak." },
+            { name: "Tasarruf", category: "Huzurlu İnsan", reason: "Bireyin elindeki kaynakları doğru yönetmesi onu stresten uzak tutar ve iç dengesini korur.", hint: "İsraf etmemek, tutumluluk ve elindekinin kıymetini bilmek." },
+            
+            // Huzurlu Aile ve Toplum
+            { name: "Aile Bütünlüğü", category: "Huzurlu Aile ve Toplum", reason: "Toplumun en küçük yapı taşı olan ailenin korunması, doğrudan toplumsal barışı etkiler.", hint: "Birlikte yaşama ve en yakın dayanışma çemberi." },
+            { name: "Dostluk", category: "Huzurlu Aile ve Toplum", reason: "İnsanlar arası güçlü ve güvene dayalı bağlar toplumsal uyumu pekiştirir.", hint: "Güven, arkadaşlık ve omuz omuza vermek." },
+            { name: "Dürüstlük", category: "Huzurlu Aile ve Toplum", reason: "Toplumsal güvenin oluşması için kişiler arası ilişkilerde yalandan uzak durmak şarttır.", hint: "Sözünde durmak, doğruyu söylemek ve şeffaf olmak." },
+            { name: "Özgürlük", category: "Huzurlu Aile ve Toplum", reason: "Başkalarının haklarına saygı duyarak toplu halde yaşayabilmek sosyal huzurun anahtarıdır.", hint: "Başkasının sınırında biten, sınırları belirlenmiş haklar." },
+            { name: "Sevgi", category: "Huzurlu Aile ve Toplum", reason: "İnsanları birbirine bağlayan, hoşgörü ve toplumsal barışı yeşerten en güçlü duygudur.", hint: "Karşılıksız değer vermek ve kalpten bağlılık." },
+            { name: "Vatanseverlik", category: "Huzurlu Aile ve Toplum", reason: "Ait olunan topluma, kültüre ve ülkeye duyulan bağ birlik ve beraberliği sağlar.", hint: "Ülkesini sevmek, korumak ve milleti için çalışmak." },
+            { name: "Yardımseverlik", category: "Huzurlu Aile ve Toplum", reason: "İhtiyacı olanlara destek olmak sosyal dayanışmayı ve toplum içi adaleti artırır.", hint: "Başkalarının derdiyle dertlenmek, el uzatmak." },
+            
+            // Yaşanabilir Çevre
+            { name: "Duyarlılık", category: "Yaşanabilir Çevre", reason: "Çevremizde olup bitenlere karşı farkındalık geliştirmek ekosistemi korumanın ilk adımıdır.", hint: "Etrafına karşı kör ve sağır olmamak, sorumluluk hissetmek." },
+            { name: "Estetik", category: "Yaşanabilir Çevre", reason: "Fiziksel çevreyi güzelleştirmek ve sanatla buluşturmak yaşam alanlarımızın kalitesini artırır.", hint: "Güzellik algısı, düzen ve sanatsal bakış açısı." },
+            { name: "Merhamet", category: "Yaşanabilir Çevre", reason: "Sadece insanlara değil, doğadaki tüm canlılara ve ekosisteme şefkat göstermeyi gerektirir.", hint: "Zayıf ve savunmasız canlılara acımak, hayvanları/doğayı korumak." },
+            { name: "Temizlik", category: "Yaşanabilir Çevre", reason: "Doğanın ve fiziksel çevrenin korunması, sağlıklı ve sürdürülebilir bir yaşam alanının olmazsa olmazıdır.", hint: "Çevreyi kirletmemek, doğaya zarar vermemek." }
+        ];
+
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let isWaiting = false;
+
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function initGame() {
+            questions = shuffleArray([...valuesData]);
+            currentQuestionIndex = 0;
+            score = 0;
+            updateUI();
+        }
+
+        function showResults() {
+            document.getElementById('qLabel').innerText = "Tebrikler! Test Bitti.";
+            document.getElementById('roof').style.display = 'none';
+            document.getElementById('feedbackArea').style.display = 'none';
+            
+            const groupedData = {
+                'Huzurlu İnsan': [],
+                'Huzurlu Aile ve Toplum': [],
+                'Yaşanabilir Çevre': []
+            };
+
+            valuesData.forEach(item => {
+                groupedData[item.category].push(item.name);
+            });
+
+            let listHTML = '<div class="result-list">';
+            for (const [category, items] of Object.entries(groupedData)) {
+                listHTML += `<h4>${category}</h4><ul>`;
+                items.forEach(name => {
+                    listHTML += `<li>${name}</li>`;
+                });
+                listHTML += `</ul>`;
+            }
+            listHTML += '</div>';
+
+            const valueDisplay = document.getElementById('valueDisplay');
+            valueDisplay.innerHTML = listHTML;
+            valueDisplay.style.display = 'block';
+            valueDisplay.style.fontSize = 'initial';
+            valueDisplay.style.margin = '0';
+            valueDisplay.style.minHeight = 'auto';
+
+            document.getElementById('options').innerHTML = 
+                `<button class="option-btn" onclick="location.reload()" style="background:var(--primary); color:white;">Yeniden Oyna</button>`;
+        }
+
+        function updateUI() {
+            if (currentQuestionIndex >= questions.length) {
+                showResults();
+                return;
+            }
+
+            const currentItem = questions[currentQuestionIndex];
+            document.getElementById('valueDisplay').innerText = currentItem.name;
+            document.getElementById('question-count').innerText = `Soru: ${currentQuestionIndex + 1}/${questions.length}`;
+            document.getElementById('score-text').innerText = `Puan: ${score}`;
+            document.getElementById('feedbackArea').style.display = 'none';
+            
+            const progressPct = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progress').style.width = `${progressPct}%`;
+
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.className = 'option-btn';
+                btn.disabled = false;
+            });
+            isWaiting = false;
+        }
+
+        function checkAnswer(selectedCategory) {
+            if (isWaiting) return;
+            isWaiting = true;
+
+            const currentItem = questions[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.option-btn');
+            let selectedBtn;
+
+            // Butonları kilitle ve renkleri ayarla
+            buttons.forEach(btn => {
+                btn.disabled = true; 
+                if (btn.innerText === selectedCategory) selectedBtn = btn;
+                if (btn.innerText === currentItem.category) btn.classList.add('correct');
+            });
+
+            // Geri bildirim UI elementleri
+            const fbTitle = document.getElementById('feedbackTitle');
+            const fbReason = document.getElementById('feedbackReason');
+            const fbHint = document.getElementById('feedbackHint');
+
+            if (selectedCategory === currentItem.category) {
+                score += 10;
+                fbTitle.innerHTML = `✅ Doğru Bildiniz!`;
+                fbTitle.style.color = "var(--correct)";
+            } else {
+                if (selectedBtn) selectedBtn.classList.add('wrong');
+                fbTitle.innerHTML = `❌ Yanlış! Doğru alan: <u>${currentItem.category}</u>`;
+                fbTitle.style.color = "var(--wrong)";
+            }
+
+            // Sebep ve İpucu metinlerini yazdır
+            fbReason.innerHTML = `<strong>Neden?</strong> ${currentItem.reason}`;
+            fbHint.innerHTML = `<strong>💡 İpucu:</strong> ${currentItem.hint}`;
+            
+            // Geri bildirim alanını göster
+            document.getElementById('feedbackArea').style.display = 'block';
+            
+            // Puanı anlık güncelle
+            document.getElementById('score-text').innerText = `Puan: ${score}`;
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            updateUI();
+        }
+
+        initGame();
+    </script>
+</body>
+</html>

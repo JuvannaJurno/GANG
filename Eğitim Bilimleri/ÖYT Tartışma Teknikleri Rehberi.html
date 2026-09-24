@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ÖYT Tartışma Teknikleri Rehberi</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f7f6;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .container {
+        max-width: 800px;
+        width: 100%;
+    }
+
+    /* Ana Başlık Stilleri */
+    .main-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 20px 0;
+    }
+
+    .main-header h1 {
+        font-size: 2.5rem;
+        color: #2c3e50;
+        margin: 0 0 10px 0;
+        letter-spacing: -1px;
+    }
+
+    .main-header p {
+        font-size: 1.1rem;
+        color: #7f8c8d;
+        margin: 0;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        margin-bottom: 30px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background: #2c3e50;
+        color: #fff;
+        padding: 15px 20px;
+        margin: 0;
+        font-size: 1.2rem;
+    }
+
+    .card-body {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    @media (min-width: 600px) {
+        .card-body {
+            flex-direction: row;
+        }
+    }
+
+    .info-section {
+        flex: 1;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .info-section ul {
+        padding-left: 20px;
+        margin: 0;
+    }
+
+    .info-section li {
+        margin-bottom: 10px;
+    }
+
+    /* Genel Animasyon Alanı Stilleri */
+    .animation-section {
+        flex: 1;
+        background: #ecf0f1;
+        border-radius: 8px;
+        min-height: 250px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .interaction-area {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        flex: 1;
+    }
+
+    .group {
+        display: flex;
+        flex-wrap: wrap;
+        width: 60px;
+        gap: 5px;
+        justify-content: center;
+    }
+
+    .group-label {
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: bold;
+        margin-top: 10px;
+        width: 100%;
+        color: #7f8c8d;
+    }
+
+    /* Noktalar */
+    .dot {
+        width: 12px;
+        height: 12px;
+        background-color: #34495e; 
+        border-radius: 50%;
+        animation: dotPulse 2s infinite ease-in-out;
+        position: relative;
+    }
+    
+    .group .dot:nth-child(2) { animation-delay: 0.2s; }
+    .group .dot:nth-child(3) { animation-delay: 0.4s; }
+    .group .dot:nth-child(4) { animation-delay: 0.6s; }
+    .group .dot:nth-child(5) { animation-delay: 0.8s; }
+    .group .dot:nth-child(6) { animation-delay: 1.0s; }
+
+    .dot.teacher {
+        width: 16px;
+        height: 16px;
+        background-color: #8e44ad; 
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        box-shadow: 0 0 10px rgba(142, 68, 173, 0.5);
+    }
+
+    .dot.expert { background-color: #16a085; } 
+    .dot.jury { background-color: #f39c12; } 
+    .dot.audience { background-color: #bdc3c7; width: 10px; height: 10px; }
+    .dot.baskan { background-color: #2c3e50; width: 14px; height: 14px;}
+
+    @keyframes dotPulse {
+        0%, 100% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.1); opacity: 1; }
+    }
+
+    .audience-area {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+        width: 80%;
+        margin-top: auto;
+        margin-bottom: 15px;
+    }
+
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+        font-size: 0.8rem;
+        padding-top: 15px;
+        border-top: 1px solid #dfe6e9;
+        margin-top: auto;
+        width: 100%;
+        position: relative;
+        z-index: 5;
+    }
+
+    .legend-item { display: flex; align-items: center; gap: 8px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    .clickable-egg { cursor: pointer; }
+
+    /* =========================================
+       1. MÜNAZARA
+       ========================================= */
+    .munazara-arena { justify-content: flex-start; padding-top: 40px; }
+    .jury-area { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+    .jury-area .group { flex-direction: row; width: auto; gap: 8px; }
+    .munazara-message { position: absolute; left: 50%; top: 55%; transform: translate(-50%, -50%); font-weight: bold; font-size: 1rem; opacity: 0; animation: debateExchange 8s infinite; }
+    @keyframes debateExchange {
+        0% { left: 25%; top: 60%; opacity: 0; transform: translate(0, -50%) scale(0.5); } 10% { left: 25%; top: 60%; opacity: 1; transform: translate(0, -50%) scale(1.1); } 35% { left: 50%; top: 35%; opacity: 1; transform: translate(-50%, -50%) scale(1); } 40% { left: 50%; top: 35%; opacity: 0; transform: translate(-50%, -50%) scale(0.5); } 50% { left: 75%; top: 60%; opacity: 0; transform: translate(-100%, -50%) scale(0.5); } 60% { left: 75%; top: 60%; opacity: 1; transform: translate(-100%, -50%) scale(1.1); } 85% { left: 50%; top: 35%; opacity: 1; transform: translate(-50%, -50%) scale(1); } 90% { left: 50%; top: 35%; opacity: 0; transform: translate(-50%, -50%) scale(0.5); } 100% { opacity: 0; }
+    }
+    .munazara-message::after { content: "Tez"; animation: debateContent 8s infinite; }
+    @keyframes debateContent { 0%, 49% { content: "Tez 💬"; color: #2980b9; } 50%, 100% { content: "Antitez 💬"; color: #c0392b; } }
+
+    /* =========================================
+       2. ZIT PANEL 
+       ========================================= */
+    .zit-panel-message { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-weight: bold; font-size: 1.5rem; opacity: 0; animation: zitPanelExchange 10s infinite; }
+    @keyframes zitPanelExchange {
+        0% { left: 25%; opacity: 0; transform: translate(0, -50%) scale(0.5); } 5% { left: 25%; opacity: 1; transform: translate(0, -50%) scale(1.2); } 20% { left: 75%; opacity: 1; transform: translate(-100%, -50%) scale(1); } 25% { left: 75%; opacity: 0; transform: translate(-100%, -50%) scale(0.5); } 26% { left: 75%; opacity: 0; transform: translate(-100%, -50%) scale(0.5); } 31% { left: 75%; opacity: 1; transform: translate(-100%, -50%) scale(1.2); } 45% { left: 25%; opacity: 1; transform: translate(0, -50%) scale(1); } 50% { left: 25%; opacity: 0; transform: translate(0, -50%) scale(0.5); } 51%, 59% { opacity: 0; } 60% { left: 75%; opacity: 0; transform: translate(-100%, -50%) scale(0.5); } 65% { left: 75%; opacity: 1; transform: translate(-100%, -50%) scale(1.2); } 79% { left: 25%; opacity: 1; transform: translate(0, -50%) scale(1); } 84% { left: 25%; opacity: 0; transform: translate(0, -50%) scale(0.5); } 85% { left: 25%; opacity: 0; transform: translate(0, -50%) scale(0.5); } 89% { left: 25%; opacity: 1; transform: translate(0, -50%) scale(1.2); } 98% { left: 75%; opacity: 1; transform: translate(-100%, -50%) scale(1); } 100% { left: 75%; opacity: 0; transform: translate(-100%, -50%) scale(0.5); }
+    }
+    .zit-panel-message::after { content: "?"; animation: zitPanelContentChange 10s infinite; }
+    @keyframes zitPanelContentChange { 0%, 25% { content: "?"; color: #e74c3c; } 26%, 50% { content: "✓"; color: #27ae60; } 51%, 59% { content: ""; } 60%, 84% { content: "?"; color: #e74c3c; } 85%, 100% { content: "✓"; color: #27ae60; } }
+
+    /* =========================================
+       3. KOLLEGYUM 
+       ========================================= */
+    .kollegyum-message { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-weight: bold; font-size: 1rem; opacity: 0; animation: kollegyumExchange 8s infinite; }
+    @keyframes kollegyumExchange {
+        0% { left: 25%; opacity: 0; transform: translate(0, -50%) scale(0.5); } 10% { left: 25%; opacity: 1; transform: translate(0, -50%) scale(1.1); } 40% { left: 75%; opacity: 1; transform: translate(-100%, -50%) scale(1); } 45% { left: 75%; opacity: 0; transform: translate(-100%, -50%) scale(0.5); } 50% { left: 75%; opacity: 0; transform: translate(-100%, -50%) scale(0.5); } 60% { left: 75%; opacity: 1; transform: translate(-100%, -50%) scale(1.1); } 90% { left: 25%; opacity: 1; transform: translate(0, -50%) scale(1); } 95% { left: 25%; opacity: 0; transform: translate(0, -50%) scale(0.5); } 100% { opacity: 0; }
+    }
+    .kollegyum-message::after { content: "Sunum 💡"; animation: kollegyumContent 8s infinite; }
+    @keyframes kollegyumContent { 0%, 49% { content: "Sunum 💡"; color: #16a085; } 50%, 100% { content: "Soru ❓"; color: #e74c3c; } }
+
+    /* =========================================
+       4. GÖRÜŞ GELİŞTİRME
+       ========================================= */
+    .gorus-arena { padding-top: 50px; flex-direction: column; }
+    .gorus-zones { display: flex; width: 100%; justify-content: space-between; position: relative; height: 120px; }
+    .zone { flex: 1; display: flex; flex-direction: column; align-items: center; border-top: 3px solid #ccc; padding-top: 10px; margin: 0 5px; position: relative; }
+    .zone.agree { border-color: #27ae60; } .zone.partial { border-color: #f39c12; } .zone.disagree { border-color: #e74c3c; }
+    .zone-title { font-size: 0.75rem; font-weight: bold; color: #555; margin-bottom: 15px; text-align: center; }
+    .zone-dots { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; width: 60px; }
+    .changer-dot { position: absolute; width: 12px; height: 12px; background-color: #2980b9; border-radius: 50%; top: 60px; z-index: 10; }
+    .changer-1 { animation: changeMind1 12s infinite; } .changer-2 { animation: changeMind2 12s infinite; }
+    @keyframes changeMind1 { 0%, 10% { left: 83%; opacity: 1; } 15%, 25% { left: 83%; opacity: 1; transform: scale(1.2); } 35% { left: 50%; opacity: 1; transform: scale(1); } 40%, 90% { left: 50%; opacity: 1; } 95%, 100% { left: 50%; opacity: 0; } }
+    @keyframes changeMind2 { 0%, 50% { left: 50%; opacity: 1; } 55%, 65% { left: 50%; opacity: 1; transform: scale(1.2); } 75% { left: 16%; opacity: 1; transform: scale(1); } 80%, 90% { left: 16%; opacity: 1; } 95%, 100% { left: 16%; opacity: 0; } }
+    .changer-1::after, .changer-2::after { content: "💬"; position: absolute; top: -20px; left: -5px; font-size: 14px; opacity: 0; }
+    .changer-1::after { animation: showThought1 12s infinite; } .changer-2::after { animation: showThought2 12s infinite; }
+    @keyframes showThought1 { 15%, 25% { opacity: 1; } 0%, 14%, 26%, 100% { opacity: 0; } }
+    @keyframes showThought2 { 55%, 65% { opacity: 1; } 0%, 54%, 66%, 100% { opacity: 0; } }
+
+    /* =========================================
+       ORTAK MASA & SEYİRCİ STİLLERİ 
+       ========================================= */
+    .panel-stage { display: flex; justify-content: center; align-items: flex-end; gap: 30px; width: 100%; margin-bottom: 20px; }
+    .panelists-desk { display: flex; gap: 10px; border-bottom: 4px solid #bdc3c7; padding: 0 15px 5px 15px; position: relative; z-index: 5;}
+    .baskan-desk { display: flex; justify-content: center; border-bottom: 4px solid #bdc3c7; padding: 0 15px 5px 15px; position: relative; z-index: 5;}
+    .audience-curve { position: relative; width: 70%; height: 40px; border-top: 2px solid #95a5a6; border-radius: 50% 50% 0 0 / 100% 100% 0 0; margin-top: 20px; display: flex; justify-content: space-evenly; align-items: flex-start; }
+    .audience-curve .dot { top: -6px; }
+    .bubble::after { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 14px; opacity: 0; }
+
+    /* 5. PANEL ÖZEL ANİMASYONLARI */
+    .b-bubble::after { animation: baskanIslemleri 12s infinite; }
+    .p-bubble-1::after { content: "💬"; animation: panelist1Konusur 12s infinite; }
+    .p-bubble-2::after { content: "💬"; animation: panelist2Konusur 12s infinite; }
+    .a-bubble::after { content: "❓"; color: #e74c3c; animation: seyirciSorar 12s infinite; }
+    
+    @keyframes baskanIslemleri { 0%, 8% { opacity: 1; content: "👉"; } 9%, 33% { opacity: 0; } 34%, 42% { opacity: 1; content: "👉"; } 43%, 66% { opacity: 0; } 67%, 83% { opacity: 1; content: "📝"; } 84%, 100% { opacity: 0; } }
+    @keyframes panelist1Konusur { 0%, 8% { opacity: 0; } 9%, 33% { opacity: 1; } 34%, 100% { opacity: 0; } }
+    @keyframes panelist2Konusur { 0%, 42% { opacity: 0; } 43%, 66% { opacity: 1; } 67%, 100% { opacity: 0; } }
+    @keyframes seyirciSorar { 0%, 83% { opacity: 0; transform: translate(-50%, 0); } 84%, 98% { opacity: 1; transform: translate(-50%, -10px); } 99%, 100% { opacity: 0; transform: translate(-50%, 0); } }
+
+    /* =========================================
+       6. AÇIK OTURUM (STAND EASTER EGG BURADA)
+       ========================================= */
+    .ao-expert-1 { background-color: #e74c3c; } 
+    .ao-expert-2 { background-color: #f1c40f; } 
+    .ao-expert-3 { background-color: #3498db; } 
+
+    .ao-baskan-bubble::after { content: "❓"; color: #e74c3c; animation: baskanSorgular 10s infinite; }
+    .ao-e-bubble-1::after { content: "💬"; animation: aoUzman1Konusur 10s infinite; }
+    .ao-e-bubble-2::after { content: "💬"; animation: aoUzman2Konusur 10s infinite; }
+    
+    .ao-a-bubble-1::after { content: "❓"; color: #e74c3c; animation: randomSoru 15s infinite 2s; }
+    .ao-a-bubble-2::after { content: "❓"; color: #e74c3c; animation: randomSoru 18s infinite 8s; }
+    .ao-a-bubble-3::after { content: "❓"; color: #e74c3c; animation: randomSoru 20s infinite 14s; }
+
+    @keyframes baskanSorgular { 0%, 10% { opacity: 1; transform: translate(-50%, -10px); } 11%, 45% { opacity: 0; } 46%, 55% { opacity: 1; transform: translate(-50%, -10px); } 56%, 100% { opacity: 0; } }
+    @keyframes aoUzman1Konusur { 0%, 10% { opacity: 0; } 11%, 35% { opacity: 1; } 36%, 100% { opacity: 0; } }
+    @keyframes aoUzman2Konusur { 0%, 55% { opacity: 0; } 56%, 80% { opacity: 1; } 81%, 100% { opacity: 0; } }
+    @keyframes randomSoru { 0%, 90% { opacity: 0; transform: translate(-50%, 0); } 91%, 98% { opacity: 1; transform: translate(-50%, -10px); } 99%, 100% { opacity: 0; } }
+
+    /* --- STAND SAVAŞI CSS --- */
+    .anime-battle-active { background-color: #111 !important; transition: background 0.3s; }
+    .anime-battle-active .legend, .anime-battle-active .group-label { opacity: 0.2; }
+    
+    .anime-battle-active #ao-easter-1::after, .anime-battle-active #ao-easter-2::after { display: none; }
+
+    .anime-battle-active::before { 
+        content: "💥 ORA ORA ORA! 💥"; 
+        position: absolute; top: 30%; left: 50%; transform: translateX(-50%); 
+        font-size: 2.5rem; font-weight: bold; font-style: italic; color: #ff0000; 
+        text-shadow: 3px 3px 0 yellow; z-index: 100; 
+        animation: jojoShake 0.1s infinite; 
+    }
+
+    .anime-battle-active #ao-easter-1 { animation: jojoClashL 0.2s infinite !important; z-index: 99; }
+    .anime-battle-active #ao-easter-2 { animation: jojoClashR 0.2s infinite !important; z-index: 99; }
+
+    .anime-battle-active #ao-easter-1::before {
+        content: ""; position: absolute; width: 40px; height: 40px; border-radius: 50%;
+        background-color: #9b59b6; opacity: 0.6; box-shadow: 0 0 20px 10px #9b59b6;
+        top: -30px; left: -10px; z-index: -1; animation: standVibrate 0.05s infinite alternate;
+    }
+    .anime-battle-active #ao-easter-2::before {
+        content: ""; position: absolute; width: 40px; height: 40px; border-radius: 50%;
+        background-color: #f1c40f; opacity: 0.6; box-shadow: 0 0 20px 10px #f1c40f;
+        top: -30px; right: -10px; z-index: -1; animation: standVibrate 0.05s infinite alternate-reverse;
+    }
+
+    @keyframes jojoShake { 0% { transform: translate(-50%, -50%) rotate(-2deg); } 50% { transform: translate(-52%, -48%) rotate(3deg) scale(1.1); } 100% { transform: translate(-48%, -52%) rotate(-1deg); } }
+    @keyframes jojoClashL { 0% { transform: translate(40px, -50px); } 100% { transform: translate(50px, -45px); } }
+    @keyframes jojoClashR { 0% { transform: translate(-40px, -50px); } 100% { transform: translate(-50px, -45px); } }
+    @keyframes standVibrate { 0% { transform: translate(-3px, -3px) scale(1); } 100% { transform: translate(3px, 3px) scale(1.1); } }
+
+    /* =========================================
+       7. FORUM 
+       ========================================= */
+    .f-speaker { background-color: #9b59b6; } 
+    .f-move-1 { animation: fAudMove1 12s infinite; } .f-move-2 { animation: fAudMove2 12s infinite 4s; } .f-move-3 { animation: fAudMove3 12s infinite 8s; }
+
+    @keyframes fAudMove1 { 0%, 10% { transform: translateY(0) scale(1); background-color: #bdc3c7; z-index: 1; } 15%, 25% { transform: translateY(-20px) scale(1.3); background-color: #2980b9; z-index: 10; } 30%, 100% { transform: translateY(0) scale(1); background-color: #bdc3c7; z-index: 1; } }
+    @keyframes fAudMove2 { 0%, 10% { transform: translateY(0) scale(1); background-color: #bdc3c7; z-index: 1; } 15%, 25% { transform: translateY(-20px) scale(1.3); background-color: #e74c3c; z-index: 10; } 30%, 100% { transform: translateY(0) scale(1); background-color: #bdc3c7; z-index: 1; } }
+    @keyframes fAudMove3 { 0%, 10% { transform: translateY(0) scale(1); background-color: #bdc3c7; z-index: 1; } 15%, 25% { transform: translateY(-20px) scale(1.3); background-color: #2980b9; z-index: 10; } 30%, 100% { transform: translateY(0) scale(1); background-color: #bdc3c7; z-index: 1; } }
+
+    .f-move-1::after { content: "💬"; position: absolute; top: -25px; left: 50%; transform: translateX(-50%); opacity: 0; animation: fAudBubble 12s infinite; font-size: 14px; }
+    .f-move-2::after { content: "❓"; position: absolute; top: -25px; left: 50%; transform: translateX(-50%); opacity: 0; animation: fAudBubble 12s infinite 4s; font-size: 14px; }
+    .f-move-3::after { content: "💬"; position: absolute; top: -25px; left: 50%; transform: translateX(-50%); opacity: 0; animation: fAudBubble 12s infinite 8s; font-size: 14px; }
+    @keyframes fAudBubble { 0%, 14% { opacity: 0; } 15%, 25% { opacity: 1; } 26%, 100% { opacity: 0; } }
+
+    .f-s-bubble-1::after { content: "💬"; position: absolute; top: -25px; left: 50%; transform: translateX(-50%); opacity: 0; animation: fSpeakerBubble 12s infinite 1.5s; font-size: 14px; }
+    .f-s-bubble-2::after { content: "💬"; position: absolute; top: -25px; left: 50%; transform: translateX(-50%); opacity: 0; animation: fSpeakerBubble 12s infinite 5.5s; font-size: 14px; }
+    @keyframes fSpeakerBubble { 0%, 10% { opacity: 0; } 11%, 21% { opacity: 1; } 22%, 100% { opacity: 0; } }
+
+    /* =========================================
+       8. SEMPOZYUM (BİLGİ ŞÖLENİ) 
+       ========================================= */
+    .symp-expert { background-color: #ecf0f1; border: 3px solid #34495e; } 
+    .symp-e-1 { animation: sympPresent 15s infinite 0s; } .symp-e-2 { animation: sympPresent 15s infinite 5s; } .symp-e-3 { animation: sympPresent 15s infinite 10s; }
+
+    @keyframes sympPresent { 0%, 5% { transform: translateY(0); box-shadow: none; } 10%, 25% { transform: translateY(-15px); box-shadow: 0 5px 10px rgba(0,0,0,0.2); } 30%, 100% { transform: translateY(0); box-shadow: none; } }
+    .symp-e-1::after, .symp-e-2::after, .symp-e-3::after { content: "📄"; position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 16px; opacity: 0; }
+    .symp-e-1::after { animation: sympPaper 15s infinite 0s; } .symp-e-2::after { animation: sympPaper 15s infinite 5s; } .symp-e-3::after { animation: sympPaper 15s infinite 10s; }
+    @keyframes sympPaper { 0%, 5% { opacity: 0; } 10%, 25% { opacity: 1; } 30%, 100% { opacity: 0; } }
+
+    /* =========================================
+       9. ÇALIŞTAY (WORKSHOP)
+       ========================================= */
+    .workshop-arena { padding-top: 20px; flex-direction: column; justify-content: center; }
+    .w-table-wrap { position: relative; width: 180px; height: 100px; margin: 40px auto; }
+    .w-table { width: 100%; height: 100%; background-color: #ecf0f1; border: 4px solid #bdc3c7; border-radius: 50px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; flex-direction: column; }
+    .w-dot { position: absolute; z-index: 3; }
+    .w-d-1 { top: -6px; left: 40px; background-color: #16a085; } .w-d-2 { top: -6px; right: 40px; background-color: #16a085; }
+    .w-d-3 { bottom: -6px; left: 40px; background-color: #16a085; } .w-d-4 { bottom: -6px; right: 40px; background-color: #16a085; }
+    .w-baskan { top: 50%; left: -15px; transform: translateY(-50%); background-color: #2c3e50; }
+    .w-process { font-size: 1.2rem; opacity: 0; animation: processAnim 10s infinite; position: absolute; }
+    .w-result { font-size: 1rem; font-weight: bold; color: #27ae60; opacity: 0; animation: resultAnim 10s infinite; position: absolute; background: white; padding: 2px 8px; border-radius: 8px; border: 2px solid #27ae60; white-space: nowrap; }
+
+    @keyframes processAnim { 0%, 5% { opacity: 0; transform: scale(0.8); } 10%, 60% { opacity: 1; transform: scale(1); } 65%, 100% { opacity: 0; } }
+    @keyframes resultAnim { 0%, 65% { opacity: 0; transform: translateY(15px); } 70%, 95% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-10px); } }
+
+</style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#egitim-bilimleri" aria-label="Ana menüye dön">← Menüye dön</a>
+
+<div class="container">
+
+    <div class="main-header">
+        <h1>🎓 ÖYT Tartışma Teknikleri Rehberi</h1>
+        <p>Eğitim Bilimleri için interaktif ve minimalist animasyonlu özet</p>
+    </div>
+
+    <div class="card">
+        <h2 class="card-header">1. Münazara</h2>
+        <div class="card-body">
+            <div class="animation-section munazara-arena">
+                <div class="dot teacher" style="top: 10px;" title="Öğretmen (Moderatör)"></div>
+                <div class="jury-area">
+                    <div class="group">
+                        <div class="dot jury"></div><div class="dot jury"></div><div class="dot jury"></div>
+                    </div>
+                    <div class="group-label" style="margin-top: 5px;">Jüri</div>
+                </div>
+                <div class="interaction-area" style="margin-top: 30px;">
+                    <div class="group">
+                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        <div class="group-label">Tez Grubu</div>
+                    </div>
+                    <div class="munazara-message"></div>
+                    <div class="group">
+                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        <div class="group-label">Antitez Grubu</div>
+                    </div>
+                </div>
+                <div class="audience-area">
+                    <div class="dot audience"></div><div class="dot audience"></div><div class="dot audience"></div>
+                    <div class="dot audience"></div><div class="dot audience"></div><div class="dot audience"></div>
+                    <div class="group-label" style="margin-top: 0;">Seyirci</div>
+                </div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #f39c12;"></div><span>Jüri</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #34495e;"></div><span>Tartışmacı</span></div>
+                </div>
+            </div>
+            <div class="info-section">
+                <ul>
+                    <li>Farklı görüşleri savunan iki grubun, görüşlerini <strong>jüri ve seyirci önünde</strong> tartışmalarıdır.</li>
+                    <li>Gruplar birbirlerinin tezlerini çürütmeye çalışırlar. <strong>Jüriyi ikna eden kazanır.</strong></li>
+                    <li>Önceden sıkı bir hazırlık gerektirir. Öğrencilerin iş birliği içinde çalışmalarını sağlar.</li>
+                    <li>Amaç; öğrencilerin savunma becerilerini geliştirmektir.</li>
+                    <li>Sınırlılığı; öğrenciler düşünmedikleri fikirleri savunmak zorunda kalabilir.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="card-header">2. Zıt Panel</h2>
+        <div class="card-body">
+            <div class="animation-section">
+                <div class="dot teacher" title="Öğretmen (Moderatör)"></div>
+                <div class="interaction-area">
+                    <div class="group">
+                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        <div class="group-label">Grup A</div>
+                    </div>
+                    <div class="zit-panel-message"></div>
+                    <div class="group">
+                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        <div class="group-label">Grup B</div>
+                    </div>
+                </div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #34495e;"></div><span>Öğrenci</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #8e44ad;"></div><span>Öğretmen</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #e74c3c;"></div><span>Soru</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #27ae60;"></div><span>Cevap/Onay</span></div>
+                </div>
+            </div>
+            <div class="info-section">
+                <ul>
+                    <li>İki gruptan oluşur. Gruplardan biri <strong>soru sorar</strong>, diğeri ise <strong>cevap verir</strong>.</li>
+                    <li>Kullanım amacı; dersin tekrarı, anlaşılmayan yerlerin belirlenmesidir.</li>
+                    <li>Sınıftaki tüm öğrenciler katılır. Gruplar öğrencilerden oluşturulur.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="card-header">3. Kollegyum</h2>
+        <div class="card-body">
+            <div class="animation-section" style="padding-top: 40px;">
+                <div class="dot teacher" style="top: 10px;" title="Öğretmen (Moderatör)"></div>
+                <div class="interaction-area">
+                    <div class="group">
+                        <div class="dot expert"></div><div class="dot expert"></div><div class="dot expert"></div>
+                        <div class="group-label">Uzman Grup</div>
+                    </div>
+                    <div class="kollegyum-message"></div>
+                    <div class="group">
+                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        <div class="group-label">Öğrenci Grubu</div>
+                    </div>
+                </div>
+                <div class="audience-area">
+                    <div class="dot audience"></div><div class="dot audience"></div><div class="dot audience"></div>
+                    <div class="dot audience"></div><div class="dot audience"></div><div class="dot audience"></div>
+                    <div class="group-label" style="margin-top: 0;">Sınıftaki Diğer Öğrenciler</div>
+                </div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #16a085;"></div><span>Uzman</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #34495e;"></div><span>Öğrenci</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #bdc3c7;"></div><span>Sınıf</span></div>
+                </div>
+            </div>
+            <div class="info-section">
+                <ul>
+                    <li>İki panel grubu oluşturulur. Bu gruplardan biri <strong>öğrenci grubu</strong>, diğeri ise <strong>uzman (kaynak) gruptur</strong>.</li>
+                    <li><strong>Uzman grup konuyu sunar</strong>, ardından da <strong>öğrenci grubu</strong> sınıftaki diğer öğrenciler yerine <strong>soru sorar</strong>.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="card-header">4. Görüş Geliştirme</h2>
+        <div class="card-body">
+            <div class="animation-section gorus-arena">
+                <div class="dot teacher" title="Öğretmen (Moderatör)"></div>
+                <div class="gorus-zones">
+                    <div class="zone agree">
+                        <div class="zone-title">Katılıyorum</div>
+                        <div class="zone-dots">
+                            <div class="dot"></div><div class="dot"></div>
+                        </div>
+                    </div>
+                    <div class="zone partial">
+                        <div class="zone-title">Kısmen Katılıyorum</div>
+                        <div class="zone-dots">
+                            <div class="dot"></div><div class="dot"></div>
+                        </div>
+                    </div>
+                    <div class="zone disagree">
+                        <div class="zone-title">Katılmıyorum</div>
+                        <div class="zone-dots">
+                            <div class="dot"></div><div class="dot"></div>
+                        </div>
+                    </div>
+                    <div class="changer-dot changer-1" title="Fikrini Değiştiren Öğrenci"></div>
+                    <div class="changer-dot changer-2" title="Fikrini Değiştiren Öğrenci"></div>
+                </div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #34495e;"></div><span>Öğrenci</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #2980b9;"></div><span>Fikrini Değiştiren</span></div>
+                </div>
+            </div>
+            <div class="info-section">
+                <ul>
+                    <li>Tüm sınıfın katılımıyla gerçekleşir. Öğrenciler zıt veya çelişkili görüş belirtebilirler.</li>
+                    <li>Öğrenciler bir görüşe dair <strong>katılıyorum, katılmıyorum, kısmen katılıyorum</strong> şeklinde panolara ayrılırlar.</li>
+                    <li><strong>En önemli özelliği:</strong> Öğrenciler diğer arkadaşlarının açıklamalarını dinledikten sonra <strong>fikirlerini değiştirebilirler.</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="card-header">5. Panel</h2>
+        <div class="card-body">
+            <div class="animation-section panel-arena" style="padding-top: 40px;">
+                <div class="dot teacher" style="top: 10px;" title="Öğretmen"></div>
+                
+                <div class="panel-stage">
+                    <div class="panelists-group">
+                        <div class="panelists-desk">
+                            <div class="dot expert bubble p-bubble-1"></div>
+                            <div class="dot expert"></div>
+                            <div class="dot expert bubble p-bubble-2"></div>
+                            <div class="dot expert"></div>
+                        </div>
+                        <div class="group-label" style="margin-top: 5px;">Panelistler (Aynı Konu)</div>
+                    </div>
+
+                    <div class="baskan-group">
+                        <div class="baskan-desk">
+                            <div class="dot baskan bubble b-bubble"></div>
+                        </div>
+                        <div class="group-label" style="margin-top: 5px;">Başkan</div>
+                    </div>
+                </div>
+
+                <div class="audience-curve">
+                    <div class="dot audience bubble a-bubble"></div>
+                    <div class="dot audience bubble a-bubble" style="animation-delay: 0.5s;"></div>
+                    <div class="dot audience bubble a-bubble" style="animation-delay: 1s;"></div>
+                    <div class="dot audience bubble a-bubble" style="animation-delay: 0.2s;"></div>
+                    <div class="dot audience"></div>
+                </div>
+                <div class="group-label" style="margin-top: -10px;">Seyirci (Sonda Soru Sorar)</div>
+
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #2c3e50;"></div><span>Başkan</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #16a085;"></div><span>Panelist</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #bdc3c7;"></div><span>Seyirci</span></div>
+                </div>
+            </div>
+            <div class="info-section">
+                <ul>
+                    <li><strong>Panelist (4-6 kişi):</strong> Ön hazırlık yapar. Konuyu 10-15 dk sunar. Aynı konuyu farklı açılardan yorumlar.</li>
+                    <li><strong>Başkan:</strong> Sıra ile söz hakkı verir. Oturum sonunda özet yapar.</li>
+                    <li><strong>Seyirci:</strong> Sadece <strong>en sonda soru sorabilir</strong>, tartışmaya katılmaz.</li>
+                    <li>Sohbet havasında gerçekleşir. Konu kesin bir sonuca bağlanmaz.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="card-header">6. Açık Oturum</h2>
+        <div class="card-body">
+            <div class="animation-section panel-arena" id="ao-arena" style="padding-top: 40px;">
+                <div class="dot teacher" style="top: 10px;" title="Öğretmen"></div>
+                
+                <div class="panel-stage">
+                    <div class="panelists-group">
+                        <div class="panelists-desk">
+                            <div class="dot ao-expert-1 bubble ao-e-bubble-1" title="Farklı Görüş 1"></div>
+                            <div class="dot ao-expert-2" title="Farklı Görüş 2"></div>
+                            <div class="dot ao-expert-3 bubble ao-e-bubble-2" title="Farklı Görüş 3"></div>
+                        </div>
+                        <div class="group-label" style="margin-top: 5px;">Uzmanlar (Değişik Görüşlü)</div>
+                    </div>
+
+                    <div class="baskan-group">
+                        <div class="baskan-desk">
+                            <div class="dot baskan bubble ao-baskan-bubble"></div>
+                        </div>
+                        <div class="group-label" style="margin-top: 5px;">Başkan (Sorgular)</div>
+                    </div>
+                </div>
+
+                <div class="audience-curve">
+                    <div class="dot audience bubble ao-a-bubble-1 clickable-egg" id="ao-easter-1" title="Gizli gücü tetiklemek için tıkla!"></div>
+                    <div class="dot audience bubble ao-a-bubble-2 clickable-egg" id="ao-easter-2" title="Şimdi de bana tıkla!"></div>
+                    <div class="dot audience"></div>
+                    <div class="dot audience"></div>
+                    <div class="dot audience bubble ao-a-bubble-3"></div>
+                </div>
+                <div class="group-label" style="margin-top: -10px;">Seyirci (Soru Sorabilir)</div>
+
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #2c3e50;"></div><span>Başkan</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background: linear-gradient(90deg, #e74c3c, #f1c40f, #3498db);"></div><span>Zıt Görüşlü Uzmanlar</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #bdc3c7;"></div><span>Seyirci</span></div>
+                </div>
+            </div>
+            <div class="info-section">
+                <ul>
+                    <li><strong>Ön hazırlık yoktur.</strong></li>
+                    <li><strong>Uzmanlar:</strong> Konuya dair <strong>değişik görüşlü (karşıt)</strong> fikirleri savunurlar.</li>
+                    <li><strong>Başkan:</strong> Toplantıya hâkimdir. Düşünceleri sorgular, <strong>soru sorar</strong> ve değerlendirme yapar.</li>
+                    <li><strong>Seyirci:</strong> Tartışmaya doğrudan katılmaz, sadece aralarda soru sorabilir. <em>(Not: Seyircinin tartışmaya katılmayıp yalnızca soru sorması, Açık Oturumu Forum tekniğinden ayıran en önemli farktır.)</em></li>
+                    <li>Konu sanatsal, siyasi, toplumsal, güncel olabilir. TV veya radyoda da yapılabilir.</li>
+                    <li>Örnek: TBMM genel kurul çalışmaları bir açık oturumdur.</li>
+                    <li>Ciddi bir havada gerçekleşir.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="card-header">7. Forum</h2>
+        <div class="card-body">
+            <div class="animation-section panel-arena" style="padding-top: 40px;">
+                <div class="dot teacher" style="top: 10px;" title="Öğretmen"></div>
+                
+                <div class="panel-stage">
+                    <div class="panelists-group">
+                        <div class="panelists-desk">
+                            <div class="dot f-speaker bubble f-s-bubble-1"></div>
+                            <div class="dot f-speaker f-s-bubble-3"></div>
+                            <div class="dot f-speaker bubble f-s-bubble-2"></div>
+                        </div>
+                        <div class="group-label" style="margin-top: 5px;">Konuşmacılar (3-6 kişi)</div>
+                    </div>
+
+                    <div class="baskan-group">
+                        <div class="baskan-desk">
+                            <div class="dot baskan"></div>
+                        </div>
+                        <div class="group-label" style="margin-top: 5px;">Başkan</div>
+                    </div>
+                </div>
+
+                <div class="audience-curve">
+                    <div class="dot audience f-move-1"></div>
+                    <div class="dot audience"></div>
+                    <div class="dot audience f-move-2"></div> 
+                    <div class="dot audience"></div>
+                    <div class="dot audience f-move-3"></div> 
+                </div>
+                <div class="group-label" style="margin-top: -10px;">Seyirci (Aktif Katılımcı)</div>
+
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #2c3e50;"></div><span>Başkan</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #9b59b6;"></div><span>Konuşmacı</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background: linear-gradient(90deg, #2980b9, #e74c3c);"></div><span>Seyirci (Fikir/Soru)</span></div>
+                </div>
+            </div>
+            <div class="info-section">
+                <ul>
+                    <li>Toplumu ilgilendiren konular ele alınır. Bilimsel olarak içerik tartışılmaz.</li>
+                    <li><strong>En Önemli Özellik: Seyircinin fikir beyan etmesi vardır.</strong> Seyirci tartışmaya aktif olarak <strong>katılır</strong> ve <strong>soru sorar.</strong></li>
+                    <li>Seyirciler <strong>kendi aralarında tartışmaz, birbirlerine soru sormaz.</strong></li>
+                    <li>Katılımcıların yazılı ve sözlü soruları cevaplanır.</li>
+                    <li>Tartışma kesin bir sonuca bağlanmaz.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="card-header">8. Sempozyum (Bilgi Şöleni)</h2>
+        <div class="card-body">
+            <div class="animation-section panel-arena" style="padding-top: 40px;">
+                <div class="dot teacher" style="top: 10px;" title="Öğretmen"></div>
+                
+                <div class="panel-stage">
+                    <div class="panelists-group">
+                        <div class="panelists-desk" style="border-bottom-color: #7f8c8d;">
+                            <div class="dot symp-expert symp-e-1"></div>
+                            <div class="dot symp-expert"></div>
+                            <div class="dot symp-expert symp-e-2"></div>
+                            <div class="dot symp-expert"></div>
+                            <div class="dot symp-expert symp-e-3"></div>
+                        </div>
+                        <div class="group-label" style="margin-top: 5px;">Uzmanlar / Akademisyenler (5-6 Kişi)</div>
+                    </div>
+
+                    <div class="baskan-group">
+                        <div class="baskan-desk" style="border-bottom-color: #7f8c8d;">
+                            <div class="dot baskan"></div>
+                        </div>
+                        <div class="group-label" style="margin-top: 5px;">Oturum Başkanı</div>
+                    </div>
+                </div>
+
+                <div class="audience-curve" style="border-top-color: #bdc3c7;">
+                    <div class="dot audience" style="background-color: #95a5a6;"></div>
+                    <div class="dot audience" style="background-color: #95a5a6;"></div>
+                    <div class="dot audience" style="background-color: #95a5a6;"></div>
+                    <div class="dot audience" style="background-color: #95a5a6;"></div>
+                    <div class="dot audience" style="background-color: #95a5a6;"></div>
+                    <div class="dot audience" style="background-color: #95a5a6;"></div>
+                </div>
+                <div class="group-label" style="margin-top: -10px; color: #555;">Özel İzleyici Topluluğu</div>
+
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #2c3e50;"></div><span>Oturum Başkanı</span></div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background-color: #ecf0f1; border: 2px solid #34495e;"></div>
+                        <span>Uzman (Bildiri Sunan)</span>
+                    </div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #95a5a6;"></div><span>Özel İzleyici</span></div>
+                </div>
+            </div>
+            <div class="info-section">
+                <ul>
+                    <li>Bir grup katılımcının; bilimsel, sanatsal ve akademik bir konunun belirli bir yönü üzerinde öğrenci ya da dinleyici karşısında konuşmalarıdır.</li>
+                    <li>Oturum başkanı yönetiminde 5 - 6 kişilik katılımcılar, daha önceden belirtilen konu üzerinde çalışmalar düzenleyerek <strong>bulguları sunarlar (bildiri).</strong></li>
+                    <li>Sempozyumdan sonra forum ya da panel yapılabilir.</li>
+                    <li>Genellikle akademik bir konunun, uzmanları tarafından değişik boyutlarıyla ele alındığı konuşmalardır.</li>
+                    <li>Belli bir konuda çeşitli konuşmacıların katılımıyla düzenlenen <strong>bilimsel toplantılardır.</strong></li>
+                    <li>Konu, alanında uzman kişilerce farklı yönleri ile ele alınır.</li>
+                    <li>Bilim, sanat, ekonomik, siyaset gibi bir konuda alanında yetkin kişiler, <strong>özel izleyici topluluğuna bildiri sunar.</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="card-header">9. Çalıştay (Çalışma Atölyesi / Workshop)</h2>
+        <div class="card-body">
+            <div class="animation-section workshop-arena">
+                <div class="w-table-wrap">
+                    <div class="w-table">
+                        <span class="w-process">⚙️ 💬 🔄</span>
+                        <span class="w-result">💡 Ortak Çözüm</span>
+                    </div>
+                    
+                    <div class="dot w-dot w-d-1" title="Uzman"></div>
+                    <div class="dot w-dot w-d-2" title="Uzman"></div>
+                    <div class="dot w-dot w-d-3" title="Uzman"></div>
+                    <div class="dot w-dot w-d-4" title="Uzman"></div>
+                    <div class="dot w-dot w-baskan" title="Başkan / Lider"></div>
+                </div>
+
+                <div class="legend" style="margin-top: 20px;">
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #2c3e50;"></div><span>Başkan</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background-color: #16a085;"></div><span>Alan Uzmanı</span></div>
+                    <div class="legend-item"><span>⚙️ 💬 Sentez / İrdeleme</span></div>
+                    <div class="legend-item"><span>💡 Ortak Karar</span></div>
+                </div>
+            </div>
+            <div class="info-section">
+                <ul>
+                    <li>Alanlarında uzman bireylerin, <strong>bir başkanın öncülüğünde</strong> kısa bir zaman içinde bir konuya ilişkin <strong>kendi aralarında tartışarak çözüm üretmeleridir.</strong></li>
+                    <li>Amaç; bilgi birikimlerinin paylaşılması ve ortak bir ekip oluşturmaktır.</li>
+                    <li>Önemli, belirsiz, hassas konularda <strong>nitelikli kararların alınmasını</strong> sağlar.</li>
+                    <li>Konunun irdelenmesi, analiz edilmesi, fikirlerin sentezlenmesi, problem çözme ve karar alma gibi çalışmalar düzenlenir.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let easterEggStep = 0;
+    const egg1 = document.getElementById('ao-easter-1');
+    const egg2 = document.getElementById('ao-easter-2');
+    const arena = document.getElementById('ao-arena');
+
+    // 1. Seyirciye tıkla
+    egg1.addEventListener('click', () => {
+        easterEggStep = 1;
+    });
+
+    // 2. Seyirciye tıkla (Savaşı başlat)
+    egg2.addEventListener('click', () => {
+        if (easterEggStep === 1) {
+            triggerAnimeBattle();
+            easterEggStep = 0; 
+        }
+    });
+
+    function triggerAnimeBattle() {
+        if(!arena.classList.contains('anime-battle-active')) {
+            arena.classList.add('anime-battle-active');
+            
+            // 3.5 Saniye sonra savaşı bitir
+            setTimeout(() => {
+                arena.classList.remove('anime-battle-active');
+            }, 3500);
+        }
+    }
+</script>
+
+</body>
+</html>

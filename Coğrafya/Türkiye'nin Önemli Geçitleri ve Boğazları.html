@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türkiye'nin Önemli Geçitleri ve Boğazları</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                grid-template-columns: 1.2fr 1fr;
+                align-items: start;
+            }
+        }
+
+        header {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 10px 0;
+            margin-bottom: 10px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        /* Navigasyon / Sekmeler */
+        .tabs {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 10px;
+        }
+
+        .tab-btn {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #475569;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .tab-btn.cta {
+            background: #f59e0b;
+            color: white;
+            border-color: #f59e0b;
+        }
+
+        /* Görünürlük Kontrolü */
+        .section-content {
+            display: none;
+            grid-column: 1 / -1;
+        }
+
+        .section-content.active {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 992px) {
+            #matchSection.active {
+                grid-template-columns: 1.2fr 1fr;
+            }
+        }
+
+        /* Harita ve Lejant */
+        .map-section {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 20px;
+        }
+
+        .basin-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #334155;
+            padding: 4px 8px;
+        }
+
+        .color-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .map-container {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .map-img {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            cursor: zoom-in;
+            transition: transform 0.2s;
+        }
+        
+        .map-img:hover {
+            transform: scale(1.02);
+        }
+
+        .map-citation {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 8px;
+            text-align: center;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        /* Liste Bölümü */
+        .list-section {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .basin-group {
+            margin-bottom: 24px;
+        }
+
+        .basin-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+        }
+
+        .basin-title .color-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .river-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        @media (min-width: 480px) {
+            .river-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .river-row {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 6px 10px;
+        }
+
+        .river-initial {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #ffffff;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            flex-shrink: 0;
+            text-shadow: 0px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .river-slot {
+            flex-grow: 1;
+            background: #ffffff;
+            border: 2px dashed #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 10px;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            font-weight: 600;
+            user-select: none;
+            transition: all 0.2s;
+        }
+
+        .river-slot:hover {
+            border-color: #3b82f6;
+            background-color: #f0fdf4;
+        }
+
+        .river-slot.filled { border-style: solid; color: #0f172a; }
+        .river-slot.correct { border-color: #22c55e; background-color: #f0fdf4; color: #15803d; }
+        .river-slot.incorrect { border-color: #ef4444; background-color: #fef2f2; color: #b91c1c; }
+
+        /* Alt Çekmece (Drawer) */
+        .backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+            opacity: 0; visibility: hidden; transition: 0.3s; z-index: 999;
+        }
+        .backdrop.active { opacity: 1; visibility: visible; }
+
+        .drawer {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff;
+            border-radius: 24px 24px 0 0; transform: translateY(100%);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000;
+            padding: 24px; box-shadow: 0 -10px 25px rgba(0,0,0,0.1); max-height: 70vh;
+            overflow-y: auto;
+        }
+        .drawer.active { transform: translateY(0); }
+
+        .drawer-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .drawer-title { font-size: 1.2rem; font-weight: 700; color: #0f172a; }
+        .drawer-close { background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; }
+
+        .options-container { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+        .option-btn {
+            background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px;
+            padding: 14px; font-weight: 600; cursor: pointer; text-align: left; transition: 0.2s;
+        }
+        .option-btn:hover { background: #e0f2fe; border-color: #0284c7; color: #0369a1; }
+
+        /* Resim Büyütme Modalı */
+        .img-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(5px);
+        }
+        
+        .img-modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 12px;
+            animation: zoomIn 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        @keyframes zoomIn {
+            from {transform: scale(0.8); opacity: 0;}
+            to {transform: scale(1); opacity: 1;}
+        }
+        
+        .close-img-modal {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: #ffffff;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-img-modal:hover {
+            background: #ef4444;
+        }
+
+        /* Quiz Modu */
+        .quiz-container {
+            background: #fff; padding: 30px; border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto;
+        }
+        .question-card { margin-bottom: 24px; display: none; }
+        .question-card.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .quiz-header { font-size: 0.9rem; color: #64748b; font-weight: 600; margin-bottom: 12px; }
+        .question-text { font-size: 1.2rem; font-weight: 700; color: #1e293b; margin-bottom: 20px; line-height: 1.5; }
+        
+        .quiz-option {
+            display: block; width: 100%; text-align: left; background: #f8fafc;
+            border: 2px solid #e2e8f0; padding: 12px 16px; margin-bottom: 10px;
+            border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s;
+            font-size: 1rem;
+        }
+        .quiz-option:hover { border-color: #94a3b8; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; color: #15803d; pointer-events: none; }
+        .quiz-option.wrong { background: #fee2e2; border-color: #ef4444; color: #b91c1c; pointer-events: none; }
+        
+        .quiz-feedback { margin-top: 16px; padding: 12px; border-radius: 8px; font-weight: 600; display: none; line-height: 1.5; }
+        .quiz-feedback.success { background: #dcfce7; color: #15803d; display: block; }
+        .quiz-feedback.error { background: #fee2e2; color: #b91c1c; display: block; }
+        
+        .next-btn {
+            background: #0f172a; color: white; border: none; padding: 12px 24px;
+            border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 16px; display: none;
+            font-size: 1rem;
+        }
+        .next-btn:hover { background: #1e293b; }
+        .quiz-result { text-align: center; display: none; }
+    </style>
+<link rel="stylesheet" href="../menu-back.css">
+</head>
+<body>
+<a class="ags-menu-back" href="../index.html#cografya" aria-label="Ana menüye dön">← Menüye dön</a>
+
+    <div class="container">
+        <header>
+            <h1>Türkiye'nin Önemli Geçitleri ve Boğazları</h1>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('match')">Harita Eşleştirme</button>
+            <button class="tab-btn cta" onclick="switchTab('quiz')">Maceraya Başla (Hap Bilgiler)</button>
+        </div>
+
+        <div id="matchSection" class="section-content active">
+            <div class="map-section">
+                <div class="basin-legend">
+                    <div class="legend-item"><span class="color-dot" style="background-color: #10b981"></span> Geçitler ve Boğazlar (1-10)</div>
+                </div>
+                <div class="map-container">
+                    <img src="https://i.imgur.com/IIwhdV3.png" alt="Türkiye Geçitleri Haritası" class="map-img" id="mainMapImg">
+                    <div class="map-citation">👆 Haritayı büyütmek için üzerine tıklayın</div>
+                </div>
+            </div>
+
+            <div class="list-section" id="categoryListContainer">
+                </div>
+        </div>
+
+        <div id="quizSection" class="section-content">
+            <div class="quiz-container">
+                <div id="quizContent"></div>
+                <div class="quiz-result" id="quizResult">
+                    <h2 style="font-size: 2rem; margin-bottom: 10px;">Test Tamamlandı!</h2>
+                    <p id="scoreText" style="font-size: 1.2rem; font-weight: 600; color: #475569; margin-bottom: 20px;"></p>
+                    <button class="tab-btn active" onclick="restartQuiz()">Tekrar Çöz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="backdrop" id="backdrop" onclick="closeDrawer()"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <span class="drawer-title" id="drawerTitle">Seçiminizi Yapın</span>
+            <button class="drawer-close" onclick="closeDrawer()">&times;</button>
+        </div>
+        <div class="options-container" id="optionsContainer"></div>
+    </div>
+
+    <div id="imgModal" class="img-modal">
+        <span class="close-img-modal" id="closeImgModal">&times;</span>
+        <img class="img-modal-content" id="zoomedImage">
+    </div>
+
+    <script>
+        // --- 1. HARİTA BÜYÜTME (MODAL) MANTIĞI ---
+        const mapImg = document.getElementById("mainMapImg");
+        const modal = document.getElementById("imgModal");
+        const modalImg = document.getElementById("zoomedImage");
+        const closeBtn = document.getElementById("closeImgModal");
+
+        mapImg.onclick = function(){
+            modal.style.display = "block";
+            modalImg.src = this.src;
+        }
+
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        modal.onclick = function(e) {
+            if(e.target !== modalImg) {
+                modal.style.display = "none";
+            }
+        }
+
+        // --- 2. KATEGORİ VE EŞLEŞTİRME VERİLERİ ---
+        const categories = [
+            { id: 'gecitler', name: 'Önemli Geçitler ve Boğazlar', color: '#10b981', items: [
+                { num: '1', name: 'Geyve Boğazı' },
+                { num: '2', name: 'Bolu Dağı Geçidi' },
+                { num: '3', name: 'Ilgaz Geçidi' },
+                { num: '4', name: 'Ecevit Geçidi' },
+                { num: '5', name: 'Zigana Kalkanlı' },
+                { num: '6', name: 'Kop (Çimen)' },
+                { num: '7', name: 'Çubuk Geçidi' },
+                { num: '8', name: 'Sertavul Geçidi' },
+                { num: '9', name: 'Gülek Boğazı' },
+                { num: '10', name: 'Belen Geçidi' }
+            ]}
+        ];
+
+        let allNames = [];
+        categories.forEach(c => c.items.forEach(i => {
+            i.id = 'item_' + i.num;
+            allNames.push(i.name);
+        }));
+
+        let activeSlot = null;
+
+        function initCategories() {
+            const container = document.getElementById('categoryListContainer');
+            container.innerHTML = '';
+
+            categories.forEach(category => {
+                const group = document.createElement('div');
+                group.className = 'basin-group';
+                
+                const title = document.createElement('div');
+                title.className = 'basin-title';
+                title.innerHTML = `<span class="color-indicator" style="background-color: ${category.color}"></span> ${category.name}`;
+                group.appendChild(title);
+
+                const grid = document.createElement('div');
+                grid.className = 'river-grid';
+
+                category.items.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'river-row';
+                    row.innerHTML = `
+                        <div class="river-initial" style="background-color: ${category.color};">${item.num}</div>
+                        <div class="river-slot" id="slot-${item.id}" onclick="openDrawer('${item.id}', '${item.name}', '${item.num}')">
+                            <span>Haritadaki ${item.num} Numaralı Geçit...</span>
+                            <span>▼</span>
+                        </div>
+                    `;
+                    grid.appendChild(row);
+                });
+
+                group.appendChild(grid);
+                container.appendChild(group);
+            });
+        }
+
+        function openDrawer(slotId, correctName, num) {
+            activeSlot = { id: slotId, correct: correctName };
+            document.getElementById('drawerTitle').innerText = `Haritadaki ${num} Numaralı Geçidi Seçin`;
+            
+            // Tüm isimlerden doğru cevabı çıkarıp 3 tane rastgele çeldirici seçiyoruz
+            let distractors = allNames.filter(n => n !== correctName);
+            let selectedDistractors = [...distractors].sort(() => 0.5 - Math.random()).slice(0, 3);
+
+            const options = [correctName, ...selectedDistractors].sort(() => 0.5 - Math.random());
+            
+            const optsContainer = document.getElementById('optionsContainer');
+            optsContainer.innerHTML = '';
+            
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => selectOption(opt);
+                optsContainer.appendChild(btn);
+            });
+
+            document.getElementById('backdrop').classList.add('active');
+            document.getElementById('drawer').classList.add('active');
+        }
+
+        function closeDrawer() {
+            document.getElementById('backdrop').classList.remove('active');
+            document.getElementById('drawer').classList.remove('active');
+            activeSlot = null;
+        }
+
+        function selectOption(selected) {
+            if (!activeSlot) return;
+            const slotEl = document.getElementById(`slot-${activeSlot.id}`);
+            
+            slotEl.children[0].innerText = selected;
+            slotEl.classList.add('filled');
+            
+            if (selected === activeSlot.correct) {
+                slotEl.className = 'river-slot filled correct';
+                slotEl.children[1].innerText = '✓';
+            } else {
+                slotEl.className = 'river-slot filled incorrect';
+                slotEl.children[1].innerText = '✗';
+            }
+            closeDrawer();
+        }
+
+        // --- 3. KISA VE ÖZET QUİZ MANTIĞI ---
+        const quizQuestions = [
+            {
+                q: "Doğu Karadeniz'de yer alan ve Trabzon'u iç kesimlere (Gümüşhane'ye) bağlayan, tarihi İpek Yolu üzerindeki geçit aşağıdakilerden hangisidir?",
+                opts: ["Zigana Kalkanlı", "Kop (Çimen)", "Ilgaz Geçidi", "Ecevit Geçidi"],
+                ans: 0,
+                exp: "Zigana Geçidi, Doğu Karadeniz kıyılarını iç kesimlere bağlayan en önemli güzergahlardan biridir."
+            },
+            {
+                q: "Akdeniz Bölgesi'nde Antalya'yı Göller Yöresi'ne bağlayan önemli geçit hangisidir?",
+                opts: ["Sertavul Geçidi", "Çubuk Geçidi", "Gülek Boğazı", "Belen Geçidi"],
+                ans: 1,
+                exp: "Çubuk Geçidi, Antalya'yı iç kesimlere ve Göller Yöresi'ne (Burdur/Isparta) bağlar."
+            },
+            {
+                q: "İç Anadolu Bölgesi'ni Çukurova'ya bağlayan, Toros Dağları üzerindeki tarihi boğaz aşağıdakilerden hangisidir?",
+                opts: ["Gülek Boğazı", "Sertavul Geçidi", "Belen Geçidi", "Geyve Boğazı"],
+                ans: 0,
+                exp: "Gülek Boğazı, İç Anadolu ile Çukurova (Adana) arasında kritik bir geçiş noktasıdır."
+            },
+            {
+                q: "Karadeniz Bölgesi'nde Kastamonu ile Çankırı illerini birbirine bağlayan dağlık geçit hangisidir?",
+                opts: ["Ecevit Geçidi", "Bolu Dağı Geçidi", "Ilgaz Geçidi", "Kop (Çimen)"],
+                ans: 2,
+                exp: "Ilgaz Geçidi, Batı Karadeniz'de Kastamonu ve Çankırı arasında yer alır."
+            },
+            {
+                q: "Hatay'ı (Amik Ovası) Çukurova'ya ve Suriye sınırına bağlayan geçit aşağıdakilerden hangisidir?",
+                opts: ["Gülek Boğazı", "Sertavul Geçidi", "Çubuk Geçidi", "Belen Geçidi"],
+                ans: 3,
+                exp: "Belen Geçidi, Nur (Amanos) Dağları üzerinde yer alır ve Hatay'ı diğer bölgelere bağlar."
+            }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+
+        function renderQuiz() {
+            const container = document.getElementById('quizContent');
+            container.innerHTML = '';
+            
+            quizQuestions.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = `question-card ${index === 0 ? 'active' : ''}`;
+                card.id = `q-${index}`;
+                
+                let html = `
+                    <div class="quiz-header">Soru ${index + 1} / ${quizQuestions.length}</div>
+                    <div class="question-text">${item.q}</div>
+                    <div class="options-wrapper">
+                `;
+                
+                item.opts.forEach((opt, optIdx) => {
+                    html += `<button class="quiz-option" onclick="checkAnswer(${index}, ${optIdx}, this)">${String.fromCharCode(65+optIdx)}) ${opt}</button>`;
+                });
+                
+                html += `
+                    </div>
+                    <div class="quiz-feedback" id="feedback-${index}"></div>
+                    <button class="next-btn" id="next-${index}" onclick="nextQuestion(${index})">${index === quizQuestions.length - 1 ? 'Sonuçları Gör' : 'Sıradaki Soru ➔'}</button>
+                `;
+                card.innerHTML = html;
+                container.appendChild(card);
+            });
+        }
+
+        function checkAnswer(qIdx, optIdx, btn) {
+            const question = quizQuestions[qIdx];
+            const card = document.getElementById(`q-${qIdx}`);
+            const buttons = card.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById(`feedback-${qIdx}`);
+            const nextBtn = document.getElementById(`next-${qIdx}`);
+            
+            buttons.forEach(b => b.style.pointerEvents = 'none');
+            
+            if (optIdx === question.ans) {
+                btn.classList.add('correct');
+                feedback.className = 'quiz-feedback success';
+                feedback.innerHTML = `<strong>Doğru!</strong> ${question.exp}`;
+                score++;
+            } else {
+                btn.classList.add('wrong');
+                buttons[question.ans].classList.add('correct');
+                feedback.className = 'quiz-feedback error';
+                feedback.innerHTML = `<strong>Yanlış!</strong> ${question.exp}`;
+            }
+            
+            nextBtn.style.display = 'inline-block';
+        }
+
+        function nextQuestion(currentIdx) {
+            document.getElementById(`q-${currentIdx}`).classList.remove('active');
+            if (currentIdx + 1 < quizQuestions.length) {
+                document.getElementById(`q-${currentIdx + 1}`).classList.add('active');
+            } else {
+                document.getElementById('quizContent').style.display = 'none';
+                const result = document.getElementById('quizResult');
+                result.style.display = 'block';
+                document.getElementById('scoreText').innerText = `${quizQuestions.length} soruda ${score} doğru yaptınız.`;
+            }
+        }
+
+        function restartQuiz() {
+            currentQ = 0;
+            score = 0;
+            document.getElementById('quizResult').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'block';
+            renderQuiz();
+        }
+
+        // --- SEKME KONTROLÜ ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+            
+            if(tabId === 'match') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('matchSection').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('quizSection').classList.add('active');
+            }
+        }
+
+        // Başlangıç Yüklemeleri
+        window.onload = () => {
+            initCategories();
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>
