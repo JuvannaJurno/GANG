@@ -68,7 +68,7 @@
  new ResizeObserver(()=>{if(dialog.open)fit();}).observe(stage);
  function renderNotes(){
   list.replaceChildren();
-  const heading=section.querySelector('h2');heading.textContent='Extra Notlar';if(extraNotes.some(n=>n.section===active))heading.append(newTag());
+  const heading=section.querySelector('h2');heading.textContent='Extra Notlar';
   const term=normalize(query.value.trim());
   const notes=extraNotes.filter(n=>n.section===active&&(!term||normalize(n.name+' '+n.topic+' Extra Notlar').includes(term)));
   if(!notes.length){const p=document.createElement('p');p.className='notes-empty';p.textContent=term?'Aramana uygun extra not bulunamadı.':'Bu ders için henüz extra not eklenmedi.';list.append(p);return;}
@@ -81,7 +81,7 @@
    const links=document.createElement('div');links.className='note-links';
    for(const note of notes.filter(n=>n.topic===topic)){
     const button=document.createElement('button');button.type='button';button.className='test note-link';
-    const name=document.createElement('span');name.className='test-title';name.textContent=note.name;name.append(newTag());
+    const name=document.createElement('span');name.className='test-title';name.textContent=note.name;
     const action=document.createElement('span');action.className='open';action.textContent='Görseli aç ↗';action.setAttribute('aria-hidden','true');
     button.append(name,action);button.onclick=()=>open(note,button);links.append(button);
    }
